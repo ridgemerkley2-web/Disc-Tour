@@ -56,6 +56,20 @@ EFFECTORS = (
     ("foot_r_Goal", "foot_r"),
 )
 
+# UE's PBIK preferred angles are expressed in each bone's local solver axes.
+# The proxy's arms are mirrored across X, so the elbow Z preference mirrors;
+# both calves share the same local X bend direction after FBX import. Keep this
+# ordered contract identical in IK_DG_Master and CR_DG_Master.
+BEND_BONE_SETTINGS = (
+    ("lowerarm_l", (0.0, 0.0, -45.0)),
+    ("lowerarm_r", (0.0, 0.0, 45.0)),
+    ("calf_l", (45.0, 0.0, 0.0)),
+    ("calf_r", (45.0, 0.0, 0.0)),
+)
+
+PBIK_ITERATIONS = 20
+PBIK_SUB_ITERATIONS = 10
+
 PROFILES = (
     (
         "DA_DG_Test_ShortCompact",
@@ -168,11 +182,14 @@ def _save(asset):
 
 def _ensure_curves(skeleton):
     existing = {str(name) for name in skeleton.get_curve_meta_data_names()}
+    changed = False
     for curve in CURVES:
         if curve not in existing:
             if not skeleton.add_curve_meta_data(curve):
                 raise RuntimeError(f"Could not register skeleton curve: {curve}")
-    _save(skeleton)
+            changed = True
+    if changed:
+        _save(skeleton)
     actual = {str(name) for name in skeleton.get_curve_meta_data_names()}
     missing = sorted(set(CURVES) - actual)
     if missing:
@@ -183,7 +200,8 @@ def _ensure_curves(skeleton):
 def _create_profile(asset_name, display_name, values, folder):
     path = f"{folder}/{asset_name}"
     profile = unreal.load_asset(path)
-    if profile is None:
+    created = profile is None
+    if created:
         factory = unreal.DataAssetFactory()
         factory.set_editor_property("data_asset_class", unreal.DiscGolfCharacterProfile.static_class())
         profile = unreal.AssetToolsHelpers.get_asset_tools().create_asset(
@@ -195,14 +213,31 @@ def _create_profile(asset_name, display_name, values, folder):
     if not isinstance(profile, unreal.DiscGolfCharacterProfile):
         raise RuntimeError(f"Character profile path has the wrong class: {path}")
 
-    body = unreal.DGBodyProfile()
-    for name, value in values.items():
-        body.set_editor_property(name, value)
-    profile.set_editor_property("body", body)
-    profile.set_editor_property("display_name", unreal.TextLibrary.conv_string_to_text(display_name))
-    profile.set_editor_property("right_disc_grip_bone", "disc_grip_r")
-    profile.set_editor_property("left_disc_grip_bone", "disc_grip_l")
-    _save(profile)
+    changed = created
+    current_body = profile.get_editor_property("body")
+    body_changed = any(
+        abs(float(current_body.get_editor_property(name)) - float(value)) > 1.0e-5
+        for name, value in values.items()
+    )
+    if body_changed:
+        body = unreal.DGBodyProfile()
+        for name, value in values.items():
+            body.set_editor_property(name, value)
+        profile.set_editor_property("body", body)
+        changed = True
+    if str(profile.get_editor_property("display_name")) != display_name:
+        profile.set_editor_property(
+            "display_name", unreal.TextLibrary.conv_string_to_text(display_name)
+        )
+        changed = True
+    if str(profile.get_editor_property("right_disc_grip_bone")) != "disc_grip_r":
+        profile.set_editor_property("right_disc_grip_bone", "disc_grip_r")
+        changed = True
+    if str(profile.get_editor_property("left_disc_grip_bone")) != "disc_grip_l":
+        profile.set_editor_property("left_disc_grip_bone", "disc_grip_l")
+        changed = True
+    if changed:
+        _save(profile)
     return profile
 
 
@@ -236,6 +271,77 @@ def _clear_ik_definition(controller):
             raise RuntimeError("Could not clear the IK Rig solver stack")
 
 
+def _float_matches(actual, expected, tolerance=1.0e-5):
+    return abs(float(actual) - float(expected)) <= tolerance
+
+
+def _vector_matches(actual, expected, tolerance=1.0e-5):
+    return all(
+        _float_matches(component, target, tolerance)
+        for component, target in zip((actual.x, actual.y, actual.z), expected)
+    )
+
+
+def _ensure_ik_bend_settings(controller, solver_controller):
+    """Author the four explicit FBIK bend preferences without touching limits."""
+    changed = False
+    # The generic controller's GetBoneSettings is not reflected correctly for
+    # the UE 5.8 FBIK struct (it returns None even for registered settings).
+    # The solver-specific getter does expose saved values, so use the complete
+    # preferred-angle contract as the no-write/no-warning guard.
+    pending_bones = []
+    for bone_name, preferred_angles in BEND_BONE_SETTINGS:
+        setting = solver_controller.get_bone_settings(bone_name)
+        if (
+            setting is not None
+            and str(setting.get_editor_property("bone")).casefold()
+            == bone_name.casefold()
+            and bool(setting.get_editor_property("use_preferred_angles"))
+            and _vector_matches(
+                setting.get_editor_property("preferred_angles"), preferred_angles
+            )
+        ):
+            continue
+        pending_bones.append(bone_name)
+
+    if not pending_bones:
+        return False
+
+    # AddBoneSetting creates missing entries and safely refuses an existing
+    # wrong entry, after which SetBoneSettings repairs that copied struct.
+    for bone_name in pending_bones:
+        controller.add_bone_setting(bone_name, 0)
+
+    # Adding settings rebuilds the solver-controller view in UE 5.8. Reacquire
+    # it before reading and writing the copied FIKRigFBIKBoneSettings structs.
+    solver_controller = controller.get_solver_controller(0)
+    if not isinstance(solver_controller, unreal.IKRigFBIKController):
+        raise RuntimeError("Could not reacquire IK FBIK controller after adding settings")
+
+    desired_angles = dict(BEND_BONE_SETTINGS)
+    for bone_name in pending_bones:
+        preferred_angles = desired_angles[bone_name]
+        setting = solver_controller.get_bone_settings(bone_name)
+        if (
+            setting is None
+            or str(setting.get_editor_property("bone")).casefold()
+            != bone_name.casefold()
+        ):
+            raise RuntimeError(f"IK FBIK bone setting did not persist for {bone_name}")
+        setting_changed = False
+        if not bool(setting.get_editor_property("use_preferred_angles")):
+            setting.set_editor_property("use_preferred_angles", True)
+            setting_changed = True
+        actual_angles = setting.get_editor_property("preferred_angles")
+        if not _vector_matches(actual_angles, preferred_angles):
+            setting.set_editor_property("preferred_angles", unreal.Vector(*preferred_angles))
+            setting_changed = True
+        if setting_changed:
+            solver_controller.set_bone_settings(bone_name, setting)
+            changed = True
+    return changed
+
+
 def _create_ik_rig(mesh):
     ik_rig = unreal.load_asset(IK_PATH)
     created = ik_rig is None
@@ -250,8 +356,11 @@ def _create_ik_rig(mesh):
         raise RuntimeError(f"Could not create/load IK Rig: {IK_PATH}")
 
     controller = unreal.IKRigController.get_controller(ik_rig)
-    if not controller.set_skeletal_mesh(mesh):
-        raise RuntimeError("IK_DG_Master rejected SK_DG_Master")
+    changed = created
+    if controller.get_skeletal_mesh() != mesh:
+        if not controller.set_skeletal_mesh(mesh):
+            raise RuntimeError("IK_DG_Master rejected SK_DG_Master")
+        changed = True
 
     if created:
         _clear_ik_definition(controller)
@@ -277,31 +386,61 @@ def _create_ik_rig(mesh):
             result = str(controller.add_retarget_chain(chain_name, start, end, goal))
             if not result or result == "None":
                 raise RuntimeError(f"Could not add retarget chain {chain_name}")
+        changed = True
 
-    if not controller.set_retarget_root("pelvis"):
-        raise RuntimeError("Could not set IK retarget root to pelvis")
-    if not controller.set_root_motion_bone("root"):
-        raise RuntimeError("Could not set IK root-motion bone to root")
+    if str(controller.get_retarget_root()) != "pelvis":
+        if not controller.set_retarget_root("pelvis"):
+            raise RuntimeError("Could not set IK retarget root to pelvis")
+        changed = True
+    if str(controller.get_root_motion_bone()) != "root":
+        if not controller.set_root_motion_bone("root"):
+            raise RuntimeError("Could not set IK root-motion bone to root")
+        changed = True
     if controller.get_num_solvers() != 1:
         raise RuntimeError(f"IK_DG_Master has {controller.get_num_solvers()} solvers, expected 1")
     if not controller.get_solver_enabled(0):
         raise RuntimeError("IK_DG_Master FBIK solver is disabled")
+    if str(controller.get_start_bone(0)) != "pelvis":
+        if not controller.set_start_bone("pelvis", 0):
+            raise RuntimeError("Could not set IK solver root to pelvis")
+        changed = True
     solver_controller = controller.get_solver_controller(0)
     if not isinstance(solver_controller, unreal.IKRigFBIKController):
         raise RuntimeError(f"IK_DG_Master solver has wrong controller class: {solver_controller}")
 
     # Match Epic's UE 5.8 auto-FBIK baseline while keeping stretch disabled.
+    # Do not rewrite the struct unless a field in our contract differs; notably,
+    # this preserves the existing Iterations value.
     solver_settings = solver_controller.get_solver_settings()
-    solver_settings.set_editor_property("root_behavior", unreal.PBIKRootBehavior.FREE)
-    solver_settings.set_editor_property("global_pull_chain_alpha", 0.0)
-    solver_settings.set_editor_property("sub_iterations", 10)
-    solver_settings.set_editor_property("allow_stretch", False)
-    solver_controller.set_solver_settings(solver_settings)
+    solver_settings_changed = False
+    if solver_settings.get_editor_property("root_behavior") != unreal.PBIKRootBehavior.FREE:
+        solver_settings.set_editor_property("root_behavior", unreal.PBIKRootBehavior.FREE)
+        solver_settings_changed = True
+    if not _float_matches(solver_settings.get_editor_property("global_pull_chain_alpha"), 0.0):
+        solver_settings.set_editor_property("global_pull_chain_alpha", 0.0)
+        solver_settings_changed = True
+    if int(solver_settings.get_editor_property("sub_iterations")) != PBIK_SUB_ITERATIONS:
+        solver_settings.set_editor_property("sub_iterations", PBIK_SUB_ITERATIONS)
+        solver_settings_changed = True
+    if bool(solver_settings.get_editor_property("allow_stretch")):
+        solver_settings.set_editor_property("allow_stretch", False)
+        solver_settings_changed = True
+    if solver_settings_changed:
+        solver_controller.set_solver_settings(solver_settings)
+        changed = True
     for goal_name, _bone_name in EFFECTORS:
         goal_settings = solver_controller.get_goal_settings(goal_name)
-        goal_settings.set_editor_property("chain_depth", 2)
-        solver_controller.set_goal_settings(goal_name, goal_settings)
-    _save(ik_rig)
+        if int(goal_settings.get_editor_property("chain_depth")) != 2:
+            goal_settings.set_editor_property("chain_depth", 2)
+            solver_controller.set_goal_settings(goal_name, goal_settings)
+            changed = True
+    if _ensure_ik_bend_settings(controller, solver_controller):
+        changed = True
+    solver_controller = controller.get_solver_controller(0)
+    if not isinstance(solver_controller, unreal.IKRigFBIKController):
+        raise RuntimeError("Could not reacquire IK FBIK controller for verification")
+    if changed:
+        _save(ik_rig)
 
     actual_solver_settings = solver_controller.get_solver_settings()
     if actual_solver_settings.get_editor_property("root_behavior") != unreal.PBIKRootBehavior.FREE:
@@ -312,6 +451,11 @@ def _create_ik_rig(mesh):
         raise RuntimeError("IK_DG_Master FBIK sub-iterations are not 10")
     if bool(actual_solver_settings.get_editor_property("allow_stretch")):
         raise RuntimeError("IK_DG_Master unexpectedly allows stretch")
+    if int(actual_solver_settings.get_editor_property("iterations")) != PBIK_ITERATIONS:
+        raise RuntimeError(
+            "IK_DG_Master FBIK iterations changed from the Session 2 baseline of "
+            f"{PBIK_ITERATIONS}"
+        )
     if str(controller.get_start_bone(0)) != "pelvis":
         raise RuntimeError(f"IK solver root is {controller.get_start_bone(0)}, expected pelvis")
     if str(controller.get_retarget_root()) != "pelvis":
@@ -320,6 +464,23 @@ def _create_ik_rig(mesh):
         raise RuntimeError(
             f"Root motion bone is {controller.get_root_motion_bone()}, expected root"
         )
+    for bone_name, preferred_angles in BEND_BONE_SETTINGS:
+        setting = solver_controller.get_bone_settings(bone_name)
+        if (
+            setting is None
+            or str(setting.get_editor_property("bone")).casefold()
+            != bone_name.casefold()
+        ):
+            raise RuntimeError(f"IK_DG_Master is missing bone setting {bone_name}")
+        if not bool(setting.get_editor_property("use_preferred_angles")):
+            raise RuntimeError(f"IK_DG_Master {bone_name} preferred angles are disabled")
+        actual_angles = setting.get_editor_property("preferred_angles")
+        if not _vector_matches(actual_angles, preferred_angles):
+            raise RuntimeError(
+                f"IK_DG_Master {bone_name} preferred angles "
+                f"({actual_angles.x}, {actual_angles.y}, {actual_angles.z}) do not match "
+                f"{preferred_angles}"
+            )
 
     expected_goals = {name: bone for name, bone in EFFECTORS}
     if len(controller.get_all_goals()) != len(expected_goals):
@@ -401,7 +562,7 @@ def _add_transform_control(rig, bone_name):
     control_name = f"ctrl_{bone_name}"
     control_key = _rig_key(control_name, unreal.RigElementType.CONTROL)
     if hierarchy.contains(control_key):
-        return control_key
+        return control_key, False
 
     settings = unreal.RigControlSettings()
     settings.control_type = unreal.RigControlType.EULER_TRANSFORM
@@ -424,7 +585,7 @@ def _add_transform_control(rig, bone_name):
         hierarchy.get_global_transform(bone_key, True),
         True,
     )
-    return control_key
+    return control_key, True
 
 
 def _add_float_control(rig, control_name, default_value):
@@ -432,7 +593,7 @@ def _add_float_control(rig, control_name, default_value):
     controller = rig.get_hierarchy_controller()
     control_key = _rig_key(control_name, unreal.RigElementType.CONTROL)
     if hierarchy.contains(control_key):
-        return control_key
+        return control_key, False
     settings = unreal.RigControlSettings()
     settings.control_type = unreal.RigControlType.FLOAT
     value = hierarchy.make_control_value_from_float(default_value)
@@ -446,7 +607,7 @@ def _add_float_control(rig, control_name, default_value):
     )
     if not control_key:
         raise RuntimeError(f"Could not add Control Rig scalar: {control_name}")
-    return control_key
+    return control_key, True
 
 
 def _find_node(model, name):
@@ -464,12 +625,88 @@ def _pin_is_linked(pin):
     return pin is not None and len(pin.get_links()) > 0
 
 
+def _pin_name_matches(pin, expected):
+    if pin is None:
+        return False
+    actual = str(pin.get_default_value()).strip()
+    if len(actual) >= 2 and actual[0] == actual[-1] and actual[0] in ("'", '"'):
+        actual = actual[1:-1].strip()
+    return actual.casefold() == expected.casefold()
+
+
+def _pin_raw_name_matches(pin, expected):
+    """FName pins consumed by PBIK must not retain export-text quotes."""
+    return pin is not None and str(pin.get_default_value()).strip() == expected
+
+
+def _pin_bool_matches(pin, expected):
+    if pin is None:
+        return False
+    return str(pin.get_default_value()).strip().casefold() == str(expected).casefold()
+
+
+def _pin_float_matches(pin, expected, tolerance=1.0e-5):
+    if pin is None:
+        return False
+    try:
+        return _float_matches(pin.get_default_value(), expected, tolerance)
+    except (TypeError, ValueError):
+        return False
+
+
+def _pbik_defaults_match(pbik):
+    """Compare the authored defaults that set Session 2 solver behavior."""
+    if not _pin_raw_name_matches(pbik.find_pin("Root"), "pelvis"):
+        return False
+
+    effectors_pin = pbik.find_pin("Effectors")
+    if effectors_pin is None or effectors_pin.get_array_size() != len(EFFECTORS):
+        return False
+    for index, (_goal_name, bone_name) in enumerate(EFFECTORS):
+        if not _pin_raw_name_matches(
+            pbik.find_pin(f"Effectors.{index}.Bone"), bone_name
+        ):
+            return False
+        if not _pin_float_matches(pbik.find_pin(f"Effectors.{index}.ChainDepth"), 2.0):
+            return False
+
+    bone_settings_pin = pbik.find_pin("BoneSettings")
+    if bone_settings_pin is None or bone_settings_pin.get_array_size() != len(
+        BEND_BONE_SETTINGS
+    ):
+        return False
+    for index, (bone_name, preferred_angles) in enumerate(BEND_BONE_SETTINGS):
+        prefix = f"BoneSettings.{index}"
+        if not _pin_raw_name_matches(pbik.find_pin(f"{prefix}.Bone"), bone_name):
+            return False
+        if not _pin_bool_matches(
+            pbik.find_pin(f"{prefix}.bUsePreferredAngles"), True
+        ):
+            return False
+        for axis, expected in zip("XYZ", preferred_angles):
+            if not _pin_float_matches(
+                pbik.find_pin(f"{prefix}.PreferredAngles.{axis}"), expected
+            ):
+                return False
+
+    return (
+        _pin_name_matches(pbik.find_pin("Settings.RootBehavior"), "Free")
+        and _pin_float_matches(pbik.find_pin("Settings.Iterations"), PBIK_ITERATIONS)
+        and _pin_float_matches(
+            pbik.find_pin("Settings.SubIterations"), PBIK_SUB_ITERATIONS
+        )
+        and _pin_float_matches(pbik.find_pin("Settings.GlobalPullChainAlpha"), 0.0)
+        and _pin_bool_matches(pbik.find_pin("Settings.bAllowStretch"), False)
+    )
+
+
 def _build_pbik_graph(rig):
     model = rig.get_default_model()
     graph_controller = rig.get_controller_by_name(model.get_name())
     if graph_controller is None:
         raise RuntimeError("Could not obtain the Control Rig VM graph controller")
 
+    changed = False
     begin = _find_node(model, "BeginExecution")
     if begin is None:
         begin = graph_controller.add_unit_node_from_struct_path(
@@ -479,6 +716,7 @@ def _build_pbik_graph(rig):
             "BeginExecution",
             False,
         )
+        changed = True
     if begin is None:
         raise RuntimeError("Could not create/find Control Rig Forward Solve event")
 
@@ -505,6 +743,16 @@ def _build_pbik_graph(rig):
         effector.set_editor_property("chain_depth", 2)
         pbik_effectors.append(effector)
     defaults.set_editor_property("effectors", pbik_effectors)
+    pbik_bone_settings = []
+    for bone_name, preferred_angles in BEND_BONE_SETTINGS:
+        bone_setting = unreal.PBIKBoneSetting()
+        bone_setting.set_editor_property("bone", bone_name)
+        bone_setting.set_editor_property("use_preferred_angles", True)
+        bone_setting.set_editor_property(
+            "preferred_angles", unreal.Vector(*preferred_angles)
+        )
+        pbik_bone_settings.append(bone_setting)
+    defaults.set_editor_property("bone_settings", pbik_bone_settings)
 
     pbik = _find_node(model, "DGFullBodyIK")
     if pbik is None:
@@ -516,12 +764,47 @@ def _build_pbik_graph(rig):
             "DGFullBodyIK",
             False,
         )
-    elif not graph_controller.set_unit_node_defaults(
-        pbik, defaults.export_text(), False, False
-    ):
-        raise RuntimeError("Could not update the existing Control Rig PBIK defaults")
+        changed = True
+    elif not _pbik_defaults_match(pbik):
+        if not graph_controller.set_unit_node_defaults(
+            pbik, defaults.export_text(), False, False
+        ):
+            raise RuntimeError("Could not update the existing Control Rig PBIK defaults")
+        changed = True
     if pbik is None:
         raise RuntimeError("Could not create the Control Rig PBIK node")
+
+    # RigUnit_PBIK.export_text() quotes FName values. In UE 5.8 that
+    # representation can survive as a literal runtime bone name, making
+    # execution report "root bone not set or not found" even though a
+    # normalized structural check passes. Force runtime-safe raw names and do
+    # not propagate the values across links.
+    raw_bone_pins = [("Root", "pelvis")]
+    raw_bone_pins.extend(
+        (f"Effectors.{index}.Bone", bone_name)
+        for index, (_goal_name, bone_name) in enumerate(EFFECTORS)
+    )
+    raw_bone_pins.extend(
+        (f"BoneSettings.{index}.Bone", bone_name)
+        for index, (bone_name, _preferred_angles) in enumerate(BEND_BONE_SETTINGS)
+    )
+    for pin_path, bone_name in raw_bone_pins:
+        bone_pin = pbik.find_pin(pin_path)
+        if _pin_raw_name_matches(bone_pin, bone_name):
+            continue
+        if bone_pin is None or not graph_controller.set_pin_default_value(
+            bone_pin.get_pin_path(),
+            bone_name,
+            True,
+            False,
+            False,
+            False,
+            False,
+        ):
+            raise RuntimeError(
+                f"Could not set Control Rig PBIK {pin_path} to raw {bone_name}"
+            )
+        changed = True
 
     begin_exec = begin.find_pin("ExecuteContext")
     pbik_exec = pbik.find_pin("ExecuteContext")
@@ -530,6 +813,7 @@ def _build_pbik_graph(rig):
             begin_exec.get_pin_path(), pbik_exec.get_pin_path(), False
         ):
             raise RuntimeError("Could not connect Forward Solve to PBIK")
+        changed = True
 
     for index, (_goal_name, bone_name) in enumerate(EFFECTORS):
         transform_pin = pbik.find_pin(f"Effectors.{index}.Transform")
@@ -556,6 +840,7 @@ def _build_pbik_graph(rig):
                 False,
             ):
                 raise RuntimeError(f"Could not wire {bone_name} control to PBIK")
+            changed = True
 
         if bone_name.startswith("foot_"):
             curve_name = "DG_FootPlant_L" if bone_name.endswith("_l") else "DG_FootPlant_R"
@@ -587,6 +872,7 @@ def _build_pbik_graph(rig):
                     value_pin.get_pin_path(), rotation_pin.get_pin_path(), False
                 ):
                     raise RuntimeError(f"Could not wire {curve_name} to rotation alpha")
+                changed = True
         else:
             # Keep the hand effectors dormant by default. Session 3 can drive
             # these alpha controls from authored throw animation without ever
@@ -619,8 +905,9 @@ def _build_pbik_graph(rig):
                     value_pin.get_pin_path(), rotation_pin.get_pin_path(), False
                 ):
                     raise RuntimeError(f"Could not wire {control_name} to rotation alpha")
+                changed = True
 
-    return model, pbik
+    return model, pbik, changed
 
 
 def _create_control_rig(mesh, skeleton):
@@ -634,7 +921,10 @@ def _create_control_rig(mesh, skeleton):
     if not isinstance(rig, unreal.ControlRigBlueprint):
         raise RuntimeError(f"Could not create/load Control Rig: {CONTROL_RIG_PATH}")
 
-    rig.set_preview_mesh(mesh, False)
+    changed = created
+    if rig.get_preview_mesh() != mesh:
+        rig.set_preview_mesh(mesh, False)
+        changed = True
     hierarchy_controller = rig.get_hierarchy_controller()
     hierarchy = rig.get_hierarchy()
     if created:
@@ -643,20 +933,34 @@ def _create_control_rig(mesh, skeleton):
         )
         if len(imported) != 69:
             raise RuntimeError(f"Control Rig imported {len(imported)} bones, expected 69")
-    hierarchy_controller.import_curves_from_asset(skeleton.get_path_name(), "", False)
+        changed = True
+    existing_curves = {
+        str(key.name)
+        for key in hierarchy.get_all_keys()
+        if key.type == unreal.RigElementType.CURVE
+    }
+    if not set(CURVES).issubset(existing_curves):
+        hierarchy_controller.import_curves_from_asset(skeleton.get_path_name(), "", False)
+        changed = True
 
     for _goal_name, bone_name in EFFECTORS:
-        _add_transform_control(rig, bone_name)
-    _add_transform_control(rig, "pelvis")
+        _control, control_created = _add_transform_control(rig, bone_name)
+        changed = changed or control_created
+    _control, control_created = _add_transform_control(rig, "pelvis")
+    changed = changed or control_created
     for control_name, default_value in PROFILE_CONTROLS:
-        _add_float_control(rig, control_name, default_value)
+        _control, control_created = _add_float_control(rig, control_name, default_value)
+        changed = changed or control_created
     for control_name, default_value in HAND_IK_CONTROLS:
-        _add_float_control(rig, control_name, default_value)
+        _control, control_created = _add_float_control(rig, control_name, default_value)
+        changed = changed or control_created
 
-    model, pbik = _build_pbik_graph(rig)
-    rig.request_auto_vm_recompilation()
-    rig.recompile_vm()
-    _save(rig)
+    model, pbik, graph_changed = _build_pbik_graph(rig)
+    changed = changed or graph_changed
+    if changed:
+        rig.request_auto_vm_recompilation()
+        rig.recompile_vm()
+        _save(rig)
 
     controls = sorted(
         str(key.name)
@@ -674,7 +978,8 @@ def _create_control_rig(mesh, skeleton):
 
 def _create_anim_blueprint(mesh, skeleton):
     anim_bp = unreal.load_asset(ANIM_BP_PATH)
-    if anim_bp is None:
+    created = anim_bp is None
+    if created:
         factory = unreal.AnimBlueprintFactory()
         factory.set_editor_property("parent_class", unreal.DiscGolfAnimInstance.static_class())
         factory.set_editor_property("target_skeleton", skeleton)
@@ -688,8 +993,9 @@ def _create_anim_blueprint(mesh, skeleton):
         )
     if not isinstance(anim_bp, unreal.AnimBlueprint):
         raise RuntimeError(f"Could not create/load Animation Blueprint: {ANIM_BP_PATH}")
-    unreal.BlueprintEditorLibrary.compile_blueprint(anim_bp)
-    _save(anim_bp)
+    if created:
+        unreal.BlueprintEditorLibrary.compile_blueprint(anim_bp)
+        _save(anim_bp)
     parent = unreal.BlueprintEditorLibrary.get_blueprint_parent_class(anim_bp)
     if parent != unreal.DiscGolfAnimInstance.static_class():
         raise RuntimeError(f"ABP_DG_Player parent class is {parent}, expected DiscGolfAnimInstance")

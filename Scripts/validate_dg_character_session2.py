@@ -94,6 +94,16 @@ EFFECTORS = {
     "foot_r_Goal": "foot_r",
 }
 
+BEND_BONE_SETTINGS = (
+    ("lowerarm_l", (0.0, 0.0, -45.0)),
+    ("lowerarm_r", (0.0, 0.0, 45.0)),
+    ("calf_l", (45.0, 0.0, 0.0)),
+    ("calf_r", (45.0, 0.0, 0.0)),
+)
+
+PBIK_ITERATIONS = 20
+PBIK_SUB_ITERATIONS = 10
+
 CHAINS = {
     "Root": ("root", "root", None),
     "Spine": ("spine_01", "spine_04", None),
@@ -179,6 +189,22 @@ def _source_paths(pin):
     if pin is None:
         return []
     return sorted(str(value.get_pin_path()) for value in pin.get_linked_source_pins(False))
+
+
+def _vector3(value):
+    return [float(value.x), float(value.y), float(value.z)]
+
+
+def _angles_match(actual, expected, tolerance=1.0e-5):
+    return all(abs(component - target) <= tolerance for component, target in zip(actual, expected))
+
+
+def _pin_float(pin, message):
+    _require(pin is not None, message)
+    try:
+        return float(pin.get_default_value())
+    except (TypeError, ValueError) as error:
+        raise RuntimeError(f"{message}: {pin.get_default_value()!r}") from error
 
 
 def _validate_master(mesh, skeleton):
@@ -267,15 +293,64 @@ def _validate_ik(ik_rig, mesh):
         not bool(solver_settings.get_editor_property("allow_stretch")),
         "IK FBIK unexpectedly allows stretch",
     )
-    _require(int(solver_settings.get_editor_property("iterations")) > 0, "IK FBIK has no iterations")
     _require(
-        int(solver_settings.get_editor_property("sub_iterations")) == 10,
-        "IK FBIK sub-iterations are not 10",
+        int(solver_settings.get_editor_property("iterations")) == PBIK_ITERATIONS,
+        f"IK FBIK iterations changed from the Session 2 baseline of {PBIK_ITERATIONS}",
+    )
+    _require(
+        int(solver_settings.get_editor_property("sub_iterations")) == PBIK_SUB_ITERATIONS,
+        f"IK FBIK sub-iterations are not {PBIK_SUB_ITERATIONS}",
     )
     _require(
         abs(float(solver_settings.get_editor_property("global_pull_chain_alpha"))) <= 1.0e-6,
         "IK FBIK global pull-chain alpha is not zero",
     )
+
+    expected_bones = {bone_name for bone_name, _angles in BEND_BONE_SETTINGS}
+    bone_settings = {}
+    for bone_name, expected_angles in BEND_BONE_SETTINGS:
+        setting = solver.get_bone_settings(bone_name)
+        _require(
+            setting is not None
+            and _norm(setting.get_editor_property("bone")) == _norm(bone_name),
+            f"IK FBIK bone setting is unavailable for {bone_name}",
+        )
+        _require(
+            bool(setting.get_editor_property("use_preferred_angles")),
+            f"IK FBIK preferred angles are disabled for {bone_name}",
+        )
+        actual_angles = _vector3(setting.get_editor_property("preferred_angles"))
+        _require(
+            _angles_match(actual_angles, expected_angles),
+            f"IK FBIK {bone_name} preferred angles {actual_angles} != {expected_angles}",
+        )
+        _require(
+            abs(float(setting.get_editor_property("position_stiffness"))) <= 1.0e-6
+            and abs(float(setting.get_editor_property("rotation_stiffness"))) <= 1.0e-6,
+            f"IK FBIK {bone_name} unexpectedly changes stiffness",
+        )
+        for axis in ("x", "y", "z"):
+            _require(
+                setting.get_editor_property(axis) == unreal.PBIKLimitType.FREE,
+                f"IK FBIK {bone_name} {axis.upper()} limit is not Free",
+            )
+            _require(
+                abs(float(setting.get_editor_property(f"min_{axis}"))) <= 1.0e-6
+                and abs(float(setting.get_editor_property(f"max_{axis}"))) <= 1.0e-6,
+                f"IK FBIK {bone_name} {axis.upper()} limit range is not zero/default",
+            )
+        bone_settings[bone_name] = {
+            "use_preferred_angles": True,
+            "preferred_angles": actual_angles,
+            "position_stiffness": float(
+                setting.get_editor_property("position_stiffness")
+            ),
+            "rotation_stiffness": float(
+                setting.get_editor_property("rotation_stiffness")
+            ),
+            "limits": {axis: "Free" for axis in ("x", "y", "z")},
+        }
+    _require(set(bone_settings) == expected_bones, "IK FBIK bend-setting set is incomplete")
 
     actual_chains = {}
     for chain in controller.get_retarget_chains():
@@ -309,10 +384,46 @@ def _validate_ik(ik_rig, mesh):
         "retarget_root": "pelvis",
         "root_motion_bone": "root",
         "goals": actual_goals,
+        "bone_settings": {name: bone_settings[name] for name in sorted(bone_settings)},
         "chains": {
             name: {"start": values[0], "end": values[1], "goal": values[2]}
             for name, values in sorted(actual_chains.items())
         },
+    }
+
+
+def _execute_control_rig_probe(rig, mesh):
+    """Instantiate and execute the saved Control Rig once in a transient component."""
+    component = unreal.new_object(
+        unreal.ControlRigComponent,
+        name="DGSession2ValidationControlRigComponent",
+    )
+    _require(component is not None, "Could not create transient ControlRigComponent")
+    if hasattr(rig, "get_control_rig_asset_reference") and hasattr(
+        component, "set_control_rig_asset_reference"
+    ):
+        component.set_control_rig_asset_reference(rig.get_control_rig_asset_reference())
+        binding_method = "ControlRigAssetReference"
+    else:
+        component.set_control_rig_class(rig.generated_class())
+        binding_method = "GeneratedClassFallback"
+    component.set_bone_initial_transforms_from_skeletal_mesh(mesh)
+    component.initialize()
+    instance = component.get_control_rig()
+    _require(instance is not None, "Transient Control Rig instance was not created")
+    hierarchy = instance.get_hierarchy()
+    _require(hierarchy is not None, "Transient Control Rig hierarchy is unavailable")
+    _require(
+        component.does_element_exist("pelvis", unreal.RigElementType.BONE),
+        "Transient Control Rig cannot resolve pelvis",
+    )
+    component.update(0.0)
+    return {
+        "status": "EXECUTED",
+        "binding_method": binding_method,
+        "hierarchy_key_count": len(hierarchy.get_all_keys()),
+        "pelvis_resolved": True,
+        "required_log_condition": "NO_PBIK_INITIALIZATION_WARNING",
     }
 
 
@@ -408,15 +519,25 @@ def _validate_control_rig(rig, mesh):
         _require(actual_struct == expected_struct, f"{node_name} has wrong unit struct {actual_struct}")
     for node in nodes.values():
         _require(not node.has_orphaned_pins(), f"Control Rig node has orphaned pins: {node.get_name()}")
-    _require(_norm(pbik.find_pin("Root").get_default_value()) == "pelvis", "PBIK root is not pelvis")
+    root_pin = pbik.find_pin("Root")
+    _require(root_pin is not None, "PBIK root pin is missing")
+    _require(
+        root_pin.get_default_value() == "pelvis",
+        "PBIK root must be the raw runtime-safe FName pelvis (quotes are invalid)",
+    )
     _require(pbik.find_pin("Effectors").get_array_size() == 4, "PBIK must have exactly four effectors")
     _require(
         pbik.find_pin("Settings.RootBehavior").get_default_value().casefold() == "free",
         "Control Rig PBIK root behavior is not Free",
     )
     _require(
-        int(pbik.find_pin("Settings.SubIterations").get_default_value()) == 10,
-        "Control Rig PBIK sub-iterations are not 10",
+        int(pbik.find_pin("Settings.Iterations").get_default_value()) == PBIK_ITERATIONS,
+        f"Control Rig PBIK iterations are not {PBIK_ITERATIONS}",
+    )
+    _require(
+        int(pbik.find_pin("Settings.SubIterations").get_default_value())
+        == PBIK_SUB_ITERATIONS,
+        f"Control Rig PBIK sub-iterations are not {PBIK_SUB_ITERATIONS}",
     )
     _require(
         abs(float(pbik.find_pin("Settings.GlobalPullChainAlpha").get_default_value())) <= 1.0e-6,
@@ -429,6 +550,81 @@ def _validate_control_rig(rig, mesh):
     exec_sources = _source_paths(pbik.find_pin("ExecuteContext"))
     _require(any("BeginExecution" in path for path in exec_sources), "PBIK execution is not wired")
 
+    pbik_bone_settings_pin = pbik.find_pin("BoneSettings")
+    _require(pbik_bone_settings_pin is not None, "PBIK BoneSettings pin is missing")
+    _require(
+        pbik_bone_settings_pin.get_array_size() == len(BEND_BONE_SETTINGS),
+        f"PBIK must have exactly {len(BEND_BONE_SETTINGS)} bend bone settings",
+    )
+    pbik_bone_settings = {}
+    for index, (bone_name, expected_angles) in enumerate(BEND_BONE_SETTINGS):
+        prefix = f"BoneSettings.{index}"
+        bone_pin = pbik.find_pin(f"{prefix}.Bone")
+        preferred_pin = pbik.find_pin(f"{prefix}.bUsePreferredAngles")
+        _require(bone_pin is not None, f"PBIK bone setting {index} has no Bone pin")
+        _require(
+            bone_pin.get_default_value() == bone_name,
+            f"PBIK bone setting {index} must use raw runtime-safe {bone_name}",
+        )
+        _require(
+            preferred_pin is not None
+            and preferred_pin.get_default_value().strip().casefold() == "true",
+            f"PBIK preferred angles are disabled for {bone_name}",
+        )
+        actual_angles = [
+            _pin_float(
+                pbik.find_pin(f"{prefix}.PreferredAngles.{axis}"),
+                f"PBIK {bone_name} preferred-angle {axis} pin is invalid",
+            )
+            for axis in "XYZ"
+        ]
+        _require(
+            _angles_match(actual_angles, expected_angles),
+            f"PBIK {bone_name} preferred angles {actual_angles} != {expected_angles}",
+        )
+        _require(
+            abs(
+                _pin_float(
+                    pbik.find_pin(f"{prefix}.PositionStiffness"),
+                    f"PBIK {bone_name} position stiffness pin is invalid",
+                )
+            )
+            <= 1.0e-6
+            and abs(
+                _pin_float(
+                    pbik.find_pin(f"{prefix}.RotationStiffness"),
+                    f"PBIK {bone_name} rotation stiffness pin is invalid",
+                )
+            )
+            <= 1.0e-6,
+            f"PBIK {bone_name} unexpectedly changes stiffness",
+        )
+        for axis in "XYZ":
+            limit_pin = pbik.find_pin(f"{prefix}.{axis}")
+            _require(
+                limit_pin is not None
+                and limit_pin.get_default_value().strip().casefold() == "free",
+                f"PBIK {bone_name} {axis} limit is not Free",
+            )
+            for bound in ("Min", "Max"):
+                _require(
+                    abs(
+                        _pin_float(
+                            pbik.find_pin(f"{prefix}.{bound}{axis}"),
+                            f"PBIK {bone_name} {bound}{axis} pin is invalid",
+                        )
+                    )
+                    <= 1.0e-6,
+                    f"PBIK {bone_name} {bound}{axis} is not zero/default",
+                )
+        pbik_bone_settings[bone_name] = {
+            "use_preferred_angles": True,
+            "preferred_angles": actual_angles,
+            "position_stiffness": 0.0,
+            "rotation_stiffness": 0.0,
+            "limits": {axis.casefold(): "Free" for axis in "XYZ"},
+        }
+
     effector_links = {}
     ordered_effectors = ["hand_l", "hand_r", "foot_l", "foot_r"]
     for index, bone_name in enumerate(ordered_effectors):
@@ -440,7 +636,10 @@ def _validate_control_rig(rig, mesh):
             all(pin is not None for pin in (bone_pin, transform_pin, position_pin, rotation_pin)),
             f"PBIK effector pins missing at index {index}",
         )
-        _require(_norm(bone_pin.get_default_value()) == _norm(bone_name), f"Wrong PBIK bone {index}")
+        _require(
+            bone_pin.get_default_value() == bone_name,
+            f"PBIK effector {index} must use raw runtime-safe {bone_name}",
+        )
         _require(
             int(pbik.find_pin(f"Effectors.{index}.ChainDepth").get_default_value()) == 2,
             f"PBIK {bone_name} chain depth is not 2",
@@ -512,6 +711,7 @@ def _validate_control_rig(rig, mesh):
             "rotation_alpha": rotation_sources,
         }
 
+    runtime_probe = _execute_control_rig_probe(rig, mesh)
     return {
         "compile_status": str(rig.get_editor_property("status")),
         "bone_count": len(bone_names),
@@ -523,9 +723,14 @@ def _validate_control_rig(rig, mesh):
         "pbik_settings": {
             "root_behavior": "Free",
             "allow_stretch": False,
-            "sub_iterations": 10,
+            "iterations": PBIK_ITERATIONS,
+            "sub_iterations": PBIK_SUB_ITERATIONS,
             "global_pull_chain_alpha": 0.0,
         },
+        "pbik_bone_settings": {
+            name: pbik_bone_settings[name] for name in sorted(pbik_bone_settings)
+        },
+        "runtime_probe": runtime_probe,
         "effectors": effector_links,
         "disc_grips": {
             "live_validation": "mirrored palm-local origins and hand parenting",
@@ -692,7 +897,7 @@ def main():
             "throw-style tuning and creator integration",
         ],
         "manual_visual_gates": [
-            "author and validate mirrored elbow/knee preferred bend directions",
+            "visually confirm the authored mirrored elbow/knee bend directions",
             "PBIK compression test for both hands and both feet",
             "real disc fit/orientation check at disc_grip_l and disc_grip_r",
         ],

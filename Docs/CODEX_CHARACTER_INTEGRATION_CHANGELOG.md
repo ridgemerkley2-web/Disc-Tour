@@ -138,7 +138,7 @@ At the Session 1 checkpoint, no Session 2–16 integration had been started.
 ## Session 2 — master character rig and IK foundation
 
 Date: 2026-08-14
-Status: **SESSION 2 STRUCTURAL ACCEPTANCE: PASS — MANUAL VISUAL GATES PENDING**
+Status: **SESSION 2 STRUCTURAL ACCEPTANCE: PASS**
 
 This session followed `CODEX/02_MASTER_RIG_AND_IK.md` only. It establishes an unassigned character, skeleton, IK, Control Rig, and Animation Blueprint foundation. Session 3 throw/release integration and Session 4 runtime body-profile deformation remain deferred. The existing pawn, input, throw controller, release resolver, disc launch/flight, scoring, course, replay, and save systems remain authoritative.
 
@@ -253,11 +253,92 @@ Visual evidence:
 
 The original 605 Content files retain baseline digest `92D95B055243221174413EE6AEC2B0564E8A7331E77B6486183773513142A561`. `DiscGolfTour.Build.cs` remains unchanged. `ADiscGolferPawn` remains the default pawn, and `RequestThrow -> LaunchThrow -> InitializeDisc/Throw` remains the only release/flight authority. The known pre-existing Pine Ridge final-Z miss remains untouched.
 
-Manual/in-editor acceptance is still required for mirrored elbow/knee bend directions, hand/foot PBIK compression under a real pose, plant-foot behavior during an authored throw, and production-disc fit at both grip helpers. The proxy is not production character art.
+The remaining Session 2 rig and provisional-disc checks were completed in the visual closeout below. The proxy remains validation geometry rather than production character art, and its block hands cannot establish production grip ergonomics.
 
-- Session 2 visual closeout: mirrored elbow/knee compression, a transient non-production plant-foot stress pose, and grip orientation with the current gameplay disc visual.
 - Session 3: first RHBH animation/montage, phase/release/finished notifies, held-disc attachment, single one-way handoff into existing release authority, and gameplay assignment.
 - Session 4: runtime body/style deformation, profile plumbing, creator/save integration, and the three-profile animation matrix.
 - Session 5+: production mocap/retargeting, art, outfits, and later customization work.
 
 No Session 3 integration was started.
+
+### Session 2 visual closeout
+
+Date: 2026-08-15
+Status: **SESSION 2 VISUAL ACCEPTANCE: PASS FOR THE VALIDATION PROXY AND CURRENT PROVISIONAL GAMEPLAY DISC — PRODUCTION CHARACTER/DISC ART AND RUNTIME BODY DEFORMATION REMAIN DEFERRED**
+
+The protected structural baseline was committed first as `01a998bf51d551c7c2ae9c9ae75415d9c33c0418` (`Session 2: add DG master proxy rig and animation foundation`). The accidentally dirty `SK_DG_Master*` tab was closed without saving; the disk asset reopened with the exact 69-bone hierarchy. Its SHA-256 remains `5C461476D6877DFBE3E6DF08FF48CDF5BB940BC8C883D3E3F43058331DCC186F`.
+
+Only the two rig assets were intentionally changed after that checkpoint:
+
+- `/Game/DiscGolf/Rigs/IK_DG_Master`
+- `/Game/DiscGolf/Rigs/CR_DG_Master`
+
+The final mirrored preferred-angle contract is:
+
+| Bone | Preferred angle (X, Y, Z degrees) |
+|---|---:|
+| `lowerarm_l` | `(0, 0, -45)` |
+| `lowerarm_r` | `(0, 0, +45)` |
+| `calf_l` | `(+45, 0, 0)` |
+| `calf_r` | `(+45, 0, 0)` |
+
+Both rigs retain Free root behavior, stretch disabled, 20 iterations, 10 sub-iterations, zero global pull-chain alpha, and chain depth 2. Control Rig PBIK root, effector, and bone-setting FNames now persist as raw values such as `pelvis`; the earlier quoted export-text form (`"pelvis"`) caused a root-not-found initialization warning. A transient `ControlRigComponent` now executes the saved graph with 88 hierarchy keys and no PBIK initialization warning.
+
+#### Compression and plant-foot acceptance
+
+| Check | Result |
+|---|---|
+| Mirrored elbows | PASS — forward offsets 15.2225 / 15.8748 cm; mirror-position error 2.07484 cm; no inversion observed |
+| Mirrored knees | PASS — forward offsets 27.2859 / 27.3133 cm; mirror-position error 0.11894 cm; no inversion observed |
+| Reachable PBIK targets | PASS — maximum effector error 0.4252 cm |
+| No-stretch contract | PASS — effectively zero segment-length change; unreachable extension targets remain short rather than stretching |
+| Brace-foot stability | PASS — 133.5103 cm throwing-hand sweep with 0.017151 cm foot drift, 0 degrees rotation drift, and 0.017151 cm toe drift while the spine rotates 12.6821 degrees |
+
+The screenshots show the intended mirrored bend direction, compressed and extended solver states, and one fixed plant marker across reachback, brace, and follow-through stress poses. The disconnected-looking rigid blocks are a limitation of the generated validation proxy, not production skinning or anatomy.
+
+#### Provisional gameplay-disc grip check
+
+The visual test used the same mesh as the native gameplay disc: `/Engine/BasicShapes/Cylinder.Cylinder`, scale `(0.21, 0.21, 0.015)`. It renders at 21 x 21 x 1.5 cm versus the 21.1 cm gameplay physics diameter. Disc local `+X` is release-forward and local `+Z` is the top/normal.
+
+| Hand | Candidate local attachment transform |
+|---|---|
+| Left | location `(0,0,0)`, rotation `(0,0,0)`, scale `(0.21,0.21,0.015)` on `disc_grip_l` |
+| Right | location `(0,0,0)`, rotation `(0,180,0)`, scale `(0.21,0.21,0.015)` on `disc_grip_r` |
+
+The derived palm-local offsets are approximately left `(+3.500001,-5.9999998,-1.999998)` cm and right `(-3.500001,-5.9999998,-1.999998)` cm. Normal-Editor captures place the real Cylinder at the evaluated left/right grip positions with visible `+X/+Y/+Z` markers. This is a PASS for provisional mesh identity, scale, grip position, and axis convention. The capture renderers were transient components positioned from evaluated Control Rig bone coordinates; they were not an animated socket-follow implementation. Literal held-disc attachment/release is Session 3. The flat Cylinder has no authored rim or dome, and the proxy has block hands without deforming fingers, so production palm/rim ergonomics are not accepted here.
+
+#### Shared profile foundation
+
+ShortCompact, Baseline, and TallLongArms were loaded as three distinct fixtures and exercised against the same `SK_DG_Master`, `SKEL_DG_Master`, `IK_DG_Master`, and `CR_DG_Master`. The profile controls resolve correctly, but all three render the same geometry by design. Runtime silhouette/body-proportion deformation remains Session 4 work.
+
+#### Final visual evidence
+
+All eight 1920 x 1080 images are under `Saved/CharacterFramework/Screenshots/Session2_VisualCloseout/`:
+
+- `01_PBIK_Compressed_MirroredElbowsKnees.png`
+- `02_PBIK_Extended_NoStretch.png`
+- `03_PlantFoot_Start_Reachback.png`
+- `04_PlantFoot_Mid_Brace.png`
+- `05_PlantFoot_End_FollowThrough.png`
+- `06_Grip_Left_Cylinder_Axes.png`
+- `07_Grip_Right_Cylinder_Axes.png`
+- `08_ProfileFixtures_AllThree.png`
+
+Capture manifest: `Saved/CharacterFramework/Screenshots/Session2_VisualCloseout/Session2_VisualCloseout_CaptureManifest.json`. The dedicated Editor process used `/Engine/Maps/Entry`, created only transient test actors/components, dirtied that startup map in memory, and exited without saving it. All eight Session 2 package hashes were identical before and after capture.
+
+#### Final closeout regression
+
+| Gate | Result | Evidence |
+|---|---|---|
+| UE Editor build | PASS | `DiscGolfTourEditor Win64 Development`, 90.80 s |
+| UE runtime build | PASS | `DiscGolfTour Win64 Development`, 71.17 s |
+| Framework reflection | PASS | `Saved/Logs/CharacterFramework_Session2_Closeout_Reflection.log`; 4 classes + 4 structs |
+| Strict rig validation | PASS | `Saved/Logs/CharacterFramework_Session2_Closeout_Strict_Final.log`; 69 bones, 4 goals, 4 effectors, 3 profiles, `gameplay_wiring=NONE_SESSION_2`; 0 errors/warnings |
+| Transient rig/grip/profile evidence | PASS | `Saved/Logs/CharacterFramework_Session2_Closeout_VisualDynamic_Final.log`; package mutation none |
+| Authoring no-write rerun | PASS | `Saved/Logs/CharacterFramework_Session2_Closeout_NoWrite_Final.log`; validation-only, 8/8 package hashes unchanged |
+| Full automation | PASS | `Saved/Logs/Automation_CharacterFramework_Session2_Closeout.log`; 102/102 succeeded |
+| Three-hole gameplay smoke | PASS | `Saved/Logs/ThreeHoleRoundSmoke_CharacterFramework_Session2_Closeout.log`; 3/3 holes, 3 strokes on par 11 (-8) |
+| Original Content seal | PASS | 605 files; digest `92D95B055243221174413EE6AEC2B0564E8A7331E77B6486183773513142A561` |
+| Session 3 wiring scan | PASS | Exact eight-package set; no montage, throw/release notify, held gameplay disc, pawn/AnimBP assignment, framework throw component, release callback, or physics handoff |
+
+Final rig SHA-256 values are `13D29A1D4B4F1E2A6F010D95E052D21A1E974A6789BBFE85AC5E4E260EE72958` for `IK_DG_Master` and `3F3A7BABE632C49BFE48070CD05AE73B75188DAA16369AB5E585633295D6F981` for `CR_DG_Master`. Session 2 is closed at the validation-proxy/provisional-disc level. Session 3 has not begun.
