@@ -1,0 +1,89 @@
+{
+  "schema": "disc_golf_hole_blockout",
+  "schemaVersion": 1,
+  "courseId": "PineRidgeChampionship",
+  "layoutId": "Championship",
+  "holeNumber": 1,
+  "holeName": "Pine Ridge Opening",
+  "par": 3,
+  "teeLocationCm": { "x": 0, "y": 0, "z": 0 },
+  "basketLocationCm": { "x": 11000, "y": 800, "z": 80 },
+  "surfaces": [
+    { "id": "DeepRoughBase", "surface": "DeepRough", "shape": "Box", "locationCm": { "x": 5600, "y": 300, "z": -55 }, "scale": { "x": 125, "y": 72, "z": 1 }, "rotationDeg": { "pitch": 0, "yaw": 0, "roll": 0 } },
+    { "id": "OpeningFairway", "surface": "Fairway", "shape": "Box", "locationCm": { "x": 2600, "y": -80, "z": -1 }, "scale": { "x": 53, "y": 14, "z": 0.08 }, "rotationDeg": { "pitch": 0, "yaw": 4, "roll": 0 } },
+    { "id": "LandingFairway", "surface": "Fairway", "shape": "Box", "locationCm": { "x": 7000, "y": 260, "z": 4 }, "scale": { "x": 48, "y": 16, "z": 0.08 }, "rotationDeg": { "pitch": 0, "yaw": 2, "roll": 0 } },
+    { "id": "Green", "surface": "Fairway", "shape": "Cylinder", "locationCm": { "x": 11000, "y": 800, "z": 55 }, "scale": { "x": 24, "y": 24, "z": 0.5 }, "rotationDeg": { "pitch": 0, "yaw": 0, "roll": 0 } },
+    { "id": "Tee", "surface": "TeePad", "shape": "Box", "locationCm": { "x": 0, "y": 0, "z": 4 }, "scale": { "x": 4.2, "y": 1.8, "z": 0.08 }, "rotationDeg": { "pitch": 0, "yaw": 0, "roll": 0 } },
+    { "id": "LeftApron", "surface": "LightRough", "shape": "Box", "locationCm": { "x": 7100, "y": -1550, "z": 7 }, "scale": { "x": 40, "y": 12, "z": 0.07 }, "rotationDeg": { "pitch": 0, "yaw": 2, "roll": 0 } },
+    { "id": "RightApron", "surface": "LightRough", "shape": "Box", "locationCm": { "x": 7200, "y": 2050, "z": 7 }, "scale": { "x": 40, "y": 11, "z": 0.07 }, "rotationDeg": { "pitch": 0, "yaw": 2, "roll": 0 } },
+    { "id": "SkipShelf", "surface": "Dirt", "shape": "Box", "locationCm": { "x": 9100, "y": -450, "z": 12 }, "scale": { "x": 15, "y": 5, "z": 0.1 }, "rotationDeg": { "pitch": 0, "yaw": -8, "roll": 0 } },
+    { "id": "GuardRock", "surface": "Rock", "shape": "Box", "locationCm": { "x": 10100, "y": 1850, "z": 18 }, "scale": { "x": 9, "y": 4, "z": 0.12 }, "rotationDeg": { "pitch": 0, "yaw": 14, "roll": 0 } },
+    { "id": "TournamentRopeOB", "surface": "OutOfBounds", "shape": "Box", "locationCm": { "x": 6800, "y": -4300, "z": 8 }, "scale": { "x": 75, "y": 18, "z": 0.08 }, "rotationDeg": { "pitch": 0, "yaw": 2, "roll": 0 } },
+    { "id": "PineNeedleHazard", "surface": "Hazard", "shape": "Box", "locationCm": { "x": 9600, "y": 3150, "z": 9 }, "scale": { "x": 26, "y": 10, "z": 0.09 }, "rotationDeg": { "pitch": 0, "yaw": 8, "roll": 0 } }
+  ],
+  "trees": [
+    { "locationCm": { "x": 3300, "y": -2050, "z": 0 }, "heightScale": 0.92 },
+    { "locationCm": { "x": 4300, "y": 1900, "z": 0 }, "heightScale": 0.99 },
+    { "locationCm": { "x": 5600, "y": -2300, "z": 0 }, "heightScale": 1.06 },
+    { "locationCm": { "x": 6400, "y": 2350, "z": 0 }, "heightScale": 1.13 },
+    { "locationCm": { "x": 7900, "y": -2050, "z": 0 }, "heightScale": 0.92 },
+    { "locationCm": { "x": 8350, "y": 2350, "z": 0 }, "heightScale": 0.99 },
+    { "locationCm": { "x": 9300, "y": -1700, "z": 0 }, "heightScale": 1.06 },
+    { "locationCm": { "x": 9700, "y": 2200, "z": 0 }, "heightScale": 1.13 },
+    { "locationCm": { "x": 10300, "y": -1150, "z": 0 }, "heightScale": 0.92 },
+    { "locationCm": { "x": 10500, "y": 2600, "z": 0 }, "heightScale": 0.99 },
+    { "locationCm": { "x": 11400, "y": -650, "z": 0 }, "heightScale": 1.06 },
+    { "locationCm": { "x": 11800, "y": 1700, "z": 0 }, "heightScale": 1.13 }
+  ],
+  "collisionFixtures": [
+    { "id": "LandingBrush", "type": "DenseGrass", "shape": "Box", "locationCm": { "x": 7000, "y": -1550, "z": 90 }, "scale": { "x": 5.5, "y": 2.8, "z": 1.8 }, "rotationDeg": { "pitch": 0, "yaw": 8, "roll": 0 } },
+    { "id": "GreenBoulder", "type": "Rock", "shape": "Sphere", "locationCm": { "x": 10150, "y": 2550, "z": 52 }, "scale": { "x": 1.05, "y": 0.85, "z": 0.8 }, "rotationDeg": { "pitch": 0, "yaw": 0, "roll": 0 } },
+    { "id": "TeeSponsorSign", "type": "Sign", "shape": "Box", "locationCm": { "x": 900, "y": -1300, "z": 135 }, "scale": { "x": 0.12, "y": 2.0, "z": 1.35 }, "rotationDeg": { "pitch": 0, "yaw": 12, "roll": 0 } }
+  ],
+  "landingZones": [
+    { "id": "PrimaryLanding", "label": "PRIMARY LANDING", "locationCm": { "x": 6900, "y": 250, "z": 35 }, "extentCm": { "x": 1450, "y": 720, "z": 28 }, "rotationDeg": { "pitch": 0, "yaw": 2, "roll": 0 } },
+    { "id": "BailoutLanding", "label": "SAFE BAILOUT", "locationCm": { "x": 6100, "y": 1600, "z": 35 }, "extentCm": { "x": 950, "y": 560, "z": 28 }, "rotationDeg": { "pitch": 0, "yaw": 5, "roll": 0 } }
+  ],
+  "shotRoutes": [
+    {
+      "id": "CenterPlacement", "label": "CENTER PLACEMENT", "type": "Primary",
+      "shotIntent": "Shape a controlled fairway drive through the opening and leave a clean green approach.",
+      "landingZoneId": "PrimaryLanding", "targetStrokes": 2, "riskRating": 3, "rewardRating": 4, "corridorWidthCm": 1500,
+      "waypointsCm": [ { "x": 0, "y": 0, "z": 20 }, { "x": 6900, "y": 250, "z": 45 }, { "x": 11000, "y": 800, "z": 100 } ]
+    },
+    {
+      "id": "SkipShelfAttack", "label": "SKIP-SHELF ATTACK", "type": "RiskReward",
+      "shotIntent": "Challenge the left-center shelf with a low stable line for a direct birdie or ace look.",
+      "landingZoneId": "PrimaryLanding", "targetStrokes": 2, "riskRating": 5, "rewardRating": 5, "corridorWidthCm": 900,
+      "waypointsCm": [ { "x": 0, "y": 0, "z": 20 }, { "x": 9000, "y": -450, "z": 45 }, { "x": 11000, "y": 800, "z": 100 } ]
+    },
+    {
+      "id": "RightBailout", "label": "TURNOVER / FOREHAND", "type": "Bailout",
+      "shotIntent": "Use the wider right window with a committed turnover or forehand and shape back toward the framed green.",
+      "landingZoneId": "BailoutLanding", "targetStrokes": 3, "riskRating": 1, "rewardRating": 2, "corridorWidthCm": 1400,
+      "waypointsCm": [ { "x": 0, "y": 0, "z": 20 }, { "x": 6100, "y": 1600, "z": 45 }, { "x": 9000, "y": 1800, "z": 65 }, { "x": 11000, "y": 800, "z": 100 } ]
+    }
+  ],
+  "cameraAnchors": [
+    { "id": "TeeBroadcast", "mode": "Launch", "locationCm": { "x": -450, "y": 780, "z": 300 }, "fieldOfViewDeg": 66 },
+    { "id": "FairwayBroadcast", "mode": "Fairway", "locationCm": { "x": 5500, "y": 3600, "z": 1450 }, "fieldOfViewDeg": 38 },
+    { "id": "GreenBroadcast", "mode": "Finish", "locationCm": { "x": 11750, "y": 2200, "z": 720 }, "fieldOfViewDeg": 46 }
+  ],
+  "spectatorBoundaries": [
+    { "id": "GalleryLeft", "locationCm": { "x": 7600, "y": -2850, "z": 90 }, "extentCm": { "x": 3900, "y": 35, "z": 90 }, "rotationDeg": { "pitch": 0, "yaw": 2, "roll": 0 } },
+    { "id": "GalleryRight", "locationCm": { "x": 7600, "y": 2850, "z": 90 }, "extentCm": { "x": 3900, "y": 35, "z": 90 }, "rotationDeg": { "pitch": 0, "yaw": 2, "roll": 0 } },
+    { "id": "GreenGallery", "locationCm": { "x": 11900, "y": 800, "z": 90 }, "extentCm": { "x": 35, "y": 1350, "z": 90 }, "rotationDeg": { "pitch": 0, "yaw": 0, "roll": 0 } }
+  ],
+  "windZones": [
+    { "id": "OpenCorridor", "locationCm": { "x": 4300, "y": 0, "z": 700 }, "extentCm": { "x": 3300, "y": 1800, "z": 1200 }, "baseWindScale": 1.15, "additiveWindMps": { "x": 0, "y": 0.35, "z": 0 } },
+    { "id": "GuardedGreen", "locationCm": { "x": 10300, "y": 850, "z": 650 }, "extentCm": { "x": 1900, "y": 1700, "z": 1000 }, "baseWindScale": 0.72, "additiveWindMps": { "x": 0, "y": -0.2, "z": 0 } }
+  ],
+  "flyoverPointsCm": [
+    { "x": -900, "y": -1100, "z": 500 },
+    { "x": 1200, "y": -600, "z": 720 },
+    { "x": 4100, "y": 500, "z": 1050 },
+    { "x": 7100, "y": 900, "z": 1250 },
+    { "x": 9300, "y": 1700, "z": 950 },
+    { "x": 11300, "y": 1200, "z": 560 }
+  ]
+}

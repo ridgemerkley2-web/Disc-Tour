@@ -1,0 +1,9 @@
+Read AGENTS.md, PROJECT_STATUS.md, README.md, Docs/ARCHITECTURE.md, and Docs/PHYSICS_CALIBRATION.md before changing code.
+
+Run the source-only checks in Scripts/run-checks.bat (or the two Python scripts directly). Locate the Unreal Engine 5.8 installation and build DiscGolfTourEditor for Win64 Development using Scripts/build-unreal.ps1. Fix compile/UHT errors with the smallest changes possible; do not redesign systems, add final art, or retune flight merely to make the build pass. Rebuild until it succeeds.
+
+Then run Unreal Automation tests matching DiscGolfTour. and launch a Play-In-Editor smoke test. Verify the runtime-generated practice hole, developer golfer spawn/possession, all documented controls, two-tap release, disc chase camera, wind, ground/tree collision, new lie, basket completion, trajectory sample capture, HUD telemetry, and reset.
+
+Preserve the custom fixed-step SI-unit flight solver and its spin-dominant gyroscopic precession model. Preserve opposing high-speed turn/low-speed fade and signed-spin backhand/forehand mirroring. Keep Legacy/BrowserPilot_v0.3 read-only.
+
+At the end, report: files changed, exact build/test commands and outcomes, runtime issues found/fixed, and remaining risks before Milestone 01.

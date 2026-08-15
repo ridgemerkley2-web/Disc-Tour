@@ -1,0 +1,31 @@
+{
+  "courseId": "PineRidgeChampionship",
+  "version": 1,
+  "designTarget": "Gold-level tournament presentation with multiple scoring routes",
+  "holes": [
+    {
+      "number": 1,
+      "name": "Pine Ridge Opening",
+      "par": 3,
+      "measuredFeet": 362,
+      "theme": "open-to-guarded",
+      "purpose": "teach full-power timing, wind read, late fade and controlled skips"
+    },
+    {
+      "number": 2,
+      "name": "Needle Gate",
+      "par": 4,
+      "measuredFeet": 640,
+      "theme": "wooded placement",
+      "purpose": "force line shaping, midrange control, scramble and forehand choices"
+    },
+    {
+      "number": 3,
+      "name": "Gallery Lake",
+      "par": 4,
+      "measuredFeet": 725,
+      "theme": "downhill water carry",
+      "purpose": "showcase broadcast presentation, wind, risk/reward and spectator scale"
+    }
+  ]
+}

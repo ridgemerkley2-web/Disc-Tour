@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "body": {
+    "height_cm": {
+      "min": 150.0,
+      "max": 210.0,
+      "default": 183.0,
+      "control_rig": true
+    },
+    "wingspan_scale": {
+      "min": 0.92,
+      "max": 1.08,
+      "default": 1.0,
+      "control_rig": true
+    },
+    "shoulder_width_scale": {
+      "min": 0.92,
+      "max": 1.08,
+      "default": 1.0,
+      "control_rig": true
+    },
+    "torso_length_scale": {
+      "min": 0.94,
+      "max": 1.06,
+      "default": 1.0,
+      "control_rig": true
+    },
+    "leg_length_scale": {
+      "min": 0.94,
+      "max": 1.06,
+      "default": 1.0,
+      "control_rig": true
+    },
+    "hand_scale": {
+      "min": 0.94,
+      "max": 1.06,
+      "default": 1.0,
+      "control_rig": true
+    },
+    "mass_kg": {
+      "min": 45.0,
+      "max": 160.0,
+      "default": 82.0,
+      "visual_only_v1": true
+    }
+  },
+  "throw_style": {
+    "run_up_intensity": {
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.65
+    },
+    "reach_back_amount": {
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.8
+    },
+    "torso_rotation": {
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.75
+    },
+    "brace_intensity": {
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.75
+    },
+    "explosiveness": {
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.6
+    },
+    "follow_through": {
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.8
+    }
+  },
+  "gameplay_inputs_not_character_creator": [
+    "Power01",
+    "HyzerDegrees",
+    "NoseDegrees",
+    "AimYawDegrees",
+    "TimingQuality01"
+  ]
+}

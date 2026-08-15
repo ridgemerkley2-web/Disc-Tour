@@ -1,0 +1,18 @@
+{
+  "FileVersion": 3,
+  "Version": 15,
+  "VersionName": "1.5.0",
+  "FriendlyName": "Disc Golf Core Playability Foundation",
+  "Description": "Disc-golf production foundation plus core game-loop playability monitoring and validation.",
+  "Category": "Disc Golf",
+  "CreatedBy": "Disc Golf Project",
+  "CanContainContent": true,
+  "IsBetaVersion": true,
+  "Modules": [
+    {
+      "Name": "DiscGolfCharacterFramework",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ]
+}

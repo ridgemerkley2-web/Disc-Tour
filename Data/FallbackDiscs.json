@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "note": "Human-readable mirror of the deterministic C++ fallback. The active production definitions are cooked Primary Data Assets under /Game/Data/Discs; automated parity tests keep both paths numerically identical.",
+  "molds": [
+    {"id":"Apex","flight":[12,5,-1,3],"role":"distance driver"},
+    {"id":"Vector","flight":[9,5,-2,2],"role":"control driver"},
+    {"id":"Line","flight":[7,5,-1,2],"role":"fairway driver"},
+    {"id":"Compass","flight":[5,5,0,1],"role":"midrange"},
+    {"id":"Touch","flight":[2,3,0,1],"role":"putt and approach"}
+  ],
+  "plastics": {
+    "Base":{"stability":"less stable","ground":"grippy / low skip"},
+    "Tour":{"stability":"neutral baseline","ground":"balanced"},
+    "Crystal":{"stability":"more stable","ground":"higher skip"}
+  }
+}

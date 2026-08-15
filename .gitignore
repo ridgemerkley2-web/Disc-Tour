@@ -1,0 +1,33 @@
+# Unreal generated folders
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+.idea/
+.vscode/
+_BuildKit/
+__pycache__/
+*.pyc
+*.VC.db
+*.opensdf
+*.sdf
+*.sln
+*.suo
+*.xcodeproj
+
+# Build artifacts
+Build/Receipts/
+Build/Windows/FileOpenOrder/
+*.pdb
+*.obj
+*.dll
+*.exe
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keep source content and project config
+!Content/
+!Config/

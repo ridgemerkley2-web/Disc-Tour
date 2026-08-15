@@ -1,0 +1,93 @@
+{
+  "schema": "disc_golf_hole_blockout",
+  "schemaVersion": 1,
+  "courseId": "PineRidgeChampionship",
+  "layoutId": "Championship",
+  "holeNumber": 3,
+  "holeName": "Gallery Lake",
+  "par": 4,
+  "teeLocationCm": { "x": 0, "y": 0, "z": 450 },
+  "basketLocationCm": { "x": 21890, "y": 2900, "z": -350 },
+  "surfaces": [
+    { "id": "DeepRoughBase", "surface": "DeepRough", "shape": "Box", "locationCm": { "x": 11000, "y": 1200, "z": -455 }, "scale": { "x": 245, "y": 90, "z": 1 }, "rotationDeg": { "pitch": 0, "yaw": 0, "roll": 0 } },
+    { "id": "Tee", "surface": "TeePad", "shape": "Box", "locationCm": { "x": 0, "y": 0, "z": 453 }, "scale": { "x": 2.4, "y": 1.1, "z": 0.06 }, "rotationDeg": { "pitch": 0, "yaw": 4, "roll": 0 } },
+    { "id": "OverlookFairway", "surface": "Fairway", "shape": "Box", "locationCm": { "x": 3400, "y": 250, "z": 300 }, "scale": { "x": 67, "y": 18, "z": 0.1 }, "rotationDeg": { "pitch": 0, "yaw": 4, "roll": 0 } },
+    { "id": "LakeRightRoute", "surface": "Fairway", "shape": "Box", "locationCm": { "x": 10200, "y": 3350, "z": -40 }, "scale": { "x": 72, "y": 14, "z": 0.12 }, "rotationDeg": { "pitch": 0, "yaw": 18, "roll": 0 } },
+    { "id": "GalleryLandingFairway", "surface": "Fairway", "shape": "Box", "locationCm": { "x": 16900, "y": 2600, "z": -285 }, "scale": { "x": 78, "y": 22, "z": 0.12 }, "rotationDeg": { "pitch": 0, "yaw": 4, "roll": 0 } },
+    { "id": "Green", "surface": "Fairway", "shape": "Cylinder", "locationCm": { "x": 21890, "y": 2900, "z": -375 }, "scale": { "x": 27, "y": 27, "z": 0.5 }, "rotationDeg": { "pitch": 0, "yaw": 0, "roll": 0 } },
+    { "id": "OverlookApron", "surface": "LightRough", "shape": "Box", "locationCm": { "x": 4700, "y": -1800, "z": 185 }, "scale": { "x": 65, "y": 16, "z": 0.1 }, "rotationDeg": { "pitch": 0, "yaw": 3, "roll": 0 } },
+    { "id": "GalleryApron", "surface": "LightRough", "shape": "Box", "locationCm": { "x": 18000, "y": 5400, "z": -330 }, "scale": { "x": 70, "y": 15, "z": 0.1 }, "rotationDeg": { "pitch": 0, "yaw": 2, "roll": 0 } },
+    { "id": "GalleryLakeWater", "surface": "Hazard", "shape": "Cylinder", "locationCm": { "x": 11200, "y": 700, "z": -155 }, "scale": { "x": 58, "y": 42, "z": 0.18 }, "rotationDeg": { "pitch": 0, "yaw": 0, "roll": 0 } },
+    { "id": "LakeBeach", "surface": "Dirt", "shape": "Box", "locationCm": { "x": 14500, "y": 1650, "z": -235 }, "scale": { "x": 36, "y": 8, "z": 0.1 }, "rotationDeg": { "pitch": 0, "yaw": 9, "roll": 0 } },
+    { "id": "LakeShoreRock", "surface": "Rock", "shape": "Box", "locationCm": { "x": 13900, "y": -1300, "z": -210 }, "scale": { "x": 28, "y": 7, "z": 0.14 }, "rotationDeg": { "pitch": 0, "yaw": -12, "roll": 0 } },
+    { "id": "FinalGalleryOB", "surface": "OutOfBounds", "shape": "Box", "locationCm": { "x": 20400, "y": 7600, "z": -395 }, "scale": { "x": 68, "y": 22, "z": 0.08 }, "rotationDeg": { "pitch": 0, "yaw": 1, "roll": 0 } }
+  ],
+  "trees": [
+    { "locationCm": { "x": 2500, "y": -2200, "z": 290 }, "heightScale": 1.02 },
+    { "locationCm": { "x": 3300, "y": 2350, "z": 260 }, "heightScale": 1.10 },
+    { "locationCm": { "x": 5100, "y": -2700, "z": 130 }, "heightScale": 1.17 },
+    { "locationCm": { "x": 5900, "y": 2900, "z": 95 }, "heightScale": 0.96 },
+    { "locationCm": { "x": 7600, "y": -3400, "z": -20 }, "heightScale": 1.08 },
+    { "locationCm": { "x": 8200, "y": 5200, "z": -60 }, "heightScale": 1.14 },
+    { "locationCm": { "x": 11100, "y": -4200, "z": -170 }, "heightScale": 1.05 },
+    { "locationCm": { "x": 12600, "y": 5600, "z": -190 }, "heightScale": 1.12 },
+    { "locationCm": { "x": 14600, "y": -3000, "z": -245 }, "heightScale": 0.98 },
+    { "locationCm": { "x": 15300, "y": 5900, "z": -270 }, "heightScale": 1.16 },
+    { "locationCm": { "x": 17700, "y": -1700, "z": -315 }, "heightScale": 1.04 },
+    { "locationCm": { "x": 18400, "y": 6200, "z": -325 }, "heightScale": 1.10 },
+    { "locationCm": { "x": 20700, "y": 600, "z": -350 }, "heightScale": 1.00 },
+    { "locationCm": { "x": 22400, "y": 5200, "z": -350 }, "heightScale": 1.13 }
+  ],
+  "collisionFixtures": [
+    { "id": "ShoreReeds", "type": "DenseGrass", "shape": "Box", "locationCm": { "x": 12500, "y": 4300, "z": -80 }, "scale": { "x": 6.0, "y": 2.8, "z": 1.6 }, "rotationDeg": { "pitch": 0, "yaw": -8, "roll": 0 } },
+    { "id": "ShoreBoulder", "type": "Rock", "shape": "Sphere", "locationCm": { "x": 14500, "y": -1550, "z": -158 }, "scale": { "x": 1.25, "y": 1.0, "z": 0.9 }, "rotationDeg": { "pitch": 0, "yaw": 0, "roll": 0 } },
+    { "id": "GallerySign", "type": "Sign", "shape": "Box", "locationCm": { "x": 1800, "y": -1800, "z": 430 }, "scale": { "x": 0.12, "y": 2.2, "z": 1.4 }, "rotationDeg": { "pitch": 0, "yaw": 8, "roll": 0 } }
+  ],
+  "landingZones": [
+    { "id": "LakeCarryLanding", "label": "CLEAR THE WATER", "locationCm": { "x": 15600, "y": 2300, "z": -245 }, "extentCm": { "x": 1900, "y": 850, "z": 28 }, "rotationDeg": { "pitch": 0, "yaw": 6, "roll": 0 } },
+    { "id": "RightRouteLanding", "label": "SAFE RIGHT ROUTE", "locationCm": { "x": 12600, "y": 4100, "z": -150 }, "extentCm": { "x": 1550, "y": 650, "z": 28 }, "rotationDeg": { "pitch": 0, "yaw": 15, "roll": 0 } }
+  ],
+  "shotRoutes": [
+    {
+      "id": "LakeCarry", "label": "LAKE-CARRY ATTACK", "type": "Primary",
+      "shotIntent": "Commit over open water and land beyond the beach for the shortest birdie approach.",
+      "landingZoneId": "LakeCarryLanding", "targetStrokes": 3, "riskRating": 4, "rewardRating": 5, "corridorWidthCm": 1400,
+      "waypointsCm": [ { "x": 0, "y": 0, "z": 470 }, { "x": 6500, "y": 300, "z": 180 }, { "x": 11200, "y": 900, "z": -80 }, { "x": 15600, "y": 2300, "z": -220 }, { "x": 21890, "y": 2900, "z": -330 } ]
+    },
+    {
+      "id": "DirectWaterAttack", "label": "DIRECT WATER ATTACK", "type": "RiskReward",
+      "shotIntent": "Take the exposed center line over the widest water to maximize distance and eagle chances.",
+      "landingZoneId": "LakeCarryLanding", "targetStrokes": 3, "riskRating": 5, "rewardRating": 5, "corridorWidthCm": 950,
+      "waypointsCm": [ { "x": 0, "y": 0, "z": 470 }, { "x": 7600, "y": 500, "z": 110 }, { "x": 12500, "y": 1200, "z": -120 }, { "x": 17200, "y": 2500, "z": -270 }, { "x": 21890, "y": 2900, "z": -330 } ]
+    },
+    {
+      "id": "RightShore", "label": "RIGHT-SHORE PLACEMENT", "type": "Bailout",
+      "shotIntent": "Follow the dry right shelf, trade distance for safety, and approach from the gallery side.",
+      "landingZoneId": "RightRouteLanding", "targetStrokes": 4, "riskRating": 2, "rewardRating": 3, "corridorWidthCm": 1500,
+      "waypointsCm": [ { "x": 0, "y": 0, "z": 470 }, { "x": 6500, "y": 2400, "z": 130 }, { "x": 12600, "y": 4100, "z": -130 }, { "x": 18000, "y": 4300, "z": -280 }, { "x": 21890, "y": 2900, "z": -330 } ]
+    }
+  ],
+  "cameraAnchors": [
+    { "id": "LakeTeeBroadcast", "mode": "Launch", "locationCm": { "x": -600, "y": 1050, "z": 860 }, "fieldOfViewDeg": 68 },
+    { "id": "LakeCarryBroadcast", "mode": "Fairway", "locationCm": { "x": 10300, "y": 5700, "z": 1850 }, "fieldOfViewDeg": 38 },
+    { "id": "GalleryGreenBroadcast", "mode": "Finish", "locationCm": { "x": 22900, "y": 5000, "z": 520 }, "fieldOfViewDeg": 46 }
+  ],
+  "spectatorBoundaries": [
+    { "id": "LakeGalleryLeft", "locationCm": { "x": 16900, "y": -2200, "z": -210 }, "extentCm": { "x": 5700, "y": 35, "z": 90 }, "rotationDeg": { "pitch": 0, "yaw": 4, "roll": 0 } },
+    { "id": "LakeGalleryRight", "locationCm": { "x": 17400, "y": 6500, "z": -210 }, "extentCm": { "x": 5400, "y": 35, "z": 90 }, "rotationDeg": { "pitch": 0, "yaw": 3, "roll": 0 } },
+    { "id": "AmphitheaterGallery", "locationCm": { "x": 23300, "y": 2900, "z": -260 }, "extentCm": { "x": 35, "y": 1850, "z": 110 }, "rotationDeg": { "pitch": 0, "yaw": 0, "roll": 0 } }
+  ],
+  "windZones": [
+    { "id": "LakeExposure", "locationCm": { "x": 10500, "y": 900, "z": 850 }, "extentCm": { "x": 5700, "y": 3900, "z": 1700 }, "baseWindScale": 1.42, "additiveWindMps": { "x": -0.1, "y": 0.75, "z": 0.08 } },
+    { "id": "GalleryShelter", "locationCm": { "x": 19800, "y": 2900, "z": 550 }, "extentCm": { "x": 3200, "y": 2700, "z": 1300 }, "baseWindScale": 0.68, "additiveWindMps": { "x": 0.1, "y": -0.2, "z": 0 } }
+  ],
+  "flyoverPointsCm": [
+    { "x": -1000, "y": -1300, "z": 980 },
+    { "x": 2400, "y": -500, "z": 1250 },
+    { "x": 6500, "y": 300, "z": 1500 },
+    { "x": 10600, "y": 1300, "z": 1800 },
+    { "x": 15000, "y": 2600, "z": 1250 },
+    { "x": 19000, "y": 3600, "z": 850 },
+    { "x": 22200, "y": 3500, "z": 260 }
+  ]
+}

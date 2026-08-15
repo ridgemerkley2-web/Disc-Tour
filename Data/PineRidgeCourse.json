@@ -1,0 +1,21 @@
+{
+  "schema": "disc_golf_course_manifest",
+  "schemaVersion": 1,
+  "courseId": "PineRidgeChampionship",
+  "layoutId": "Championship",
+  "displayName": "Pine Ridge Championship",
+  "holes": [
+    {
+      "holeNumber": 1, "definitionFile": "Data/PineRidgeHole1.json",
+      "worldOriginCm": { "x": 0, "y": 0, "z": 0 }, "worldYawDeg": 0
+    },
+    {
+      "holeNumber": 2, "definitionFile": "Data/PineRidgeHole2.json",
+      "worldOriginCm": { "x": 14500, "y": 4000, "z": 100 }, "worldYawDeg": 8
+    },
+    {
+      "holeNumber": 3, "definitionFile": "Data/PineRidgeHole3.json",
+      "worldOriginCm": { "x": 36000, "y": 10500, "z": -250 }, "worldYawDeg": -12
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pine Ridge Disc Golf — Pilot 0.3</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="game" width="1600" height="900" aria-label="Disc golf game"></canvas>
+
+    <header class="broadcast-bar">
+      <div class="brand-lockup">
+        <div class="brand-mark">PR</div>
+        <div>
+          <div class="eyebrow">PINE RIDGE CHAMPIONSHIP</div>
+          <div class="title">Disc Golf Pilot <span class="version">0.3</span></div>
+        </div>
+      </div>
+      <div class="scorebug">
+        <div><span class="label">HOLE</span><strong id="holeNum">1</strong></div>
+        <div><span class="label">PAR</span><strong id="par">3</strong></div>
+        <div><span class="label">DIST</span><strong id="holeDist">405'</strong></div>
+        <div><span class="label">STROKES</span><strong id="strokes">0</strong></div>
+        <div><span class="label">SCORE</span><strong id="score">E</strong></div>
+      </div>
+      <div class="windbox">
+        <span class="label">WIND</span>
+        <div><span id="windArrow">↗</span> <strong id="windText">7 mph</strong></div>
+        <small id="gustText">steady</small>
+      </div>
+    </header>
+
+    <aside class="shot-panel glass">
+      <div class="panel-head">
+        <div class="panel-title">SHOT CONTROL</div>
+        <span id="shotModeBadge" class="mode-badge">THROW</span>
+      </div>
+      <label>Throw style
+        <select id="throwStyle">
+          <option value="rhbh">RHBH · Backhand</option>
+          <option value="rhfh">RHFH · Forehand</option>
+        </select>
+      </label>
+      <label>Disc
+        <select id="discSelect">
+          <option value="apex">Apex · 12 / 5 / -1 / 3</option>
+          <option value="vector">Vector · 9 / 5 / -2 / 2</option>
+          <option value="line">Line · 7 / 5 / -1 / 2</option>
+          <option value="compass">Compass · 5 / 5 / 0 / 1</option>
+          <option value="touch">Touch · 2 / 3 / 0 / 1</option>
+        </select>
+      </label>
+      <label>Plastic
+        <select id="plasticSelect">
+          <option value="crystal">Crystal · stable / slick skip</option>
+          <option value="tour">Tour · balanced grip</option>
+          <option value="base">Base · grippy / less skip</option>
+        </select>
+      </label>
+      <div class="disc-card" id="discCard">
+        <div><strong id="discName">Apex</strong><span id="discFlight">12 · 5 · -1 · 3</span></div>
+        <small id="discTrait">Stable distance driver · Crystal plastic</small>
+      </div>
+      <label>Power <span id="powerReadout">82%</span>
+        <input id="power" type="range" min="20" max="100" value="82" />
+      </label>
+      <label>Aim <span id="aimReadout">0°</span>
+        <input id="aim" type="range" min="-35" max="35" value="0" />
+      </label>
+      <label>Release angle <span id="hyzerReadout">12° hyzer</span>
+        <input id="hyzer" type="range" min="-30" max="30" value="-12" />
+      </label>
+      <label>Nose <span id="noseReadout">0°</span>
+        <input id="nose" type="range" min="-8" max="12" value="0" />
+      </label>
+      <button id="throwBtn" class="primary">START THROW <span>SPACE</span></button>
+      <div class="button-row">
+        <button id="replayBtn" class="secondary compact" disabled>REPLAY <span>P</span></button>
+        <button id="resetBtn" class="secondary compact">RESET <span>R</span></button>
+      </div>
+      <div class="microcopy">Timing, lie, plastic, wind gusts and release angle now all affect the shot.</div>
+    </aside>
+
+    <aside class="telemetry glass">
+      <div class="panel-title">LIVE TELEMETRY</div>
+      <div class="metric"><span>Carry</span><strong id="carry">0 ft</strong></div>
+      <div class="metric"><span>To pin</span><strong id="toPin">405 ft</strong></div>
+      <div class="metric"><span>Speed</span><strong id="speed">0 mph</strong></div>
+      <div class="metric"><span>Height</span><strong id="height">0 ft</strong></div>
+      <div class="metric"><span>Spin</span><strong id="spin">0 rpm</strong></div>
+      <div class="metric"><span>Lie</span><strong id="lie">Tee</strong></div>
+      <div class="metric"><span>Surface</span><strong id="surface">Tee pad</strong></div>
+      <div class="metric"><span>Release</span><strong id="releaseQuality">—</strong></div>
+      <div class="metric"><span>Camera</span><strong id="cameraLabel">Broadcast</strong></div>
+    </aside>
+
+    <div class="release-meter glass" id="releaseMeter">
+      <div class="release-copy"><span>RELEASE TIMING</span><strong id="releasePrompt">PRESS SPACE IN THE GREEN</strong></div>
+      <div class="meter-track">
+        <div class="sweet-zone" id="sweetZone"></div>
+        <div class="perfect-zone"></div>
+        <div class="meter-needle" id="meterNeedle"></div>
+      </div>
+      <div class="meter-labels"><span>EARLY</span><span>PERFECT</span><span>LATE</span></div>
+    </div>
+
+    <div class="center-message" id="centerMessage">
+      <div class="kicker">LOCAL GAMEPLAY PILOT · 0.3</div>
+      <h1>Hole 1 · Pine Ridge Championship</h1>
+      <p>First presentation build: animated player, disc bag/plastics, gusting wind, lie effects, richer course rendering and instant shot replay.</p>
+      <button id="startBtn" class="primary big">PLAY HOLE</button>
+    </div>
+
+    <div class="lower-third" id="lowerThird">
+      <div class="accent"></div>
+      <div><span id="shotLabel">ON THE TEE</span><strong id="shotDetail">405 ft · Par 3</strong></div>
+    </div>
+
+    <div class="replay-bug" id="replayBug">SHOT REPLAY · PINE RIDGE</div>
+    <div class="camera-chip" id="cameraChip">CAM · BROADCAST</div>
+    <div class="controls-hint">A/D aim · W/S power · Q/E hyzer · F forehand/backhand · 1–5 disc · SPACE timing/throw · P replay · C camera · R reset</div>
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>

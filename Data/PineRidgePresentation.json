@@ -1,0 +1,58 @@
+{
+  "schema": "disc_golf_course_presentation",
+  "schemaVersion": 1,
+  "courseId": "PineRidgeChampionship",
+  "layoutId": "Championship",
+  "biomeId": "PacificNorthwestPine",
+  "collisionProfileId": "PineRidgeCompetitiveV2_Fixtures",
+  "collisionInvariantAcrossQuality": true,
+  "assetsReady": false,
+  "assets": {
+    "terrainMaterial": "/Game/Presentation/Course/PineRidge/Materials/M_PineRidgeTerrain",
+    "foliageSet": "/Game/Presentation/Course/PineRidge/Foliage/DA_PineRidgeFoliage",
+    "waterMaterial": "/Game/Presentation/Course/PineRidge/Materials/M_GalleryLakeWater"
+  },
+  "qualityTiers": [
+    {
+      "id": "Low",
+      "foliageDensityScale": 0.50,
+      "grassDensityScale": 0.35,
+      "foliageCullDistanceScale": 0.75,
+      "affectsCollision": false,
+      "collisionProfileId": "PineRidgeCompetitiveV2_Fixtures"
+    },
+    {
+      "id": "Medium",
+      "foliageDensityScale": 0.85,
+      "grassDensityScale": 0.75,
+      "foliageCullDistanceScale": 1.00,
+      "affectsCollision": false,
+      "collisionProfileId": "PineRidgeCompetitiveV2_Fixtures"
+    },
+    {
+      "id": "High",
+      "foliageDensityScale": 1.15,
+      "grassDensityScale": 1.10,
+      "foliageCullDistanceScale": 1.25,
+      "affectsCollision": false,
+      "collisionProfileId": "PineRidgeCompetitiveV2_Fixtures"
+    }
+  ],
+  "holes": [
+    {
+      "holeNumber": 1, "terrainStyleId": "OpeningPines", "forestReferenceId": "BrewsterRidgeTreeLine",
+      "foliageSeed": 1101, "canopyDensityScale": 1.15, "forestDepthCm": 4200,
+      "corridorBufferCm": 610, "teeClearingRadiusCm": 1067, "greenClearingRadiusCm": 1067
+    },
+    {
+      "holeNumber": 2, "terrainStyleId": "NeedleCorridor", "forestReferenceId": "NorthwoodBlackCompression",
+      "foliageSeed": 2202, "canopyDensityScale": 1.40, "forestDepthCm": 4800,
+      "corridorBufferCm": 300, "teeClearingRadiusCm": 1100, "greenClearingRadiusCm": 1500
+    },
+    {
+      "holeNumber": 3, "terrainStyleId": "GalleryLake", "forestReferenceId": "IdlewildLakeFrame",
+      "foliageSeed": 3303, "canopyDensityScale": 1.25, "forestDepthCm": 4500,
+      "corridorBufferCm": 650, "teeClearingRadiusCm": 1500, "greenClearingRadiusCm": 2200
+    }
+  ]
+}
