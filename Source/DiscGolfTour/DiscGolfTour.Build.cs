@@ -10,6 +10,7 @@ public class DiscGolfTour : ModuleRules
         {
             "Core",
             "CoreUObject",
+            "DiscGolfCharacterFramework",
             "Engine",
             "RHI",
             "GameplayTags",

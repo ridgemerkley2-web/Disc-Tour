@@ -13,6 +13,9 @@ class UCameraComponent;
 class UDiscBagComponent;
 class UThrowControllerComponent;
 class UDiscGolferPresentationComponent;
+class UDiscGolfThrowComponent;
+class UDiscGolfRHBHThrowAdapterComponent;
+class UAnimMontage;
 struct FInputActionValue;
 struct FThrowRelease;
 
@@ -29,7 +32,14 @@ public:
     UFUNCTION(BlueprintPure) UDiscBagComponent* GetDiscBag() const { return DiscBag; }
     UFUNCTION(BlueprintPure) UThrowControllerComponent* GetThrowController() const { return ThrowController; }
     UFUNCTION(BlueprintPure) UDiscGolferPresentationComponent* GetPresentationComponent() const { return PresentationComponent; }
+    UFUNCTION(BlueprintPure) UDiscGolfRHBHThrowAdapterComponent* GetRHBHThrowAdapter() const { return RHBHThrowAdapter; }
+    UFUNCTION(BlueprintPure) bool IsAnimatedThrowActive() const;
     UFUNCTION(BlueprintPure) FString GetGolferPresentationStatusText() const;
+
+    /** Shared by real input and the end-to-end Session 3 smoke. */
+    bool TryStartAnimatedRHBHThrow(const FThrowCommand& AuthoritativeCommand);
+    bool CancelAnimatedThrowBeforeRelease();
+    void CancelAnimatedThrow();
 
     void FaceLocation(const FVector& WorldLocation);
     void SetPresentationShotContext(EDiscShotContext ShotContext, float DistanceToBasketMeters);
@@ -46,6 +56,18 @@ private:
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscBagComponent> DiscBag;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UThrowControllerComponent> ThrowController;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolferPresentationComponent> PresentationComponent;
+    UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfThrowComponent> FrameworkThrowComponent;
+    UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfRHBHThrowAdapterComponent> RHBHThrowAdapter;
+    UPROPERTY(VisibleAnywhere) TObjectPtr<UStaticMeshComponent> HeldDiscVisual;
+    UPROPERTY() TObjectPtr<UAnimMontage> RHBHThrowMontage;
+
+    bool HandleAnimatedRHBHRelease(
+        const FThrowCommand& AuthoritativeCommand,
+        const FTransform& GripWorldTransform);
+    void HandleRHBHMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+    UFUNCTION()
+    void HandleAnimatedThrowRecovered(int64 AttemptSerial, bool bDiscWasReleased);
 
     void InputAim(const FInputActionValue& Value);
     void InputPower(const FInputActionValue& Value);

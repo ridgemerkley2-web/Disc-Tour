@@ -16,6 +16,7 @@
 #include "DiscGolfTourGameInstance.h"
 #include "DiscGolfPresentationMath.h"
 #include "DiscGolferPawn.h"
+#include "DiscGolfRHBHThrowAdapterComponent.h"
 #include "DiscGolfTourPlayerController.h"
 #include "DiscTrajectorySubsystem.h"
 #include "DiscReplayActor.h"
@@ -28,6 +29,8 @@
 #include "DiscGolfCourseSurfaceActor.h"
 #include "DiscGolfFixturePresentationActor.h"
 #include "DiscGolfFixtureQaRunner.h"
+#include "DiscGolfSession3SmokeRunner.h"
+#include "DiscGolfSession3VisualCaptureRunner.h"
 #include "DiscGolfEnvironmentController.h"
 #include "DiscGolfWorldFixtureActor.h"
 #include "ThrowControllerComponent.h"
@@ -294,9 +297,14 @@ void ADiscGolfTourGameMode::BeginPlay()
         FCommandLine::Get(), TEXT("GroundGrassSmokeTest"));
     const bool bHole1FlightRouteSmokeRequested = FParse::Param(
         FCommandLine::Get(), TEXT("Hole1FlightRouteSmokeTest"));
+    const bool bSession3OneThrowSmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Session3OneThrowSmokeTest"));
+    const bool bSession3VisualCaptureRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Session3VisualCapture"));
     FString InitialCourse = (bRouteTelemetryRequested || bGalleryLakeWaterSmokeRequested
         || bDenseForestSmokeRequested || bGroundGrassSmokeRequested
-        || bHole1FlightRouteSmokeRequested)
+        || bHole1FlightRouteSmokeRequested || bSession3OneThrowSmokeRequested
+        || bSession3VisualCaptureRequested)
         ? TEXT("PineRidge") : TEXT("Regression");
     const bool bCourseOverridden = FParse::Value(FCommandLine::Get(), TEXT("Course="), InitialCourse);
     if (!LoadCourse(InitialCourse))
@@ -327,6 +335,8 @@ void ADiscGolfTourGameMode::BeginPlay()
         || FParse::Param(FCommandLine::Get(), TEXT("RegressionSuiteSmokeTest"))
         || FParse::Param(FCommandLine::Get(), TEXT("PineRidgePlaySmokeTest"))
         || bHole1FlightRouteSmokeRequested
+        || bSession3OneThrowSmokeRequested
+        || bSession3VisualCaptureRequested
         || FParse::Param(FCommandLine::Get(), TEXT("FixtureCollisionSmokeTest"))
         || bGalleryLakeWaterSmokeRequested
         || bDenseForestSmokeRequested
@@ -409,7 +419,43 @@ void ADiscGolfTourGameMode::BeginPlay()
         return;
     }
 
-    if (bGroundGrassSmokeRequested)
+    if (bSession3VisualCaptureRequested)
+    {
+        Session3VisualCaptureRunner = GetWorld()->SpawnActor<ADiscGolfSession3VisualCaptureRunner>();
+        if (!Session3VisualCaptureRunner)
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("DG_SESSION3_VISUAL_CAPTURE: FAIL runner could not spawn."));
+            FPlatformMisc::RequestExitWithStatus(false, 1);
+            return;
+        }
+        FTimerHandle Session3VisualCaptureTimer;
+        GetWorldTimerManager().SetTimer(
+            Session3VisualCaptureTimer,
+            FTimerDelegate::CreateUObject(
+                Session3VisualCaptureRunner,
+                &ADiscGolfSession3VisualCaptureRunner::Start),
+            0.5f,
+            false);
+    }
+    else if (bSession3OneThrowSmokeRequested)
+    {
+        Session3SmokeRunner = GetWorld()->SpawnActor<ADiscGolfSession3SmokeRunner>();
+        if (!Session3SmokeRunner)
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("SESSION 3 ONE-THROW SMOKE FAIL: runner could not spawn."));
+            FPlatformMisc::RequestExitWithStatus(false, 1);
+            return;
+        }
+        FTimerHandle Session3SmokeTimer;
+        GetWorldTimerManager().SetTimer(
+            Session3SmokeTimer,
+            FTimerDelegate::CreateUObject(Session3SmokeRunner, &ADiscGolfSession3SmokeRunner::Start),
+            0.5f,
+            false);
+    }
+    else if (bGroundGrassSmokeRequested)
     {
         FTimerHandle GroundGrassSmokeTimer;
         GetWorldTimerManager().SetTimer(GroundGrassSmokeTimer, FTimerDelegate::CreateUObject(
@@ -1040,10 +1086,13 @@ void ADiscGolfTourGameMode::EnsurePlayerPawn()
 
 bool ADiscGolfTourGameMode::CanPlayerThrow() const
 {
+    const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+        UGameplayStatics::GetPlayerPawn(this, 0));
     return DiscGolfGameplayGate::CanLaunchThrow(
         ActiveHole != nullptr, ActiveDisc != nullptr, ReplayActor != nullptr,
         IsCourseFlyoverActive(), bHoleComplete, bScorecardVisible, bHoleIntroActive)
-        && !bRegressionActive && !bLieTransitionActive;
+        && !bRegressionActive && !bLieTransitionActive
+        && (!Golfer || !Golfer->IsAnimatedThrowActive());
 }
 
 bool ADiscGolfTourGameMode::LoadCourse(const FString& CourseName)
@@ -1056,6 +1105,13 @@ bool ADiscGolfTourGameMode::LoadCourse(const FString& CourseName)
     if (ActiveDisc || bRegressionActive)
     {
         CourseStatusText = TEXT("COURSE CHANGE BLOCKED - WAIT FOR CURRENT THROW");
+        return false;
+    }
+    if (const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+            UGameplayStatics::GetPlayerPawn(this, 0));
+        Golfer && Golfer->IsAnimatedThrowActive())
+    {
+        CourseStatusText = TEXT("COURSE CHANGE BLOCKED - FINISH OR CANCEL CHARACTER THROW");
         return false;
     }
 
@@ -2410,7 +2466,75 @@ void ADiscGolfTourGameMode::RequestThrow(const FThrowCommand& Command)
     LaunchThrow(Command);
 }
 
-void ADiscGolfTourGameMode::LaunchThrow(const FThrowCommand& Command)
+bool ADiscGolfTourGameMode::RequestThrowFromGrip(
+    const FThrowCommand& Command,
+    const FTransform& GripWorldTransform)
+{
+    // This C++-only seam may bypass CanPlayerThrow solely because the adapter's
+    // committed release keeps that normal gate closed until the montage recovers.
+    // Every other lifecycle authority remains mandatory.
+    if (bRegressionActive || bLieTransitionActive)
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Character release rejected because another gameplay authority is active."));
+        return false;
+    }
+
+    if (GripWorldTransform.ContainsNaN())
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Character release rejected because disc_grip_r produced a non-finite transform."));
+        return false;
+    }
+
+    const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+        UGameplayStatics::GetPlayerPawn(this, 0));
+    const UDiscGolfRHBHThrowAdapterComponent* Adapter = Golfer
+        ? Golfer->GetRHBHThrowAdapter() : nullptr;
+    const FVector GripLocation = GripWorldTransform.GetLocation();
+    if (!Golfer || !Adapter
+        || !Adapter->IsThrowActive()
+        || !Adapter->HasCommittedRelease()
+        || Adapter->GetReleaseCommitCountForAttempt() != 1)
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Character release rejected because no committed Session 3 player transaction owns it."));
+        return false;
+    }
+
+    const FThrowCommand CachedCommand = Adapter->GetLastAuthoritativeCommand();
+    const bool bMatchesCommittedCommand = CachedCommand.MoldId == Command.MoldId
+        && CachedCommand.Plastic == Command.Plastic
+        && CachedCommand.ThrowStyle == Command.ThrowStyle
+        && CachedCommand.ShotContext == Command.ShotContext
+        && CachedCommand.Direction == Command.Direction
+        && CachedCommand.Power01 == Command.Power01
+        && CachedCommand.HyzerDeg == Command.HyzerDeg
+        && CachedCommand.NoseAngleDeg == Command.NoseAngleDeg
+        && CachedCommand.LaunchAngleDeg == Command.LaunchAngleDeg
+        && CachedCommand.TimingError == Command.TimingError;
+    if (!bMatchesCommittedCommand)
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Character release rejected because its command does not match the committed transaction."));
+        return false;
+    }
+
+    if (FVector::DistSquared(GripLocation, Golfer->GetActorLocation()) > FMath::Square(300.0f))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Character release rejected because disc_grip_r was implausibly far from the player."));
+        return false;
+    }
+
+    // The exact adapter transaction is now Released, so CanPlayerThrow would
+    // intentionally reject it. LaunchThrow retains the shared disc lifecycle gate.
+    return LaunchThrow(Command, &GripLocation);
+}
+
+bool ADiscGolfTourGameMode::LaunchThrow(
+    const FThrowCommand& Command,
+    const FVector* ReleaseLocationOverrideCm)
 {
     // This private path is shared by accepted player throws and trusted regression
     // presets. Fundamental lifecycle guards still prevent replacing an active disc.
@@ -2418,21 +2542,23 @@ void ADiscGolfTourGameMode::LaunchThrow(const FThrowCommand& Command)
         ActiveHole != nullptr, ActiveDisc != nullptr, ReplayActor != nullptr,
         IsCourseFlyoverActive(), bHoleComplete, bScorecardVisible, bHoleIntroActive))
     {
-        return;
+        return false;
     }
 
     UDiscCatalogSubsystem* Catalog = GetGameInstance() ? GetGameInstance()->GetSubsystem<UDiscCatalogSubsystem>() : nullptr;
-    if (!Catalog) return;
+    if (!Catalog) return false;
 
     FResolvedDiscDefinition ResolvedDisc;
-    if (!Catalog->ResolveDisc(Command.MoldId, Command.Plastic, ResolvedDisc)) return;
+    if (!Catalog->ResolveDisc(Command.MoldId, Command.Plastic, ResolvedDisc)) return false;
 
     ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(UGameplayStatics::GetPlayerPawn(this, 0));
-    if (!Golfer) return;
+    if (!Golfer) return false;
 
-    const FVector SpawnLocation = Golfer->GetActorLocation() + Golfer->GetActorForwardVector() * 70.0f + FVector(0, 0, 35.0f);
+    const FVector SpawnLocation = ReleaseLocationOverrideCm
+        ? *ReleaseLocationOverrideCm
+        : Golfer->GetActorLocation() + Golfer->GetActorForwardVector() * 70.0f + FVector(0, 0, 35.0f);
     ActiveDisc = GetWorld()->SpawnActor<ADiscActor>(SpawnLocation, Golfer->GetActorRotation());
-    if (!ActiveDisc) return;
+    if (!ActiveDisc) return false;
 
     ActiveDisc->InitializeDisc(ResolvedDisc, WindDirector);
     ActiveDisc->OnDiscSettled.AddDynamic(this, &ADiscGolfTourGameMode::HandleDiscSettled);
@@ -2465,6 +2591,7 @@ void ADiscGolfTourGameMode::LaunchThrow(const FThrowCommand& Command)
     RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveAirborneFlight(
         LastRelease.ReleaseSpeedMps, LastRelease.SpinRpm, 0.0f), SpawnLocation);
     StartBroadcastCameraForShot(ActiveDisc, SpawnLocation, AuthoredCommand.ShotContext);
+    return true;
 }
 
 void ADiscGolfTourGameMode::HandleDiscSettled(ADiscActor* Disc, FVector FinalLocation)
@@ -2927,6 +3054,12 @@ void ADiscGolfTourGameMode::ReturnCameraToPlayer()
 
 void ADiscGolfTourGameMode::ResetHole()
 {
+    if (ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+        UGameplayStatics::GetPlayerPawn(this, 0)))
+    {
+        Golfer->CancelAnimatedThrow();
+    }
+
     if (RoundState.bRoundComplete && ActiveDisc == nullptr && !bRegressionActive)
     {
         RestartRound();

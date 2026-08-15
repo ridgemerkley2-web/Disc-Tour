@@ -23,6 +23,8 @@ class ADiscBroadcastCameraDirector;
 class ADiscGolfFlyoverRouteActor;
 class ADiscGolfLevelDesignReviewActor;
 class ADiscGolfFixtureQaRunner;
+class ADiscGolfSession3SmokeRunner;
+class ADiscGolfSession3VisualCaptureRunner;
 
 USTRUCT()
 struct FDiscGolfHole1FlightRouteResult
@@ -52,6 +54,15 @@ public:
     virtual void Tick(float DeltaSeconds) override;
 
     UFUNCTION(BlueprintCallable) void RequestThrow(const FThrowCommand& Command);
+    /**
+     * C++-only animation handoff for the local RHBH presentation. It accepts only
+     * the player adapter's already-committed transaction. Only the release location
+     * comes from the character rig; FThrowCommand and the existing launch solver
+     * remain the sole gameplay authority.
+     */
+    bool RequestThrowFromGrip(
+        const FThrowCommand& Command,
+        const FTransform& GripWorldTransform);
     UFUNCTION(BlueprintCallable) void ResetHole();
     UFUNCTION(BlueprintCallable) void CyclePhysicsRegressionPreset();
     UFUNCTION(BlueprintCallable) void RunSelectedPhysicsRegression();
@@ -171,6 +182,8 @@ private:
     UPROPERTY() TObjectPtr<ADiscReplayActor> ReplayActor;
     UPROPERTY() TObjectPtr<ADiscBroadcastCameraDirector> BroadcastCameraDirector;
     UPROPERTY() TObjectPtr<ADiscGolfFixtureQaRunner> FixtureQaRunner;
+    UPROPERTY() TObjectPtr<ADiscGolfSession3SmokeRunner> Session3SmokeRunner;
+    UPROPERTY() TObjectPtr<ADiscGolfSession3VisualCaptureRunner> Session3VisualCaptureRunner;
     UPROPERTY() FDiscGolfCourseManifestDefinition ActiveCourseManifest;
     UPROPERTY() TArray<FDiscGolfHoleBlockoutDefinition> ActiveHoleDefinitions;
     UPROPERTY() FDiscGolfRoundState RoundState;
@@ -280,7 +293,7 @@ private:
         const FVector& FallbackLocationCm) const;
     void SavePracticeRoundSnapshot();
     bool RestorePracticeRoundSnapshot();
-    void LaunchThrow(const FThrowCommand& Command);
+    bool LaunchThrow(const FThrowCommand& Command, const FVector* ReleaseLocationOverrideCm = nullptr);
     void RecordPresentationAudioEvent(
         const FDiscGolfPresentationAudioEvent& Event,
         const FVector& WorldLocationCm = FVector::ZeroVector,

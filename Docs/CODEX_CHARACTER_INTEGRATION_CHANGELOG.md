@@ -342,3 +342,182 @@ Capture manifest: `Saved/CharacterFramework/Screenshots/Session2_VisualCloseout/
 | Session 3 wiring scan | PASS | Exact eight-package set; no montage, throw/release notify, held gameplay disc, pawn/AnimBP assignment, framework throw component, release callback, or physics handoff |
 
 Final rig SHA-256 values are `13D29A1D4B4F1E2A6F010D95E052D21A1E974A6789BBFE85AC5E4E260EE72958` for `IK_DG_Master` and `3F3A7BABE632C49BFE48070CD05AE73B75188DAA16369AB5E585633295D6F981` for `CR_DG_Master`. Session 2 is closed at the validation-proxy/provisional-disc level. Session 3 has not begun.
+
+---
+
+## Session 3 — first animated RHBH throw and existing-physics handoff
+
+Date: 2026-08-15
+Status: **SESSION 3 ACCEPTANCE: PASS**
+
+This session followed only `CODEX/03_FIRST_THROW_AND_PHYSICS.md`. It implements one right-handed backhand drive from input through animation, one release notify, the existing gameplay launch/flight path, follow-through, and recovery. Forehand, putting, additional throw styles, character deformation, creator systems, outfits, MetaHuman work, production animation, and new course content were not started.
+
+### Preflight and protected baseline
+
+The starting validated checkpoint was `01a998bf51d551c7c2ae9c9ae75415d9c33c0418`. Seven intentional Session 2 visual-closeout files were separated from generated evidence and committed before Session 3 as `65be3f3fe370b685e00cf65ba44193aeb3cda0db` (`Session 2: close visual rig acceptance`). That dedicated commit contains only the validated `IK_DG_Master` and `CR_DG_Master` changes plus their closeout documentation and four Session 2 authoring/validation scripts.
+
+The unrelated pre-existing untracked environment, imported-content, data, source-art, and editor-configuration roots were not staged, discarded, overwritten, or incorporated. Generated `Binaries`, `Intermediate`, `Saved`, and `DerivedDataCache` output remains uncommitted. The installed UE 5.8-compatible plugin remained the source of truth and has zero Session 3 source changes; no build-kit files replaced it. The behavior-neutral `FoliageBasicShapeHalfExtentCm` unity-build rename remains intact.
+
+### Existing throw-path audit
+
+The following existing project path remains authoritative:
+
+`ADiscGolferPawn::InputThrow` -> `UThrowControllerComponent::HandleThrowPress` -> `ADiscGolfTourGameMode::RequestThrow` / Session 3 grip adapter -> `ADiscGolfTourGameMode::LaunchThrow` -> `DiscGolfCourseRules::ApplyLieEffects` -> `DiscGolfMath::ResolveThrowRelease` -> `ADiscActor::Throw` -> `UDiscFlightComponent::Launch`.
+
+| Responsibility | Existing authority retained |
+|---|---|
+| Throw start | `ADiscGolferPawn::InputThrow`; the first press starts the existing timing state and the second produces `FThrowCommand` |
+| Throw state | `UThrowControllerComponent::bTimingActive` before command creation; existing GameMode lifecycle gates for active disc/replay/flyover/hole/UI/lie-transition state; one project-owned Session 3 animation transaction only after a legal RHBH drive command exists |
+| Disc choice | `UDiscBagComponent::GetSelectedMoldId` and `GetSelectedPlastic`; `UDiscCatalogSubsystem::ResolveDisc` resolves the definition at launch |
+| Aim and style | Pawn world-forward direction plus the existing `UThrowControllerComponent` throw style and shot context |
+| Power and angles | Existing ThrowController `Power01`, `HyzerDeg`, `NoseDeg`, and `LaunchAngleDeg` values |
+| Release timing | Existing moving timing needle and `DiscGolfMath::NormalizeTimingError`; the animation does not recalculate timing |
+| Lie effects | Existing `DiscGolfCourseRules::ApplyLieEffects`; GameMode remains authoritative for the current shot context and lie multipliers |
+| Release speed, spin, aim error, and final release attitude | Existing `DiscGolfMath::ResolveThrowRelease` only |
+| Gameplay disc | `ADiscGolfTourGameMode::LaunchThrow` spawns one `ADiscActor`, initializes it from the catalog and `AWindDirector`, then calls `ADiscActor::Throw(LastRelease)` |
+| Flight, wind, collision, and ground play | Existing `UDiscFlightComponent` fixed-step solver and the existing wind/collision/ground systems |
+| Settle, lie, score, and next action | Existing `HandleDiscSettled` / `HandleDiscHoledOut`, lie resolution, scoring, player relocation, and course flow |
+| Camera | Existing `StartBroadcastCameraForShot`, broadcast tracking, settle transition, and `ReturnCameraToPlayer`; no character-framework camera authority was enabled |
+| Input contexts | Existing Enhanced Input mapping remains authoritative. Aim/throw adjustment actions are temporarily gated by the active animation transaction rather than replaced with a parallel input context |
+
+Before Session 3 there was no runtime held-disc attachment and no character-animation-to-gameplay release bridge. Direct/programmatic `RequestThrow` remains synchronous for regressions and non-Session-3 paths. Only a local `Backhand + Drive` command attempts the new montage; non-RHBH, putting, or unavailable-presentation cases retain the prior immediate path.
+
+### Temporary RHBH animation and montage
+
+| Asset | Verified contract |
+|---|---|
+| `/Game/DiscGolf/Animation/Throws/A_DG_RHBH_Prototype` | 2.8 seconds at 60 FPS; 168 frames / 169 keys per track; 20 animated bone tracks; all 6 DG motion curves; 116.264-degree throwing-arm sweep; non-looping; in-place with only small validation shifts |
+| `/Game/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype` | One `A_DG_RHBH_Prototype` segment on `DefaultSlot`, one Default section, 2.8-second duration |
+| `/Game/DiscGolf/Animation/ABP_DG_Player` | Parent remains `/Script/DiscGolfCharacterFramework.DiscGolfAnimInstance`; pose flow is `LocalRefPose -> DefaultSlot -> Root`; targets `SKEL_DG_Master` |
+
+The non-production sequence contains setup, a compact x-step/run-up, reachback, plant/brace, acceleration, release, follow-through, and recovery. Visual QA exposed that the first draft stacked component-space pose intent as independent local rotations. The sequence authoring utility was corrected to convert component intent to local bone keys; the accepted sequence keeps parent-child length ratios at approximately 1.0, limits the sampled maximum component rotation to 88.043 degrees, preserves a 116.264-degree arm sweep and 66.756 cm grip sweep, and stays within a 173.965 cm sampled root-relative extent. Final SHA-256 values are `EA53E0460B958FFA7C8BC1DCACB5A4E6F1C6ABBACE9F177C68A1017C6783ECE6` for the sequence, `6BCD1C3256668D7F041FE6D33B6910052EE77FA4739A1EF4E60E689A787A8AF8` for the montage, and `87627AACC7F6E6696CE16395F2C1E66FACCEAAC5333856469B6CAE008F75EE4D` for the Animation Blueprint. Session 3 did not change the accepted `IK_DG_Master` or `CR_DG_Master` assets.
+
+| Event | Frame | Time |
+|---|---:|---:|
+| Aim | 0 | 0.000000 s |
+| RunUp | 12 | 0.200000 s |
+| ReachBack | 48 | 0.800000 s |
+| Plant | 70 | 1.166667 s |
+| Acceleration | 84 | 1.400000 s |
+| `DG Release Disc` | 96 | 1.600000 s |
+| FollowThrough | 100 | 1.666667 s |
+| Recovery | 132 | 2.200000 s |
+| `DG Throw Finished` | 162 | 2.700000 s |
+
+`DG Release Disc` uses `/Script/DiscGolfCharacterFramework.AnimNotify_DiscRelease` and exists exactly once. `DG Throw Finished` uses `/Script/DiscGolfCharacterFramework.AnimNotify_ThrowFinished` and exists exactly once. Phase entries use `/Script/DiscGolfCharacterFramework.AnimNotify_ThrowPhase`. The authoring utility and independent read-only validator both enforce the exact event count, timing, slot, skeleton, track, curve, and Animation Blueprint contracts.
+
+### Provisional held disc
+
+`ADiscGolferPawn` now creates `HeldDiscVisual`, using the existing provisional `/Engine/BasicShapes/Cylinder.Cylinder`, attached to `SkeletalGolferMesh` at `disc_grip_r`.
+
+| Attachment field | Value |
+|---|---|
+| Local location | `(0, 0, 0)` cm |
+| Local rotation | `(Pitch=0, Yaw=180, Roll=0)` degrees |
+| Local scale | `(0.21, 0.21, 0.015)` |
+| Collision | Disabled |
+| Overlap events | Disabled |
+
+The component becomes visible only for an active pre-release animation transaction. At release it is hidden before the synchronous gameplay-launch delegate executes, preventing a held/gameplay double-disc frame. The authoritative gameplay-disc mesh, physics orientation, and collision were not altered to fit the proxy hand. The Cylinder and block hand remain provisional validation geometry and do not establish final rim/palm ergonomics.
+
+### Single-authority release adapter
+
+The project-owned adapter is `UDiscGolfRHBHThrowAdapterComponent`. Its release path is:
+
+`HandleFrameworkDiscRelease` -> `ADiscGolferPawn::HandleAnimatedRHBHRelease` -> `ADiscGolfTourGameMode::RequestThrowFromGrip` -> existing `LaunchThrow` -> existing `ResolveThrowRelease` -> existing gameplay disc and flight component.
+
+The adapter snapshots the exact authoritative `FThrowCommand` produced by the ThrowController. From plugin `FDGReleaseData` it consumes only `GripWorldTransform`; framework-suggested speed, spin, grip velocity, and replacement release intent are ignored. `RequestThrowFromGrip` is a narrow C++-only seam: GameMode rejects regression/lie-transition activity, calls not originating from the actual player pawn's active and release-committed adapter transaction, cached-command mismatches, non-finite transforms, and grip positions more than 300 cm from the player. It then uses the accepted grip **location only** as the gameplay-disc spawn override. Direction, power, timing, hyzer, nose, launch angle, disc definition, lie effects, release speed, spin, wind, and every flight calculation continue through the existing project authorities listed above.
+
+`FDiscGolfRHBHThrowTransaction` commits its state to Released before invoking external launch code. Each attempt has a monotonically increasing serial, exactly one permitted release commit, and stale-attempt rejection. A duplicate, blended, re-entrant, or replayed release notify cannot launch a second disc. The held visual hides before launch; a rejected authoritative launch is recorded and never retried.
+
+Cancellation before release transitions directly to recovery, hides the held visual, cancels the framework presentation, and launches zero discs. A montage-start failure uses the same safe cancellation. An interruption after release recovers presentation state but cannot replace or relaunch the committed gameplay disc. `DG Throw Finished` performs normal recovery once; montage-end interruption provides a fallback; a token-aware 5.0-second watchdog prevents an indefinitely stuck pre- or post-release transaction. The pawn stops any stale montage during recovery so an old notify cannot affect a later attempt.
+
+During the active animation transaction, aim adjustment, power, hyzer, nose, style, disc selection, and a second throw are rejected. At release, the existing GameMode camera transition begins. At finish/recovery, the animation lock clears; the existing flight continues independently; at settle the existing lie transition moves the player, stops the broadcast camera, blends back to the pawn, reapplies the shot context, and makes the next legal action available. Reset cancels an outstanding animated transaction before running the existing hole reset. No duplicate pawn, gameplay disc, replay actor, or input authority is created.
+
+### Body-profile compatibility boundary
+
+ShortCompact, Baseline, and TallLongArms all reference the same accepted `SK_DG_Master`, `SKEL_DG_Master`, `IK_DG_Master`, `CR_DG_Master`, `ABP_DG_Player`, and RHBH montage foundation. Their data assets and matching rig inputs remain valid. Runtime body-proportion deformation and profile-to-rig plumbing are deliberately still absent, so all three fixtures use the same proxy geometry in Session 3; this is a playback/event compatibility check, not Session 4 deformation acceptance.
+
+The rendered compatibility harness played the same montage and event path on ShortCompact, Baseline, and TallLongArms. Each fixture started animation, retained a finite usable grip transform, fired one release callback, reached follow-through, and recovered through `ThrowFinished` without inversion, collapse, or a stuck transaction. The images intentionally identify profile deformation as Session 4 work; this pass proves shared-rig/playback compatibility only, not distinct body silhouettes.
+
+### Files and assets changed
+
+Modified:
+
+- `Content/DiscGolf/Animation/ABP_DG_Player.uasset`
+- `Source/DiscGolfTour/DiscGolfTour.Build.cs`
+- `Source/DiscGolfTour/DiscGolfTourGameMode.cpp`
+- `Source/DiscGolfTour/DiscGolfTourGameMode.h`
+- `Source/DiscGolfTour/DiscGolferPawn.cpp`
+- `Source/DiscGolfTour/DiscGolferPawn.h`
+- `Docs/CODEX_CHARACTER_INTEGRATION_CHANGELOG.md`
+
+Added:
+
+- `Content/DiscGolf/Animation/Throws/A_DG_RHBH_Prototype.uasset`
+- `Content/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype.uasset`
+- `Source/DiscGolfTour/DiscGolfRHBHThrowTransaction.h`
+- `Source/DiscGolfTour/DiscGolfRHBHThrowAdapterComponent.h`
+- `Source/DiscGolfTour/DiscGolfRHBHThrowAdapterComponent.cpp`
+- `Source/DiscGolfTour/DiscGolfSession3SmokeRunner.h`
+- `Source/DiscGolfTour/DiscGolfSession3SmokeRunner.cpp`
+- `Source/DiscGolfTour/DiscGolfSession3VisualCaptureRunner.h`
+- `Source/DiscGolfTour/DiscGolfSession3VisualCaptureRunner.cpp`
+- `Source/DiscGolfTour/Tests/DiscGolfSession3ThrowTransactionTests.cpp`
+- `Source/DiscGolfTourEditor/DiscGolfSession3AssetUtility.h`
+- `Source/DiscGolfTourEditor/DiscGolfSession3AssetUtility.cpp`
+- `Scripts/create_dg_character_session3_assets.py`
+- `Scripts/diagnose_dg_character_session3_pose.py`
+- `Scripts/validate_dg_character_session3_assets.py`
+- `Scripts/validate_dg_character_session3_rig.py`
+- `Scripts/validate_dg_character_session3_wiring.py`
+
+The 24-file Session 3 source/content/documentation scope is the complete intended change set. Rendered screenshots, manifests, logs, binaries, intermediates, and other generated evidence remain under `Saved`/generated roots and are not project-source changes.
+
+### Automated and regression verification
+
+| Gate | Result | Evidence |
+|---|---|---|
+| Project static validator | PASS | `Scripts/validate_project.py` |
+| Reference flight check | PASS | Existing release, flight, mirror, and ground envelopes unchanged |
+| Trajectory artifact validation | PASS | Existing deterministic trajectory artifacts remain valid |
+| UE Editor build | PASS | Final compiled source build: 4 actions / 13.68 s; final up-to-date verification: 0 actions / 2.69 s; `Result: Succeeded` |
+| UE runtime build | PASS | `DiscGolfTour Win64 Development`; 9 actions / 148.76 s; linked `Binaries/Win64/DiscGolfTour.exe` |
+| Framework reflection | PASS | `Saved/Logs/CharacterFramework_Session3_Final_Reflection.log`; 4 classes + 4 structs; exit 0; no fatal/assert/failure markers |
+| Strict Session 3 asset validation/no-write gate | PASS | `Saved/Logs/CharacterFramework_Session3_Final_Assets.log` and `Saved/CharacterFramework/Session3AssetValidation.json`; exact release/finish counts and `disk_mutation=NONE` |
+| Idempotent authoring rerun | PASS | `Saved/Logs/CharacterFramework_Session3_Final_NoWrite.log`; `PASS_ALREADY_CURRENT_NO_ASSET_WRITES`; all 10 package SHA-256 values unchanged |
+| Session 3 wiring scan | PASS | `Saved/CharacterFramework/Session3WiringValidation.json`; 20/20 checks; exact 10-asset set; consumed release field `GripWorldTransform`; plugin changes 0 |
+| Strict rig/authority validation | PASS | `Saved/Logs/CharacterFramework_Session3_Final_Rig.log`; 69 bones, 4 goals, 4 effectors, 3 profiles, release 1, finish 1, `SINGLE_EXISTING_FLIGHT_PATH` |
+| Focused transaction automation | PASS | `Saved/Logs/Automation_CharacterFramework_Session3_Focused_Final.log`; 6/6 tests succeeded; process exit 0 |
+| Full existing automation | PASS | `Saved/Logs/Automation_CharacterFramework_Session3_Full_Final.log`; 108/108 `DiscGolfTour.` tests succeeded; `TEST COMPLETE. EXIT CODE: 0` |
+| Existing three-hole gameplay smoke | PASS | `Saved/Logs/ThreeHoleRoundSmoke_CharacterFramework_Session3_Final.log`; 3/3 holes, 3 strokes on par 11 (-8); manifest transitions, scoring, scorecard, and save snapshot active |
+| Live end-to-end one-throw smoke | PASS | `Saved/Logs/Session3OneThrowSmoke_Final.log`; exact FollowThrough/Recovery phase observations, one `DG Throw Finished`, one original pawn, camera return, next-action begin/cancel; evaluated pre-release cancellation launched 0 discs through the former release time |
+| Rendered visual evidence | PASS (validation proxy) | `Saved/Logs/CharacterFramework_Session3_VisualCapture_ComponentAnchored.log`; 8/8 1920x1080 images; one release, one stroke, three profile fixtures, actual held/gameplay mesh component anchors |
+
+The final live one-throw flight produced 1,745 trajectory samples, 67.20 m airborne travel, 75.96 m final carry, a 2.17 m apex, four ground impacts, and a resolved fairway lie. The test observed animation before release, exactly one release commit and one gameplay disc, the authoritative `LastRelease` reaching the existing flight component with valid non-zero velocity, exactly one FollowThrough phase, exactly one Recovery phase, exactly one `DG Throw Finished`, settled-flight/lie completion, return of the PlayerController view target to the original pawn, and availability of the next legal action.
+
+The six new deterministic transaction tests cover cached-command pass-through, cancel-before-release, duplicate/re-entrant release rejection, normal and watchdog recovery, one-authority release, and stale-attempt/post-release interruption rejection. Existing physics tests were not loosened.
+
+### Visual evidence
+
+The final capture manifest is `Saved/CharacterFramework/Screenshots/Session3_FirstThrow/Session3_FirstThrow_CaptureManifest.json`. It records 8/8 1920x1080 captures, one live release callback, one stroke, `ThrowFinished` recovery, no held visual after release, and successful playback/recovery checks for all three profile fixtures. The first three frames are anchored to the actual rendered components (`HeldDiscVisual`, then the authoritative `DiscMesh`) with zero focus-alignment error; the release log records zero mesh-alignment error.
+
+- `01_HeldDisc_BeforeRelease.png`
+- `02_Exact_DGReleaseDisc_Frame.png`
+- `03_ImmediatePostRelease_OneGameplayDisc.png`
+- `04_FollowThrough.png`
+- `05_RecoveredGameplayState.png`
+- `06_ShortCompact_Playback.png`
+- `07_Baseline_Playback.png`
+- `08_TallLongArms_Playback.png`
+
+Manual review passed these images only as validation-proxy/provisional-Cylinder evidence. The white held Cylinder is nearly edge-on in the first frame, and the release frame overlaps the proxy hand; the paired manifest and callback log provide the exact state proof. These images are not production character-art, grip-ergonomics, environment-lighting, or UI-presentation acceptance.
+
+### Remaining production limitations
+
+- `A_DG_RHBH_Prototype` is mechanically coherent validation animation, not final mocap or production polish.
+- `SK_DG_Master` is a rigid block proxy; the Cylinder has no authored rim or dome and cannot prove production grip ergonomics.
+- Runtime ShortCompact/Baseline/TallLongArms deformation and profile plumbing remain Session 4 work.
+- Only one RHBH drive is animated. Forehand and putting deliberately retain existing behavior and have no Session 3 animation coverage.
+- No plugin camera, replay, course, physics, scoring, save, equipment, UI, or environment system was activated.
+- No Session 4 work has begun.
