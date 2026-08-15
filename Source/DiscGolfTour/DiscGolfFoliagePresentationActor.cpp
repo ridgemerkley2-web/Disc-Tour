@@ -9,7 +9,7 @@
 
 namespace
 {
-    constexpr float BasicShapeHalfExtentCm = 50.0f;
+    constexpr float FoliageBasicShapeHalfExtentCm = 50.0f;
     constexpr float CameraClearingRadiusCm = 1100.0f;
     constexpr float GalleryBufferCm = 350.0f;
     constexpr float LakeForestBufferCm = 700.0f;
@@ -107,8 +107,8 @@ namespace
         if (!Surface.SurfaceId.ToString().Contains(TEXT("LakeWater"))) return false;
         const FVector Local = Surface.Rotation.UnrotateVector(
             FVector(Candidate.X, Candidate.Y, Surface.LocationCm.Z) - Surface.LocationCm);
-        const float RadiusX = BasicShapeHalfExtentCm * FMath::Abs(Surface.Scale.X) + LakeForestBufferCm;
-        const float RadiusY = BasicShapeHalfExtentCm * FMath::Abs(Surface.Scale.Y) + LakeForestBufferCm;
+        const float RadiusX = FoliageBasicShapeHalfExtentCm * FMath::Abs(Surface.Scale.X) + LakeForestBufferCm;
+        const float RadiusY = FoliageBasicShapeHalfExtentCm * FMath::Abs(Surface.Scale.Y) + LakeForestBufferCm;
         if (Surface.Shape == EDiscGolfPrimitiveShape::Cylinder)
         {
             return FMath::Square(Local.X / RadiusX) + FMath::Square(Local.Y / RadiusY) <= 1.0f;

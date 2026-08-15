@@ -2,7 +2,7 @@
 
 ## Session 1 — project audit and plugin compile
 
-Date: 2026-08-14  
+Date: 2026-08-14
 Status: **SESSION 1: PASS**
 
 This session followed only `CODEX/01_AUDIT_AND_PLUGIN.md`. Sessions 2–16 remain deferred. The plugin is compiled and loadable, but its gameplay-adjacent systems are intentionally dormant.
@@ -131,4 +131,133 @@ An earlier, pre-plugin `PineRidgePlaySmokeTest` resolved a legal deep-rough lie 
 - Session 15: final vertical-slice integration.
 - Session 16: adapted playability monitoring and complete Smoke/Core Loop/Round/Persistence gates.
 
-No Session 2–16 plugin integration remains in this deliverable.
+At the Session 1 checkpoint, no Session 2–16 integration had been started.
+
+---
+
+## Session 2 — master character rig and IK foundation
+
+Date: 2026-08-14
+Status: **SESSION 2 STRUCTURAL ACCEPTANCE: PASS — MANUAL VISUAL GATES PENDING**
+
+This session followed `CODEX/02_MASTER_RIG_AND_IK.md` only. It establishes an unassigned character, skeleton, IK, Control Rig, and Animation Blueprint foundation. Session 3 throw/release integration and Session 4 runtime body-profile deformation remain deferred. The existing pawn, input, throw controller, release resolver, disc launch/flight, scoring, course, replay, and save systems remain authoritative.
+
+### Proxy source and project setup
+
+No compatible project-owned master character existed. The only prior skeletal content was an incompatible UE4 mannequin embedded in a vegetation vendor pack, so it was not modified or adopted as the DG master.
+
+- Generated `SourceArt/DiscGolf/Characters/SK_DG_Master_Proxy.blend` and `.fbx` from the v1.5 proxy generator in an isolated Blender 5.2.0 LTS process.
+- The generated character is a blocky, rigid-weighted validation proxy, not production character art.
+- Enabled Control Rig, IK Rig, and Full Body IK. Skeletal Mesh Modeling Tools is enabled only for Editor targets.
+- Added deterministic source validation, import, rig-authoring, and strict live-asset validation scripts under `Scripts/`.
+- One behavior-neutral project-source fix was required by a unity build: the private foliage constant `BasicShapeHalfExtentCm` was renamed to `FoliageBasicShapeHalfExtentCm` in `DiscGolfFoliagePresentationActor.cpp`. Its value and both uses are unchanged. No player, input, throw, release, flight, lie, scoring, course, replay, save, or configuration behavior changed.
+
+The source validation report records the earlier development-mirror path. The current `C:\DGTour` source files are byte-identical:
+
+| Source | SHA-256 |
+|---|---|
+| `SK_DG_Master_Proxy.blend` | `24E5B920A5EDC70E4DB51D4CFE4E02EEB65ED9D57C30640E2899C12AA320A40C` |
+| `SK_DG_Master_Proxy.fbx` | `82ED7FC89A572A346460CCB5530EA493B8397BC0D8BECBC2E22C64B8A31CD683` |
+
+### Assets created
+
+| Role | Object path |
+|---|---|
+| Master skeletal mesh | `/Game/DiscGolf/Characters/Meshes/SK_DG_Master` |
+| Master skeleton | `/Game/DiscGolf/Characters/Meshes/SKEL_DG_Master` |
+| IK Rig | `/Game/DiscGolf/Rigs/IK_DG_Master` |
+| Control Rig | `/Game/DiscGolf/Rigs/CR_DG_Master` |
+| Animation Blueprint | `/Game/DiscGolf/Animation/ABP_DG_Player` |
+| Baseline character profile | `/Game/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter` |
+| Short test fixture | `/Game/DiscGolf/Tests/Profiles/DA_DG_Test_ShortCompact` |
+| Tall test fixture | `/Game/DiscGolf/Tests/Profiles/DA_DG_Test_TallLongArms` |
+
+Exactly these eight Session 2 assets were added. No montage, animation sequence, throw notify, release callback, skeletal assignment, or gameplay adapter was created.
+
+### Master skeleton contract
+
+`Saved/CharacterFramework/Session2Validation.json` validates the live UE assets against v1.5 `DG_MasterSkeletonContract.json` version 1, SHA-256 `E2223DE774CE26900BD482130939EAAB6F813023EBB689447FCB00697C34A7B2`.
+
+- Exact 69/69 required bones and all 69 parent relationships.
+- Sole root is `root`; no extra Blender `Armature` root exists.
+- Imported proxy bounds are 168.0 x 22.5 x 171.25 cm.
+- All six required curve metadata names are present with no extras: `DG_FootPlant_L`, `DG_FootPlant_R`, `DG_ReachbackAlpha`, `DG_BraceAlpha`, `DG_ReleaseApproachAlpha`, and `DG_FollowThroughAlpha`.
+- Helper and grip bones are non-deforming and have no weighted vertex groups.
+- `disc_grip_l` and `disc_grip_r` are direct children of their matching hands. Their origins are mirrored at approximately `[+81.0, 3.5, 144.0]` and `[-81.0, 3.5, 144.0]` cm with 0.0 cm mirror error.
+- The source convention is a 5 cm palm-local helper whose primary axis points palm-outward toward the fingertips (`+X` left, `-X` right in the neutral T-pose). A real disc fit/orientation check remains a manual visual gate.
+
+### IK Rig
+
+`IK_DG_Master` uses `SK_DG_Master` as its preview mesh and contains exactly one enabled `/Script/IKRig.IKRigFBIKController`.
+
+- Solver root and retarget root: `pelvis`.
+- Root-motion bone: `root`.
+- Root behavior: Free; stretch disabled; 20 iterations, 10 sub-iterations, zero global pull-chain alpha.
+- Four connected goals, each with chain depth 2: `hand_l_Goal -> hand_l`, `hand_r_Goal -> hand_r`, `foot_l_Goal -> foot_l`, and `foot_r_Goal -> foot_r`.
+- Nine exact chains: Root (`root -> root`), Spine (`spine_01 -> spine_04`), Neck (`neck_01 -> head`), Arm L/R (`upperarm -> hand`), Leg L/R (`thigh -> foot`), and Foot L/R (`foot -> ball`). Chain ancestry is validated.
+
+### Control Rig and plant-foot foundation
+
+`CR_DG_Master` compiles up to date and imports all 69 skeleton bones and six curves. Its Forward Solve graph contains one pelvis-rooted `/Script/PBIK.RigUnit_PBIK` node with four effectors.
+
+- Hand transforms come from `ctrl_hand_l/r`. Their position and rotation alphas come from `dg_hand_ik_alpha_l/r`, both defaulting to `0.0` so the unused foundation cannot pin hands in the reference pose.
+- Foot transforms come from `ctrl_foot_l/r`. Their position and rotation alphas are driven by `DG_FootPlant_L/R`.
+- PBIK uses Free root behavior, stretch disabled, 10 sub-iterations, zero global pull-chain alpha, and chain depth 2.
+- Profile input controls exist for height, wingspan, shoulder width, torso length, leg length, and hand scale.
+
+This is a structurally validated plant-foot correction strategy, not a claim of stable feet during a keyed throw. The straight proxy reference limbs use non-Mannequin local axes, so mirrored elbow/knee preferred bend directions must be chosen from an in-editor compression test rather than copied from Epic mannequin defaults.
+
+### Animation Blueprint
+
+`ABP_DG_Player` targets `SKEL_DG_Master`, has AnimGraph and EventGraph foundations, generates `ABP_DG_Player_C`, and compiles up to date. Its parent class is `/Script/DiscGolfCharacterFramework.DiscGolfAnimInstance`.
+
+The Animation Blueprint is intentionally not assigned to `ADiscGolferPawn`. No plugin throw component, release notify, `OnDiscRelease` callback, or second release authority was added.
+
+### Body-profile fixtures
+
+All three fixtures share the same intended master mesh, skeleton, and Control Rig foundation. No alternate skeleton was created.
+
+| Profile | Height | Wingspan | Shoulder | Torso | Leg | Hand |
+|---|---:|---:|---:|---:|---:|---:|
+| ShortCompact | 155 cm | 0.94 | 0.94 | 0.96 | 0.95 | 0.95 |
+| Baseline | 183 cm | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
+| TallLongArms | 205 cm | 1.07 | 1.05 | 1.04 | 1.05 | 1.05 |
+
+The profile data and matching rig-input controls pass. Runtime profile-to-rig plumbing, actual mesh deformation, throw-style tuning, creator UI, and persistence are Session 4 work and are not claimed here.
+
+### Verification evidence
+
+| Gate | Result | Evidence |
+|---|---|---|
+| Python syntax | PASS | Session 2 production scripts compiled with UE/Python tooling |
+| Project validator | PASS | `Scripts/validate_project.py` |
+| Reference flight check | PASS | Existing flight, release, mirror, and ground envelopes unchanged |
+| Trajectory artifacts | PASS | 178 samples across 6 scenarios/presets |
+| UE Editor build | PASS | `DiscGolfTourEditor Win64 Development`, 109.89 s |
+| UE runtime build | PASS | `DiscGolfTour Win64 Development`, 295.54 s; linked `Binaries/Win64/DiscGolfTour.exe` |
+| Framework reflection | PASS | `Saved/Logs/CharacterFramework_Session2_Reflection.log`; 4 classes + 4 structs; 0 errors/warnings |
+| Strict live-asset validation | PASS | `Saved/Logs/CharacterFramework_Session2_Validation_Final.log`; 69 bones, 4 goals, 4 effectors, 3 profiles, `gameplay_wiring=NONE_SESSION_2`; 0 errors/warnings |
+| Validation-only rerun | PASS | `Saved/Logs/CharacterFramework_Session2_NoWriteRerun.log`; exit 0, 8/8 generated packages unchanged by SHA-256, `ChangedPackages=0`, 0 errors/warnings |
+| Full automation | PASS | `Saved/Logs/Automation_CharacterFramework_Session2_Full.log`; 102/102 successes, 0 failures/not-run |
+| Three-hole gameplay smoke | PASS | `Saved/Logs/ThreeHoleRoundSmoke_CharacterFramework_Session2.log`; 3/3 holes, 3 strokes on par 11 (-8) |
+
+Visual evidence:
+
+- `Saved/CharacterFramework/Screenshots/Session2_SK_DG_Master_Front_Skeleton.png`
+- `Saved/CharacterFramework/Screenshots/Session2_DiscGrip_L_Closeup.png`
+- `Saved/CharacterFramework/Screenshots/Session2_DiscGrip_R_Closeup.png`
+- `Saved/CharacterFramework/Screenshots/Session2_IK_DG_Master_Solver.png`
+- `Saved/CharacterFramework/Screenshots/Session2_CR_DG_Master_PBIK_Graph.png`
+
+### Preservation and deferred work
+
+The original 605 Content files retain baseline digest `92D95B055243221174413EE6AEC2B0564E8A7331E77B6486183773513142A561`. `DiscGolfTour.Build.cs` remains unchanged. `ADiscGolferPawn` remains the default pawn, and `RequestThrow -> LaunchThrow -> InitializeDisc/Throw` remains the only release/flight authority. The known pre-existing Pine Ridge final-Z miss remains untouched.
+
+Manual/in-editor acceptance is still required for mirrored elbow/knee bend directions, hand/foot PBIK compression under a real pose, plant-foot behavior during an authored throw, and production-disc fit at both grip helpers. The proxy is not production character art.
+
+- Session 2 visual closeout: mirrored elbow/knee compression, a transient non-production plant-foot stress pose, and grip orientation with the current gameplay disc visual.
+- Session 3: first RHBH animation/montage, phase/release/finished notifies, held-disc attachment, single one-way handoff into existing release authority, and gameplay assignment.
+- Session 4: runtime body/style deformation, profile plumbing, creator/save integration, and the three-profile animation matrix.
+- Session 5+: production mocap/retargeting, art, outfits, and later customization work.
+
+No Session 3 integration was started.
