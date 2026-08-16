@@ -532,6 +532,10 @@ Status: **SESSION 4 ACCEPTANCE: PASS.**
 
 The final line of the Session 3 record above describes the state at Session 3 closeout. Session 4 now adds a bounded body-profile and throw-style presentation layer on the accepted character foundation. It does not replace the player, throw command, release transaction, flight solver, wind, collision, lie, scoring, course, camera, or replay authorities established before this session.
 
+### Accepted Session 4 checkpoint
+
+The exact 35-file accepted Session 4 implementation was committed as `e7bce699fb95160ffe6ca2599c8d5cec22f09189` (`Session 4: integrate body and throw-style character creator`). The commit contains only the 19 documented modifications and 16 documented additions below. Generated evidence and the 647 unrelated pre-existing untracked environment, imported-content, configuration, and source-art files were not staged or incorporated.
+
 ### Source-of-truth and authority boundaries
 
 | Responsibility | Session 4 owner / boundary |
