@@ -29,8 +29,8 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfCurrentSaveSchemaAcceptanceTest,
 
 bool FDiscGolfCurrentSaveSchemaAcceptanceTest::RunTest(const FString& Parameters)
 {
-    TestEqual(TEXT("The current migration target remains schema 6"),
-        DiscGolfSaveSchema::CurrentVersion, 6);
+    TestEqual(TEXT("The current migration target is Session 4 schema 7"),
+        DiscGolfSaveSchema::CurrentVersion, 7);
     TestTrue(TEXT("The exact current schema is accepted"),
         DiscGolfSaveSchema::IsCurrent(DiscGolfSaveSchema::CurrentVersion));
     return true;

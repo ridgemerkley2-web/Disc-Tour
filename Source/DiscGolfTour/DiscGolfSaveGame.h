@@ -5,11 +5,12 @@
 #include "DiscGolfTypes.h"
 #include "DiscGolfRoundState.h"
 #include "DiscGolfPlayerExperience.h"
+#include "DiscGolfCharacterProfileRuntime.h"
 #include "DiscGolfSaveGame.generated.h"
 
 namespace DiscGolfSaveSchema
 {
-    inline constexpr int32 CurrentVersion = 6;
+    inline constexpr int32 CurrentVersion = 7;
 
     constexpr bool IsCurrent(const int32 Version)
     {
@@ -41,4 +42,5 @@ public:
     UPROPERTY(BlueprintReadWrite, SaveGame) FName PracticeMoldId = TEXT("Apex");
     UPROPERTY(BlueprintReadWrite, SaveGame) EDiscPlastic PracticePlastic = EDiscPlastic::Tour;
     UPROPERTY(BlueprintReadWrite, SaveGame) FDiscGolfPlayerSettings PlayerSettings;
+    UPROPERTY(BlueprintReadWrite, SaveGame) FDiscGolfCharacterProfileSaveData CharacterProfile;
 };

@@ -7,8 +7,12 @@
 #include "DiscGolfTourPlayerController.h"
 #include "DiscGolferPresentationComponent.h"
 #include "DiscGolfRHBHThrowAdapterComponent.h"
+#include "DiscGolfCharacterProfileRuntime.h"
 #include "DiscGolfCharacterProfile.h"
+#include "DiscGolfAppearanceComponent.h"
+#include "DiscGolfAnimInstance.h"
 #include "DiscGolfThrowComponent.h"
+#include "DiscGolfTourGameInstance.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
@@ -19,7 +23,96 @@
 #include "InputActionValue.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
 #include "UObject/ConstructorHelpers.h"
+
+namespace
+{
+    bool ResolveSession4ProfileOverride(
+        UObject* Outer,
+        FDGBodyProfile& OutBody,
+        FDGThrowStyle& OutStyle,
+        EDGHandedness& OutHandedness,
+        FString& OutLabel)
+    {
+        if (!FApp::IsUnattended()
+            || !FParse::Value(FCommandLine::Get(), TEXT("Session4Profile="), OutLabel))
+        {
+            return false;
+        }
+
+        const FString Normalized = OutLabel.ToLower();
+        const TCHAR* PresetPath = nullptr;
+        if (Normalized == TEXT("shortcompact") || Normalized == TEXT("short"))
+        {
+            PresetPath = TEXT("/Game/DiscGolf/Tests/Profiles/DA_DG_Test_ShortCompact.DA_DG_Test_ShortCompact");
+            OutLabel = TEXT("ShortCompact");
+        }
+        else if (Normalized == TEXT("baseline") || Normalized == TEXT("default"))
+        {
+            PresetPath = TEXT("/Game/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter.DA_DG_DefaultCharacter");
+            OutLabel = TEXT("Baseline");
+        }
+        else if (Normalized == TEXT("talllongarms") || Normalized == TEXT("tall"))
+        {
+            PresetPath = TEXT("/Game/DiscGolf/Tests/Profiles/DA_DG_Test_TallLongArms.DA_DG_Test_TallLongArms");
+            OutLabel = TEXT("TallLongArms");
+        }
+
+        if (PresetPath)
+        {
+            if (const UDiscGolfCharacterProfile* Preset = LoadObject<UDiscGolfCharacterProfile>(Outer, PresetPath))
+            {
+                OutBody = Preset->Body;
+                OutStyle = Preset->ThrowStyle;
+                OutHandedness = Preset->Handedness;
+                return true;
+            }
+            return false;
+        }
+
+        if (Normalized == TEXT("slidermin") || Normalized == TEXT("minimum"))
+        {
+            FDiscGolfCharacterProfileSaveData Minimum;
+            Minimum.HeightCm = DiscGolfCharacterCreatorSchema::MinHeightCm;
+            Minimum.WingspanScale = DiscGolfCharacterCreatorSchema::MinWingspanScale;
+            Minimum.ShoulderWidthScale = DiscGolfCharacterCreatorSchema::MinShoulderWidthScale;
+            Minimum.TorsoLengthScale = DiscGolfCharacterCreatorSchema::MinTorsoLengthScale;
+            Minimum.LegLengthScale = DiscGolfCharacterCreatorSchema::MinLegLengthScale;
+            Minimum.HandScale = DiscGolfCharacterCreatorSchema::MinHandScale;
+            Minimum.MassKg = DiscGolfCharacterCreatorSchema::MinMassKg;
+            Minimum.RunUpIntensity = Minimum.ReachBackAmount = Minimum.TorsoRotation = 0.0f;
+            Minimum.BraceIntensity = Minimum.Explosiveness = Minimum.FollowThrough = 0.0f;
+            OutBody = Minimum.ToBodyProfile();
+            OutStyle = Minimum.ToThrowStyle();
+            OutHandedness = EDGHandedness::Right;
+            OutLabel = TEXT("SliderMin");
+            return true;
+        }
+
+        if (Normalized == TEXT("slidermax") || Normalized == TEXT("maximum"))
+        {
+            FDiscGolfCharacterProfileSaveData Maximum;
+            Maximum.HeightCm = DiscGolfCharacterCreatorSchema::MaxHeightCm;
+            Maximum.WingspanScale = DiscGolfCharacterCreatorSchema::MaxWingspanScale;
+            Maximum.ShoulderWidthScale = DiscGolfCharacterCreatorSchema::MaxShoulderWidthScale;
+            Maximum.TorsoLengthScale = DiscGolfCharacterCreatorSchema::MaxTorsoLengthScale;
+            Maximum.LegLengthScale = DiscGolfCharacterCreatorSchema::MaxLegLengthScale;
+            Maximum.HandScale = DiscGolfCharacterCreatorSchema::MaxHandScale;
+            Maximum.MassKg = DiscGolfCharacterCreatorSchema::MaxMassKg;
+            Maximum.RunUpIntensity = Maximum.ReachBackAmount = Maximum.TorsoRotation = 1.0f;
+            Maximum.BraceIntensity = Maximum.Explosiveness = Maximum.FollowThrough = 1.0f;
+            OutBody = Maximum.ToBodyProfile();
+            OutStyle = Maximum.ToThrowStyle();
+            OutHandedness = EDGHandedness::Right;
+            OutLabel = TEXT("SliderMax");
+            return true;
+        }
+
+        return false;
+    }
+}
 
 ADiscGolferPawn::ADiscGolferPawn()
 {
@@ -73,6 +166,9 @@ ADiscGolferPawn::ADiscGolferPawn()
 
     HeldDiscVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldDiscVisual"));
     HeldDiscVisual->SetupAttachment(SkeletalMesh, TEXT("disc_grip_r"));
+    // Follow the profiled grip position/orientation without multiplying the
+    // fixed gameplay-Cylinder dimensions by Control Rig socket scale.
+    HeldDiscVisual->SetAbsolute(false, false, true);
     HeldDiscVisual->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     HeldDiscVisual->SetGenerateOverlapEvents(false);
     HeldDiscVisual->SetRelativeLocation(FVector::ZeroVector);
@@ -96,9 +192,11 @@ ADiscGolferPawn::ADiscGolferPawn()
     ThrowController = CreateDefaultSubobject<UThrowControllerComponent>(TEXT("ThrowController"));
     PresentationComponent = CreateDefaultSubobject<UDiscGolferPresentationComponent>(TEXT("GolferPresentation"));
     FrameworkThrowComponent = CreateDefaultSubobject<UDiscGolfThrowComponent>(TEXT("CharacterFrameworkThrow"));
+    CharacterAppearance = CreateDefaultSubobject<UDiscGolfAppearanceComponent>(TEXT("CharacterAppearance"));
     if (DefaultCharacterProfile.Succeeded())
     {
-        FrameworkThrowComponent->CharacterProfile = DefaultCharacterProfile.Object;
+        CharacterProfileTemplate = DefaultCharacterProfile.Object;
+        FrameworkThrowComponent->CharacterProfile = CharacterProfileTemplate;
     }
     RHBHThrowAdapter = CreateDefaultSubobject<UDiscGolfRHBHThrowAdapterComponent>(TEXT("RHBHThrowAdapter"));
     RHBHThrowMontage = RHBHMontage.Succeeded() ? RHBHMontage.Object : nullptr;
@@ -107,6 +205,35 @@ ADiscGolferPawn::ADiscGolferPawn()
 void ADiscGolferPawn::BeginPlay()
 {
     Super::BeginPlay();
+
+    if (CharacterProfileTemplate && FrameworkThrowComponent)
+    {
+        RuntimeCharacterProfile = DuplicateObject<UDiscGolfCharacterProfile>(
+            CharacterProfileTemplate, this, TEXT("RuntimeCharacterProfile"));
+        if (RuntimeCharacterProfile)
+        {
+            RuntimeCharacterProfile->SetFlags(RF_Transient);
+            FrameworkThrowComponent->CharacterProfile = RuntimeCharacterProfile;
+
+            FDGBodyProfile SavedBody = RuntimeCharacterProfile->Body;
+            FDGThrowStyle SavedStyle = RuntimeCharacterProfile->ThrowStyle;
+            EDGHandedness SavedHandedness = RuntimeCharacterProfile->Handedness;
+            if (const UDiscGolfTourGameInstance* Instance = Cast<UDiscGolfTourGameInstance>(GetGameInstance()))
+            {
+                Instance->GetCharacterProfile(SavedBody, SavedStyle, SavedHandedness);
+            }
+            FString Session4OverrideLabel;
+            if (ResolveSession4ProfileOverride(
+                    this, SavedBody, SavedStyle, SavedHandedness, Session4OverrideLabel))
+            {
+                UE_LOG(LogDiscGolfTour, Display,
+                    TEXT("SESSION 4 PROFILE OVERRIDE: %s (transient, save slot unchanged)."),
+                    *Session4OverrideLabel);
+            }
+            ApplyCharacterProfileUnchecked(SavedBody, SavedStyle, SavedHandedness);
+        }
+    }
+
     const bool bHasSkeletalAsset = SkeletalMesh && SkeletalMesh->GetSkeletalMeshAsset() != nullptr;
     if (SkeletalMesh) SkeletalMesh->SetVisibility(bHasSkeletalAsset);
     if (BodyMesh) BodyMesh->SetVisibility(!bHasSkeletalAsset);
@@ -120,6 +247,166 @@ void ADiscGolferPawn::BeginPlay()
         RHBHThrowAdapter->OnThrowRecovered.AddUniqueDynamic(
             this, &ADiscGolferPawn::HandleAnimatedThrowRecovered);
     }
+}
+
+bool ADiscGolferPawn::GetCharacterCreatorProfile(
+    FDGBodyProfile& OutBody,
+    FDGThrowStyle& OutStyle,
+    EDGHandedness& OutHandedness) const
+{
+    const UDiscGolfCharacterProfile* Profile = RuntimeCharacterProfile
+        ? RuntimeCharacterProfile.Get()
+        : (FrameworkThrowComponent ? FrameworkThrowComponent->CharacterProfile.Get() : nullptr);
+    if (!Profile)
+    {
+        return false;
+    }
+
+    OutBody = Profile->Body;
+    OutStyle = Profile->ThrowStyle;
+    OutHandedness = Profile->Handedness;
+    return true;
+}
+
+bool ADiscGolferPawn::IsCharacterProfileChangeSafe() const
+{
+    if (IsAnimatedThrowActive() || (ThrowController && ThrowController->IsTimingActive()))
+    {
+        return false;
+    }
+
+    const ADiscGolfTourGameMode* GameMode = GetWorld()
+        ? GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>() : nullptr;
+    return !GameMode || GameMode->CanOpenCharacterCreator();
+}
+
+bool ADiscGolferPawn::PreviewCharacterCreatorProfile(
+    const FDGBodyProfile& Body,
+    const FDGThrowStyle& Style,
+    EDGHandedness Handedness)
+{
+    if (!RuntimeCharacterProfile || !IsCharacterProfileChangeSafe())
+    {
+        return false;
+    }
+
+    ApplyCharacterProfileUnchecked(Body, Style, Handedness);
+    return true;
+}
+
+void ADiscGolferPawn::ApplyCharacterProfileUnchecked(
+    const FDGBodyProfile& Body,
+    const FDGThrowStyle& Style,
+    EDGHandedness Handedness)
+{
+    if (!RuntimeCharacterProfile)
+    {
+        return;
+    }
+
+    FDiscGolfCharacterProfileSaveData Safe =
+        FDiscGolfCharacterProfileSaveData::FromFramework(Body, Style, Handedness);
+    Safe.Sanitize();
+    RuntimeCharacterProfile->Body = Safe.ToBodyProfile();
+    RuntimeCharacterProfile->ThrowStyle = Safe.ToThrowStyle();
+    RuntimeCharacterProfile->Handedness = Safe.GetHandedness();
+
+    if (FrameworkThrowComponent)
+    {
+        FrameworkThrowComponent->CharacterProfile = RuntimeCharacterProfile;
+    }
+    if (CharacterAppearance)
+    {
+        CharacterAppearance->ApplyStandardMorphs(SkeletalMesh, RuntimeCharacterProfile->Body);
+    }
+    RefreshCharacterProfilePresentation();
+}
+
+void ADiscGolferPawn::RefreshCharacterProfilePresentation()
+{
+    if (!SkeletalMesh || !RuntimeCharacterProfile)
+    {
+        return;
+    }
+
+    // NativeUpdateAnimation normally performs this copy. Push it explicitly as
+    // well so a paused character-creator preview responds without a permanent
+    // actor/component Tick.
+    if (UDiscGolfAnimInstance* AnimInstance = Cast<UDiscGolfAnimInstance>(SkeletalMesh->GetAnimInstance()))
+    {
+        AnimInstance->BodyProfile = RuntimeCharacterProfile->Body;
+        AnimInstance->ThrowStyle = RuntimeCharacterProfile->ThrowStyle;
+        AnimInstance->Handedness = RuntimeCharacterProfile->Handedness;
+    }
+    SkeletalMesh->TickAnimation(0.0f, false);
+    SkeletalMesh->RefreshBoneTransforms();
+    SkeletalMesh->MarkRenderDynamicDataDirty();
+}
+
+void ADiscGolferPawn::BeginCharacterCreatorPreview()
+{
+    if (bCharacterCreatorPreviewActive || !CameraBoom || !Camera || !SkeletalMesh)
+    {
+        return;
+    }
+
+    bCharacterCreatorPreviewActive = true;
+    SavedPreviewCameraArmLength = CameraBoom->TargetArmLength;
+    SavedPreviewCameraSocketOffset = CameraBoom->SocketOffset;
+    SavedPreviewCameraBoomRotation = CameraBoom->GetRelativeRotation();
+    SavedPreviewCameraFov = Camera->FieldOfView;
+    SavedPreviewSkeletalRotation = SkeletalMesh->GetRelativeRotation();
+    bSavedSkeletalTickWhenPaused = SkeletalMesh->PrimaryComponentTick.bTickEvenWhenPaused;
+    bSavedCameraBoomTickWhenPaused = CameraBoom->PrimaryComponentTick.bTickEvenWhenPaused;
+
+    CameraBoom->PrimaryComponentTick.bTickEvenWhenPaused = true;
+    CameraBoom->TargetArmLength = 430.0f;
+    CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 70.0f);
+    CameraBoom->SetRelativeRotation(FRotator(-4.0f, 180.0f, 0.0f));
+    Camera->SetFieldOfView(46.0f);
+    SkeletalMesh->PrimaryComponentTick.bTickEvenWhenPaused = true;
+    RefreshCharacterProfilePresentation();
+}
+
+void ADiscGolferPawn::EndCharacterCreatorPreview(bool bRestoreView)
+{
+    if (!bCharacterCreatorPreviewActive)
+    {
+        return;
+    }
+
+    bCharacterCreatorPreviewActive = false;
+    if (SkeletalMesh)
+    {
+        SkeletalMesh->PrimaryComponentTick.bTickEvenWhenPaused = bSavedSkeletalTickWhenPaused;
+        if (bRestoreView)
+        {
+            SkeletalMesh->SetRelativeRotation(SavedPreviewSkeletalRotation);
+        }
+    }
+    if (bRestoreView && CameraBoom && Camera)
+    {
+        CameraBoom->TargetArmLength = SavedPreviewCameraArmLength;
+        CameraBoom->SocketOffset = SavedPreviewCameraSocketOffset;
+        CameraBoom->SetRelativeRotation(SavedPreviewCameraBoomRotation);
+        Camera->SetFieldOfView(SavedPreviewCameraFov);
+    }
+    if (CameraBoom)
+    {
+        CameraBoom->PrimaryComponentTick.bTickEvenWhenPaused = bSavedCameraBoomTickWhenPaused;
+    }
+}
+
+void ADiscGolferPawn::RotateCharacterCreatorPreview(float DeltaYawDegrees)
+{
+    if (!bCharacterCreatorPreviewActive || !SkeletalMesh || !FMath::IsFinite(DeltaYawDegrees))
+    {
+        return;
+    }
+
+    FRotator Rotation = SkeletalMesh->GetRelativeRotation();
+    Rotation.Yaw = FMath::UnwindDegrees(Rotation.Yaw + FMath::Clamp(DeltaYawDegrees, -45.0f, 45.0f));
+    SkeletalMesh->SetRelativeRotation(Rotation);
 }
 
 void ADiscGolferPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -199,6 +486,15 @@ bool ADiscGolferPawn::IsAnimatedThrowActive() const
 bool ADiscGolferPawn::TryStartAnimatedRHBHThrow(const FThrowCommand& AuthoritativeCommand)
 {
     if (!RHBHThrowAdapter || !RHBHThrowMontage || !SkeletalMesh)
+    {
+        return false;
+    }
+
+    // Session 4 persists handedness but deliberately does not fabricate a
+    // mirrored LHBH montage. Left-handed players retain the legacy synchronous
+    // gameplay path until a separately authored animation is accepted.
+    if (FrameworkThrowComponent && FrameworkThrowComponent->CharacterProfile
+        && FrameworkThrowComponent->CharacterProfile->Handedness != EDGHandedness::Right)
     {
         return false;
     }

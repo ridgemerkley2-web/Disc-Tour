@@ -1,4 +1,5 @@
 #include "DiscGolfSession3AssetUtility.h"
+#include "DiscGolfSession4AssetUtility.h"
 
 #include "Animation/AnimBlueprint.h"
 #include "Animation/AnimData/CurveIdentifier.h"
@@ -39,6 +40,7 @@ const TCHAR* MontagePath = TEXT("/Game/DiscGolf/Animation/Throws/AM_DG_RHBH_Prot
 
 const TCHAR* LocalRefPoseClassPath = TEXT("/Script/AnimGraph.AnimGraphNode_LocalRefPose");
 const TCHAR* SlotClassPath = TEXT("/Script/AnimGraph.AnimGraphNode_Slot");
+const TCHAR* ControlRigNodeClassPath = TEXT("/Script/ControlRigDeveloper.AnimGraphNode_ControlRig");
 const TCHAR* RootClassPath = TEXT("/Script/AnimGraph.AnimGraphNode_Root");
 const TCHAR* PhaseNotifyClassPath = TEXT("/Script/DiscGolfCharacterFramework.AnimNotify_ThrowPhase");
 const TCHAR* ReleaseNotifyClassPath = TEXT("/Script/DiscGolfCharacterFramework.AnimNotify_DiscRelease");
@@ -1311,14 +1313,16 @@ bool ValidateAnimGraphAsset(UAnimBlueprint* Blueprint, USkeleton* Skeleton,
         return false;
     }
     UEdGraph* Graph = FindAnimGraph(Blueprint);
-    if (!Graph || Graph->Nodes.Num() != 3)
+    if (!Graph || (Graph->Nodes.Num() != 3 && Graph->Nodes.Num() != 4))
     {
-        Error = TEXT("ABP_DG_Player AnimGraph must contain exactly RefPose, DefaultSlot, and Root");
+        Error = TEXT("ABP_DG_Player AnimGraph must match the exact Session 3 or Session 4 pose-node contract");
         return false;
     }
+    const bool bSession4Graph = Graph->Nodes.Num() == 4;
 
     UEdGraphNode* RefNode = nullptr;
     UEdGraphNode* SlotNode = nullptr;
+    UEdGraphNode* ControlRigNode = nullptr;
     UEdGraphNode* RootNode = nullptr;
     TArray<TSharedPtr<FJsonValue>> NodeJson;
     for (UEdGraphNode* Node : Graph->Nodes)
@@ -1326,6 +1330,7 @@ bool ValidateAnimGraphAsset(UAnimBlueprint* Blueprint, USkeleton* Skeleton,
         const FString Path = Node ? Node->GetClass()->GetPathName() : FString();
         if (Path == LocalRefPoseClassPath) RefNode = Node;
         else if (Path == SlotClassPath) SlotNode = Node;
+        else if (bSession4Graph && Path == ControlRigNodeClassPath) ControlRigNode = Node;
         else if (Path == RootClassPath) RootNode = Node;
         else
         {
@@ -1338,6 +1343,34 @@ bool ValidateAnimGraphAsset(UAnimBlueprint* Blueprint, USkeleton* Skeleton,
     {
         Error = TEXT("ABP_DG_Player node set or slot name is invalid");
         return false;
+    }
+    if (bSession4Graph)
+    {
+        if (!ControlRigNode)
+        {
+            Error = TEXT("Session 4 ABP graph is missing its post-montage Control Rig node");
+            return false;
+        }
+        const FString Session4Validation = UDiscGolfSession4AssetUtility::ValidateSession4Assets();
+        TSharedPtr<FJsonObject> Session4Json;
+        const TSharedRef<TJsonReader<>> Session4Reader = TJsonReaderFactory<>::Create(Session4Validation);
+        FString Session4Status;
+        if (!FJsonSerializer::Deserialize(Session4Reader, Session4Json) || !Session4Json.IsValid() ||
+            !Session4Json->TryGetStringField(TEXT("status"), Session4Status) ||
+            !Session4Status.StartsWith(TEXT("PASS")))
+        {
+            Error = TEXT("Session 4 ABP graph failed its strict Control Rig class, mapping, transfer, or pose-flow contract");
+            return false;
+        }
+
+        OutObject->SetStringField(TEXT("status"), TEXT("PASS"));
+        OutObject->SetStringField(TEXT("path"), Blueprint->GetPathName());
+        OutObject->SetStringField(TEXT("parent_class"), Blueprint->ParentClass->GetPathName());
+        OutObject->SetStringField(TEXT("slot"), DefaultSlot.ToString());
+        OutObject->SetStringField(TEXT("pose_flow"), TEXT("LocalRefPose -> DefaultSlot -> ControlRig -> Root"));
+        OutObject->SetStringField(TEXT("session4_contract"), Session4Status);
+        OutObject->SetArrayField(TEXT("node_classes"), NodeJson);
+        return true;
     }
     UEdGraphPin* RefOut = FindPosePin(RefNode, EGPD_Output);
     UEdGraphPin* SlotIn = FindPosePin(SlotNode, EGPD_Input);

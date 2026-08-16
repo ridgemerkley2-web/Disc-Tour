@@ -40,11 +40,11 @@
 
 namespace DiscGolfSession3VisualCapture
 {
-constexpr double ReadinessTimeoutSeconds = 8.0;
+constexpr double Session3VisualReadinessTimeoutSeconds = 8.0;
 constexpr double TimingCaptureSeconds = 0.12;
 constexpr double ScreenshotTimeoutSeconds = 30.0;
-constexpr double ReleaseTimeoutSeconds = 5.0;
-constexpr double GameplayRecoveryTimeoutSeconds = 65.0;
+constexpr double Session3VisualReleaseTimeoutSeconds = 5.0;
+constexpr double Session3VisualGameplayRecoveryTimeoutSeconds = 65.0;
 constexpr double ProfileTimeoutSeconds = 6.0;
 // Frame 54 is the validated reachback fixture. The grip is clear of the torso
 // here, so the real attached Cylinder reads cleanly before release.
@@ -284,7 +284,7 @@ void ADiscGolfSession3VisualCaptureRunner::Tick(float DeltaSeconds)
                 }
                 SetStage(EStage::BuildingLiveCommand);
             }
-            else if (SecondsInStage() > ReadinessTimeoutSeconds)
+            else if (SecondsInStage() > Session3VisualReadinessTimeoutSeconds)
             {
                 Fail(TEXT("legal tee throw did not become available"));
             }
@@ -302,14 +302,14 @@ void ADiscGolfSession3VisualCaptureRunner::Tick(float DeltaSeconds)
             {
                 PrepareHeldCapture();
             }
-            else if (SecondsInStage() > ReleaseTimeoutSeconds)
+            else if (SecondsInStage() > Session3VisualReleaseTimeoutSeconds)
             {
                 Fail(TEXT("held-disc montage pose was not reached"));
             }
             break;
 
         case EStage::WaitingForRelease:
-            if (SecondsInStage() > ReleaseTimeoutSeconds)
+            if (SecondsInStage() > Session3VisualReleaseTimeoutSeconds)
             {
                 Fail(TEXT("DG Release Disc did not fire during visual capture"));
             }
@@ -328,7 +328,7 @@ void ADiscGolfSession3VisualCaptureRunner::Tick(float DeltaSeconds)
                 bLiveFollowThroughReached = ThrowAdapter->IsThrowActive();
                 PrepareFollowThroughCapture();
             }
-            else if (SecondsInStage() > ReleaseTimeoutSeconds)
+            else if (SecondsInStage() > Session3VisualReleaseTimeoutSeconds)
             {
                 Fail(TEXT("follow-through montage pose was not reached"));
             }
@@ -342,7 +342,7 @@ void ADiscGolfSession3VisualCaptureRunner::Tick(float DeltaSeconds)
             {
                 PrepareRecoveredCapture();
             }
-            else if (SecondsInStage() > GameplayRecoveryTimeoutSeconds)
+            else if (SecondsInStage() > Session3VisualGameplayRecoveryTimeoutSeconds)
             {
                 Fail(TEXT("flight/lie/camera path did not recover before visual timeout"));
             }

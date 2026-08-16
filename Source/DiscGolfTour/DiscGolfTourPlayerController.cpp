@@ -1,5 +1,9 @@
 #include "DiscGolfTourPlayerController.h"
 
+#include "DiscGolfCharacterCreatorWidget.h"
+#include "DiscGolfCharacterProfileRuntime.h"
+#include "DiscGolfCharacterProfile.h"
+#include "DiscGolferPawn.h"
 #include "DiscGolfInputConfig.h"
 #include "DiscGolfPlayerExperience.h"
 #include "DiscGolfTourGameInstance.h"
@@ -8,10 +12,13 @@
 #include "EnhancedInputSubsystems.h"
 #include "Engine/Engine.h"
 #include "Engine/LocalPlayer.h"
+#include "Framework/Application/SlateApplication.h"
 #include "GameplayTagContainer.h"
 #include "InputKeyEventArgs.h"
+#include "Misc/PackageName.h"
 #include "PlayerMappableKeySettings.h"
 #include "UserSettings/EnhancedInputUserSettings.h"
+#include "Blueprint/UserWidget.h"
 
 namespace
 {
@@ -28,7 +35,22 @@ namespace
         }
         return false;
     }
+
+    void SanitizeCreatorProfile(
+        FDGBodyProfile& Body,
+        FDGThrowStyle& ThrowStyle,
+        EDGHandedness& Handedness)
+    {
+        FDiscGolfCharacterProfileSaveData Safe =
+            FDiscGolfCharacterProfileSaveData::FromFramework(Body, ThrowStyle, Handedness);
+        Safe.Sanitize();
+        Body = Safe.ToBodyProfile();
+        ThrowStyle = Safe.ToThrowStyle();
+        Handedness = Safe.GetHandedness();
+    }
 }
+
+ADiscGolfTourPlayerController::ADiscGolfTourPlayerController() = default;
 
 void ADiscGolfTourPlayerController::BeginPlay()
 {
@@ -41,6 +63,11 @@ void ADiscGolfTourPlayerController::BeginPlay()
 
 void ADiscGolfTourPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+    if (bCharacterCreatorOpen)
+    {
+        CloseCharacterCreator(true);
+    }
+
     if (bGameplayContextAdded && EffectiveInputConfig && EffectiveInputConfig->GameplayMappingContext)
     {
         if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
@@ -59,6 +86,19 @@ void ADiscGolfTourPlayerController::EndPlay(const EEndPlayReason::Type EndPlayRe
 bool ADiscGolfTourPlayerController::InputKey(const FInputKeyEventArgs& Params)
 {
     const bool bPressed = Params.Event == IE_Pressed;
+
+    if (bCharacterCreatorOpen)
+    {
+        if (bPressed && IsControlsToggleKey(Params.Key))
+        {
+            CancelCharacterCreator();
+            return true;
+        }
+
+        // Gameplay mapping is disabled while the creator is open. Let Slate
+        // receive navigation, slider, button and controller-focus input.
+        return Super::InputKey(Params);
+    }
 
     if (!bControlsMenuOpen && bPressed && Params.Key == EKeys::F9)
     {
@@ -125,7 +165,8 @@ bool ADiscGolfTourPlayerController::InputKey(const FInputKeyEventArgs& Params)
             }
             else if (IsAnyOf(Params.Key, {EKeys::Enter, EKeys::SpaceBar, EKeys::Gamepad_FaceButton_Bottom}))
             {
-                if (!bSettingsPage) BeginControlBindingCapture();
+                if (bSettingsPage) OpenCharacterCreator();
+                else BeginControlBindingCapture();
             }
             else if (IsAnyOf(Params.Key, {EKeys::R, EKeys::Gamepad_FaceButton_Top}))
             {
@@ -242,6 +283,320 @@ void ADiscGolfTourPlayerController::SetGameplayContextEnabled(bool bEnabled)
             bGameplayContextAdded = false;
         }
     }
+}
+
+bool ADiscGolfTourPlayerController::OpenCharacterCreator()
+{
+    if (bCharacterCreatorOpen)
+    {
+        return true;
+    }
+
+    ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn());
+    if (!Golfer || !Golfer->IsCharacterProfileChangeSafe())
+    {
+        ControlsStatusText = TEXT("Character creator unavailable while a throw, flight, replay or transition is active.");
+        CharacterCreatorStatusText = ControlsStatusText;
+        return false;
+    }
+
+    if (!Golfer->GetCharacterCreatorProfile(
+            CharacterCreatorOpeningBody,
+            CharacterCreatorOpeningThrowStyle,
+            CharacterCreatorOpeningHandedness))
+    {
+        ControlsStatusText = TEXT("Character creator could not read the active profile; no values were changed.");
+        CharacterCreatorStatusText = ControlsStatusText;
+        return false;
+    }
+    SanitizeCreatorProfile(
+        CharacterCreatorOpeningBody,
+        CharacterCreatorOpeningThrowStyle,
+        CharacterCreatorOpeningHandedness);
+
+    const bool bOpenedControlsMenuHere = !bControlsMenuOpen;
+    if (bOpenedControlsMenuHere)
+    {
+        OpenControlsMenu();
+    }
+
+    TSubclassOf<UDiscGolfCharacterCreatorWidget> EffectiveWidgetClass = CharacterCreatorWidgetClass;
+    if (!EffectiveWidgetClass)
+    {
+        // A later empty Widget Blueprint can supply art without replacing the
+        // functional native Slate tree. Missing optional content stays silent.
+        const FString WidgetPackage = TEXT("/Game/DiscGolf/UI/WBP_DG_CharacterCreator");
+        if (FPackageName::DoesPackageExist(WidgetPackage))
+        {
+            EffectiveWidgetClass = LoadClass<UDiscGolfCharacterCreatorWidget>(
+                nullptr,
+                TEXT("/Game/DiscGolf/UI/WBP_DG_CharacterCreator.WBP_DG_CharacterCreator_C"));
+        }
+    }
+    if (!EffectiveWidgetClass)
+    {
+        EffectiveWidgetClass = UDiscGolfCharacterCreatorWidget::StaticClass();
+    }
+
+    CharacterCreatorWidget = CreateWidget<UDiscGolfCharacterCreatorWidget>(this, EffectiveWidgetClass);
+    if (!CharacterCreatorWidget)
+    {
+        ControlsStatusText = TEXT("Character creator UI could not be created; active profile was retained.");
+        CharacterCreatorStatusText = ControlsStatusText;
+        if (bOpenedControlsMenuHere)
+        {
+            CloseControlsMenu();
+        }
+        return false;
+    }
+
+    CharacterCreatorWidget->InitializeCreator(
+        this,
+        CharacterCreatorOpeningBody,
+        CharacterCreatorOpeningThrowStyle,
+        CharacterCreatorOpeningHandedness);
+    if (!CharacterCreatorWidget->AddToPlayerScreen(1000))
+    {
+        CharacterCreatorWidget = nullptr;
+        ControlsStatusText = TEXT("Character creator UI could not join the local player screen; active profile was retained.");
+        CharacterCreatorStatusText = ControlsStatusText;
+        if (bOpenedControlsMenuHere)
+        {
+            CloseControlsMenu();
+        }
+        return false;
+    }
+
+    bCharacterCreatorPreviousMouseCursor = bShowMouseCursor;
+    bCharacterCreatorOpen = true;
+    CharacterCreatorStatusText = TEXT("Live preview active. Apply saves to the existing local profile; Cancel restores the opening values.");
+    Golfer->BeginCharacterCreatorPreview();
+
+    bShowMouseCursor = true;
+    FInputModeGameAndUI InputMode;
+    const TSharedPtr<SWidget> InitialFocusWidget = CharacterCreatorWidget->GetInitialFocusWidget();
+    InputMode.SetWidgetToFocus(InitialFocusWidget.IsValid()
+        ? InitialFocusWidget.ToSharedRef()
+        : CharacterCreatorWidget->TakeWidget());
+    InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+    InputMode.SetHideCursorDuringCapture(false);
+    SetInputMode(InputMode);
+    if (InitialFocusWidget.IsValid() && FSlateApplication::IsInitialized())
+    {
+        FSlateApplication::Get().SetKeyboardFocus(InitialFocusWidget, EFocusCause::SetDirectly);
+    }
+    FlushPressedKeys();
+    return true;
+}
+
+bool ADiscGolfTourPlayerController::PreviewCharacterCreatorDraft(
+    const FDGBodyProfile& Body,
+    const FDGThrowStyle& ThrowStyle,
+    EDGHandedness Handedness)
+{
+    if (!bCharacterCreatorOpen)
+    {
+        return false;
+    }
+
+    ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn());
+    if (!Golfer || !Golfer->IsCharacterProfileChangeSafe())
+    {
+        CharacterCreatorStatusText = TEXT("Preview blocked until the active gameplay transition finishes.");
+        return false;
+    }
+
+    FDGBodyProfile SafeBody = Body;
+    FDGThrowStyle SafeThrowStyle = ThrowStyle;
+    EDGHandedness SafeHandedness = Handedness;
+    SanitizeCreatorProfile(SafeBody, SafeThrowStyle, SafeHandedness);
+    if (!Golfer->PreviewCharacterCreatorProfile(SafeBody, SafeThrowStyle, SafeHandedness))
+    {
+        CharacterCreatorStatusText = TEXT("The current pawn rejected that preview; the last valid profile remains active.");
+        return false;
+    }
+
+    CharacterCreatorStatusText = SafeHandedness == EDGHandedness::Left
+        ? TEXT("Left handed saved-data preview. Animated LHBH is unavailable; gameplay uses the existing non-animated fallback.")
+        : TEXT("Live right-handed profile preview applied to the existing player pawn.");
+    return true;
+}
+
+bool ADiscGolfTourPlayerController::ResolveCharacterCreatorPreset(
+    FName PresetId,
+    FDGBodyProfile& OutBody,
+    FDGThrowStyle& OutThrowStyle,
+    EDGHandedness& OutHandedness) const
+{
+    const TCHAR* AssetPath = nullptr;
+    if (PresetId == FName(TEXT("Baseline")) || PresetId == FName(TEXT("Default")))
+    {
+        AssetPath = TEXT("/Game/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter.DA_DG_DefaultCharacter");
+    }
+    else if (PresetId == FName(TEXT("ShortCompact")))
+    {
+        AssetPath = TEXT("/Game/DiscGolf/Tests/Profiles/DA_DG_Test_ShortCompact.DA_DG_Test_ShortCompact");
+    }
+    else if (PresetId == FName(TEXT("TallLongArms")))
+    {
+        AssetPath = TEXT("/Game/DiscGolf/Tests/Profiles/DA_DG_Test_TallLongArms.DA_DG_Test_TallLongArms");
+    }
+
+    const UDiscGolfCharacterProfile* Profile = AssetPath
+        ? LoadObject<UDiscGolfCharacterProfile>(nullptr, AssetPath)
+        : nullptr;
+    if (!Profile)
+    {
+        return false;
+    }
+
+    OutBody = Profile->Body;
+    OutThrowStyle = Profile->ThrowStyle;
+    OutHandedness = Profile->Handedness;
+    SanitizeCreatorProfile(OutBody, OutThrowStyle, OutHandedness);
+    return true;
+}
+
+bool ADiscGolfTourPlayerController::LoadCharacterCreatorPreset(
+    FName PresetId,
+    FDGBodyProfile& OutBody,
+    FDGThrowStyle& OutThrowStyle,
+    EDGHandedness& OutHandedness)
+{
+    if (!bCharacterCreatorOpen
+        || !ResolveCharacterCreatorPreset(PresetId, OutBody, OutThrowStyle, OutHandedness))
+    {
+        CharacterCreatorStatusText = TEXT("Requested profile preset is unavailable; the current draft was retained.");
+        return false;
+    }
+
+    if (!PreviewCharacterCreatorDraft(OutBody, OutThrowStyle, OutHandedness))
+    {
+        return false;
+    }
+    CharacterCreatorStatusText = FString::Printf(
+        TEXT("%s loaded into the live draft. Apply to save or Cancel to restore the opening profile."),
+        *PresetId.ToString());
+    return true;
+}
+
+bool ADiscGolfTourPlayerController::ResetCharacterCreatorDraft(
+    FDGBodyProfile& OutBody,
+    FDGThrowStyle& OutThrowStyle,
+    EDGHandedness& OutHandedness)
+{
+    if (!bCharacterCreatorOpen)
+    {
+        return false;
+    }
+
+    OutBody = CharacterCreatorOpeningBody;
+    OutThrowStyle = CharacterCreatorOpeningThrowStyle;
+    OutHandedness = CharacterCreatorOpeningHandedness;
+    if (!PreviewCharacterCreatorDraft(OutBody, OutThrowStyle, OutHandedness))
+    {
+        return false;
+    }
+    CharacterCreatorStatusText = TEXT("Draft reset to the profile that was active when the creator opened.");
+    return true;
+}
+
+bool ADiscGolfTourPlayerController::ApplyCharacterCreatorDraft(
+    const FDGBodyProfile& Body,
+    const FDGThrowStyle& ThrowStyle,
+    EDGHandedness Handedness)
+{
+    if (!bCharacterCreatorOpen)
+    {
+        return false;
+    }
+
+    FDGBodyProfile SafeBody = Body;
+    FDGThrowStyle SafeThrowStyle = ThrowStyle;
+    EDGHandedness SafeHandedness = Handedness;
+    SanitizeCreatorProfile(SafeBody, SafeThrowStyle, SafeHandedness);
+    if (!PreviewCharacterCreatorDraft(SafeBody, SafeThrowStyle, SafeHandedness))
+    {
+        return false;
+    }
+
+    UDiscGolfTourGameInstance* Instance = Cast<UDiscGolfTourGameInstance>(GetGameInstance());
+    if (!Instance || !Instance->UpdateCharacterProfile(SafeBody, SafeThrowStyle, SafeHandedness))
+    {
+        CharacterCreatorStatusText = TEXT("Profile save failed. The creator remains open and no saved profile was replaced.");
+        return false;
+    }
+
+    CharacterCreatorStatusText = SafeHandedness == EDGHandedness::Left
+        ? TEXT("Profile saved. Animated LHBH remains deferred; the documented gameplay fallback is active.")
+        : TEXT("Profile saved to the existing local player profile.");
+    ControlsStatusText = CharacterCreatorStatusText;
+    CloseCharacterCreator(false);
+    return true;
+}
+
+void ADiscGolfTourPlayerController::CancelCharacterCreator()
+{
+    if (!bCharacterCreatorOpen)
+    {
+        return;
+    }
+
+    ControlsStatusText = TEXT("Character changes cancelled; the opening profile was restored.");
+    CloseCharacterCreator(true);
+}
+
+void ADiscGolfTourPlayerController::RotateCharacterCreatorPreview(float DeltaYawDegrees)
+{
+    if (!bCharacterCreatorOpen || !FMath::IsFinite(DeltaYawDegrees))
+    {
+        return;
+    }
+    if (ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn()))
+    {
+        Golfer->RotateCharacterCreatorPreview(FMath::Clamp(DeltaYawDegrees, -45.0f, 45.0f));
+    }
+}
+
+void ADiscGolfTourPlayerController::CloseCharacterCreator(bool bRestoreOpeningProfile)
+{
+    if (!bCharacterCreatorOpen)
+    {
+        return;
+    }
+
+    if (ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn()))
+    {
+        if (bRestoreOpeningProfile)
+        {
+            if (!Golfer->PreviewCharacterCreatorProfile(
+                    CharacterCreatorOpeningBody,
+                    CharacterCreatorOpeningThrowStyle,
+                    CharacterCreatorOpeningHandedness))
+            {
+                ControlsStatusText = TEXT("Cancel is waiting for a safe profile transition; the creator remains open.");
+                CharacterCreatorStatusText = ControlsStatusText;
+                return;
+            }
+        }
+        Golfer->EndCharacterCreatorPreview(true);
+    }
+
+    if (CharacterCreatorWidget)
+    {
+        CharacterCreatorWidget->RemoveFromParent();
+        CharacterCreatorWidget = nullptr;
+    }
+    bCharacterCreatorOpen = false;
+    bShowMouseCursor = bCharacterCreatorPreviousMouseCursor;
+
+    if (bControlsMenuOpen)
+    {
+        CloseControlsMenu();
+    }
+    FInputModeGameOnly InputMode;
+    SetInputMode(InputMode);
+    FlushPressedKeys();
 }
 
 void ADiscGolfTourPlayerController::OpenControlsMenu()

@@ -31,6 +31,7 @@
 #include "DiscGolfFixtureQaRunner.h"
 #include "DiscGolfSession3SmokeRunner.h"
 #include "DiscGolfSession3VisualCaptureRunner.h"
+#include "DiscGolfSession4VisualCaptureRunner.h"
 #include "DiscGolfEnvironmentController.h"
 #include "DiscGolfWorldFixtureActor.h"
 #include "ThrowControllerComponent.h"
@@ -301,10 +302,12 @@ void ADiscGolfTourGameMode::BeginPlay()
         FCommandLine::Get(), TEXT("Session3OneThrowSmokeTest"));
     const bool bSession3VisualCaptureRequested = FParse::Param(
         FCommandLine::Get(), TEXT("Session3VisualCapture"));
+    const bool bSession4VisualCaptureRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Session4VisualCapture"));
     FString InitialCourse = (bRouteTelemetryRequested || bGalleryLakeWaterSmokeRequested
         || bDenseForestSmokeRequested || bGroundGrassSmokeRequested
         || bHole1FlightRouteSmokeRequested || bSession3OneThrowSmokeRequested
-        || bSession3VisualCaptureRequested)
+        || bSession3VisualCaptureRequested || bSession4VisualCaptureRequested)
         ? TEXT("PineRidge") : TEXT("Regression");
     const bool bCourseOverridden = FParse::Value(FCommandLine::Get(), TEXT("Course="), InitialCourse);
     if (!LoadCourse(InitialCourse))
@@ -337,6 +340,7 @@ void ADiscGolfTourGameMode::BeginPlay()
         || bHole1FlightRouteSmokeRequested
         || bSession3OneThrowSmokeRequested
         || bSession3VisualCaptureRequested
+        || bSession4VisualCaptureRequested
         || FParse::Param(FCommandLine::Get(), TEXT("FixtureCollisionSmokeTest"))
         || bGalleryLakeWaterSmokeRequested
         || bDenseForestSmokeRequested
@@ -419,7 +423,26 @@ void ADiscGolfTourGameMode::BeginPlay()
         return;
     }
 
-    if (bSession3VisualCaptureRequested)
+    if (bSession4VisualCaptureRequested)
+    {
+        Session4VisualCaptureRunner = GetWorld()->SpawnActor<ADiscGolfSession4VisualCaptureRunner>();
+        if (!Session4VisualCaptureRunner)
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("DG_SESSION4_VISUAL_CAPTURE: FAIL runner could not spawn."));
+            FPlatformMisc::RequestExitWithStatus(false, 1);
+            return;
+        }
+        FTimerHandle Session4VisualCaptureTimer;
+        GetWorldTimerManager().SetTimer(
+            Session4VisualCaptureTimer,
+            FTimerDelegate::CreateUObject(
+                Session4VisualCaptureRunner,
+                &ADiscGolfSession4VisualCaptureRunner::Start),
+            0.5f,
+            false);
+    }
+    else if (bSession3VisualCaptureRequested)
     {
         Session3VisualCaptureRunner = GetWorld()->SpawnActor<ADiscGolfSession3VisualCaptureRunner>();
         if (!Session3VisualCaptureRunner)
@@ -1092,6 +1115,19 @@ bool ADiscGolfTourGameMode::CanPlayerThrow() const
         ActiveHole != nullptr, ActiveDisc != nullptr, ReplayActor != nullptr,
         IsCourseFlyoverActive(), bHoleComplete, bScorecardVisible, bHoleIntroActive)
         && !bRegressionActive && !bLieTransitionActive
+        && (!Golfer || !Golfer->IsAnimatedThrowActive());
+}
+
+bool ADiscGolfTourGameMode::CanOpenCharacterCreator() const
+{
+    const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+        UGameplayStatics::GetPlayerPawn(this, 0));
+    return ActiveDisc == nullptr
+        && ReplayActor == nullptr
+        && !IsCourseFlyoverActive()
+        && !bRegressionActive
+        && !bLieTransitionActive
+        && !bHoleIntroActive
         && (!Golfer || !Golfer->IsAnimatedThrowActive());
 }
 

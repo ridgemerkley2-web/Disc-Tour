@@ -25,6 +25,7 @@ class ADiscGolfLevelDesignReviewActor;
 class ADiscGolfFixtureQaRunner;
 class ADiscGolfSession3SmokeRunner;
 class ADiscGolfSession3VisualCaptureRunner;
+class ADiscGolfSession4VisualCaptureRunner;
 
 USTRUCT()
 struct FDiscGolfHole1FlightRouteResult
@@ -110,6 +111,12 @@ public:
     UFUNCTION(Exec) void DGT_SaveRouteTelemetry() { SaveRouteTelemetry(); }
     UFUNCTION(Exec) void DGT_StopRouteTelemetry() { StopRouteTelemetry(); }
     UFUNCTION(BlueprintPure) bool CanPlayerThrow() const;
+    /**
+     * True only while the local player can safely pause gameplay and edit the
+     * presentation-only character profile. This deliberately excludes every
+     * active throw, camera, replay, and lie-transition authority.
+     */
+    UFUNCTION(BlueprintPure) bool CanOpenCharacterCreator() const;
 
     UFUNCTION(BlueprintPure) int32 GetStrokes() const { return Strokes; }
     UFUNCTION(BlueprintPure) int32 GetPenaltyStrokes() const { return PenaltyStrokes; }
@@ -184,6 +191,7 @@ private:
     UPROPERTY() TObjectPtr<ADiscGolfFixtureQaRunner> FixtureQaRunner;
     UPROPERTY() TObjectPtr<ADiscGolfSession3SmokeRunner> Session3SmokeRunner;
     UPROPERTY() TObjectPtr<ADiscGolfSession3VisualCaptureRunner> Session3VisualCaptureRunner;
+    UPROPERTY() TObjectPtr<ADiscGolfSession4VisualCaptureRunner> Session4VisualCaptureRunner;
     UPROPERTY() FDiscGolfCourseManifestDefinition ActiveCourseManifest;
     UPROPERTY() TArray<FDiscGolfHoleBlockoutDefinition> ActiveHoleDefinitions;
     UPROPERTY() FDiscGolfRoundState RoundState;

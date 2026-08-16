@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "DiscGolfCharacterTypes.h"
 #include "DiscGolfTypes.h"
 #include "DiscGolferPawn.generated.h"
 
@@ -15,6 +16,8 @@ class UThrowControllerComponent;
 class UDiscGolferPresentationComponent;
 class UDiscGolfThrowComponent;
 class UDiscGolfRHBHThrowAdapterComponent;
+class UDiscGolfAppearanceComponent;
+class UDiscGolfCharacterProfile;
 class UAnimMontage;
 struct FInputActionValue;
 struct FThrowRelease;
@@ -35,6 +38,24 @@ public:
     UFUNCTION(BlueprintPure) UDiscGolfRHBHThrowAdapterComponent* GetRHBHThrowAdapter() const { return RHBHThrowAdapter; }
     UFUNCTION(BlueprintPure) bool IsAnimatedThrowActive() const;
     UFUNCTION(BlueprintPure) FString GetGolferPresentationStatusText() const;
+
+    /** Session 4 works on a transient copy; preset PrimaryDataAssets stay immutable. */
+    bool GetCharacterCreatorProfile(
+        FDGBodyProfile& OutBody,
+        FDGThrowStyle& OutStyle,
+        EDGHandedness& OutHandedness) const;
+    bool PreviewCharacterCreatorProfile(
+        const FDGBodyProfile& Body,
+        const FDGThrowStyle& Style,
+        EDGHandedness Handedness);
+    bool IsCharacterProfileChangeSafe() const;
+    void BeginCharacterCreatorPreview();
+    void EndCharacterCreatorPreview(bool bRestoreView = true);
+    void RotateCharacterCreatorPreview(float DeltaYawDegrees);
+
+    UDiscGolfCharacterProfile* GetRuntimeCharacterProfile() const { return RuntimeCharacterProfile; }
+    USkeletalMeshComponent* GetSkeletalGolferMesh() const { return SkeletalMesh; }
+    UStaticMeshComponent* GetHeldDiscVisual() const { return HeldDiscVisual; }
 
     /** Shared by real input and the end-to-end Session 3 smoke. */
     bool TryStartAnimatedRHBHThrow(const FThrowCommand& AuthoritativeCommand);
@@ -57,9 +78,27 @@ private:
     UPROPERTY(VisibleAnywhere) TObjectPtr<UThrowControllerComponent> ThrowController;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolferPresentationComponent> PresentationComponent;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfThrowComponent> FrameworkThrowComponent;
+    UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfAppearanceComponent> CharacterAppearance;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfRHBHThrowAdapterComponent> RHBHThrowAdapter;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UStaticMeshComponent> HeldDiscVisual;
     UPROPERTY() TObjectPtr<UAnimMontage> RHBHThrowMontage;
+    UPROPERTY() TObjectPtr<UDiscGolfCharacterProfile> CharacterProfileTemplate;
+    UPROPERTY(Transient) TObjectPtr<UDiscGolfCharacterProfile> RuntimeCharacterProfile;
+
+    bool bCharacterCreatorPreviewActive = false;
+    bool bSavedSkeletalTickWhenPaused = false;
+    bool bSavedCameraBoomTickWhenPaused = false;
+    float SavedPreviewCameraArmLength = 0.0f;
+    float SavedPreviewCameraFov = 90.0f;
+    FVector SavedPreviewCameraSocketOffset = FVector::ZeroVector;
+    FRotator SavedPreviewCameraBoomRotation = FRotator::ZeroRotator;
+    FRotator SavedPreviewSkeletalRotation = FRotator::ZeroRotator;
+
+    void ApplyCharacterProfileUnchecked(
+        const FDGBodyProfile& Body,
+        const FDGThrowStyle& Style,
+        EDGHandedness Handedness);
+    void RefreshCharacterProfilePresentation();
 
     bool HandleAnimatedRHBHRelease(
         const FThrowCommand& AuthoritativeCommand,

@@ -10,9 +10,11 @@ public class DiscGolfTour : ModuleRules
         {
             "Core",
             "CoreUObject",
+            "ControlRig",
             "DiscGolfCharacterFramework",
             "Engine",
             "RHI",
+            "RigVM",
             "GameplayTags",
             "PhysicsCore",
             "InputCore",

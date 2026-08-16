@@ -22,10 +22,19 @@ public class DiscGolfTourEditor : ModuleRules
 
         PrivateDependencyModuleNames.AddRange(new string[]
         {
+            "AnimGraph",
             "AssetRegistry",
+            "BlueprintGraph",
+            "ControlRig",
+            "ControlRigDeveloper",
+            "DiscGolfCharacterFramework",
             "Json",
             "JsonUtilities",
             "Projects",
+            "RigVM",
+            "RigVMDeveloper",
+            "UMG",
+            "UMGEditor",
             "UnrealEd"
         });
     }

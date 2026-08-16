@@ -379,8 +379,8 @@ void ADiscGolfHUD::DrawSettingsMenu(
     Rect(PanelRaised, SafeMargin, 576.0f, ReferenceWidth - SafeMargin * 2.0f, 112.0f);
     Rect(SuccessMint, SafeMargin, 576.0f, 6.0f, 112.0f);
     Text(PlayerController->GetControlsStatusText(), SuccessMint, 50.0f, 591.0f, Small, 0.88f);
-    Text(TEXT("UP / DOWN  SELECT     LEFT / RIGHT  ADJUST     TAB / SHOULDERS  CONTROLS"), FogGray, 50.0f, 625.0f, Small, 0.78f);
-    Text(TEXT("ESCAPE / VIEW  RETURN TO GAME"), FogGray, 50.0f, 650.0f, Small, 0.78f);
+    Text(TEXT("UP / DOWN  SELECT     LEFT / RIGHT  ADJUST     ENTER / BOTTOM  CHARACTER CREATOR"), FogGray, 50.0f, 625.0f, Small, 0.78f);
+    Text(TEXT("TAB / SHOULDERS  CONTROLS     ESCAPE / VIEW  RETURN TO GAME"), FogGray, 50.0f, 650.0f, Small, 0.78f);
 }
 
 void ADiscGolfHUD::DrawScorecard(const ADiscGolfTourGameMode* GameMode, UFont* Medium, UFont* Small)
@@ -692,6 +692,12 @@ void ADiscGolfHUD::DrawHUD()
     UFont* Small = GEngine ? GEngine->GetSmallFont() : nullptr;
     if (const ADiscGolfTourPlayerController* PlayerController = Cast<ADiscGolfTourPlayerController>(GetOwningPlayerController()))
     {
+        // The Session 4 creator supplies its own full-screen UMG/Slate surface.
+        // Do not stack the existing Canvas settings menu underneath it.
+        if (PlayerController->IsCharacterCreatorOpen())
+        {
+            return;
+        }
         if (PlayerController->IsControlsMenuOpen())
         {
             DrawControlsMenu(PlayerController, Medium, Small);

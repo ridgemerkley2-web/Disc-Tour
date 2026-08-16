@@ -548,7 +548,31 @@ def _validate_control_rig(rig, mesh):
         "Control Rig PBIK unexpectedly allows stretch",
     )
     exec_sources = _source_paths(pbik.find_pin("ExecuteContext"))
-    _require(any("BeginExecution" in path for path in exec_sources), "PBIK execution is not wired")
+    if any("BeginExecution" in path for path in exec_sources):
+        execution_contract = "BeginExecution -> DGFullBodyIK"
+    else:
+        _require(
+            "DGApplyCharacterProfile" in nodes,
+            "PBIK execution is neither the accepted Session 2 direct path nor the Session 4 profile path",
+        )
+        profile_unit = nodes["DGApplyCharacterProfile"]
+        _require(
+            profile_unit.get_script_struct().get_path_name()
+            == "/Script/DiscGolfTour.RigUnit_DGApplyCharacterProfile",
+            "DGApplyCharacterProfile has the wrong unit struct",
+        )
+        _require(
+            any("DGApplyCharacterProfile" in path for path in exec_sources),
+            "PBIK is not driven by the Session 4 profile unit",
+        )
+        _require(
+            any(
+                "BeginExecution" in path
+                for path in _source_paths(profile_unit.find_pin("ExecuteContext"))
+            ),
+            "Session 4 profile unit is not driven by BeginExecution",
+        )
+        execution_contract = "BeginExecution -> DGApplyCharacterProfile -> DGFullBodyIK"
 
     pbik_bone_settings_pin = pbik.find_pin("BoneSettings")
     _require(pbik_bone_settings_pin is not None, "PBIK BoneSettings pin is missing")
@@ -725,6 +749,7 @@ def _validate_control_rig(rig, mesh):
             "allow_stretch": False,
             "iterations": PBIK_ITERATIONS,
             "sub_iterations": PBIK_SUB_ITERATIONS,
+            "execution": execution_contract,
             "global_pull_chain_alpha": 0.0,
         },
         "pbik_bone_settings": {

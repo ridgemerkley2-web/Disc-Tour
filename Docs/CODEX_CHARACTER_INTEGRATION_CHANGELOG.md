@@ -521,3 +521,233 @@ Manual review passed these images only as validation-proxy/provisional-Cylinder 
 - Only one RHBH drive is animated. Forehand and putting deliberately retain existing behavior and have no Session 3 animation coverage.
 - No plugin camera, replay, course, physics, scoring, save, equipment, UI, or environment system was activated.
 - No Session 4 work has begun.
+
+---
+
+## Session 4 -- one-skeleton character creator and profiled RHBH presentation
+
+Date: 2026-08-15
+
+Status: **SESSION 4 ACCEPTANCE: PASS.**
+
+The final line of the Session 3 record above describes the state at Session 3 closeout. Session 4 now adds a bounded body-profile and throw-style presentation layer on the accepted character foundation. It does not replace the player, throw command, release transaction, flight solver, wind, collision, lie, scoring, course, camera, or replay authorities established before this session.
+
+### Source-of-truth and authority boundaries
+
+| Responsibility | Session 4 owner / boundary |
+|---|---|
+| Creator ranges and plugin-facing types | Installed UE 5.8-compatible `DiscGolfCharacterFramework` plugin and `Plugins/DiscGolfCharacterFramework/Config/DG_CharacterCreatorSchema.json` |
+| Persistent player data | Project-owned primitive-only `FDiscGolfCharacterProfileSaveData` in `Source/DiscGolfTour/DiscGolfCharacterProfileRuntime.h` |
+| Save authority | Existing `UDiscGolfTourGameInstance` / `UDiscGolfSaveGame` path; schema version 7 |
+| Live preview | The already possessed `ADiscGolferPawn` and a transient duplicate of the default character profile |
+| Pose deformation | Project-owned mutable Control Rig unit `FRigUnit_DGApplyCharacterProfile` |
+| Full-body solve | The previously accepted `DGFullBodyIK` PBIK node and its unchanged settings |
+| Throw playback | Existing `AM_DG_RHBH_Prototype` montage with its existing fixed timing, curves, release notify, and finish notify |
+| Release and flight | Existing Session 3 release adapter and authoritative gameplay-disc launch path |
+| Throw-style power/spin | Explicitly fixed to `1.0` / `1.0`; creator style is visual-only |
+| Left-handed animation | Not authored. LHBH preview/save is supported, but animated RHBH is rejected before montage and the existing non-animated gameplay fallback remains authoritative |
+
+No new skeleton, alternate pawn, duplicate gameplay disc, or parallel throw/flight calculation was introduced.
+
+### Character profile schema and persistence
+
+`FDiscGolfCharacterProfileSaveData` stores only project-owned primitive fields, so a player save does not serialize marketplace/plugin UObject references:
+
+| Group | Persisted fields | Accepted range |
+|---|---|---|
+| Handedness | `bLeftHanded` | Right / Left |
+| Body | `HeightCm` | 150-210 cm; default 183 |
+| Body | `WingspanScale`, `ShoulderWidthScale` | 0.92-1.08; default 1.0 |
+| Body | `TorsoLengthScale`, `LegLengthScale`, `HandScale` | 0.94-1.06; default 1.0 |
+| Body | `MassKg` | 45-160 kg; default 82 |
+| Throw presentation | `RunUpIntensity`, `ReachBackAmount`, `TorsoRotation`, `BraceIntensity`, `Explosiveness`, `FollowThrough` | 0.0-1.0 with schema defaults |
+
+`Muscularity`, `BodyFat`, `Chest`, `Waist`, `Hips`, `Arms`, and `Legs` are persisted as a future body-build foundation but are intentionally not presented as production visual deformation in Session 4.
+
+Save schema 7 sanitizes all character values against the installed creator schema. Schema 6 and earlier migrate to a sanitized default profile; unsupported future schemas are rejected. `UDiscGolfTourGameInstance::UpdateCharacterProfile` restores the previous profile if the existing save operation fails, so an unsuccessful Apply cannot replace the last valid saved character.
+
+`DiscGolfTour.Character.Session4.Profile.DiskSlotRoundTrip` supplies the focused next-launch persistence proof. It writes a sanitized schema-7 profile to a GUID-named automation-only UE save slot, reloads it through `LoadGameFromSlot`, verifies all 21 primitive character fields (including handedness) plus schema version, then deletes the slot and verifies that it no longer exists. The project's normal startup continues to load its existing `DiscGolfTour_Profile_0` slot through the GameInstance, and pawn initialization reconstructs the single transient runtime profile from that loaded data.
+
+At pawn initialization, `DA_DG_DefaultCharacter` is duplicated into transient `RuntimeCharacterProfile`. Saved or previewed values modify only that transient instance. The source data asset remains immutable.
+
+### One-skeleton runtime rig architecture
+
+The visible profile path uses the accepted assets:
+
+- `/Game/DiscGolf/Characters/Meshes/SK_DG_Master`
+- `/Game/DiscGolf/Characters/Meshes/SKEL_DG_Master`
+- `/Game/DiscGolf/Rigs/IK_DG_Master`
+- `/Game/DiscGolf/Rigs/CR_DG_Master`
+- `/Game/DiscGolf/Animation/ABP_DG_Player`
+- `/Game/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype`
+
+`FRigUnit_DGApplyCharacterProfile` is implemented in:
+
+- `Source/DiscGolfTour/DiscGolfCharacterRigUnits.h`
+- `Source/DiscGolfTour/DiscGolfCharacterRigUnits.cpp`
+
+Its five public inputs are `BodyProfile`, `ThrowStyle`, `Handedness`, `ThrowPhase`, and `bThrowActive`. It executes before the accepted PBIK:
+
+`BeginExecution -> DGApplyCharacterProfile -> DGFullBodyIK`
+
+The unit snapshots the source pose and derives bounded local/global transforms from that source rather than multiplying the previous evaluated pose. This prevents cumulative scale or transform drift. Baseline is a near no-op. Height, torso, leg, shoulder, arm, and hand changes are bounded to the creator schema; actor/component scale is not used as a body-proportion shortcut. The result is translated to an average ball/toe ground landmark before PBIK so the feet remain grounded across the supported range.
+
+Existing `DG_FootPlant_L` / `DG_FootPlant_R` curves drive foot locks. The grip correction follows `disc_grip_r` with limited reachback influence. Both hand-IK alpha controls are explicitly set to zero before the active-throw branch, preventing an interrupted or cancelled reachback from leaving stale hand IK in idle. Throw-style inputs add restrained presentation-only offsets and rotations while preserving the montage, `DG Release Disc`, and `DG Throw Finished` timing.
+
+`ABP_DG_Player` now evaluates:
+
+`LocalRefPose -> DefaultSlot -> ControlRig -> Root`
+
+The Control Rig node transfers the input pose and directly maps all five animation-instance properties to the five Control Rig public variables. The accepted PBIK contract remains pelvis Free, 20 iterations, 10 subiterations, global pull 0, stretch disabled, four effectors, and four bend settings.
+
+The provisional held Cylinder still attaches to `disc_grip_r`. Its component uses `SetAbsolute(false, false, true)` with relative scale `(0.21, 0.21, 0.015)`. It therefore follows the profiled socket position and rotation without inheriting Control Rig socket scale. This removed the oversized tiled-plane artifact seen in early Session 4 captures without changing the authoritative gameplay disc mesh, physics scale, or launch orientation.
+
+### Creator UI and gameplay flow
+
+`UDiscGolfCharacterCreatorWidget` supplies the functional native Body/Throw Style UI. It exposes:
+
+- live Body and Throw Style sliders;
+- Right / Left handed selection;
+- Baseline, ShortCompact, and TallLongArms presets;
+- Reset, Apply, Cancel, Rotate Left, and Rotate Right;
+- an explicit warning that animated LHBH is not authored.
+
+`/Game/DiscGolf/UI/WBP_DG_CharacterCreator` is deliberately an empty WidgetBlueprint foundation parented to `/Script/DiscGolfTour.DiscGolfCharacterCreatorWidget`. It inherits the native UI and does not fabricate Face, Hair, Clothing, or Outfit tabs. If that WBP cannot be loaded, the PlayerController can instantiate the native class.
+
+The existing PlayerController owns open/preview/apply/cancel and input focus. Opening is gated by `ADiscGolfTourGameMode::CanOpenCharacterCreator` and `ADiscGolferPawn::IsCharacterProfileChangeSafe` so it cannot begin during a live disc, replay, flyover, regression, lie transition, hole intro, or active animated throw. Normal HUD rendering is suppressed while the creator is open. Preview is transient on the possessed pawn; Apply uses the GameInstance save authority; Cancel restores the profile that was active when the creator opened. The implementation is event-driven and does not add a permanent character-creator Tick.
+
+### Handedness and gameplay-authority acceptance
+
+- Right-handed profiles continue through the single Session 3 RHBH montage and release adapter.
+- A Left profile can be previewed and saved.
+- `ADiscGolferPawn::TryStartAnimatedRHBHThrow` rejects a Left profile before montage playback or a release callback.
+- Left-handed gameplay retains the pre-existing non-animated fallback; no mirrored montage or LHBH animation quality is claimed.
+- `FDiscGolfCharacterProfileSaveData::ToThrowStyle` forces `PowerMultiplier = 1.0` and `SpinMultiplier = 1.0`.
+- Body/style presentation never recalculates power, spin, hyzer, nose angle, aim, timing, or wind.
+- The existing Session 3 transaction remains the only animated release authority, and the existing gameplay disc/flight component remains the only physics authority.
+- No plugin camera, replay, course, scoring, save, equipment, environment, or physics subsystem was activated.
+
+### Deterministic asset authoring and validation
+
+`UDiscGolfSession4AssetUtility` exposes `AuthorSession4Assets()` and `ValidateSession4Assets()`. The Python wrappers are:
+
+- `Scripts/create_dg_character_session4_assets.py`
+- `Scripts/validate_dg_character_session4_assets.py`
+- `Scripts/validate_dg_character_session4_wiring.py`
+- `Scripts/run-session4-profile-smokes.py`
+
+The utility owns only the exact Session 4 CR variables/unit, ABP Control Rig node/mappings, and empty creator WBP. It validates the accepted PBIK, skeleton, ABP node set, variable GUID/type/default contract, and existing WBP ownership before writing. Unexpected immutable content is refused rather than rewritten. UE 5.8 legacy Control Rig member-variable creation is followed by one synchronous full Blueprint compile before getter nodes are authored; recovery validation reads the generated CDO public property-bag variables. A current asset rerun reports `PASS_ALREADY_CURRENT_NO_ASSET_WRITES`.
+
+`Scripts/validate_dg_character_session2.py` now accepts either the original direct `BeginExecution -> DGFullBodyIK` chain or the exact Session 4 two-hop chain above. All original PBIK type, root, settings, effector, bend, and hierarchy checks remain required. Its historical Session 2 authority gate still intentionally requires zero gameplay wiring, so the integrated Session 3/4 final strict gate is `Scripts/validate_dg_character_session3_rig.py`, which adds the exact release/finish and single-flight-authority checks.
+
+### Session 4 source/content scope
+
+Modified:
+
+- `Content/DiscGolf/Animation/ABP_DG_Player.uasset`
+- `Content/DiscGolf/Rigs/CR_DG_Master.uasset`
+- `Scripts/validate_dg_character_session2.py`
+- `Source/DiscGolfTour/DiscGolfHUD.cpp`
+- `Source/DiscGolfTour/DiscGolfSaveGame.h`
+- `Source/DiscGolfTour/DiscGolfSession3VisualCaptureRunner.cpp`
+- `Source/DiscGolfTour/DiscGolfTour.Build.cs`
+- `Source/DiscGolfTour/DiscGolfTourGameInstance.cpp`
+- `Source/DiscGolfTour/DiscGolfTourGameInstance.h`
+- `Source/DiscGolfTour/DiscGolfTourGameMode.cpp`
+- `Source/DiscGolfTour/DiscGolfTourGameMode.h`
+- `Source/DiscGolfTour/DiscGolfTourPlayerController.cpp`
+- `Source/DiscGolfTour/DiscGolfTourPlayerController.h`
+- `Source/DiscGolfTour/DiscGolferPawn.cpp`
+- `Source/DiscGolfTour/DiscGolferPawn.h`
+- `Source/DiscGolfTour/Tests/DiscGolfSaveSchemaTests.cpp`
+- `Source/DiscGolfTourEditor/DiscGolfSession3AssetUtility.cpp`
+- `Source/DiscGolfTourEditor/DiscGolfTourEditor.Build.cs`
+- `Docs/CODEX_CHARACTER_INTEGRATION_CHANGELOG.md`
+
+Added:
+
+- `Content/DiscGolf/UI/WBP_DG_CharacterCreator.uasset`
+- `Scripts/create_dg_character_session4_assets.py`
+- `Scripts/run-session4-profile-smokes.py`
+- `Scripts/validate_dg_character_session4_assets.py`
+- `Scripts/validate_dg_character_session4_wiring.py`
+- `Source/DiscGolfTour/DiscGolfCharacterCreatorWidget.cpp`
+- `Source/DiscGolfTour/DiscGolfCharacterCreatorWidget.h`
+- `Source/DiscGolfTour/DiscGolfCharacterProfileRuntime.cpp`
+- `Source/DiscGolfTour/DiscGolfCharacterProfileRuntime.h`
+- `Source/DiscGolfTour/DiscGolfCharacterRigUnits.cpp`
+- `Source/DiscGolfTour/DiscGolfCharacterRigUnits.h`
+- `Source/DiscGolfTour/DiscGolfSession4VisualCaptureRunner.cpp`
+- `Source/DiscGolfTour/DiscGolfSession4VisualCaptureRunner.h`
+- `Source/DiscGolfTour/Tests/DiscGolfCharacterProfileRuntimeTests.cpp`
+- `Source/DiscGolfTourEditor/DiscGolfSession4AssetUtility.cpp`
+- `Source/DiscGolfTourEditor/DiscGolfSession4AssetUtility.h`
+
+`SK_DG_Master`, `SKEL_DG_Master`, `IK_DG_Master`, `A_DG_RHBH_Prototype`, `AM_DG_RHBH_Prototype`, and the three existing authored profile data assets were reused without Session 4 replacement.
+
+### Final verification evidence
+
+| Gate | Recorded result | Evidence / qualification |
+|---|---|---|
+| Session 4 asset authoring recovery | PASS | `Saved/Logs/CharacterFramework_Session4_AssetAuthoring_Recovery2.log` |
+| Final Editor target build | PASS | `DiscGolfTourEditor Win64 Development`; 4 actions; `Result: Succeeded`; 29.72 s |
+| Final runtime target build | PASS | `DiscGolfTour Win64 Development`; 11 actions; `Result: Succeeded`; 155.22 s |
+| Final source/static validators | PASS | `validate_project.py`, `reference_flight_check.py`, `validate_trajectory_artifacts.py`, Python compile, schema SHA-256, and `git diff --check`; Session 4 wiring 90/90 in `Saved/CharacterFramework/Session4WiringValidation.json` |
+| Final framework reflection | PASS | `Saved/Logs/CharacterFramework_Session4_Final_Reflection.log`; 4 classes + 4 structs; 0 errors/warnings |
+| Final strict rig/authority | PASS | `Saved/Logs/CharacterFramework_Session4_Final_StrictRig.log`; 69 bones, 4 goals, 4 effectors, 3 profiles, one release, one finish, single existing flight path; 0 errors/warnings |
+| Final strict asset validation | PASS | `Saved/Logs/CharacterFramework_Session4_Final_Assets.log`; exact `Begin_Profile_PBIK`, `RefPose_DefaultSlot_ControlRig_Root`, project-owned WBP, and `disk_mutation=NONE` |
+| Final idempotent author/no-write rerun | PASS | `Saved/Logs/CharacterFramework_Session4_Final_NoWrite.log`; `PASS_ALREADY_CURRENT_NO_ASSET_WRITES`; 0 errors/warnings |
+| Full `DiscGolfTour.` automation | PASS | `Saved/Logs/Automation_CharacterFramework_Session4_Final.log`; 115/115 tests succeeded, zero non-success results, `TEST COMPLETE. EXIT CODE: 0`; includes the real disk-slot round-trip proof |
+| Existing three-hole smoke | PASS | `Saved/Logs/ThreeHoleRoundSmoke_CharacterFramework_Session4_Final.log`; 3/3 holes, 3 strokes, par 11, -8; existing transitions, scoring, scorecard, and save snapshot active |
+| Sequential profile one-throw smokes | PASS | `Saved/CharacterFramework/Session4ProfileSmokeReport.json`; 5/5: ShortCompact, Baseline, TallLongArms, SliderMin, and SliderMax; each process exit 0 with no timeout |
+| Retry7 rendered visual acceptance | PASS | `Saved/Logs/CharacterFramework_Session4_VisualCapture_Retry7.log` and the capture manifest listed below |
+
+Each final profile smoke proved aim/throw availability, active animation, one release, one authoritative gameplay disc with valid non-zero motion, the existing flight solver, FollowThrough, Recovery, `DG Throw Finished`, camera return, next-action availability, and cancel-before-release producing zero discs.
+
+### Retry7 rendered visual evidence
+
+Retry7 used UE 5.8.1 build CL 56057345 and produced the required 8/8 images at 1920x1080:
+
+- `Saved/CharacterFramework/Screenshots/Session4_CharacterCreator/01_Neutral_Front_Short_Baseline_Tall.png`
+- `Saved/CharacterFramework/Screenshots/Session4_CharacterCreator/02_Neutral_Side_Short_Baseline_Tall.png`
+- `Saved/CharacterFramework/Screenshots/Session4_CharacterCreator/03_Maximum_Reachback_AllProfiles.png`
+- `Saved/CharacterFramework/Screenshots/Session4_CharacterCreator/04_Plant_Brace_AllProfiles.png`
+- `Saved/CharacterFramework/Screenshots/Session4_CharacterCreator/05_Release_AllProfiles.png`
+- `Saved/CharacterFramework/Screenshots/Session4_CharacterCreator/06_FollowThrough_AllProfiles.png`
+- `Saved/CharacterFramework/Screenshots/Session4_CharacterCreator/07_Live_CharacterCreator_ShortPreview.png`
+- `Saved/CharacterFramework/Screenshots/Session4_CharacterCreator/08_Slider_Extremes_Min_Max.png`
+
+The authoritative manifest is `Saved/CharacterFramework/Screenshots/Session4_CharacterCreator/Session4_CharacterCreator_CaptureManifest.json`. Every capture passed framing, camera-outside-subject, clear line-of-sight, finite-transform, and readability gates.
+
+| Fixture | Head-to-ground landmark | Wingspan chain | Shoulder width | Avg. hand chain | Avg. foot-to-ball | Avg. hand-to-grip |
+|---|---:|---:|---:|---:|---:|---:|
+| ShortCompact | 123.60 cm | 148.80 cm | 30.25 cm | 15.13 cm | 14.26 cm | 6.32 cm |
+| Baseline | 153.00 cm | 184.67 cm | 38.00 cm | 17.30 cm | 17.72 cm | 7.23 cm |
+| TallLongArms | 179.12 cm | 219.38 cm | 44.70 cm | 19.23 cm | 20.84 cm | 8.03 cm |
+| SliderMin | 118.61 cm | 141.45 cm | 28.66 cm | 14.72 cm | 13.65 cm | 6.15 cm |
+| SliderMax | 185.04 cm | 226.53 cm | 47.10 cm | 19.64 cm | 21.55 cm | 8.21 cm |
+
+These are proxy-skeleton landmarks, not claims about production anatomical stature.
+
+Phase evidence:
+
+- ReachBack target `0.9000 s`; captured `0.9034 s`; minimum `DG_ReachbackAlpha = 0.99921`.
+- Plant target `1.1667 s`; captured `1.1733 s`; minimum brace/plant requirement `1.0` and contact gate passed.
+- Release target `1.6000 s`; captured `1.6108 s`; minimum `DG_ReleaseApproachAlpha = 0.83725`; exactly three validation-only grip callbacks for the three profiles.
+- FollowThrough target `1.8667 s`; captured `1.8788 s`; minimum `DG_FollowThroughAlpha = 0.99644`.
+
+The live creator frame opened the inherited native/WBP UI on the possessed pawn, previewed ShortCompact plus a Left-handed draft, displayed the LHBH limitation, and confirmed Cancel restored the opening profile without saving. The handedness boundary check rejected animated RHBH before montage, generated zero release callbacks during that check, and left the primary profile asset unchanged.
+
+The Retry7 gameplay-isolation guard recorded zero world discs and zero strokes both before and after capture. Its three release callbacks were explicitly bound validation callbacks and did not spawn gameplay discs. The persistent-write guard compared 616 initial package files and one existing save file; no `.uasset`, `.umap`, or save-game file changed, and no package/level save call occurred. Only the eight PNGs and the JSON manifest were allowed outputs.
+
+### Remaining production-art and scope limitations
+
+- `SK_DG_Master` remains a rigid, blocky validation proxy. Production topology, skinning, weight painting, twist distribution, joint volume, and deformation polish are not accepted.
+- The provisional Cylinder proves attachment and scale isolation only. Final rim/palm fit, finger wrap, grip ergonomics, and production disc art remain deferred.
+- Face, hair, clothing, outfits, and cosmetic authoring are absent by design. `WBP_DG_CharacterCreator` contains no fake future tabs.
+- Persisted muscularity/body-fat/chest/waist/hips/arms/legs values are foundation data only and do not yet drive visible production meshes.
+- Only the RHBH montage is animated. LHBH, forehand, and putting animation remain deferred; their existing gameplay behavior was not replaced.
+- Throw-style differences are intentionally restrained and visual-only. They do not change release power, spin, flight, scoring, or competitive outcome.
+- Retry7 accepts profile readability and rig behavior on the proxy, not final character-art silhouette quality.
+- Final Fab forest visual acceptance remains pending imported marketplace assets and is outside Session 4.
+- **SESSION 4 ACCEPTANCE: PASS.** One master skeleton supports all accepted profiles and slider extremes; creator preview/persistence, restrained presentation variation, profile-safe held-disc/release alignment, and the Session 3 single-authority throw invariant are all demonstrated. Session 5 and later character-art work have not begun.
