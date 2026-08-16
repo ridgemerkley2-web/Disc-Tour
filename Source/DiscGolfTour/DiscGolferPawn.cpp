@@ -10,13 +10,18 @@
 #include "DiscGolfCharacterProfileRuntime.h"
 #include "DiscGolfCharacterProfile.h"
 #include "DiscGolfAppearanceComponent.h"
+#include "DiscGolfOutfitCatalog.h"
+#include "DiscGolfOutfitComponent.h"
+#include "DiscGolfOutfitRuntime.h"
 #include "DiscGolfAnimInstance.h"
 #include "DiscGolfThrowComponent.h"
 #include "DiscGolfTourGameInstance.h"
 #include "DiscGolfSession5MocapValidationPaths.h"
+#include "Algo/Unique.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
+#include "Camera/PlayerCameraManager.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -194,6 +199,7 @@ ADiscGolferPawn::ADiscGolferPawn()
     PresentationComponent = CreateDefaultSubobject<UDiscGolferPresentationComponent>(TEXT("GolferPresentation"));
     FrameworkThrowComponent = CreateDefaultSubobject<UDiscGolfThrowComponent>(TEXT("CharacterFrameworkThrow"));
     CharacterAppearance = CreateDefaultSubobject<UDiscGolfAppearanceComponent>(TEXT("CharacterAppearance"));
+    OutfitComponent = CreateDefaultSubobject<UDiscGolfOutfitComponent>(TEXT("CharacterOutfit"));
     if (DefaultCharacterProfile.Succeeded())
     {
         CharacterProfileTemplate = DefaultCharacterProfile.Object;
@@ -263,6 +269,25 @@ void ADiscGolferPawn::BeginPlay()
     if (BodyMesh) BodyMesh->SetVisibility(!bHasSkeletalAsset);
     if (HeadMesh) HeadMesh->SetVisibility(!bHasSkeletalAsset);
     if (PresentationComponent) PresentationComponent->SetSkeletalAssetsReady(bHasSkeletalAsset);
+    if (OutfitComponent)
+    {
+        OutfitComponent->Catalog = LoadObject<UDiscGolfOutfitCatalog>(
+            nullptr, DiscGolfOutfitRuntime::CatalogObjectPath);
+        OutfitComponent->OnBodyCoverageChanged.AddUniqueDynamic(
+            this, &ADiscGolferPawn::HandleOutfitCoverageChanged);
+
+        FDGOutfitLoadout SavedLoadout;
+        if (const UDiscGolfTourGameInstance* Instance = Cast<UDiscGolfTourGameInstance>(GetGameInstance()))
+        {
+            SavedLoadout = Instance->GetOutfitLoadout();
+        }
+        FString OutfitStatus;
+        if (!ApplyOutfitLoadoutTransactionally(SavedLoadout, true, OutfitStatus)
+            || !OutfitStatus.IsEmpty())
+        {
+            UE_LOG(LogDiscGolfTour, Warning, TEXT("Outfit startup recovery: %s"), *OutfitStatus);
+        }
+    }
     if (RHBHThrowAdapter)
     {
         RHBHThrowAdapter->Configure(FrameworkThrowComponent, SkeletalMesh, HeldDiscVisual);
@@ -343,7 +368,98 @@ void ADiscGolferPawn::ApplyCharacterProfileUnchecked(
     {
         CharacterAppearance->ApplyStandardMorphs(SkeletalMesh, RuntimeCharacterProfile->Body);
     }
+    RefreshOutfitForCurrentBodyProfile();
     RefreshCharacterProfilePresentation();
+}
+
+UDiscGolfOutfitCatalog* ADiscGolferPawn::GetOutfitCatalog() const
+{
+    return OutfitComponent ? OutfitComponent->Catalog.Get() : nullptr;
+}
+
+const FDGOutfitLoadout& ADiscGolferPawn::GetCurrentOutfitLoadout() const
+{
+    static const FDGOutfitLoadout EmptyLoadout;
+    return OutfitComponent ? OutfitComponent->CurrentLoadout : EmptyLoadout;
+}
+
+bool ADiscGolferPawn::ApplyOutfitLoadoutTransactionally(
+    const FDGOutfitLoadout& Requested,
+    bool bAllowUnavailableItems,
+    FString& OutStatus)
+{
+    OutStatus.Reset();
+    if (!OutfitComponent || !SkeletalMesh || !RuntimeCharacterProfile)
+    {
+        OutStatus = TEXT("Outfit runtime is unavailable; the current appearance was retained.");
+        return false;
+    }
+
+    const FDGOutfitLoadout Previous = OutfitComponent->CurrentLoadout;
+    const FDiscGolfOutfitResolution Resolution = DiscGolfOutfitRuntime::ResolveCanonicalLoadout(
+        Requested, OutfitComponent->Catalog, RuntimeCharacterProfile->Body);
+    if (!Resolution.bAllEntriesResolved && !bAllowUnavailableItems)
+    {
+        OutStatus = FString::Join(Resolution.Warnings, TEXT(" "));
+        return false;
+    }
+
+    bool bApplied = false;
+    if (Resolution.Loadout.Equipped.IsEmpty())
+    {
+        OutfitComponent->ClearOutfit();
+        bApplied = true;
+    }
+    else
+    {
+        bApplied = OutfitComponent->ApplyLoadout(
+            Resolution.Loadout, SkeletalMesh, RuntimeCharacterProfile->Body);
+    }
+
+    if (!bApplied || !DiscGolfOutfitRuntime::AreLoadoutsEquivalent(
+            OutfitComponent->CurrentLoadout, Resolution.Loadout))
+    {
+        if (Previous.Equipped.IsEmpty())
+        {
+            OutfitComponent->ClearOutfit();
+        }
+        else
+        {
+            OutfitComponent->ApplyLoadout(
+                Previous, SkeletalMesh, RuntimeCharacterProfile->Body);
+        }
+        HandleOutfitCoverageChanged(OutfitComponent->GetCoveredBodyRegions());
+        OutStatus = TEXT("Outfit assets could not be applied; the previous loadout was restored.");
+        return false;
+    }
+
+    RefreshOutfitForCurrentBodyProfile();
+    if (!Resolution.Warnings.IsEmpty())
+    {
+        OutStatus = FString::Join(Resolution.Warnings, TEXT(" "));
+    }
+    return true;
+}
+
+void ADiscGolferPawn::RefreshOutfitForCurrentBodyProfile()
+{
+    if (!OutfitComponent || !RuntimeCharacterProfile)
+    {
+        return;
+    }
+    OutfitComponent->ReapplyBodyMorphs(RuntimeCharacterProfile->Body);
+    HandleOutfitCoverageChanged(OutfitComponent->GetCoveredBodyRegions());
+}
+
+void ADiscGolferPawn::HandleOutfitCoverageChanged(
+    const TArray<EDGBodyRegion>& CoveredRegions)
+{
+    CoveredOutfitBodyRegions = CoveredRegions;
+    CoveredOutfitBodyRegions.Sort([](EDGBodyRegion A, EDGBodyRegion B)
+    {
+        return static_cast<uint8>(A) < static_cast<uint8>(B);
+    });
+    CoveredOutfitBodyRegions.SetNum(Algo::Unique(CoveredOutfitBodyRegions));
 }
 
 void ADiscGolferPawn::RefreshCharacterProfilePresentation()
@@ -382,14 +498,39 @@ void ADiscGolferPawn::BeginCharacterCreatorPreview()
     SavedPreviewSkeletalRotation = SkeletalMesh->GetRelativeRotation();
     bSavedSkeletalTickWhenPaused = SkeletalMesh->PrimaryComponentTick.bTickEvenWhenPaused;
     bSavedCameraBoomTickWhenPaused = CameraBoom->PrimaryComponentTick.bTickEvenWhenPaused;
+    APlayerCameraManager* PlayerCameraManager = nullptr;
+    if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+    {
+        PlayerCameraManager = PlayerController->PlayerCameraManager;
+    }
+    if (PlayerCameraManager)
+    {
+        bSavedPlayerCameraManagerTickWhenPaused =
+            PlayerCameraManager->PrimaryActorTick.bTickEvenWhenPaused;
+        PlayerCameraManager->PrimaryActorTick.bTickEvenWhenPaused = true;
+    }
 
     CameraBoom->PrimaryComponentTick.bTickEvenWhenPaused = true;
     CameraBoom->TargetArmLength = 430.0f;
-    CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 70.0f);
+    CameraBoom->SocketOffset = FVector(0.0f, -120.0f, 70.0f);
     CameraBoom->SetRelativeRotation(FRotator(-4.0f, 180.0f, 0.0f));
     Camera->SetFieldOfView(46.0f);
     SkeletalMesh->PrimaryComponentTick.bTickEvenWhenPaused = true;
     RefreshCharacterProfilePresentation();
+    if (CameraBoom->IsRegistered())
+    {
+        // UE 5.8 caches the spring endpoint until TickComponent calls
+        // UpdateDesiredArmLocation and propagates the socket to its children.
+        CameraBoom->TickComponent(
+            0.0f, ELevelTick::LEVELTICK_All, nullptr);
+    }
+    if (PlayerCameraManager)
+    {
+        // The creator opens after the controls menu pauses the world. The boom
+        // and camera manager now both tick while paused; push the initial view
+        // immediately as well so the first creator frame is deterministic.
+        PlayerCameraManager->UpdateCamera(0.0f);
+    }
 }
 
 void ADiscGolferPawn::EndCharacterCreatorPreview(bool bRestoreView)
@@ -418,6 +559,29 @@ void ADiscGolferPawn::EndCharacterCreatorPreview(bool bRestoreView)
     if (CameraBoom)
     {
         CameraBoom->PrimaryComponentTick.bTickEvenWhenPaused = bSavedCameraBoomTickWhenPaused;
+    }
+    if (bRestoreView && CameraBoom && CameraBoom->IsRegistered())
+    {
+        // Rebuild the restored spring endpoint before PlayerCameraManager
+        // samples it, even though the controls menu still has world time paused.
+        CameraBoom->TickComponent(
+            0.0f, ELevelTick::LEVELTICK_All, nullptr);
+    }
+    APlayerCameraManager* PlayerCameraManager = nullptr;
+    if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+    {
+        PlayerCameraManager = PlayerController->PlayerCameraManager;
+    }
+    if (bRestoreView && PlayerCameraManager)
+    {
+        // Cancel/Apply also closes while paused, so restore the camera POV
+        // before gameplay input and world time resume.
+        PlayerCameraManager->UpdateCamera(0.0f);
+    }
+    if (PlayerCameraManager)
+    {
+        PlayerCameraManager->PrimaryActorTick.bTickEvenWhenPaused =
+            bSavedPlayerCameraManagerTickWhenPaused;
     }
 }
 

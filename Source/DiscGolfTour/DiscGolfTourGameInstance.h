@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "DiscGolfCharacterProfileRuntime.h"
+#include "DiscGolfOutfitTypes.h"
 #include "DiscGolfPlayerExperience.h"
 #include "Engine/GameInstance.h"
 #include "DiscGolfTourGameInstance.generated.h"
@@ -19,6 +20,15 @@ namespace DiscGolfProfilePersistence
 
     /** Pure in-memory migration seam used by Init and focused automation. */
     DISCGOLFTOUR_API EMigrationResult MigrateToCurrent(UDiscGolfSaveGame& InOutProfile);
+
+    /**
+     * Resolves the narrowly gated Session 6 validation slot override.
+     * Returns false and clears OutSaveSlot unless the visual-capture and
+     * no-save guards are both present and the requested slot is safe.
+     */
+    DISCGOLFTOUR_API bool TryResolveSession6OutfitValidationSaveSlot(
+        const TCHAR* CommandLine,
+        FString& OutSaveSlot);
 }
 
 UCLASS()
@@ -51,8 +61,24 @@ public:
         const FDGThrowStyle& ThrowStyle,
         EDGHandedness Handedness);
 
+    UFUNCTION(BlueprintPure)
+    FDGOutfitLoadout GetOutfitLoadout() const;
+
+    /** One authoritative save transaction for the existing profile plus modular outfit IDs. */
+    UFUNCTION(BlueprintCallable)
+    bool UpdateCharacterProfileAndOutfit(
+        const FDiscGolfCharacterProfileSaveData& CharacterProfile,
+        const FDGOutfitLoadout& OutfitLoadout);
+
+    /** Empty in normal gameplay; read-only C++ seam for Session 6 cleanup/proof. */
+    FString GetSession6OutfitValidationSaveSlot() const
+    {
+        return bUsingSession6OutfitValidationSaveSlot ? SaveSlot : FString();
+    }
+
 private:
     bool SaveProfileInternal();
     UPROPERTY() TObjectPtr<UDiscGolfSaveGame> Profile;
     FString SaveSlot = TEXT("DiscGolfTour_Profile_0");
+    bool bUsingSession6OutfitValidationSaveSlot = false;
 };

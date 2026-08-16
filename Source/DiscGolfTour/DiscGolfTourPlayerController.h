@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "DiscGolfCharacterTypes.h"
+#include "DiscGolfOutfitRuntime.h"
 #include "GameFramework/PlayerController.h"
 #include "DiscGolfTourPlayerController.generated.h"
 
@@ -50,7 +51,7 @@ public:
     void GetControlBindingRows(TArray<FDiscGolfControlBindingRow>& OutRows) const;
     void GetSettingRows(TArray<FDiscGolfSettingRow>& OutRows) const;
 
-    /** Opens the event-driven Session 4 editor on the existing possessed pawn. */
+    /** Opens the event-driven character/outfit editor on the existing possessed pawn. */
     UFUNCTION(BlueprintCallable, Category="Disc Golf|Character Creator")
     bool OpenCharacterCreator();
 
@@ -88,6 +89,20 @@ public:
     UFUNCTION(BlueprintCallable, Category="Disc Golf|Character Creator")
     void RotateCharacterCreatorPreview(float DeltaYawDegrees);
 
+    bool PreviewCharacterCreatorOutfitSelection(
+        EDGOutfitSlot Slot,
+        FName ItemId,
+        FName VariantId,
+        FDGOutfitLoadout& OutDraft);
+    bool ResetCharacterCreatorOutfit(FDGOutfitLoadout& OutDraft);
+    bool RandomizeCharacterCreatorOutfit(FDGOutfitLoadout& OutDraft);
+    TArray<FDiscGolfOutfitOption> GetCharacterCreatorOutfitOptions(EDGOutfitSlot Slot) const;
+    bool PrepareCharacterCreatorForSession6VisualEvidence(EDGOutfitSlot Slot);
+    const FDGOutfitLoadout& GetCharacterCreatorDraftOutfit() const
+    {
+        return CharacterCreatorDraftOutfit;
+    }
+
     UFUNCTION(BlueprintPure, Category="Disc Golf|Character Creator")
     FString GetCharacterCreatorStatusText() const { return CharacterCreatorStatusText; }
 
@@ -122,6 +137,8 @@ private:
     FDGBodyProfile CharacterCreatorOpeningBody;
     FDGThrowStyle CharacterCreatorOpeningThrowStyle;
     EDGHandedness CharacterCreatorOpeningHandedness = EDGHandedness::Right;
+    FDGOutfitLoadout CharacterCreatorOpeningOutfit;
+    FDGOutfitLoadout CharacterCreatorDraftOutfit;
 
     UEnhancedInputLocalPlayerSubsystem* GetEnhancedInputSubsystem() const;
     UEnhancedInputUserSettings* GetEnhancedInputUserSettings() const;

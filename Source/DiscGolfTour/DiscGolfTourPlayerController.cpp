@@ -15,7 +15,9 @@
 #include "Framework/Application/SlateApplication.h"
 #include "GameplayTagContainer.h"
 #include "InputKeyEventArgs.h"
+#include "Misc/CommandLine.h"
 #include "Misc/PackageName.h"
+#include "Misc/Parse.h"
 #include "PlayerMappableKeySettings.h"
 #include "UserSettings/EnhancedInputUserSettings.h"
 #include "Blueprint/UserWidget.h"
@@ -313,6 +315,9 @@ bool ADiscGolfTourPlayerController::OpenCharacterCreator()
         CharacterCreatorOpeningBody,
         CharacterCreatorOpeningThrowStyle,
         CharacterCreatorOpeningHandedness);
+    CharacterCreatorOpeningOutfit = DiscGolfOutfitRuntime::NormalizeForPersistence(
+        Golfer->GetCurrentOutfitLoadout());
+    CharacterCreatorDraftOutfit = CharacterCreatorOpeningOutfit;
 
     const bool bOpenedControlsMenuHere = !bControlsMenuOpen;
     if (bOpenedControlsMenuHere)
@@ -354,7 +359,8 @@ bool ADiscGolfTourPlayerController::OpenCharacterCreator()
         this,
         CharacterCreatorOpeningBody,
         CharacterCreatorOpeningThrowStyle,
-        CharacterCreatorOpeningHandedness);
+        CharacterCreatorOpeningHandedness,
+        CharacterCreatorOpeningOutfit);
     if (!CharacterCreatorWidget->AddToPlayerScreen(1000))
     {
         CharacterCreatorWidget = nullptr;
@@ -370,6 +376,10 @@ bool ADiscGolfTourPlayerController::OpenCharacterCreator()
     bCharacterCreatorPreviousMouseCursor = bShowMouseCursor;
     bCharacterCreatorOpen = true;
     CharacterCreatorStatusText = TEXT("Live preview active. Apply saves to the existing local profile; Cancel restores the opening values.");
+    // A recently skipped presentation may still be blending back to the pawn
+    // when the controls menu pauses the world. Freeze creator authority onto
+    // the existing possessed golfer before applying its paused preview camera.
+    SetViewTarget(Golfer);
     Golfer->BeginCharacterCreatorPreview();
 
     bShowMouseCursor = true;
@@ -410,9 +420,33 @@ bool ADiscGolfTourPlayerController::PreviewCharacterCreatorDraft(
     FDGThrowStyle SafeThrowStyle = ThrowStyle;
     EDGHandedness SafeHandedness = Handedness;
     SanitizeCreatorProfile(SafeBody, SafeThrowStyle, SafeHandedness);
+    FDGBodyProfile PreviousBody;
+    FDGThrowStyle PreviousStyle;
+    EDGHandedness PreviousHandedness = EDGHandedness::Right;
+    const bool bHadPrevious = Golfer->GetCharacterCreatorProfile(
+        PreviousBody, PreviousStyle, PreviousHandedness);
+    const FDGOutfitLoadout PreviousOutfit = Golfer->GetCurrentOutfitLoadout();
     if (!Golfer->PreviewCharacterCreatorProfile(SafeBody, SafeThrowStyle, SafeHandedness))
     {
         CharacterCreatorStatusText = TEXT("The current pawn rejected that preview; the last valid profile remains active.");
+        return false;
+    }
+
+    FString OutfitStatus;
+    if (!Golfer->ApplyOutfitLoadoutTransactionally(
+            CharacterCreatorDraftOutfit, false, OutfitStatus))
+    {
+        if (bHadPrevious)
+        {
+            Golfer->PreviewCharacterCreatorProfile(
+                PreviousBody, PreviousStyle, PreviousHandedness);
+            FString RollbackStatus;
+            Golfer->ApplyOutfitLoadoutTransactionally(
+                PreviousOutfit, true, RollbackStatus);
+        }
+        CharacterCreatorStatusText = OutfitStatus.IsEmpty()
+            ? TEXT("The current outfit is incompatible with that body preview; the last valid preview remains active.")
+            : OutfitStatus;
         return false;
     }
 
@@ -521,7 +555,16 @@ bool ADiscGolfTourPlayerController::ApplyCharacterCreatorDraft(
     }
 
     UDiscGolfTourGameInstance* Instance = Cast<UDiscGolfTourGameInstance>(GetGameInstance());
-    if (!Instance || !Instance->UpdateCharacterProfile(SafeBody, SafeThrowStyle, SafeHandedness))
+    const FDiscGolfCharacterProfileSaveData Existing = Instance
+        ? Instance->GetCharacterProfile() : FDiscGolfCharacterProfileSaveData();
+    const FDiscGolfCharacterProfileSaveData SaveData =
+        FDiscGolfCharacterProfileSaveData::FromFramework(
+            SafeBody,
+            SafeThrowStyle,
+            SafeHandedness,
+            Existing.ToBodyBuildProfile());
+    if (!Instance || !Instance->UpdateCharacterProfileAndOutfit(
+            SaveData, CharacterCreatorDraftOutfit))
     {
         CharacterCreatorStatusText = TEXT("Profile save failed. The creator remains open and no saved profile was replaced.");
         return false;
@@ -558,6 +601,161 @@ void ADiscGolfTourPlayerController::RotateCharacterCreatorPreview(float DeltaYaw
     }
 }
 
+bool ADiscGolfTourPlayerController::PreviewCharacterCreatorOutfitSelection(
+    EDGOutfitSlot Slot,
+    FName ItemId,
+    FName VariantId,
+    FDGOutfitLoadout& OutDraft)
+{
+    if (!bCharacterCreatorOpen)
+    {
+        return false;
+    }
+
+    ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn());
+    if (!Golfer || !Golfer->IsCharacterProfileChangeSafe()
+        || !Golfer->GetRuntimeCharacterProfile())
+    {
+        CharacterCreatorStatusText = TEXT("Outfit preview is blocked until gameplay returns to a safe state.");
+        return false;
+    }
+
+    FDGOutfitLoadout Candidate = CharacterCreatorDraftOutfit;
+    FString SelectionStatus;
+    if (!DiscGolfOutfitRuntime::SetSlotSelection(
+            Candidate,
+            Slot,
+            ItemId,
+            VariantId,
+            Golfer->GetOutfitCatalog(),
+            Golfer->GetRuntimeCharacterProfile()->Body,
+            SelectionStatus))
+    {
+        CharacterCreatorStatusText = SelectionStatus;
+        return false;
+    }
+    FString ApplyStatus;
+    if (!Golfer->ApplyOutfitLoadoutTransactionally(Candidate, false, ApplyStatus))
+    {
+        CharacterCreatorStatusText = ApplyStatus;
+        return false;
+    }
+
+    CharacterCreatorDraftOutfit = Golfer->GetCurrentOutfitLoadout();
+    OutDraft = CharacterCreatorDraftOutfit;
+    CharacterCreatorStatusText = ApplyStatus.IsEmpty()
+        ? SelectionStatus : ApplyStatus;
+    return true;
+}
+
+bool ADiscGolfTourPlayerController::ResetCharacterCreatorOutfit(
+    FDGOutfitLoadout& OutDraft)
+{
+    if (!bCharacterCreatorOpen)
+    {
+        return false;
+    }
+    ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn());
+    FString Status;
+    const FDGOutfitLoadout Empty;
+    if (!Golfer || !Golfer->ApplyOutfitLoadoutTransactionally(Empty, false, Status))
+    {
+        CharacterCreatorStatusText = Status;
+        return false;
+    }
+    CharacterCreatorDraftOutfit = Golfer->GetCurrentOutfitLoadout();
+    OutDraft = CharacterCreatorDraftOutfit;
+    CharacterCreatorStatusText = TEXT("Outfit draft reset to None in every slot. Apply to save or Cancel to restore.");
+    return true;
+}
+
+bool ADiscGolfTourPlayerController::RandomizeCharacterCreatorOutfit(
+    FDGOutfitLoadout& OutDraft)
+{
+    if (!bCharacterCreatorOpen)
+    {
+        return false;
+    }
+    ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn());
+    if (!Golfer || !Golfer->GetRuntimeCharacterProfile())
+    {
+        return false;
+    }
+
+    FDGOutfitLoadout Candidate;
+    FRandomStream Random(static_cast<int32>(FPlatformTime::Cycles()));
+    for (EDGOutfitSlot Slot : DiscGolfOutfitRuntime::GetOrderedSlots())
+    {
+        const TArray<FDiscGolfOutfitOption> Options =
+            DiscGolfOutfitRuntime::GetOptionsForSlot(
+                Golfer->GetOutfitCatalog(), Slot, Golfer->GetRuntimeCharacterProfile()->Body);
+        TArray<const FDiscGolfOutfitOption*> Compatible;
+        for (const FDiscGolfOutfitOption& Option : Options)
+        {
+            if (Option.bCompatible && !Option.VariantIds.IsEmpty())
+            {
+                Compatible.Add(&Option);
+            }
+        }
+        if (Compatible.IsEmpty())
+        {
+            continue;
+        }
+
+        const FDiscGolfOutfitOption* Selected = Compatible[Random.RandRange(0, Compatible.Num() - 1)];
+        const FName VariantId = Selected->VariantIds[Random.RandRange(0, Selected->VariantIds.Num() - 1)];
+        FString IgnoredStatus;
+        DiscGolfOutfitRuntime::SetSlotSelection(
+            Candidate,
+            Slot,
+            Selected->ItemId,
+            VariantId,
+            Golfer->GetOutfitCatalog(),
+            Golfer->GetRuntimeCharacterProfile()->Body,
+            IgnoredStatus);
+    }
+
+    FString Status;
+    if (!Golfer->ApplyOutfitLoadoutTransactionally(Candidate, false, Status))
+    {
+        CharacterCreatorStatusText = Status;
+        return false;
+    }
+    CharacterCreatorDraftOutfit = Golfer->GetCurrentOutfitLoadout();
+    OutDraft = CharacterCreatorDraftOutfit;
+    CharacterCreatorStatusText = TEXT("Compatible proxy outfit randomized. Apply to save or Cancel to restore.");
+    return true;
+}
+
+TArray<FDiscGolfOutfitOption> ADiscGolfTourPlayerController::GetCharacterCreatorOutfitOptions(
+    EDGOutfitSlot Slot) const
+{
+    const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn());
+    if (!bCharacterCreatorOpen || !Golfer || !Golfer->GetRuntimeCharacterProfile())
+    {
+        return {};
+    }
+    return DiscGolfOutfitRuntime::GetOptionsForSlot(
+        Golfer->GetOutfitCatalog(), Slot, Golfer->GetRuntimeCharacterProfile()->Body);
+}
+
+bool ADiscGolfTourPlayerController::PrepareCharacterCreatorForSession6VisualEvidence(
+    EDGOutfitSlot Slot)
+{
+    if (!FParse::Param(FCommandLine::Get(), TEXT("Session6OutfitVisualCapture")))
+    {
+        return false;
+    }
+    if (!bCharacterCreatorOpen || !CharacterCreatorWidget)
+    {
+        return false;
+    }
+
+    CharacterCreatorWidget->PrepareSession6VisualOutfitEvidence(
+        Slot, CharacterCreatorDraftOutfit);
+    return true;
+}
+
 void ADiscGolfTourPlayerController::CloseCharacterCreator(bool bRestoreOpeningProfile)
 {
     if (!bCharacterCreatorOpen)
@@ -569,12 +767,34 @@ void ADiscGolfTourPlayerController::CloseCharacterCreator(bool bRestoreOpeningPr
     {
         if (bRestoreOpeningProfile)
         {
+            FDGBodyProfile PreviousBody;
+            FDGThrowStyle PreviousStyle;
+            EDGHandedness PreviousHandedness = EDGHandedness::Right;
+            const bool bHadPrevious = Golfer->GetCharacterCreatorProfile(
+                PreviousBody, PreviousStyle, PreviousHandedness);
+            const FDGOutfitLoadout PreviousOutfit = Golfer->GetCurrentOutfitLoadout();
+
+            FString OutfitStatus;
             if (!Golfer->PreviewCharacterCreatorProfile(
                     CharacterCreatorOpeningBody,
                     CharacterCreatorOpeningThrowStyle,
-                    CharacterCreatorOpeningHandedness))
+                    CharacterCreatorOpeningHandedness)
+                || !Golfer->ApplyOutfitLoadoutTransactionally(
+                    CharacterCreatorOpeningOutfit, false, OutfitStatus))
             {
+                if (bHadPrevious)
+                {
+                    Golfer->PreviewCharacterCreatorProfile(
+                        PreviousBody, PreviousStyle, PreviousHandedness);
+                    FString RollbackStatus;
+                    Golfer->ApplyOutfitLoadoutTransactionally(
+                        PreviousOutfit, true, RollbackStatus);
+                }
                 ControlsStatusText = TEXT("Cancel is waiting for a safe profile transition; the creator remains open.");
+                if (!OutfitStatus.IsEmpty())
+                {
+                    ControlsStatusText += TEXT(" ") + OutfitStatus;
+                }
                 CharacterCreatorStatusText = ControlsStatusText;
                 return;
             }

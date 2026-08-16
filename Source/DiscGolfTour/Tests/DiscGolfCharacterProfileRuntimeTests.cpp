@@ -7,6 +7,7 @@
 #include "Serialization/MemoryWriter.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "../DiscGolfCharacterProfileRuntime.h"
+#include "../DiscGolfOutfitRuntime.h"
 #include "../DiscGolfSaveGame.h"
 #include "../DiscGolfTourGameInstance.h"
 
@@ -245,6 +246,7 @@ bool FDiscGolfCharacterProfileDiskSlotRoundTripTest::RunTest(const FString& Para
 
     bool bSaved = false;
     FDiscGolfCharacterProfileSaveData Expected;
+    FDGOutfitLoadout ExpectedOutfit;
     if (Source)
     {
         Source->SaveSchemaVersion = DiscGolfSaveSchema::CurrentVersion;
@@ -272,6 +274,19 @@ bool FDiscGolfCharacterProfileDiskSlotRoundTripTest::RunTest(const FString& Para
         Source->CharacterProfile.Sanitize();
         Expected = Source->CharacterProfile;
 
+        FDGEquippedOutfitEntry Top;
+        Top.Slot = EDGOutfitSlot::Top;
+        Top.ItemId = TEXT("proxy_s6_top_tee_01");
+        Top.VariantId = TEXT("Teal");
+        Source->OutfitLoadout.Equipped.Add(Top);
+        FDGEquippedOutfitEntry Bag;
+        Bag.Slot = EDGOutfitSlot::Bag;
+        Bag.ItemId = TEXT("proxy_s6_bag_backpack_01");
+        Bag.VariantId = TEXT("Graphite");
+        Source->OutfitLoadout.Equipped.Add(Bag);
+        ExpectedOutfit = DiscGolfOutfitRuntime::NormalizeForPersistence(
+            Source->OutfitLoadout);
+
         bSaved = UGameplayStatics::SaveGameToSlot(Source, SlotName, UserIndex);
     }
 
@@ -288,8 +303,8 @@ bool FDiscGolfCharacterProfileDiskSlotRoundTripTest::RunTest(const FString& Para
     if (Restored)
     {
         const FDiscGolfCharacterProfileSaveData& Actual = Restored->CharacterProfile;
-        TestEqual(TEXT("Disk-slot payload retains schema 7"),
-            Restored->SaveSchemaVersion, 7);
+        TestEqual(TEXT("Disk-slot payload retains schema 8"),
+            Restored->SaveSchemaVersion, 8);
         TestEqual(TEXT("Disk-slot payload retains the current save schema"),
             Restored->SaveSchemaVersion, DiscGolfSaveSchema::CurrentVersion);
         TestTrue(TEXT("Handedness survives disk-slot persistence"),
@@ -335,6 +350,9 @@ bool FDiscGolfCharacterProfileDiskSlotRoundTripTest::RunTest(const FString& Para
             NearlyEqual(Actual.Explosiveness, Expected.Explosiveness));
         TestTrue(TEXT("Follow-through survives disk-slot persistence"),
             NearlyEqual(Actual.FollowThrough, Expected.FollowThrough));
+        TestTrue(TEXT("Stable outfit IDs and variants survive disk-slot persistence"),
+            DiscGolfOutfitRuntime::AreLoadoutsEquivalent(
+                Restored->OutfitLoadout, ExpectedOutfit));
     }
 
     const bool bDeleted = UGameplayStatics::DeleteGameInSlot(SlotName, UserIndex);
@@ -356,10 +374,10 @@ bool FDiscGolfCharacterProfileSchemaMigrationTest::RunTest(const FString& Parame
     const DiscGolfProfilePersistence::EMigrationResult Result =
         DiscGolfProfilePersistence::MigrateToCurrent(*Legacy);
 
-    TestTrue(TEXT("Schema 6 profile performs the Session 4 migration"),
+    TestTrue(TEXT("Schema 6 profile performs every migration through Session 6"),
         Result == DiscGolfProfilePersistence::EMigrationResult::Migrated);
-    TestEqual(TEXT("Schema 6 profile advances to schema 7"),
-        Legacy->SaveSchemaVersion, 7);
+    TestEqual(TEXT("Schema 6 profile advances to schema 8"),
+        Legacy->SaveSchemaVersion, 8);
     TestTrue(TEXT("Legacy save reconstructs baseline body defaults"),
         NearlyEqual(Legacy->CharacterProfile.HeightCm, 183.0f)
         && NearlyEqual(Legacy->CharacterProfile.WingspanScale, 1.0f)
@@ -369,6 +387,35 @@ bool FDiscGolfCharacterProfileSchemaMigrationTest::RunTest(const FString& Parame
         && NearlyEqual(Legacy->CharacterProfile.BodyFat, 0.35f));
     TestTrue(TEXT("Legacy save reconstructs right handedness"),
         Legacy->CharacterProfile.GetHandedness() == EDGHandedness::Right);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfCharacterProfileSchema7OutfitMigrationTest,
+    "DiscGolfTour.Character.Session6.Outfit.Schema7Migration",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDiscGolfCharacterProfileSchema7OutfitMigrationTest::RunTest(const FString& Parameters)
+{
+    UDiscGolfSaveGame* Legacy = NewObject<UDiscGolfSaveGame>();
+    Legacy->SaveSchemaVersion = 7;
+
+    // A real schema-7 archive has no outfit property. Populate it here to prove
+    // that a partially reconstructed/synthetic legacy object cannot smuggle
+    // non-schema data into the current profile.
+    FDGEquippedOutfitEntry SyntheticEntry;
+    SyntheticEntry.Slot = EDGOutfitSlot::Top;
+    SyntheticEntry.ItemId = TEXT("not_present_in_schema_7");
+    SyntheticEntry.VariantId = TEXT("Default");
+    Legacy->OutfitLoadout.Equipped.Add(SyntheticEntry);
+
+    const DiscGolfProfilePersistence::EMigrationResult Result =
+        DiscGolfProfilePersistence::MigrateToCurrent(*Legacy);
+
+    TestTrue(TEXT("Schema 7 performs the Session 6 outfit migration"),
+        Result == DiscGolfProfilePersistence::EMigrationResult::Migrated);
+    TestEqual(TEXT("Schema 7 advances to schema 8"), Legacy->SaveSchemaVersion, 8);
+    TestTrue(TEXT("Schema 7 deterministically starts with an empty outfit"),
+        Legacy->OutfitLoadout.Equipped.IsEmpty());
     return true;
 }
 

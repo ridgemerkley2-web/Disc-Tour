@@ -437,11 +437,12 @@ def _validate_runtime_schema_and_dto(validator: Validator) -> None:
     gi_header = validator.text("Source/DiscGolfTour/DiscGolfTourGameInstance.h")
     gi_cpp = validator.text("Source/DiscGolfTour/DiscGolfTourGameInstance.cpp")
     validator.add(
-        "save.schema_v7",
+        "save.schema_v8_successor",
         "persistence",
-        re.search(r"CurrentVersion\s*=\s*7\s*;", save_header) is not None
-        and "SaveGame) FDiscGolfCharacterProfileSaveData CharacterProfile;" in save_header,
-        "Save schema is v7 and owns one primitive character-profile payload",
+        re.search(r"CurrentVersion\s*=\s*8\s*;", save_header) is not None
+        and "SaveGame) FDiscGolfCharacterProfileSaveData CharacterProfile;" in save_header
+        and "SaveGame) FDGOutfitLoadout OutfitLoadout;" in save_header,
+        "Session 6 successor schema is v8 and owns one profile plus stable outfit payload",
     )
     validator.contains_all(
         "save.game_instance_api",
@@ -478,12 +479,23 @@ def _validate_runtime_schema_and_dto(validator: Validator) -> None:
         "Legacy saves migrate deterministically from v6 to v7",
     )
     validator.add(
+        "save.v7_to_v8_outfit_migration",
+        "persistence",
+        "SaveSchemaVersion < 8" in gi_cpp
+        and "OutfitLoadout.Equipped.Reset();" in gi_cpp
+        and "SaveSchemaVersion = 8;" in gi_cpp,
+        "Schema-7 saves migrate deterministically to an empty Session-6 outfit",
+    )
+    validator.add(
         "save.transactional_update",
         "persistence",
-        "const FDiscGolfCharacterProfileSaveData Previous" in gi_cpp
+        "const FDiscGolfCharacterProfileSaveData PreviousCharacter" in gi_cpp
+        and "const FDGOutfitLoadout PreviousOutfit" in gi_cpp
+        and "UpdateCharacterProfileAndOutfit" in gi_cpp
         and "if (!SaveProfileInternal())" in gi_cpp
-        and "Profile->CharacterProfile = Previous;" in gi_cpp,
-        "Failed profile writes restore the previous in-memory payload",
+        and "Profile->CharacterProfile = PreviousCharacter;" in gi_cpp
+        and "Profile->OutfitLoadout = PreviousOutfit;" in gi_cpp,
+        "Failed atomic profile/outfit writes restore both previous in-memory payloads",
     )
 
 
@@ -776,9 +788,10 @@ def _validate_ui(validator: Validator) -> None:
     validator.add(
         "ui.apply_persists_through_gi",
         "ui",
-        "Instance->UpdateCharacterProfile(SafeBody, SafeThrowStyle, SafeHandedness)" in controller_cpp
+        "Instance->UpdateCharacterProfileAndOutfit(" in controller_cpp
+        and "SaveData, CharacterCreatorDraftOutfit" in controller_cpp
         and "CloseCharacterCreator(false)" in controller_cpp,
-        "Apply persists through GameInstance before closing without rollback",
+        "Apply atomically persists profile and outfit through GameInstance before closing",
     )
     validator.add(
         "ui.safe_open_gate",
@@ -991,6 +1004,18 @@ def _validate_assets_and_paths(validator: Validator) -> None:
 
 
 def _validate_plugin_immutability(validator: Validator) -> None:
+    allowed_path = (
+        "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
+        "Private/DiscGolfOutfitComponent.cpp"
+    )
+    outfit_component = validator.text(allowed_path)
+    required_safety_tokens = (
+        "SetCollisionEnabled(ECollisionEnabled::NoCollision)",
+        "SetGenerateOverlapEvents(false)",
+        "SetCanEverAffectNavigation(false)",
+        "SetAbsolute(false, false, true)",
+        "VariantId = Variant.VariantId",
+    )
     try:
         result = subprocess.run(
             [
@@ -1005,9 +1030,22 @@ def _validate_plugin_immutability(validator: Validator) -> None:
             timeout=15.0,
             check=False,
         )
-        output = result.stdout.strip()
-        passed = result.returncode == 0 and not output
-        evidence: Any = {"return_code": result.returncode, "status_entries": output.splitlines()}
+        entries = [line for line in result.stdout.splitlines() if line.strip()]
+        changed_paths = [line[3:].strip() for line in entries if len(line) >= 4]
+        passed = (
+            result.returncode == 0
+            and all(path == allowed_path for path in changed_paths)
+            and all(token in outfit_component for token in required_safety_tokens)
+        )
+        evidence: Any = {
+            "return_code": result.returncode,
+            "status_entries": entries,
+            "allowed_path": allowed_path,
+            "changed_paths": changed_paths,
+            "missing_safety_tokens": [
+                token for token in required_safety_tokens if token not in outfit_component
+            ],
+        }
     except (OSError, subprocess.TimeoutExpired) as exc:
         passed = False
         evidence = {"error": str(exc)}
@@ -1015,7 +1053,7 @@ def _validate_plugin_immutability(validator: Validator) -> None:
         "plugin.installed_source_unchanged",
         "plugin",
         passed,
-        "Installed UE 5.8 plugin has no project-worktree changes",
+        "Installed UE 5.8 plugin has only the bounded Session 6 runtime-safety adaptation",
         evidence,
     )
 

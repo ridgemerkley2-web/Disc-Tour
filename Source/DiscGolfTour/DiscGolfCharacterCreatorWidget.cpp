@@ -1,6 +1,8 @@
 #include "DiscGolfCharacterCreatorWidget.h"
 
+#include "DiscGolfOutfitRuntime.h"
 #include "DiscGolfTourPlayerController.h"
+#include "Framework/Application/SlateApplication.h"
 #include "Input/Reply.h"
 #include "Styling/AppStyle.h"
 #include "Styling/CoreStyle.h"
@@ -12,6 +14,8 @@
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Layout/SSeparator.h"
 #include "Widgets/Layout/SSpacer.h"
+#include "Widgets/Layout/SWidgetSwitcher.h"
+#include "Widgets/Layout/SWrapBox.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/SOverlay.h"
 #include "Widgets/Text/STextBlock.h"
@@ -34,9 +38,11 @@ void UDiscGolfCharacterCreatorWidget::InitializeCreator(
     ADiscGolfTourPlayerController* InController,
     const FDGBodyProfile& InBody,
     const FDGThrowStyle& InThrowStyle,
-    EDGHandedness InHandedness)
+    EDGHandedness InHandedness,
+    const FDGOutfitLoadout& InOutfit)
 {
     OwningDiscGolfController = InController;
+    DraftOutfit = DiscGolfOutfitRuntime::NormalizeForPersistence(InOutfit);
     SetDraftProfile(InBody, InThrowStyle, InHandedness);
 }
 
@@ -48,6 +54,7 @@ void UDiscGolfCharacterCreatorWidget::SetDraftProfile(
     DraftBody = InBody;
     DraftThrowStyle = InThrowStyle;
     DraftHandedness = InHandedness;
+    RebuildOutfitLists();
     InvalidateLayoutAndVolatility();
 }
 
@@ -64,6 +71,22 @@ void UDiscGolfCharacterCreatorWidget::GetDraftProfile(
 TSharedPtr<SWidget> UDiscGolfCharacterCreatorWidget::GetInitialFocusWidget() const
 {
     return InitialFocusButton;
+}
+
+void UDiscGolfCharacterCreatorWidget::PrepareSession6VisualOutfitEvidence(
+    EDGOutfitSlot OutfitSlot,
+    const FDGOutfitLoadout& InOutfit)
+{
+    if (!DiscGolfOutfitRuntime::GetOrderedSlots().Contains(OutfitSlot))
+    {
+        OutfitSlot = EDGOutfitSlot::Top;
+    }
+    ActiveCreatorTabIndex = 1;
+    SelectedOutfitSlot = OutfitSlot;
+    DraftOutfit = DiscGolfOutfitRuntime::NormalizeForPersistence(InOutfit);
+    PendingOutfitFocusRequest = EOutfitFocusRequest::CurrentItem;
+    RebuildOutfitLists();
+    InvalidateLayoutAndVolatility();
 }
 
 TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
@@ -107,9 +130,30 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
                         .Padding(0.0f, 2.0f, 0.0f, 14.0f)
                         [
                             SNew(STextBlock)
-                            .Text(FText::FromString(TEXT("SESSION 4  //  ONE MASTER SKELETON  //  LIVE CURRENT-PLAYER PREVIEW")))
+                            .Text(FText::FromString(TEXT("SESSION 6  //  ONE MASTER SKELETON  //  MODULAR OUTFIT PREVIEW")))
                             .ColorAndOpacity(Muted)
                             .Font(FCoreStyle::GetDefaultFontStyle("Regular", 10))
+                        ]
+                        + SVerticalBox::Slot()
+                        .AutoHeight()
+                        .Padding(0.0f, 0.0f, 0.0f, 12.0f)
+                        [
+                            SNew(SHorizontalBox)
+                            + SHorizontalBox::Slot()
+                            .AutoWidth()
+                            .Padding(0.0f, 0.0f, 8.0f, 0.0f)
+                            [
+                                SNew(SButton)
+                                .Text(FText::FromString(TEXT("BODY & THROW")))
+                                .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleCreatorTab, 0)
+                            ]
+                            + SHorizontalBox::Slot()
+                            .AutoWidth()
+                            [
+                                SNew(SButton)
+                                .Text(FText::FromString(TEXT("OUTFIT")))
+                                .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleCreatorTab, 1)
+                            ]
                         ]
                         + SVerticalBox::Slot()
                         .AutoHeight()
@@ -143,47 +187,56 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
                         + SVerticalBox::Slot()
                         .FillHeight(1.0f)
                         [
-                            SNew(SScrollBox)
-                            + SScrollBox::Slot()
+                            SAssignNew(CreatorTabSwitcher, SWidgetSwitcher)
+                            .WidgetIndex_Lambda([this]() { return ActiveCreatorTabIndex; })
+                            + SWidgetSwitcher::Slot()
                             [
-                                SNew(SVerticalBox)
-                                + SVerticalBox::Slot()
-                                .AutoHeight()
-                                .Padding(0.0f, 4.0f)
+                                SNew(SScrollBox)
+                                + SScrollBox::Slot()
                                 [
-                                    SNew(STextBlock)
-                                    .Text(FText::FromString(TEXT("BODY")))
-                                    .ColorAndOpacity(Signal)
-                                    .Font(FCoreStyle::GetDefaultFontStyle("Bold", 16))
+                                    SNew(SVerticalBox)
+                                    + SVerticalBox::Slot()
+                                    .AutoHeight()
+                                    .Padding(0.0f, 4.0f)
+                                    [
+                                        SNew(STextBlock)
+                                        .Text(FText::FromString(TEXT("BODY")))
+                                        .ColorAndOpacity(Signal)
+                                        .Font(FCoreStyle::GetDefaultFontStyle("Bold", 16))
+                                    ]
+                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("HEIGHT")), ECreatorField::Height, 150.0f, 210.0f)]
+                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("WINGSPAN")), ECreatorField::Wingspan, 0.92f, 1.08f)]
+                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("SHOULDER WIDTH")), ECreatorField::ShoulderWidth, 0.92f, 1.08f)]
+                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("TORSO LENGTH")), ECreatorField::TorsoLength, 0.94f, 1.06f)]
+                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("LEG LENGTH")), ECreatorField::LegLength, 0.94f, 1.06f)]
+                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("HAND SIZE")), ECreatorField::HandScale, 0.94f, 1.06f)]
+                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("BODY MASS")), ECreatorField::Mass, 45.0f, 160.0f)]
+                                    + SVerticalBox::Slot()
+                                    .AutoHeight()
+                                    .Padding(0.0f, 14.0f, 0.0f, 8.0f)
+                                    [
+                                        SNew(SSeparator)
+                                    ]
+                                    + SVerticalBox::Slot()
+                                    .AutoHeight()
+                                    .Padding(0.0f, 4.0f)
+                                    [
+                                        SNew(STextBlock)
+                                        .Text(FText::FromString(TEXT("THROW STYLE  //  PRESENTATION ONLY")))
+                                        .ColorAndOpacity(Signal)
+                                        .Font(FCoreStyle::GetDefaultFontStyle("Bold", 16))
+                                    ]
+                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("RUN-UP INTENSITY")), ECreatorField::RunUp, 0.0f, 1.0f)]
+                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("REACHBACK")), ECreatorField::ReachBack, 0.0f, 1.0f)]
+                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("TORSO ROTATION")), ECreatorField::TorsoRotation, 0.0f, 1.0f)]
+                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("BRACE INTENSITY")), ECreatorField::Brace, 0.0f, 1.0f)]
+                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("EXPLOSIVENESS")), ECreatorField::Explosiveness, 0.0f, 1.0f)]
+                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("FOLLOW-THROUGH")), ECreatorField::FollowThrough, 0.0f, 1.0f)]
                                 ]
-                                + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("HEIGHT")), ECreatorField::Height, 150.0f, 210.0f)]
-                                + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("WINGSPAN")), ECreatorField::Wingspan, 0.92f, 1.08f)]
-                                + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("SHOULDER WIDTH")), ECreatorField::ShoulderWidth, 0.92f, 1.08f)]
-                                + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("TORSO LENGTH")), ECreatorField::TorsoLength, 0.94f, 1.06f)]
-                                + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("LEG LENGTH")), ECreatorField::LegLength, 0.94f, 1.06f)]
-                                + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("HAND SIZE")), ECreatorField::HandScale, 0.94f, 1.06f)]
-                                + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("BODY MASS")), ECreatorField::Mass, 45.0f, 160.0f)]
-                                + SVerticalBox::Slot()
-                                .AutoHeight()
-                                .Padding(0.0f, 14.0f, 0.0f, 8.0f)
-                                [
-                                    SNew(SSeparator)
-                                ]
-                                + SVerticalBox::Slot()
-                                .AutoHeight()
-                                .Padding(0.0f, 4.0f)
-                                [
-                                    SNew(STextBlock)
-                                    .Text(FText::FromString(TEXT("THROW STYLE  //  PRESENTATION ONLY")))
-                                    .ColorAndOpacity(Signal)
-                                    .Font(FCoreStyle::GetDefaultFontStyle("Bold", 16))
-                                ]
-                                + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("RUN-UP INTENSITY")), ECreatorField::RunUp, 0.0f, 1.0f)]
-                                + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("REACHBACK")), ECreatorField::ReachBack, 0.0f, 1.0f)]
-                                + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("TORSO ROTATION")), ECreatorField::TorsoRotation, 0.0f, 1.0f)]
-                                + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("BRACE INTENSITY")), ECreatorField::Brace, 0.0f, 1.0f)]
-                                + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("EXPLOSIVENESS")), ECreatorField::Explosiveness, 0.0f, 1.0f)]
-                                + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("FOLLOW-THROUGH")), ECreatorField::FollowThrough, 0.0f, 1.0f)]
+                            ]
+                            + SWidgetSwitcher::Slot()
+                            [
+                                BuildOutfitTab()
                             ]
                         ]
                         + SVerticalBox::Slot()
@@ -350,6 +403,7 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
             ]
         ];
 
+    RebuildOutfitLists();
     return RootSlateWidget.ToSharedRef();
 }
 
@@ -358,6 +412,315 @@ void UDiscGolfCharacterCreatorWidget::ReleaseSlateResources(bool bReleaseChildre
     Super::ReleaseSlateResources(bReleaseChildren);
     RootSlateWidget.Reset();
     InitialFocusButton.Reset();
+    CreatorTabSwitcher.Reset();
+    OutfitItemList.Reset();
+    OutfitVariantList.Reset();
+    OutfitCategoryButtons.Reset();
+    OutfitItemButtons.Reset();
+    OutfitVariantButtons.Reset();
+}
+
+TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::BuildOutfitTab()
+{
+    using namespace DiscGolfCharacterCreatorStyle;
+
+    OutfitCategoryButtons.Reset();
+    TSharedRef<SWrapBox> CategoryBox = SNew(SWrapBox).UseAllottedSize(true);
+    for (EDGOutfitSlot OutfitSlot : DiscGolfOutfitRuntime::GetOrderedSlots())
+    {
+        TSharedPtr<SButton> CategoryButton;
+        CategoryBox->AddSlot()
+        .Padding(FMargin(0.0f, 0.0f, 6.0f, 6.0f))
+        [
+            SAssignNew(CategoryButton, SButton)
+            .Text(DiscGolfOutfitRuntime::GetSlotDisplayName(OutfitSlot))
+            .OnClicked_UObject(
+                this,
+                &UDiscGolfCharacterCreatorWidget::HandleOutfitSlot,
+                OutfitSlot)
+        ];
+        OutfitCategoryButtons.Add(OutfitSlot, CategoryButton);
+    }
+
+    return SNew(SScrollBox)
+        + SScrollBox::Slot()
+        [
+            SNew(SVerticalBox)
+            + SVerticalBox::Slot()
+            .AutoHeight()
+            .Padding(0.0f, 4.0f, 0.0f, 3.0f)
+            [
+                SNew(STextBlock)
+                .Text(FText::FromString(TEXT("MODULAR OUTFIT  //  GENERIC PROXY CONTENT")))
+                .ColorAndOpacity(Signal)
+                .Font(FCoreStyle::GetDefaultFontStyle("Bold", 16))
+            ]
+            + SVerticalBox::Slot()
+            .AutoHeight()
+            .Padding(0.0f, 0.0f, 0.0f, 10.0f)
+            [
+                SNew(STextBlock)
+                .Text(FText::FromString(TEXT("All Session 6 wardrobe art is unbranded validation content and is not production-ready.")))
+                .ColorAndOpacity(Warning)
+                .AutoWrapText(true)
+            ]
+            + SVerticalBox::Slot()
+            .AutoHeight()
+            [
+                CategoryBox
+            ]
+            + SVerticalBox::Slot()
+            .AutoHeight()
+            .Padding(0.0f, 8.0f, 0.0f, 4.0f)
+            [
+                SNew(STextBlock)
+                .Text_Lambda([this]()
+                {
+                    return FText::Format(
+                        FText::FromString(TEXT("{0} ITEMS")),
+                        DiscGolfOutfitRuntime::GetSlotDisplayName(SelectedOutfitSlot));
+                })
+                .ColorAndOpacity(Paper)
+                .Font(FCoreStyle::GetDefaultFontStyle("Bold", 13))
+            ]
+            + SVerticalBox::Slot()
+            .AutoHeight()
+            [
+                SAssignNew(OutfitItemList, SVerticalBox)
+            ]
+            + SVerticalBox::Slot()
+            .AutoHeight()
+            .Padding(0.0f, 12.0f, 0.0f, 4.0f)
+            [
+                SNew(STextBlock)
+                .Text(FText::FromString(TEXT("COLOR / MATERIAL VARIANT")))
+                .ColorAndOpacity(Paper)
+                .Font(FCoreStyle::GetDefaultFontStyle("Bold", 13))
+            ]
+            + SVerticalBox::Slot()
+            .AutoHeight()
+            [
+                SAssignNew(OutfitVariantList, SVerticalBox)
+            ]
+            + SVerticalBox::Slot()
+            .AutoHeight()
+            .Padding(0.0f, 14.0f, 0.0f, 0.0f)
+            [
+                SNew(SHorizontalBox)
+                + SHorizontalBox::Slot()
+                .AutoWidth()
+                .Padding(0.0f, 0.0f, 8.0f, 0.0f)
+                [
+                    SNew(SButton)
+                    .Text(FText::FromString(TEXT("RESET OUTFIT")))
+                    .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleResetOutfit)
+                ]
+                + SHorizontalBox::Slot()
+                .AutoWidth()
+                [
+                    SNew(SButton)
+                    .Text(FText::FromString(TEXT("RANDOMIZE OUTFIT")))
+                    .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleRandomizeOutfit)
+                ]
+            ]
+        ];
+}
+
+void UDiscGolfCharacterCreatorWidget::RebuildOutfitLists()
+{
+    if (!OutfitItemList.IsValid() || !OutfitVariantList.IsValid())
+    {
+        return;
+    }
+
+    bool bHadFocusedItem = false;
+    bool bHadFocusedVariant = false;
+    FName PreviouslyFocusedItem = NAME_None;
+    FName PreviouslyFocusedVariant = NAME_None;
+    if (FSlateApplication::IsInitialized())
+    {
+        const TSharedPtr<SWidget> FocusedWidget =
+            FSlateApplication::Get().GetKeyboardFocusedWidget();
+        for (const TPair<FName, TSharedPtr<SButton>>& Pair : OutfitItemButtons)
+        {
+            if (Pair.Value.IsValid() && Pair.Value.Get() == FocusedWidget.Get())
+            {
+                bHadFocusedItem = true;
+                PreviouslyFocusedItem = Pair.Key;
+                break;
+            }
+        }
+        for (const TPair<FName, TSharedPtr<SButton>>& Pair : OutfitVariantButtons)
+        {
+            if (Pair.Value.IsValid() && Pair.Value.Get() == FocusedWidget.Get())
+            {
+                bHadFocusedVariant = true;
+                PreviouslyFocusedVariant = Pair.Key;
+                break;
+            }
+        }
+    }
+
+    OutfitItemList->ClearChildren();
+    OutfitVariantList->ClearChildren();
+    OutfitItemButtons.Reset();
+    OutfitVariantButtons.Reset();
+
+    const FDGEquippedOutfitEntry* SelectedEntry =
+        DiscGolfOutfitRuntime::FindEntryForSlot(DraftOutfit, SelectedOutfitSlot);
+    const bool bNoneSelected = SelectedEntry == nullptr;
+    TSharedPtr<SButton> NoneButton;
+    OutfitItemList->AddSlot()
+    .AutoHeight()
+    .Padding(0.0f, 1.0f)
+    [
+        SAssignNew(NoneButton, SButton)
+        .Text(FText::FromString(bNoneSelected ? TEXT("● NONE") : TEXT("NONE")))
+        .OnClicked_UObject(
+            this,
+            &UDiscGolfCharacterCreatorWidget::HandleOutfitItem,
+            FName())
+    ];
+    OutfitItemButtons.Add(NAME_None, NoneButton);
+
+    const ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get();
+    const TArray<FDiscGolfOutfitOption> Options = Controller
+        ? Controller->GetCharacterCreatorOutfitOptions(SelectedOutfitSlot)
+        : TArray<FDiscGolfOutfitOption>();
+    for (const FDiscGolfOutfitOption& Option : Options)
+    {
+        const bool bSelected = SelectedEntry && SelectedEntry->ItemId == Option.ItemId;
+        FString Label = bSelected ? TEXT("● ") : FString();
+        Label += Option.DisplayName.ToString();
+        if (!Option.bCompatible && !Option.CompatibilityReason.IsEmpty())
+        {
+            Label += TEXT("  [") + Option.CompatibilityReason + TEXT("]");
+        }
+        TSharedPtr<SButton> ItemButton;
+        OutfitItemList->AddSlot()
+        .AutoHeight()
+        .Padding(0.0f, 1.0f)
+        [
+            SAssignNew(ItemButton, SButton)
+            .IsEnabled(Option.bCompatible)
+            .Text(FText::FromString(Label))
+            .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleOutfitItem, Option.ItemId)
+        ];
+        OutfitItemButtons.Add(Option.ItemId, ItemButton);
+    }
+
+    if (!SelectedEntry)
+    {
+        OutfitVariantList->AddSlot()
+        .AutoHeight()
+        [
+            SNew(STextBlock)
+            .Text(FText::FromString(TEXT("Select an item to choose a variant.")))
+            .ColorAndOpacity(DiscGolfCharacterCreatorStyle::Muted)
+        ];
+    }
+    else
+    {
+        const FDiscGolfOutfitOption* SelectedOption = Options.FindByPredicate(
+            [SelectedEntry](const FDiscGolfOutfitOption& Option)
+            {
+                return Option.ItemId == SelectedEntry->ItemId;
+            });
+        if (!SelectedOption || SelectedOption->VariantIds.IsEmpty())
+        {
+            OutfitVariantList->AddSlot()
+            .AutoHeight()
+            [
+                SNew(STextBlock)
+                .Text(FText::FromString(TEXT("No valid variants are available.")))
+                .ColorAndOpacity(DiscGolfCharacterCreatorStyle::Warning)
+            ];
+        }
+        else
+        {
+            for (FName VariantId : SelectedOption->VariantIds)
+            {
+                const bool bSelected = SelectedEntry->VariantId == VariantId;
+                TSharedPtr<SButton> VariantButton;
+                OutfitVariantList->AddSlot()
+                .AutoHeight()
+                .Padding(0.0f, 1.0f)
+                [
+                    SAssignNew(VariantButton, SButton)
+                    .Text(FText::FromString(
+                        FString(bSelected ? TEXT("● ") : TEXT("")) + VariantId.ToString()))
+                    .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleOutfitVariant, VariantId)
+                ];
+                OutfitVariantButtons.Add(VariantId, VariantButton);
+            }
+        }
+    }
+
+    const auto FindItemButton = [this](FName ItemId) -> TSharedPtr<SButton>
+    {
+        const TSharedPtr<SButton>* Found = OutfitItemButtons.Find(ItemId);
+        return Found ? *Found : TSharedPtr<SButton>();
+    };
+    const auto FindVariantButton = [this](FName VariantId) -> TSharedPtr<SButton>
+    {
+        const TSharedPtr<SButton>* Found = OutfitVariantButtons.Find(VariantId);
+        return Found ? *Found : TSharedPtr<SButton>();
+    };
+
+    const EOutfitFocusRequest FocusRequest = PendingOutfitFocusRequest;
+    TSharedPtr<SButton> FocusTarget;
+    switch (FocusRequest)
+    {
+        case EOutfitFocusRequest::Category:
+            if (const TSharedPtr<SButton>* Found = OutfitCategoryButtons.Find(SelectedOutfitSlot))
+            {
+                FocusTarget = *Found;
+            }
+            break;
+        case EOutfitFocusRequest::CurrentItem:
+            FocusTarget = FindItemButton(SelectedEntry ? SelectedEntry->ItemId : NAME_None);
+            break;
+        case EOutfitFocusRequest::CurrentVariant:
+            if (SelectedEntry)
+            {
+                FocusTarget = FindVariantButton(SelectedEntry->VariantId);
+            }
+            break;
+        case EOutfitFocusRequest::Preserve:
+        default:
+            if (bHadFocusedItem)
+            {
+                FocusTarget = FindItemButton(PreviouslyFocusedItem);
+            }
+            else if (bHadFocusedVariant)
+            {
+                FocusTarget = FindVariantButton(PreviouslyFocusedVariant);
+            }
+            break;
+    }
+    PendingOutfitFocusRequest = EOutfitFocusRequest::Preserve;
+
+    if (!FocusTarget.IsValid()
+        && (FocusRequest == EOutfitFocusRequest::CurrentVariant
+            || bHadFocusedItem || bHadFocusedVariant))
+    {
+        FocusTarget = FindItemButton(SelectedEntry ? SelectedEntry->ItemId : NAME_None);
+    }
+    const bool bMustRestoreDynamicFocus =
+        FocusRequest == EOutfitFocusRequest::CurrentItem
+        || FocusRequest == EOutfitFocusRequest::CurrentVariant
+        || bHadFocusedItem
+        || bHadFocusedVariant;
+    if (bMustRestoreDynamicFocus
+        && (!FocusTarget.IsValid() || !FocusTarget->IsEnabled()))
+    {
+        FocusTarget = FindItemButton(NAME_None);
+    }
+    if (FocusTarget.IsValid() && FocusTarget->IsEnabled()
+        && FSlateApplication::IsInitialized())
+    {
+        FSlateApplication::Get().SetKeyboardFocus(FocusTarget, EFocusCause::Navigation);
+    }
 }
 
 TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::BuildSliderRow(
@@ -494,6 +857,7 @@ void UDiscGolfCharacterCreatorWidget::SubmitPreview()
     {
         Controller->PreviewCharacterCreatorDraft(DraftBody, DraftThrowStyle, DraftHandedness);
     }
+    RebuildOutfitLists();
 }
 
 FReply UDiscGolfCharacterCreatorWidget::HandleRightHanded()
@@ -555,6 +919,108 @@ FReply UDiscGolfCharacterCreatorWidget::HandleCancel()
     {
         Controller->CancelCharacterCreator();
     }
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleCreatorTab(int32 TabIndex)
+{
+    ActiveCreatorTabIndex = FMath::Clamp(TabIndex, 0, 1);
+    if (ActiveCreatorTabIndex == 1)
+    {
+        RebuildOutfitLists();
+    }
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleOutfitSlot(EDGOutfitSlot OutfitSlot)
+{
+    SelectedOutfitSlot = OutfitSlot;
+    PendingOutfitFocusRequest = EOutfitFocusRequest::Category;
+    RebuildOutfitLists();
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleOutfitItem(FName ItemId)
+{
+    if (ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get())
+    {
+        FName VariantId = NAME_None;
+        if (!ItemId.IsNone())
+        {
+            const TArray<FDiscGolfOutfitOption> Options =
+                Controller->GetCharacterCreatorOutfitOptions(SelectedOutfitSlot);
+            if (const FDiscGolfOutfitOption* Option = Options.FindByPredicate(
+                    [ItemId](const FDiscGolfOutfitOption& Candidate)
+                    {
+                        return Candidate.ItemId == ItemId;
+                    }))
+            {
+                VariantId = Option->VariantIds.Contains(FName(TEXT("Default")))
+                    ? FName(TEXT("Default"))
+                    : (Option->VariantIds.IsEmpty() ? NAME_None : Option->VariantIds[0]);
+            }
+        }
+
+        FDGOutfitLoadout Updated;
+        if (Controller->PreviewCharacterCreatorOutfitSelection(
+                SelectedOutfitSlot, ItemId, VariantId, Updated))
+        {
+            DraftOutfit = Updated;
+            PendingOutfitFocusRequest = EOutfitFocusRequest::CurrentItem;
+        }
+    }
+    RebuildOutfitLists();
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleOutfitVariant(FName VariantId)
+{
+    const FDGEquippedOutfitEntry* Entry =
+        DiscGolfOutfitRuntime::FindEntryForSlot(DraftOutfit, SelectedOutfitSlot);
+    if (!Entry)
+    {
+        return FReply::Handled();
+    }
+
+    if (ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get())
+    {
+        FDGOutfitLoadout Updated;
+        if (Controller->PreviewCharacterCreatorOutfitSelection(
+                SelectedOutfitSlot, Entry->ItemId, VariantId, Updated))
+        {
+            DraftOutfit = Updated;
+            PendingOutfitFocusRequest = EOutfitFocusRequest::CurrentVariant;
+        }
+    }
+    RebuildOutfitLists();
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleResetOutfit()
+{
+    if (ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get())
+    {
+        FDGOutfitLoadout Updated;
+        if (Controller->ResetCharacterCreatorOutfit(Updated))
+        {
+            DraftOutfit = Updated;
+        }
+    }
+    RebuildOutfitLists();
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleRandomizeOutfit()
+{
+    if (ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get())
+    {
+        FDGOutfitLoadout Updated;
+        if (Controller->RandomizeCharacterCreatorOutfit(Updated))
+        {
+            DraftOutfit = Updated;
+        }
+    }
+    RebuildOutfitLists();
     return FReply::Handled();
 }
 

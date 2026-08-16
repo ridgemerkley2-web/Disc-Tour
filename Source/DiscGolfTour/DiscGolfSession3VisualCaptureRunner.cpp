@@ -76,7 +76,7 @@ const TCHAR* ProfilePaths[] = {
 
 const float ProfileCaptureMontageSeconds[] = {0.92f, 1.43f, 1.84f};
 
-bool IsFiniteVector(const FVector& Value)
+bool IsSession3FiniteVector(const FVector& Value)
 {
     return !Value.ContainsNaN()
         && FMath::IsFinite(Value.X)
@@ -771,7 +771,7 @@ bool ADiscGolfSession3VisualCaptureRunner::HandleProfileFixtureLaunch(
     const bool bUsable = AuthoritativeCommand.ThrowStyle == EThrowStyle::Backhand
         && AuthoritativeCommand.ShotContext == EDiscShotContext::Drive
         && GripWorldTransform.IsValid()
-        && IsFiniteVector(GripWorldTransform.GetLocation())
+        && IsSession3FiniteVector(GripWorldTransform.GetLocation())
         && ProfileMesh
         && FVector::Dist(
             GripWorldTransform.GetLocation(),
@@ -1374,9 +1374,9 @@ bool ADiscGolfSession3VisualCaptureRunner::IsProfilePoseFiniteAndPlausible() con
     const FVector FootR = ProfileMesh->GetSocketLocation(TEXT("foot_r"));
     const FBoxSphereBounds Bounds = ProfileMesh->Bounds;
     float MaxBoneLengthRatioError = 0.0f;
-    return IsFiniteVector(Pelvis) && IsFiniteVector(Head) && IsFiniteVector(Hand)
-        && IsFiniteVector(FootL) && IsFiniteVector(FootR)
-        && IsFiniteVector(Bounds.BoxExtent)
+    return IsSession3FiniteVector(Pelvis) && IsSession3FiniteVector(Head) && IsSession3FiniteVector(Hand)
+        && IsSession3FiniteVector(FootL) && IsSession3FiniteVector(FootR)
+        && IsSession3FiniteVector(Bounds.BoxExtent)
         && FVector::Dist(Pelvis, Head) > 35.0f
         && FVector::Dist(Pelvis, Head) < 180.0f
         && FVector::Dist(Pelvis, Hand) < 260.0f
@@ -1443,7 +1443,7 @@ bool ADiscGolfSession3VisualCaptureRunner::ValidateBoneLengthInvariant(
         const FName ParentName = RefSkeleton.GetBoneName(ParentIndex);
         const FVector ChildLocation = Mesh->GetBoneLocation(BoneName, EBoneSpaces::WorldSpace);
         const FVector ParentLocation = Mesh->GetBoneLocation(ParentName, EBoneSpaces::WorldSpace);
-        if (!IsFiniteVector(ChildLocation) || !IsFiniteVector(ParentLocation))
+        if (!IsSession3FiniteVector(ChildLocation) || !IsSession3FiniteVector(ParentLocation))
         {
             return false;
         }
@@ -1482,7 +1482,7 @@ FVector ADiscGolfSession3VisualCaptureRunner::GetDiscEvidenceLocation(
     // renderer. That is the evidence we need; an owning actor or attachment
     // origin can legitimately differ after visual offsets are introduced.
     const FVector RenderedOrigin = DiscMesh->Bounds.Origin;
-    return IsFiniteVector(RenderedOrigin)
+    return IsSession3FiniteVector(RenderedOrigin)
         ? RenderedOrigin
         : DiscMesh->GetComponentLocation();
 }

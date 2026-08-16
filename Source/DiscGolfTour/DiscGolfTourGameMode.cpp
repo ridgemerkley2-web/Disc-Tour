@@ -34,6 +34,8 @@
 #include "DiscGolfSession4VisualCaptureRunner.h"
 #include "DiscGolfSession5MocapSmokeRunner.h"
 #include "DiscGolfSession5MocapVisualCaptureRunner.h"
+#include "DiscGolfSession6OutfitSmokeRunner.h"
+#include "DiscGolfSession6OutfitVisualCaptureRunner.h"
 #include "DiscGolfEnvironmentController.h"
 #include "DiscGolfWorldFixtureActor.h"
 #include "ThrowControllerComponent.h"
@@ -310,11 +312,16 @@ void ADiscGolfTourGameMode::BeginPlay()
         FCommandLine::Get(), TEXT("Session5MocapPipelineSmokeTest"));
     const bool bSession5MocapVisualCaptureRequested = FParse::Param(
         FCommandLine::Get(), TEXT("Session5MocapVisualCapture"));
+    const bool bSession6OutfitSmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Session6OutfitThrowSmokeTest"));
+    const bool bSession6OutfitVisualCaptureRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Session6OutfitVisualCapture"));
     FString InitialCourse = (bRouteTelemetryRequested || bGalleryLakeWaterSmokeRequested
         || bDenseForestSmokeRequested || bGroundGrassSmokeRequested
         || bHole1FlightRouteSmokeRequested || bSession3OneThrowSmokeRequested
         || bSession3VisualCaptureRequested || bSession4VisualCaptureRequested
-        || bSession5MocapSmokeRequested || bSession5MocapVisualCaptureRequested)
+        || bSession5MocapSmokeRequested || bSession5MocapVisualCaptureRequested
+        || bSession6OutfitSmokeRequested || bSession6OutfitVisualCaptureRequested)
         ? TEXT("PineRidge") : TEXT("Regression");
     const bool bCourseOverridden = FParse::Value(FCommandLine::Get(), TEXT("Course="), InitialCourse);
     if (!LoadCourse(InitialCourse))
@@ -350,6 +357,8 @@ void ADiscGolfTourGameMode::BeginPlay()
         || bSession4VisualCaptureRequested
         || bSession5MocapSmokeRequested
         || bSession5MocapVisualCaptureRequested
+        || bSession6OutfitSmokeRequested
+        || bSession6OutfitVisualCaptureRequested
         || FParse::Param(FCommandLine::Get(), TEXT("FixtureCollisionSmokeTest"))
         || bGalleryLakeWaterSmokeRequested
         || bDenseForestSmokeRequested
@@ -432,7 +441,47 @@ void ADiscGolfTourGameMode::BeginPlay()
         return;
     }
 
-    if (bSession5MocapVisualCaptureRequested)
+    if (bSession6OutfitVisualCaptureRequested)
+    {
+        Session6OutfitVisualCaptureRunner =
+            GetWorld()->SpawnActor<ADiscGolfSession6OutfitVisualCaptureRunner>();
+        if (!Session6OutfitVisualCaptureRunner)
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("DG_SESSION6_OUTFIT_VISUAL_CAPTURE: FAIL runner could not spawn."));
+            FPlatformMisc::RequestExitWithStatus(false, 1);
+            return;
+        }
+        FTimerHandle Session6VisualTimer;
+        GetWorldTimerManager().SetTimer(
+            Session6VisualTimer,
+            FTimerDelegate::CreateUObject(
+                Session6OutfitVisualCaptureRunner,
+                &ADiscGolfSession6OutfitVisualCaptureRunner::Start),
+            0.5f,
+            false);
+    }
+    else if (bSession6OutfitSmokeRequested)
+    {
+        Session6OutfitSmokeRunner =
+            GetWorld()->SpawnActor<ADiscGolfSession6OutfitSmokeRunner>();
+        if (!Session6OutfitSmokeRunner)
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("SESSION 6 OUTFIT THROW SMOKE FAIL: runner could not spawn."));
+            FPlatformMisc::RequestExitWithStatus(false, 1);
+            return;
+        }
+        FTimerHandle Session6SmokeTimer;
+        GetWorldTimerManager().SetTimer(
+            Session6SmokeTimer,
+            FTimerDelegate::CreateUObject(
+                Session6OutfitSmokeRunner,
+                &ADiscGolfSession6OutfitSmokeRunner::Start),
+            0.5f,
+            false);
+    }
+    else if (bSession5MocapVisualCaptureRequested)
     {
         Session5MocapVisualCaptureRunner =
             GetWorld()->SpawnActor<ADiscGolfSession5MocapVisualCaptureRunner>();
@@ -2987,7 +3036,13 @@ void ADiscGolfTourGameMode::ResolveSettledLie(ADiscActor* Disc, const FVector& F
 
 void ADiscGolfTourGameMode::SavePracticeRoundSnapshot()
 {
-    if (bRegressionActive) return;
+    const bool bSession6OutfitValidationNoSave = FParse::Param(
+        FCommandLine::Get(), TEXT("Session6OutfitValidationNoSave"))
+        && (FParse::Param(
+                FCommandLine::Get(), TEXT("Session6OutfitThrowSmokeTest"))
+            || FParse::Param(
+                FCommandLine::Get(), TEXT("Session6OutfitVisualCapture")));
+    if (bRegressionActive || bSession6OutfitValidationNoSave) return;
     UDiscGolfTourGameInstance* GameInstance = Cast<UDiscGolfTourGameInstance>(GetGameInstance());
     UDiscGolfSaveGame* Profile = GameInstance ? GameInstance->GetProfile() : nullptr;
     if (!GameInstance || !Profile) return;

@@ -156,7 +156,13 @@ bool UDiscGolfOutfitComponent::EquipResolvedItem(
 
     FDGOutfitVariant Variant;
     const bool bHasVariant = Item->FindVariant(VariantId, Variant);
-    if (!bHasVariant)
+    if (bHasVariant)
+    {
+        // Persist the resolved stable ID. FindVariant may have fallen back to
+        // Default when an older save references a removed variant.
+        VariantId = Variant.VariantId;
+    }
+    else
     {
         VariantId = NAME_None;
     }
@@ -176,6 +182,9 @@ bool UDiscGolfOutfitComponent::EquipResolvedItem(
         );
 
         Comp->SetupAttachment(LeaderBodyMesh);
+        Comp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+        Comp->SetGenerateOverlapEvents(false);
+        Comp->SetCanEverAffectNavigation(false);
         Comp->RegisterComponent();
         Comp->SetSkeletalMesh(Mesh);
 
@@ -215,8 +224,16 @@ bool UDiscGolfOutfitComponent::EquipResolvedItem(
 
         Comp->SetupAttachment(LeaderBodyMesh, Item->AttachSocket);
         Comp->SetRelativeTransform(Item->RelativeAttachmentTransform);
+        // Static accessories must follow socket translation/rotation without
+        // inheriting legacy Control-Rig/body-profile scale. They are cosmetic
+        // and can never participate in gameplay collision or navigation.
+        Comp->SetAbsolute(false, false, true);
+        Comp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+        Comp->SetGenerateOverlapEvents(false);
+        Comp->SetCanEverAffectNavigation(false);
         Comp->RegisterComponent();
         Comp->SetStaticMesh(Mesh);
+        Comp->SetSimulatePhysics(false);
 
         if (bHasVariant)
         {

@@ -1,0 +1,497 @@
+{
+  "bag_authority": "COSMETIC_ONLY_NO_INVENTORY_NO_DISC_SPAWN_OR_LAUNCH",
+  "blend_source": "SourceArt/DiscGolf/Outfits/Proxy/DG_Session6_ProxyOutfits.blend",
+  "blend_source_bytes": 117473,
+  "blend_source_sha256": "44CCC21B7C6C3487056AD3A49531B9EC34D706656F92C3892F1E40AE56CA1865",
+  "blender_version": "5.2.0 LTS",
+  "bone_count": 69,
+  "brand_id": "dg_generic",
+  "brand_status": "GENERIC_UNBRANDED",
+  "catalog_spec": "SourceArt/DiscGolf/Outfits/Proxy/proxy_outfit_catalog_spec.json",
+  "catalog_spec_sha256": "C03A2B63C74FE106049665B17E3229B4346D33E343BF084356B0996AD7BF651C",
+  "content_status": "NON_PRODUCTION_PROXY",
+  "coverage_policy": "METADATA_ONLY_PROXY_BODY_HAS_NO_REGION_MASK_ART",
+  "external_sources": [],
+  "fbx_outputs": [
+    {
+      "attach_socket": "head",
+      "bytes": 16428,
+      "covered_regions": [
+        "Hair"
+      ],
+      "item_id": "proxy_s6_headwear_cap_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Headwear/SM_DG_Headwear_ProxyCap01",
+      "mesh_kind": "Static",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 0,
+        "bone_count": 0,
+        "bounds_blender_units": [
+          0.15000000596046448,
+          0.1099998950958252,
+          0.19999999925494194
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 18,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 3,
+        "vertex_count": 24
+      },
+      "sha256": "5A21ABF8862EBBF2D8B4C72B25CCDE5FA354A8F9E27EBBB56BEC488D247DD876",
+      "slot": "Headwear",
+      "source_fbx": "FBX/SM_DG_Headwear_ProxyCap01.fbx"
+    },
+    {
+      "attach_socket": "head",
+      "bytes": 16460,
+      "covered_regions": [
+        "Hair"
+      ],
+      "item_id": "proxy_s6_headwear_beanie_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Headwear/SM_DG_Headwear_ProxyBeanie01",
+      "mesh_kind": "Static",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 0,
+        "bone_count": 0,
+        "bounds_blender_units": [
+          0.14800000190734863,
+          0.18500006198883057,
+          0.12050000205636024
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 18,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 3,
+        "vertex_count": 24
+      },
+      "sha256": "106E7BEBE4C421CE5792C58C994636A03C3A529AFC3A596D409E428D4BF5B576",
+      "slot": "Headwear",
+      "source_fbx": "FBX/SM_DG_Headwear_ProxyBeanie01.fbx"
+    },
+    {
+      "attach_socket": "head",
+      "bytes": 16764,
+      "covered_regions": [],
+      "item_id": "proxy_s6_eyewear_sport_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Eyewear/SM_DG_Eyewear_ProxySport01",
+      "mesh_kind": "Static",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 0,
+        "bone_count": 0,
+        "bounds_blender_units": [
+          0.13199999928474426,
+          0.039999961853027344,
+          0.10900000482797623
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 30,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 3,
+        "vertex_count": 40
+      },
+      "sha256": "3B96488C985E23F8E1F6ECA5732D3718BAF660A38EB43EA3698E3A6FFDD0AD97",
+      "slot": "Eyewear",
+      "source_fbx": "FBX/SM_DG_Eyewear_ProxySport01.fbx"
+    },
+    {
+      "attach_socket": "",
+      "bytes": 145516,
+      "covered_regions": [
+        "Torso",
+        "UpperArms"
+      ],
+      "item_id": "proxy_s6_top_tee_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Tops/SK_DG_Top_ProxyTee01",
+      "mesh_kind": "Skeletal",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 1,
+        "bone_count": 69,
+        "bounds_blender_units": [
+          0.6349999904632568,
+          0.23400002717971802,
+          0.34500014781951904
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 24,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 3,
+        "vertex_count": 32
+      },
+      "sha256": "830D16EBA19BCF6E34BF67C3E558770344AE0463681E661ACDA9FF537839672E",
+      "slot": "Top",
+      "source_fbx": "FBX/SK_DG_Top_ProxyTee01.fbx"
+    },
+    {
+      "attach_socket": "",
+      "bytes": 146076,
+      "covered_regions": [
+        "Torso",
+        "UpperArms",
+        "Forearms"
+      ],
+      "item_id": "proxy_s6_top_long_sleeve_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Tops/SK_DG_Top_ProxyLongSleeve01",
+      "mesh_kind": "Skeletal",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 1,
+        "bone_count": 69,
+        "bounds_blender_units": [
+          1.3900001049041748,
+          0.24150006473064423,
+          0.347500205039978
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 36,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 3,
+        "vertex_count": 48
+      },
+      "sha256": "85BB7EF6CF0E4ED9075FF83306CD0C142AAC868A567524FEBF2D0CDADBB9A39C",
+      "slot": "Top",
+      "source_fbx": "FBX/SK_DG_Top_ProxyLongSleeve01.fbx"
+    },
+    {
+      "attach_socket": "",
+      "bytes": 146044,
+      "covered_regions": [
+        "Torso",
+        "UpperArms",
+        "Forearms"
+      ],
+      "item_id": "proxy_s6_outerwear_jacket_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Outerwear/SK_DG_Outerwear_ProxyJacket01",
+      "mesh_kind": "Skeletal",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 1,
+        "bone_count": 69,
+        "bounds_blender_units": [
+          1.3950001001358032,
+          0.2715000510215759,
+          0.3600001335144043
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 36,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 3,
+        "vertex_count": 48
+      },
+      "sha256": "A619F3F570DBF7ADDD5D4F186CA45E82D926220E1B52106D160F9553E32D1934",
+      "slot": "Outerwear",
+      "source_fbx": "FBX/SK_DG_Outerwear_ProxyJacket01.fbx"
+    },
+    {
+      "attach_socket": "",
+      "bytes": 145516,
+      "covered_regions": [
+        "Hips",
+        "UpperLegs"
+      ],
+      "item_id": "proxy_s6_bottom_shorts_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Bottoms/SK_DG_Bottom_ProxyShorts01",
+      "mesh_kind": "Skeletal",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 1,
+        "bone_count": 69,
+        "bounds_blender_units": [
+          0.32499998807907104,
+          0.2330000177025795,
+          0.25999993085861206
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 24,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 3,
+        "vertex_count": 32
+      },
+      "sha256": "F03828147756475CBBCD4C61AE395087F338895DEB015392BAE2B53E70DF7A70",
+      "slot": "Bottom",
+      "source_fbx": "FBX/SK_DG_Bottom_ProxyShorts01.fbx"
+    },
+    {
+      "attach_socket": "",
+      "bytes": 146028,
+      "covered_regions": [
+        "Hips",
+        "UpperLegs",
+        "LowerLegs"
+      ],
+      "item_id": "proxy_s6_bottom_pants_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Bottoms/SK_DG_Bottom_ProxyPants01",
+      "mesh_kind": "Skeletal",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 1,
+        "bone_count": 69,
+        "bounds_blender_units": [
+          0.3050000071525574,
+          0.24150002747774124,
+          0.8400000035762787
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 36,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 3,
+        "vertex_count": 48
+      },
+      "sha256": "E4DE423047E007CA6D2B20DDC4906E228229AE2F3EF8CAEEE384283E44612A91",
+      "slot": "Bottom",
+      "source_fbx": "FBX/SK_DG_Bottom_ProxyPants01.fbx"
+    },
+    {
+      "attach_socket": "",
+      "bytes": 145404,
+      "covered_regions": [
+        "LowerLegs",
+        "Feet"
+      ],
+      "item_id": "proxy_s6_socks_crew_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Socks/SK_DG_Socks_ProxyCrew01",
+      "mesh_kind": "Skeletal",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 1,
+        "bone_count": 69,
+        "bounds_blender_units": [
+          0.2849999666213989,
+          0.1300000548362732,
+          0.18000002950429916
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 24,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 2,
+        "vertex_count": 32
+      },
+      "sha256": "8CDF9C883B20DE5C90FFFCEF6DD1B37DB9F31E2E470CFB9B45FF33C632776E1E",
+      "slot": "Socks",
+      "source_fbx": "FBX/SK_DG_Socks_ProxyCrew01.fbx"
+    },
+    {
+      "attach_socket": "",
+      "bytes": 145388,
+      "covered_regions": [
+        "Feet"
+      ],
+      "item_id": "proxy_s6_footwear_low_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Footwear/SK_DG_Footwear_ProxyLow01",
+      "mesh_kind": "Skeletal",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 1,
+        "bone_count": 69,
+        "bounds_blender_units": [
+          0.30000001192092896,
+          0.1850000387057662,
+          0.0845000334084034
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 24,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 2,
+        "vertex_count": 32
+      },
+      "sha256": "54900478147343CC47A223A03B02591B80B1DD5CE469DFDE3D4500A064F50833",
+      "slot": "Footwear",
+      "source_fbx": "FBX/SK_DG_Footwear_ProxyLow01.fbx"
+    },
+    {
+      "attach_socket": "",
+      "bytes": 145468,
+      "covered_regions": [
+        "Feet"
+      ],
+      "item_id": "proxy_s6_footwear_trail_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Footwear/SK_DG_Footwear_ProxyTrail01",
+      "mesh_kind": "Skeletal",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 1,
+        "bone_count": 69,
+        "bounds_blender_units": [
+          0.3100000023841858,
+          0.2325000312924388,
+          0.10150003060698509
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 36,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 3,
+        "vertex_count": 48
+      },
+      "sha256": "C846C66F4F3DBF09AA81F7AFAC72FEF6CDEBEFFBC1A2521C164D4DD2E1939B06",
+      "slot": "Footwear",
+      "source_fbx": "FBX/SK_DG_Footwear_ProxyTrail01.fbx"
+    },
+    {
+      "attach_socket": "",
+      "bytes": 145388,
+      "covered_regions": [
+        "Hands"
+      ],
+      "item_id": "proxy_s6_glove_pair_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Gloves/SK_DG_Glove_ProxyPair01",
+      "mesh_kind": "Skeletal",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 1,
+        "bone_count": 69,
+        "bounds_blender_units": [
+          1.749999761581421,
+          0.07349999994039536,
+          0.05500006675720215
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 24,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 2,
+        "vertex_count": 32
+      },
+      "sha256": "4C988DFF7FE86AE3A092560129289DE9CBCB89AC2BBA1977A3A94DFCA4D885C0",
+      "slot": "Glove",
+      "source_fbx": "FBX/SK_DG_Glove_ProxyPair01.fbx"
+    },
+    {
+      "attach_socket": "hand_l",
+      "bytes": 16284,
+      "covered_regions": [],
+      "item_id": "proxy_s6_wrist_band_left_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Wrist/SM_DG_Wrist_ProxyBandLeft01",
+      "mesh_kind": "Static",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 0,
+        "bone_count": 0,
+        "bounds_blender_units": [
+          0.08249999210238457,
+          0.04499995708465576,
+          0.07500004768371582
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 12,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 2,
+        "vertex_count": 16
+      },
+      "sha256": "0F7F1EBE7DE64102CCDC2EA6613D5D01069EB5BDF6B37DDA3963EBC2B3A5C223",
+      "slot": "Wrist",
+      "source_fbx": "FBX/SM_DG_Wrist_ProxyBandLeft01.fbx"
+    },
+    {
+      "attach_socket": "spine_04",
+      "bytes": 16444,
+      "covered_regions": [],
+      "item_id": "proxy_s6_bag_backpack_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Bags/SM_DG_Bag_ProxyBackpack01",
+      "mesh_kind": "Static",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 0,
+        "bone_count": 0,
+        "bounds_blender_units": [
+          0.3100000023841858,
+          0.440000057220459,
+          0.1979999989271164
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 18,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 3,
+        "vertex_count": 24
+      },
+      "sha256": "29B4CA0EC0747AAA8EB25B44BF6B2DF8F3F091B9FAC96969FE3471807861ADEC",
+      "slot": "Bag",
+      "source_fbx": "FBX/SM_DG_Bag_ProxyBackpack01.fbx"
+    },
+    {
+      "attach_socket": "pelvis",
+      "bytes": 16476,
+      "covered_regions": [],
+      "item_id": "proxy_s6_accessory_towel_left_01",
+      "mesh_asset": "/Game/DiscGolf/Outfits/Accessories/SM_DG_Accessory_ProxyTowelLeft01",
+      "mesh_kind": "Static",
+      "relative_attachment_transform": "Identity",
+      "roundtrip_validation": {
+        "armature_count": 0,
+        "bone_count": 0,
+        "bounds_blender_units": [
+          0.1250000149011612,
+          0.3474999666213989,
+          0.05000000447034836
+        ],
+        "material_slot_count": 1,
+        "mesh_count": 1,
+        "polygon_count": 18,
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "vertex_color_attribute": "DG_ColorRole",
+        "vertex_color_role_count": 3,
+        "vertex_count": 24
+      },
+      "sha256": "F03E8CB452A8268C5582EE0DDD0561867528EF62A8E52590C4D33721CC31E3BD",
+      "slot": "Accessory",
+      "source_fbx": "FBX/SM_DG_Accessory_ProxyTowelLeft01.fbx"
+    }
+  ],
+  "generator": "SourceArt/DiscGolf/Outfits/Proxy/generate_session6_proxy_outfits.py",
+  "generator_sha256": "2591D20864F9EE3D6D4B48AB2236B184F186D2E9BECA03949C665F2236F1D4A4",
+  "geometry_recipe_id": "SESSION6_GENERIC_BLOCKOUT_V1",
+  "item_count": 15,
+  "logos": [],
+  "master_source_blend": "SourceArt/DiscGolf/Characters/SK_DG_Master_Proxy.blend",
+  "master_source_blend_sha256": "24E5B920A5EDC70E4DB51D4CFE4E02EEB65ED9D57C30640E2899C12AA320A40C",
+  "master_source_fbx": "SourceArt/DiscGolf/Characters/SK_DG_Master_Proxy.fbx",
+  "master_source_fbx_sha256": "82ED7FC89A572A346460CCB5530EA493B8397BC0D8BECBC2E22C64B8A31CD683",
+  "production_license_claim": "NONE",
+  "rights_status": "PROJECT_LOCAL_GENERATED_TEST_FIXTURE_DERIVED_FROM_ACCEPTED_PROJECT_PROXY",
+  "schema": "DiscGolfTour.Session6ProxyOutfitSourceManifest.v1",
+  "shipping_status": "DO_NOT_SHIP",
+  "skeletal_attachment_policy": "LEADER_POSE_ACCEPTED_SKEL_DG_MASTER",
+  "skeletal_mesh_count": 9,
+  "skeleton_contract": "Plugins/DiscGolfCharacterFramework/Config/DG_MasterSkeletonContract.json",
+  "skeleton_contract_sha256": "E2223DE774CE26900BD482130939EAAB6F813023EBB689447FCB00697C34A7B2",
+  "skinning_policy": "FULL_69_BONE_EXPORT_RIGID_SINGLE_BONE_WEIGHTS",
+  "source_material_count": 1,
+  "source_material_name": "DG_OutfitProxy_SourceSlot",
+  "static_attachment_policy": "REST_BONE_LOCAL_IDENTITY_WITH_ABSOLUTE_RUNTIME_SCALE",
+  "static_mesh_count": 6,
+  "status": "PASS_GENERATED_SOURCE_FIXTURE",
+  "unreal_shared_material": "/Game/DiscGolf/Materials/Outfits/M_DG_OutfitProxy",
+  "variant_ids": [
+    "Default",
+    "Graphite",
+    "Teal"
+  ]
+}

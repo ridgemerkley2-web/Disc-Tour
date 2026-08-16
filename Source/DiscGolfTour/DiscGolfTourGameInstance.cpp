@@ -1,9 +1,12 @@
 #include "DiscGolfTourGameInstance.h"
 #include "DiscGolfTour.h"
 #include "DiscGolfSaveGame.h"
+#include "DiscGolfOutfitRuntime.h"
 #include "DiscGolfPlayerExperience.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/GameUserSettings.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
 
 namespace
 {
@@ -32,6 +35,28 @@ bool CharacterProfilesExactlyMatch(
         && A.BraceIntensity == B.BraceIntensity
         && A.Explosiveness == B.Explosiveness
         && A.FollowThrough == B.FollowThrough;
+}
+
+bool OutfitLoadoutsExactlyMatch(
+    const FDGOutfitLoadout& A,
+    const FDGOutfitLoadout& B)
+{
+    if (A.Equipped.Num() != B.Equipped.Num())
+    {
+        return false;
+    }
+    for (int32 Index = 0; Index < A.Equipped.Num(); ++Index)
+    {
+        const FDGEquippedOutfitEntry& EntryA = A.Equipped[Index];
+        const FDGEquippedOutfitEntry& EntryB = B.Equipped[Index];
+        if (EntryA.Slot != EntryB.Slot
+            || EntryA.ItemId != EntryB.ItemId
+            || EntryA.VariantId != EntryB.VariantId)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 }
 
@@ -84,18 +109,100 @@ DiscGolfProfilePersistence::EMigrationResult DiscGolfProfilePersistence::Migrate
         InOutProfile.SaveSchemaVersion = 7;
         bMigrated = true;
     }
+    if (InOutProfile.SaveSchemaVersion < 8)
+    {
+        // Schema 7 predates modular outfits. The new SaveGame property loads
+        // as an empty array, but reset it explicitly to make migration and
+        // synthetic legacy fixtures deterministic.
+        InOutProfile.OutfitLoadout.Equipped.Reset();
+        InOutProfile.SaveSchemaVersion = 8;
+        bMigrated = true;
+    }
 
     if (DiscGolfSaveSchema::IsCurrent(InOutProfile.SaveSchemaVersion))
     {
         InOutProfile.PlayerSettings.Normalize();
         InOutProfile.CharacterProfile.Sanitize();
+        InOutProfile.OutfitLoadout = DiscGolfOutfitRuntime::NormalizeForPersistence(
+            InOutProfile.OutfitLoadout);
     }
     return bMigrated ? EMigrationResult::Migrated : EMigrationResult::AlreadyCurrent;
+}
+
+bool DiscGolfProfilePersistence::TryResolveSession6OutfitValidationSaveSlot(
+    const TCHAR* CommandLine,
+    FString& OutSaveSlot)
+{
+    OutSaveSlot.Reset();
+    if (!CommandLine
+        || !FParse::Param(CommandLine, TEXT("Session6OutfitVisualCapture"))
+        || !FParse::Param(CommandLine, TEXT("Session6OutfitValidationNoSave")))
+    {
+        return false;
+    }
+
+    FString RequestedSlot;
+    if (!FParse::Value(
+            CommandLine,
+            TEXT("Session6OutfitValidationSaveSlot="),
+            RequestedSlot))
+    {
+        return false;
+    }
+
+    constexpr TCHAR RequiredPrefix[] =
+        TEXT("DiscGolfTour_Automation_Session6Outfit_");
+    constexpr int32 MaximumSuffixLength = 48;
+    if (!RequestedSlot.StartsWith(RequiredPrefix, ESearchCase::CaseSensitive))
+    {
+        return false;
+    }
+
+    const FString Suffix = RequestedSlot.RightChop(UE_ARRAY_COUNT(RequiredPrefix) - 1);
+    if (Suffix.IsEmpty() || Suffix.Len() > MaximumSuffixLength)
+    {
+        return false;
+    }
+    for (const TCHAR Character : Suffix)
+    {
+        const bool bSafeAscii = (Character >= TEXT('A') && Character <= TEXT('Z'))
+            || (Character >= TEXT('a') && Character <= TEXT('z'))
+            || (Character >= TEXT('0') && Character <= TEXT('9'))
+            || Character == TEXT('_');
+        if (!bSafeAscii)
+        {
+            return false;
+        }
+    }
+
+    OutSaveSlot = MoveTemp(RequestedSlot);
+    return true;
 }
 
 void UDiscGolfTourGameInstance::Init()
 {
     Super::Init();
+
+    FString RequestedValidationSlot;
+    const bool bValidationSlotWasRequested = FParse::Value(
+        FCommandLine::Get(),
+        TEXT("Session6OutfitValidationSaveSlot="),
+        RequestedValidationSlot);
+    FString ValidatedValidationSlot;
+    if (DiscGolfProfilePersistence::TryResolveSession6OutfitValidationSaveSlot(
+            FCommandLine::Get(), ValidatedValidationSlot))
+    {
+        SaveSlot = MoveTemp(ValidatedValidationSlot);
+        bUsingSession6OutfitValidationSaveSlot = true;
+        UE_LOG(LogDiscGolfTour, Display,
+            TEXT("SESSION 6 OUTFIT VALIDATION SAVE SLOT: %s (validation-only; production slot unchanged)."),
+            *SaveSlot);
+    }
+    else if (bValidationSlotWasRequested)
+    {
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Rejected unsafe or incompletely gated Session 6 outfit validation save slot; retaining the production profile slot."));
+    }
 
     if (USaveGame* Loaded = UGameplayStatics::LoadGameFromSlot(SaveSlot, 0))
     {
@@ -118,6 +225,7 @@ void UDiscGolfTourGameInstance::Init()
 
     const FDiscGolfCharacterProfileSaveData CharacterProfileBeforeMigration =
         Profile->CharacterProfile;
+    const FDGOutfitLoadout OutfitBeforeMigration = Profile->OutfitLoadout;
     const DiscGolfProfilePersistence::EMigrationResult MigrationResult =
         DiscGolfProfilePersistence::MigrateToCurrent(*Profile);
     if (MigrationResult == DiscGolfProfilePersistence::EMigrationResult::FutureSchemaRejected)
@@ -128,7 +236,9 @@ void UDiscGolfTourGameInstance::Init()
         return;
     }
     if (MigrationResult == DiscGolfProfilePersistence::EMigrationResult::Migrated ||
-        !CharacterProfilesExactlyMatch(CharacterProfileBeforeMigration, Profile->CharacterProfile))
+        !CharacterProfilesExactlyMatch(CharacterProfileBeforeMigration, Profile->CharacterProfile) ||
+        !OutfitLoadoutsExactlyMatch(
+            OutfitBeforeMigration, Profile->OutfitLoadout))
     {
         SaveProfile();
     }
@@ -200,15 +310,7 @@ bool UDiscGolfTourGameInstance::UpdateCharacterProfile(
         return false;
     }
 
-    const FDiscGolfCharacterProfileSaveData Previous = Profile->CharacterProfile;
-    Profile->CharacterProfile = CharacterProfile;
-    Profile->CharacterProfile.Sanitize();
-    if (!SaveProfileInternal())
-    {
-        Profile->CharacterProfile = Previous;
-        return false;
-    }
-    return true;
+    return UpdateCharacterProfileAndOutfit(CharacterProfile, Profile->OutfitLoadout);
 }
 
 bool UDiscGolfTourGameInstance::UpdateCharacterProfile(
@@ -224,6 +326,36 @@ bool UDiscGolfTourGameInstance::UpdateCharacterProfile(
     const FDGBodyBuildProfile ExistingBuild = Profile->CharacterProfile.ToBodyBuildProfile();
     return UpdateCharacterProfile(FDiscGolfCharacterProfileSaveData::FromFramework(
         Body, ThrowStyle, Handedness, ExistingBuild));
+}
+
+FDGOutfitLoadout UDiscGolfTourGameInstance::GetOutfitLoadout() const
+{
+    return Profile && DiscGolfSaveSchema::IsCurrent(Profile->SaveSchemaVersion)
+        ? DiscGolfOutfitRuntime::NormalizeForPersistence(Profile->OutfitLoadout)
+        : FDGOutfitLoadout();
+}
+
+bool UDiscGolfTourGameInstance::UpdateCharacterProfileAndOutfit(
+    const FDiscGolfCharacterProfileSaveData& CharacterProfile,
+    const FDGOutfitLoadout& OutfitLoadout)
+{
+    if (!Profile || !DiscGolfSaveSchema::IsCurrent(Profile->SaveSchemaVersion))
+    {
+        return false;
+    }
+
+    const FDiscGolfCharacterProfileSaveData PreviousCharacter = Profile->CharacterProfile;
+    const FDGOutfitLoadout PreviousOutfit = Profile->OutfitLoadout;
+    Profile->CharacterProfile = CharacterProfile;
+    Profile->CharacterProfile.Sanitize();
+    Profile->OutfitLoadout = DiscGolfOutfitRuntime::NormalizeForPersistence(OutfitLoadout);
+    if (!SaveProfileInternal())
+    {
+        Profile->CharacterProfile = PreviousCharacter;
+        Profile->OutfitLoadout = PreviousOutfit;
+        return false;
+    }
+    return true;
 }
 
 void UDiscGolfTourGameInstance::SaveProfile()

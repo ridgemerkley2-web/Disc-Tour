@@ -764,6 +764,8 @@ Date: 2026-08-15
 
 Status: **TECHNICAL SESSION 5 PIPELINE FIXTURE ACCEPTANCE: PASS. PRODUCTION MOCAP / SHIPPING ACCEPTANCE: BLOCKED / NOT SATISFIED.**
 
+Accepted Session 5 checkpoint: `e6e6a57727411a4cc50b890f4d8557bfb803e9e2` (`Session 5: add validated mocap ingestion and retarget pipeline`).
+
 Session 5 establishes a non-destructive source-to-retarget-to-cleanup pipeline without claiming that synthetic test motion is production mocap. A comprehensive read-only inventory of the project, `_BuildKit`, approved `SourceArt` locations, Content/asset-registry evidence, and repository documentation found no locally present FBX, BVH, animation FBX, Blender animation, or other user-owned/licensed RHBH capture with verified production and commercial-use permission. Consequently, no legitimate production mocap clip was available for Session 5.
 
 The accepted Session 3 prototype is project-authored validation motion, not external capture. It is the source for the Session 5 pipeline fixture only under `SYNTHETIC_TEST`, `PROJECT_OWNED_SYNTHETIC`, and `DO_NOT_SHIP`. Every one of the ten newly authored fixture packages below has the same `SYNTHETIC_TEST` / `DO_NOT_SHIP` boundary. The `Production` directory is a pipeline-stage name and does not grant shipping or production-performance approval.
@@ -942,3 +944,262 @@ The original fixture-authoring run remains historical evidence only. Its 14 warn
 The UBT records are local Log/backup artifacts rather than project `Saved/Logs` evidence. An earlier Editor link attempt failed before a dependency correction; it is not acceptance evidence. The final source-stable Editor and runtime builds listed above supersede it.
 
 Session 5 therefore closes with an accepted technical pipeline fixture, deterministic provenance enforcement, bind-safe human-scale retarget results, preserved single gameplay authority, the specified final regression matrix passing, and manually accepted validation renders. It still does not contain a shippable motion. Production replacement remains blocked on acquisition of an actual RHBH performance plus documented ownership/license, source metadata, and a registry entry that explicitly permits production use.
+
+## Session 6 - Modular outfit customization
+
+Status: **PASS for the modular outfit-system and validation scope.** All wardrobe art in this session is generic project-owned blockout content marked `NON_PRODUCTION_PROXY` / `DO_NOT_SHIP`; it is not accepted as shipping character art. Session 7 has not started.
+
+### Session 5 checkpoint
+
+Before outfit work began, the accepted 34-path Session 5 scope was committed by itself as `e6e6a57727411a4cc50b890f4d8557bfb803e9e2` with subject `Session 5: add validated mocap ingestion and retarget pipeline`. The 647 unrelated baseline paths were excluded. The earlier end-of-Session-5 statement that Session 6 had not started was correct at that checkpoint and is superseded by this section.
+
+### Runtime ownership and slot schema
+
+Session 6 extends the installed `DiscGolfCharacterFramework` outfit model instead of creating a competing customization system. `ADiscGolferPawn` owns exactly one `UDiscGolfOutfitComponent`; it does not attach the plugin customization component or adopt the plugin save-game type. Existing pawn, input, throw, `GripWorldTransform`, flight, inventory, scoring, camera, replay, and course authority remain unchanged.
+
+The frozen v1 slot order is:
+
+1. `Headwear`
+2. `Eyewear`
+3. `Top`
+4. `Outerwear`
+5. `Bottom`
+6. `Socks`
+7. `Footwear`
+8. `Glove`
+9. `Wrist`
+10. `Bag`
+11. `Accessory`
+
+Each slot holds zero or one stable `ItemId` plus one canonical `VariantId`. Equipping a new item replaces the prior item in that slot. The proxy catalog declares no cross-slot conflicts, allowing `Top` and `Outerwear` to coexist. Runtime resolution rejects unknown or height-incompatible entries to safe `None`, normalizes an unknown variant to the item's declared `Default`, and persists the resolved canonical IDs rather than the invalid request. The component exposes the union of declared `EDGBodyRegion` coverage as maintainable metadata.
+
+The installed plugin has one bounded Session 6 safety/canonicalization adaptation in `DiscGolfOutfitComponent.cpp`: both skeletal and static cosmetic components are collision-, overlap-, navigation-, and physics-free; static attachments inherit socket translation/rotation but use absolute scale; the stored variant is the resolved catalog variant. No BuildKit file was copied into or used to replace the installed plugin.
+
+### Catalog and proxy packages
+
+The canonical catalog is `/Game/DiscGolf/Outfits/Data/DA_DG_OutfitCatalog.DA_DG_OutfitCatalog`. It contains exactly 15 stable, unbranded `dg_generic` items covering all 11 slots: 9 skeletal follower meshes using the accepted `/Game/DiscGolf/Characters/Meshes/SKEL_DG_Master.SKEL_DG_Master`, and 6 rest-bone-local static attachments. All entries support 150-210 cm and use Identity relative attachment transforms.
+
+| Stable ItemId | Slot | Mesh | Coverage / attachment |
+|---|---|---|---|
+| `proxy_s6_headwear_cap_01` | Headwear | `/Game/DiscGolf/Outfits/Headwear/SM_DG_Headwear_ProxyCap01` | Hair / `head` |
+| `proxy_s6_headwear_beanie_01` | Headwear | `/Game/DiscGolf/Outfits/Headwear/SM_DG_Headwear_ProxyBeanie01` | Hair / `head` |
+| `proxy_s6_eyewear_sport_01` | Eyewear | `/Game/DiscGolf/Outfits/Eyewear/SM_DG_Eyewear_ProxySport01` | none / `head` |
+| `proxy_s6_top_tee_01` | Top | `/Game/DiscGolf/Outfits/Tops/SK_DG_Top_ProxyTee01` | Torso, UpperArms |
+| `proxy_s6_top_long_sleeve_01` | Top | `/Game/DiscGolf/Outfits/Tops/SK_DG_Top_ProxyLongSleeve01` | Torso, UpperArms, Forearms |
+| `proxy_s6_outerwear_jacket_01` | Outerwear | `/Game/DiscGolf/Outfits/Outerwear/SK_DG_Outerwear_ProxyJacket01` | Torso, UpperArms, Forearms |
+| `proxy_s6_bottom_shorts_01` | Bottom | `/Game/DiscGolf/Outfits/Bottoms/SK_DG_Bottom_ProxyShorts01` | Hips, UpperLegs |
+| `proxy_s6_bottom_pants_01` | Bottom | `/Game/DiscGolf/Outfits/Bottoms/SK_DG_Bottom_ProxyPants01` | Hips, UpperLegs, LowerLegs |
+| `proxy_s6_socks_crew_01` | Socks | `/Game/DiscGolf/Outfits/Socks/SK_DG_Socks_ProxyCrew01` | LowerLegs, Feet |
+| `proxy_s6_footwear_low_01` | Footwear | `/Game/DiscGolf/Outfits/Footwear/SK_DG_Footwear_ProxyLow01` | Feet |
+| `proxy_s6_footwear_trail_01` | Footwear | `/Game/DiscGolf/Outfits/Footwear/SK_DG_Footwear_ProxyTrail01` | Feet |
+| `proxy_s6_glove_pair_01` | Glove | `/Game/DiscGolf/Outfits/Gloves/SK_DG_Glove_ProxyPair01` | Hands |
+| `proxy_s6_wrist_band_left_01` | Wrist | `/Game/DiscGolf/Outfits/Wrist/SM_DG_Wrist_ProxyBandLeft01` | none / `hand_l` |
+| `proxy_s6_bag_backpack_01` | Bag | `/Game/DiscGolf/Outfits/Bags/SM_DG_Bag_ProxyBackpack01` | none / `spine_04` |
+| `proxy_s6_accessory_towel_left_01` | Accessory | `/Game/DiscGolf/Outfits/Accessories/SM_DG_Accessory_ProxyTowelLeft01` | none / `pelvis` |
+
+Each mesh has a matching item DataAsset under `/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_*`. Display names visibly identify the content as proxy / do-not-ship.
+
+### Material and variants
+
+All 15 items use the project-owned `/Game/DiscGolf/Materials/Outfits/M_DG_OutfitProxy.M_DG_OutfitProxy`. Role vertex colors drive `DG_PrimaryColor`, `DG_SecondaryColor`, and `DG_AccentColor`; `DG_RoughnessBias` is the scalar control. The three stable variants are:
+
+- `Default`: primary `(0.08, 0.18, 0.30, 1)`, secondary `(0.58, 0.64, 0.70, 1)`, accent `(0.92, 0.52, 0.12, 1)`, roughness bias `0.0`.
+- `Graphite`: primary `(0.07, 0.08, 0.10, 1)`, secondary `(0.23, 0.25, 0.28, 1)`, accent `(0.72, 0.75, 0.80, 1)`, roughness bias `0.08`.
+- `Teal`: primary `(0.02, 0.34, 0.38, 1)`, secondary `(0.05, 0.10, 0.13, 1)`, accent `(0.86, 0.50, 0.15, 1)`, roughness bias `-0.04`.
+
+The initial material package lacked `MATUSAGE_SkeletalMesh`; UE therefore substituted the engine default for skeletal items. That diagnostic capture was rejected. The owned author path now reconciles the flag with `MaterialEditingLibrary.set_base_material_usage`, reads it back, and saves only the dirty material. The one authorized repair changed exactly `M_DG_OutfitProxy.uasset`, from SHA-256 `55ACE70E8488876B96C28F932F68B077E32A5DC90B5A68DFAE3D6DCA4F41BAC3` to final 11,025-byte SHA-256 `EBB8A8FF9F7455F74675052F61F4CF78B372D611523675196B3A324A965B441B`; every other owned and protected package remained byte-identical. The immediate author rerun reported `PASS_ALREADY_CURRENT_NO_ASSET_WRITES`.
+
+Final visual validation enumerates every visible registered non-body skeletal component, matches its exact catalog mesh and loadout entry, and requires every slot to use a MID whose base is the canonical outfit material. It read-only checks the saved skeletal usage flag and requires explicit override values for all three vector parameters and the scalar at `1e-4` tolerance. Extra components, missing slots, inherited defaults, wrong bases, wrong variants, or usage fallback fail closed. The final log contains zero `missing usage flag` or `Default Material will be used in game` markers.
+
+### Creator, preview, Apply, Cancel, and persistence
+
+The existing creator gained a native Slate `Outfit` tab rather than a second creator. It exposes all 11 slots, `None`, catalog choices, height-disabled incompatible items, variants, Reset Outfit, Randomize Outfit, Apply & Save, and Cancel. Rebuilt item/variant lists retain an explicit keyboard/gamepad focus target. Live changes update the existing possessed pawn; no duplicate preview pawn is spawned.
+
+The preview lifecycle snapshots and restores the real spring-arm, camera, mesh, and paused-tick state. It sets the possessed golfer as view target, uses the reversible creator offset `(0, -120, 70)`, enables the camera manager while paused, and explicitly ticks the registered spring arm before updating the camera manager on both entry and restoration. This removes stale cached spring-arm composition while keeping normal gameplay camera ownership unchanged.
+
+`UDiscGolfSaveGame` advances from schema 7 to schema 8 and stores `FDGOutfitLoadout` beside the existing primitive character-profile DTO. Schema-7 migration supplies an empty outfit. Future-schema data remains untouched. `UpdateCharacterProfileAndOutfit` normalizes both payloads, previews the canonical outfit transactionally, makes one `SaveGameToSlot` call, and rolls both in-memory body/profile and outfit state back if persistence fails. Apply commits the combined body/outfit draft; Cancel restores the opening body and loadout without writing.
+
+The final visual process used a grammar-restricted, command-line-gated automation slot instead of the player's production slot. It drove the real creator Apply path, loaded schema 8 and compared exact ItemIds/VariantIds, cleared the live pawn to zero cosmetic components, reconstructed the saved loadout with the exact component count, deleted and verified absence of the temporary slot, reopened a distinct draft, and proved Cancel restored the applied opening loadout. The launcher independently verified the production slot's existence state and SHA-256 were unchanged. The validation slot parser requires both Session 6 visual/no-save guards plus prefix `DiscGolfTour_Automation_Session6Outfit_` and a 1-48-character ASCII alphanumeric/underscore suffix; invalid requests retain `DiscGolfTour_Profile_0`.
+
+Missing assets and invalid IDs resolve to safe `None`; the character still loads and throws. The `MissingItem` runtime matrix row proves that path. The cosmetic bag is a static, non-colliding attachment to `spine_04`; it does not reference `UDiscBagComponent`, disc definitions, inventory, release delegates, or spawning.
+
+### Source provenance and brand boundary
+
+The outfit source is deterministic project-local blockout art, not acquired vendor content:
+
+`SourceArt/DiscGolf/Outfits/Proxy/generate_session6_proxy_outfits.py` -> `DG_Session6_ProxyOutfits.blend` -> 15 FBXs -> 32 Unreal packages.
+
+Generation used official Blender 5.2.0 LTS. The portable archive matched SHA-256 `2D184B626C001692C362291911293B6A297179D618D95E9E9192C3A80318ADC4`; generator SHA-256 is `2591D20864F9EE3D6D4B48AB2236B184F186D2E9BECA03949C665F2236F1D4A4`; catalog spec SHA-256 is `C03A2B63C74FE106049665B17E3229B4346D33E343BF084356B0996AD7BF651C`; the 117,473-byte `.blend` SHA-256 is `44CCC21B7C6C3487056AD3A49531B9EC34D706656F92C3892F1E40AE56CA1865`; source manifest SHA-256 is `551F5021720410879445675EA37BFC423E24DD99E69E98E0B2B3F539B47B6B27`. The 15 FBXs total 1,409,684 bytes and each passed a Blender re-import round trip; the 9 skeletal exports retained the exact accepted 69-bone hierarchy and rigid unit weights.
+
+The source manifest records project-local generated-fixture rights, production-license claim `NONE`, and empty external-source/logo arrays. Modern Clothes remains `NOT_ACQUIRED`; Premium Disc Golf artwork remains `NOT_BUNDLED`. No vendor asset, real-company logo, product name, download, or network acquisition was introduced.
+
+### Final validation evidence
+
+| Gate | Result | Evidence |
+|---|---|---|
+| Final Editor build | PASS | `Saved/Logs/UBT_CharacterFramework_Session6_Final_Editor.log`; `DiscGolfTourEditor Win64 Development`, 6 actions, `Result: Succeeded`, 87.75 s |
+| Final runtime build | PASS | `Saved/Logs/UBT_CharacterFramework_Session6_Final_Runtime.log`; `DiscGolfTour Win64 Development`, 5 actions, `Result: Succeeded`, 86.15 s |
+| Reflection | PASS | `Saved/Logs/CharacterFramework_Session6_Final_Reflection.log`; 4 classes and 4 structs, 0 errors/warnings |
+| Strict rig and authority | PASS | `Saved/Logs/CharacterFramework_Session6_Final_StrictRig.log`; 69 bones, 4 goals, 4 effectors, 3 profiles, one release, one finish, `SINGLE_EXISTING_FLIGHT_PATH` |
+| Session 4 asset compatibility | PASS | `Saved/Logs/CharacterFramework_Session6_Final_Session4Assets.log`; CR/ABP/WBP exact contracts, `disk_mutation=NONE` |
+| Session 5 asset compatibility | PASS | `Saved/Logs/CharacterFramework_Session6_Final_Session5MocapAssets.log`; synthetic `DO_NOT_SHIP` fixture contract, `disk_mutation=NONE` |
+| Session 6 static wiring | PASS | `Saved/CharacterFramework/Session6OutfitWiringReport.json`; 15/15 checks, no competing gameplay authority, camera/material/persistence guards present, no Session 7 |
+| Proxy source | PASS | `Saved/CharacterFramework/Session6ProxyOutfitSourceValidation.json`; 15 items, 9 skeletal, 6 static, `GENERATED_MANIFEST_VALIDATED` |
+| Brand/license | PASS | `Saved/CharacterFramework/Session6BrandLicenseAudit.json`; `dg_generic`, 19 source files, 32 live packages, zero forbidden-brand hits, vendor `NOT_ACQUIRED` |
+| Catalog strict validation | PASS | `Saved/Logs/Session6OutfitStrictValidation_FinalPostRegression.log` and `Saved/CharacterFramework/Session6OutfitAssetValidation.json`; exact 15/9/6 catalog, canonical material skeletal usage true, 32 owned + 11 protected hashes, `PASS_NO_DISK_MUTATION` |
+| Independent no-write validation | PASS | `Saved/Logs/Session6OutfitNoWriteValidation_FinalPostRegression.log` and `Saved/CharacterFramework/Session6OutfitNoWriteValidation.json`; 43 packages, registry/disk mutation none, save/import/factory/delete calls zero, `PASS_NO_WRITE` |
+| Idempotent author rerun | PASS | `Saved/Logs/Session6OutfitIdempotentAuthor_Final.log`; `PASS_ALREADY_CURRENT_NO_ASSET_WRITES`, zero package/hash/timestamp changes |
+| Full automation | PASS | `Saved/Logs/Automation_CharacterFramework_Session6_Final.log`; exactly 123/123 `DiscGolfTour.` tests succeeded, zero failed/not-run, exit code 0; includes 7 outfit normalization/migration/serialization tests plus the validation-slot guard |
+| Session 3 one-throw | PASS | `Saved/Logs/Session3OneThrowSmoke_CharacterFramework_Session6_Final.log`; one animation/release/authoritative disc, existing flight, FollowThrough, Recovery, camera/input/next-action recovery; cancel launched zero discs |
+| Session 4 profile matrix | PASS | `Saved/CharacterFramework/Session4ProfileSmokeReport.json`; ShortCompact, Baseline, TallLongArms, SliderMin, SliderMax all passed |
+| Session 5 default prototype fallback | PASS | `Saved/Logs/Session5PrototypeFallback_Baseline_Session6_Final.log`; standard Session 3 one-throw contract passed without a Session 5 validation override |
+| Three-hole gameplay | PASS | `Saved/Logs/ThreeHoleRoundSmoke_CharacterFramework_Session6_Final.log`; 3/3 holes, 3 strokes, par 11, -8, scoring/scorecard/save snapshot active |
+| Outfit throw matrix | PASS | `Saved/CharacterFramework/Session6OutfitThrowMatrix.json`; 6/6 rows, no failed rows, changed packages/save games empty, no persistent writes |
+| Creator Apply/reload/Cancel and visuals | PASS | `Saved/Logs/CharacterFramework_Session6_OutfitVisualCapture.log` plus the manifest below; real Apply, schema-8 reload, clear/reconstruct, temp deletion, Cancel restore, material/variant verification, zero gameplay/package/save mutation |
+
+The six outfit throw rows were:
+
+1. `BaselineCore`: Baseline with top, bottom, and footwear.
+2. `BaselineLayered`: Baseline with outerwear, headwear, and cosmetic bag.
+3. `ShortFull`: ShortCompact representative full outfit.
+4. `TallFull`: TallLongArms representative full outfit.
+5. `SliderExtremeFull`: SliderMax representative full outfit.
+6. `MissingItem`: Baseline with a deliberately missing ItemId.
+
+Every row recorded exactly one accepted animation, release, authoritative existing gameplay disc, completed flight, FollowThrough/Recovery, camera/input recovery, and next action. All cosmetic components remained non-colliding; skeletal pieces followed the master through Leader Pose; static pieces retained declared parent/socket/Identity transform and absolute scale. Gloves did not alter `disc_grip_r`; footwear did not alter plant correction; the cosmetic bag never became inventory authority. Power, spin, timing, aim, hyzer, nose angle, wind, and flight physics remained untouched.
+
+### Rendered evidence and manual review
+
+The final manifest is `Saved/CharacterFramework/Screenshots/Session6_OutfitCustomization/Session6_Outfit_CaptureManifest.json`, 43,434 bytes, SHA-256 `BEB972E2563B81436E1CE414E4E132091E54C2B978AFC9A633A199C66327E8A9`. It reports `PASS` for 12 ordered 1920x1080 PNGs. Every visible skeletal outfit material is a canonical MID, the base material's saved skeletal usage is true, and all selected variant overrides match. Apply/save/reload/reconstruction, temporary-slot deletion, Cancel restoration, one release callback, two paused pose captures, zero world-disc/stroke delta, and no persistent writes are all true.
+
+Independent manual review accepted the exact final set:
+
+1. `01_Outfit_Creator_Tab.png`: complete Outfit tab, all 11 categories, full live proxy in the right preview pane.
+2. `02_Top_Choices_And_Variants.png`: two Top choices and visibly rendered Graphite selection.
+3. `03_Outerwear.png`: independent Teal Top + Outerwear layering; the footer identifies the previewed jacket.
+4. `04_Bottoms_And_Shoes.png`: Bottom choices plus Socks/Footwear preview.
+5. `05_Hats_And_Eyewear.png`: two hats and a stable eyewear attachment.
+6. `06_Gloves_And_Wrist.png`: Graphite glove and wrist attachment without grip interference.
+7. `07_Disc_Bag.png`: Teal back bag plus hip accessory; cosmetic-only boundary retained.
+8. `08_ShortCompact_Full_Outfit.png`: readable full Default outfit at 155 cm.
+9. `09_Baseline_Full_Outfit.png`: readable full Graphite outfit at 183 cm.
+10. `10_TallLongArms_Full_Outfit.png`: readable full Teal outfit at 205 cm.
+11. `11_Outfitted_Release_Frame.png`: fully outfitted exact Release at montage position 1.600 s.
+12. `12_Outfitted_FollowThrough.png`: fully outfitted FollowThrough at 2.035 s.
+
+All six required bones project inside the viewport; at least four remain inside the 2.5% safe margin; creator core bones stay in the right pane; FOV is 64 degrees; stature ordering is `155 < 183 < 205`. The blocky/gapped forms are the declared rigid-weight proxy, not a hidden renderer failure. Historical pre-material or failed-framing captures are excluded from acceptance.
+
+### Honest limitations
+
+- Every outfit asset is non-production blockout content. The 9 skeletal pieces use rigid single-bone weights and prove mechanical Leader Pose compatibility, not final skinning, cloth, folds, tailoring, morph response, or ergonomics.
+- Coverage is exact metadata only. The protected single-material proxy body has no authored per-region mask layer, so Session 6 does not visually hide Torso/Arms/Hips/Legs/Feet/Hair. Production body-mask art/material work remains.
+- No item has cloth simulation, morph targets, a PhysicsAsset, gameplay collision, overlaps, navigation influence, production LODs, final lightmap UVs, or production-fit polish. Profile-specific clipping remains possible.
+- Static accessories are accepted-bone rest-local Identity fixtures. Their fit is provisional even though runtime transform/scale safety is validated across the profiles.
+- The bag is visual only; equipment inventory is explicitly deferred. Hair/face/skin/eyes, MetaHuman, forehand, putting, and all Session 7 work remain out of scope and unstarted.
+
+### Exact Session 6 repository scope
+
+This closeout is based on HEAD `e6e6a57727411a4cc50b890f4d8557bfb803e9e2` on `main`. Session 6 owns exactly 84 working-tree paths: 18 tracked modifications and 66 untracked additions. Nothing is staged. The same 647 unrelated untracked baseline paths remain excluded and untouched.
+
+The 18 modified paths are:
+
+- `Docs/CODEX_CHARACTER_INTEGRATION_CHANGELOG.md`;
+- `Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/Private/DiscGolfOutfitComponent.cpp`;
+- `Scripts/validate_dg_character_session3_wiring.py`;
+- `Scripts/validate_dg_character_session4_wiring.py`;
+- `Source/DiscGolfTour/DiscGolfCharacterCreatorWidget.cpp`;
+- `Source/DiscGolfTour/DiscGolfCharacterCreatorWidget.h`;
+- `Source/DiscGolfTour/DiscGolfSaveGame.h`;
+- `Source/DiscGolfTour/DiscGolfSession3VisualCaptureRunner.cpp` (behavior-neutral internal finite-vector rename for adaptive-unity collision avoidance);
+- `Source/DiscGolfTour/DiscGolfTourGameInstance.cpp`;
+- `Source/DiscGolfTour/DiscGolfTourGameInstance.h`;
+- `Source/DiscGolfTour/DiscGolfTourGameMode.cpp`;
+- `Source/DiscGolfTour/DiscGolfTourGameMode.h`;
+- `Source/DiscGolfTour/DiscGolfTourPlayerController.cpp`;
+- `Source/DiscGolfTour/DiscGolfTourPlayerController.h`;
+- `Source/DiscGolfTour/DiscGolferPawn.cpp`;
+- `Source/DiscGolfTour/DiscGolferPawn.h`;
+- `Source/DiscGolfTour/Tests/DiscGolfCharacterProfileRuntimeTests.cpp`;
+- `Source/DiscGolfTour/Tests/DiscGolfSaveSchemaTests.cpp`.
+
+The 66 added paths are:
+
+Unreal packages (32):
+
+- `Content/DiscGolf/Materials/Outfits/M_DG_OutfitProxy.uasset`;
+- `Content/DiscGolf/Outfits/Data/DA_DG_OutfitCatalog.uasset`;
+- `Content/DiscGolf/Outfits/Accessories/SM_DG_Accessory_ProxyTowelLeft01.uasset`;
+- `Content/DiscGolf/Outfits/Bags/SM_DG_Bag_ProxyBackpack01.uasset`;
+- `Content/DiscGolf/Outfits/Bottoms/SK_DG_Bottom_ProxyPants01.uasset`;
+- `Content/DiscGolf/Outfits/Bottoms/SK_DG_Bottom_ProxyShorts01.uasset`;
+- `Content/DiscGolf/Outfits/Eyewear/SM_DG_Eyewear_ProxySport01.uasset`;
+- `Content/DiscGolf/Outfits/Footwear/SK_DG_Footwear_ProxyLow01.uasset`;
+- `Content/DiscGolf/Outfits/Footwear/SK_DG_Footwear_ProxyTrail01.uasset`;
+- `Content/DiscGolf/Outfits/Gloves/SK_DG_Glove_ProxyPair01.uasset`;
+- `Content/DiscGolf/Outfits/Headwear/SM_DG_Headwear_ProxyBeanie01.uasset`;
+- `Content/DiscGolf/Outfits/Headwear/SM_DG_Headwear_ProxyCap01.uasset`;
+- `Content/DiscGolf/Outfits/Outerwear/SK_DG_Outerwear_ProxyJacket01.uasset`;
+- `Content/DiscGolf/Outfits/Socks/SK_DG_Socks_ProxyCrew01.uasset`;
+- `Content/DiscGolf/Outfits/Tops/SK_DG_Top_ProxyLongSleeve01.uasset`;
+- `Content/DiscGolf/Outfits/Tops/SK_DG_Top_ProxyTee01.uasset`;
+- `Content/DiscGolf/Outfits/Wrist/SM_DG_Wrist_ProxyBandLeft01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Accessory_TowelLeft01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Bag_Backpack01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Bottom_Pants01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Bottom_Shorts01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Eyewear_Sport01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Footwear_Low01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Footwear_Trail01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Glove_Pair01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Headwear_Beanie01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Headwear_Cap01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Outerwear_Jacket01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Socks_Crew01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Top_LongSleeve01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Top_Tee01.uasset`;
+- `Content/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Wrist_BandLeft01.uasset`.
+
+Scripts and validators (8):
+
+- `Scripts/create_dg_character_session6_outfit_assets.py`;
+- `Scripts/run-session6-outfit-throw-matrix.py`;
+- `Scripts/run-session6-outfit-visual-capture.py`;
+- `Scripts/validate_dg_character_session6_brand_license.py`;
+- `Scripts/validate_dg_character_session6_outfit_assets.py`;
+- `Scripts/validate_dg_character_session6_outfit_no_write.py`;
+- `Scripts/validate_dg_character_session6_proxy_source.py`;
+- `Scripts/validate_dg_character_session6_wiring.py`.
+
+Runtime and test additions (7):
+
+- `Source/DiscGolfTour/DiscGolfOutfitRuntime.cpp`;
+- `Source/DiscGolfTour/DiscGolfOutfitRuntime.h`;
+- `Source/DiscGolfTour/DiscGolfSession6OutfitSmokeRunner.cpp`;
+- `Source/DiscGolfTour/DiscGolfSession6OutfitSmokeRunner.h`;
+- `Source/DiscGolfTour/DiscGolfSession6OutfitVisualCaptureRunner.cpp`;
+- `Source/DiscGolfTour/DiscGolfSession6OutfitVisualCaptureRunner.h`;
+- `Source/DiscGolfTour/Tests/DiscGolfOutfitRuntimeTests.cpp`.
+
+Project-owned DCC/source fixture (19):
+
+- `SourceArt/DiscGolf/Outfits/Proxy/DG_Session6_ProxyOutfits.blend`;
+- `SourceArt/DiscGolf/Outfits/Proxy/generate_session6_proxy_outfits.py`;
+- `SourceArt/DiscGolf/Outfits/Proxy/proxy_outfit_catalog_spec.json`;
+- `SourceArt/DiscGolf/Outfits/Proxy/proxy_outfit_source_manifest.json`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SK_DG_Bottom_ProxyPants01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SK_DG_Bottom_ProxyShorts01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SK_DG_Footwear_ProxyLow01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SK_DG_Footwear_ProxyTrail01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SK_DG_Glove_ProxyPair01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SK_DG_Outerwear_ProxyJacket01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SK_DG_Socks_ProxyCrew01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SK_DG_Top_ProxyLongSleeve01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SK_DG_Top_ProxyTee01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SM_DG_Accessory_ProxyTowelLeft01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SM_DG_Bag_ProxyBackpack01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SM_DG_Eyewear_ProxySport01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SM_DG_Headwear_ProxyBeanie01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SM_DG_Headwear_ProxyCap01.fbx`;
+- `SourceArt/DiscGolf/Outfits/Proxy/FBX/SM_DG_Wrist_ProxyBandLeft01.fbx`.
+
+The unrelated baseline remains exactly: `Config/DefaultEditor.ini` (1), `Content/Data` (8), `Content/Environment` (4), `Content/PN_interactiveSpruceForest` (363), `Content/Presentation` (60), `Content/Stump_Scanned` (63), `Content/WaterMaterials` (107), and `SourceArt/PineRidge` (41). Generated `Binaries`, `Intermediate`, `Saved`, and `DerivedDataCache` evidence is not repository scope. No Session 7 path or implementation was introduced.

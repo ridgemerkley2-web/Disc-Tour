@@ -6,11 +6,12 @@
 #include "DiscGolfRoundState.h"
 #include "DiscGolfPlayerExperience.h"
 #include "DiscGolfCharacterProfileRuntime.h"
+#include "DiscGolfOutfitTypes.h"
 #include "DiscGolfSaveGame.generated.h"
 
 namespace DiscGolfSaveSchema
 {
-    inline constexpr int32 CurrentVersion = 7;
+    inline constexpr int32 CurrentVersion = 8;
 
     constexpr bool IsCurrent(const int32 Version)
     {
@@ -43,4 +44,6 @@ public:
     UPROPERTY(BlueprintReadWrite, SaveGame) EDiscPlastic PracticePlastic = EDiscPlastic::Tour;
     UPROPERTY(BlueprintReadWrite, SaveGame) FDiscGolfPlayerSettings PlayerSettings;
     UPROPERTY(BlueprintReadWrite, SaveGame) FDiscGolfCharacterProfileSaveData CharacterProfile;
+    /** Stable catalog IDs only; visual assets are resolved by the installed outfit framework. */
+    UPROPERTY(BlueprintReadWrite, SaveGame) FDGOutfitLoadout OutfitLoadout;
 };

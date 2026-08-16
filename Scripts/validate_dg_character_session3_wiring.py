@@ -30,6 +30,11 @@ EXPECTED_ASSETS = (
     "Content/DiscGolf/Tests/Profiles/DA_DG_Test_TallLongArms.uasset",
 )
 
+ALLOWED_SESSION6_PLUGIN_CHANGE = (
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
+    "Private/DiscGolfOutfitComponent.cpp"
+)
+
 
 def _read(relative: str) -> str:
     return (PROJECT_ROOT / relative).read_text(encoding="utf-8")
@@ -46,6 +51,7 @@ def main() -> None:
     game_mode = _read("Source/DiscGolfTour/DiscGolfTourGameMode.cpp")
     game_mode_header = _read("Source/DiscGolfTour/DiscGolfTourGameMode.h")
     smoke = _read("Source/DiscGolfTour/DiscGolfSession3SmokeRunner.cpp")
+    outfit_component = _read(ALLOWED_SESSION6_PLUGIN_CHANGE)
     build_rules = _read("Source/DiscGolfTour/DiscGolfTour.Build.cs")
     project = json.loads(_read("DiscGolfTour.uproject"))
 
@@ -152,26 +158,49 @@ def main() -> None:
     _require(checks, "exact_required_asset_set_present", not missing_assets,
              f"missing={missing_assets}; expected_count={len(EXPECTED_ASSETS)}")
 
-    plugin_diff = subprocess.run(
-        ["git", "diff", "--name-only", "HEAD", "--",
+    plugin_status = subprocess.run(
+        ["git", "status", "--porcelain=v1", "--untracked-files=all", "--",
          "Plugins/DiscGolfCharacterFramework"],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
         check=True,
-    ).stdout.strip().splitlines()
-    _require(checks, "installed_plugin_unchanged", not plugin_diff,
-             f"plugin diff entries={plugin_diff}")
+    ).stdout.splitlines()
+    plugin_diff = sorted({line[3:].replace("\\", "/")
+                          for line in plugin_status if len(line) >= 4})
+    _require(checks, "installed_plugin_change_is_exact_session6_safety_allowlist",
+             plugin_diff == [ALLOWED_SESSION6_PLUGIN_CHANGE],
+             f"allowed={[ALLOWED_SESSION6_PLUGIN_CHANGE]}; actual={plugin_diff}")
+    _require(checks, "session6_plugin_variant_resolution_is_canonical",
+             all(token in outfit_component for token in (
+                 "const bool bHasVariant = Item->FindVariant(VariantId, Variant);",
+                 "if (bHasVariant)",
+                 "VariantId = Variant.VariantId;",
+                 "VariantId = NAME_None;")),
+             "resolved fallback variants persist the catalog's stable canonical ID")
+    _require(checks, "session6_plugin_cosmetics_are_collision_free",
+             outfit_component.count(
+                 "Comp->SetCollisionEnabled(ECollisionEnabled::NoCollision);") == 2
+             and outfit_component.count(
+                 "Comp->SetGenerateOverlapEvents(false);") == 2
+             and outfit_component.count(
+                 "Comp->SetCanEverAffectNavigation(false);") == 2,
+             "skeletal and static cosmetics both disable collision, overlap, and navigation")
+    _require(checks, "session6_plugin_static_cosmetics_are_scale_and_physics_isolated",
+             outfit_component.count("Comp->SetAbsolute(false, false, true);") == 1
+             and outfit_component.count("Comp->SetSimulatePhysics(false);") == 1,
+             "static socket cosmetics inherit translation/rotation only and explicitly disable physics")
 
     failed = [item for item in checks if not item["passed"]]
     report = {
-        "schema": "DiscGolfTour.Session3WiringValidation.v1",
+        "schema": "DiscGolfTour.Session3WiringValidation.v2",
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "status": "PASS_SESSION3_SINGLE_AUTHORITY_WIRING" if not failed else "FAIL",
         "scope": "RHBH_DRIVE_ONLY_NO_SESSION4",
         "checks": checks,
         "asset_count": len(EXPECTED_ASSETS),
         "release_data_fields_consumed": release_fields,
+        "allowed_session6_plugin_change": ALLOWED_SESSION6_PLUGIN_CHANGE,
         "plugin_source_changes": plugin_diff,
         "failed_checks": [item["check"] for item in failed],
         "writes": [str(REPORT_PATH)],
@@ -186,7 +215,8 @@ def main() -> None:
     print(
         "SESSION3 WIRING VALIDATION PASS: "
         f"checks={len(checks)} assets={len(EXPECTED_ASSETS)} "
-        "release_fields=GripWorldTransform plugin_changes=0"
+        "release_fields=GripWorldTransform plugin_changes=1 "
+        "session6_outfit_safety_allowlist=1"
     )
 
 

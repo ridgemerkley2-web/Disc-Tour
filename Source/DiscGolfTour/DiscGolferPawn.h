@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "DiscGolfCharacterTypes.h"
+#include "DiscGolfOutfitTypes.h"
 #include "DiscGolfTypes.h"
 #include "DiscGolferPawn.generated.h"
 
@@ -18,6 +19,8 @@ class UDiscGolfThrowComponent;
 class UDiscGolfRHBHThrowAdapterComponent;
 class UDiscGolfAppearanceComponent;
 class UDiscGolfCharacterProfile;
+class UDiscGolfOutfitCatalog;
+class UDiscGolfOutfitComponent;
 class UAnimMontage;
 struct FInputActionValue;
 struct FThrowRelease;
@@ -63,6 +66,17 @@ public:
     UDiscGolfCharacterProfile* GetRuntimeCharacterProfile() const { return RuntimeCharacterProfile; }
     USkeletalMeshComponent* GetSkeletalGolferMesh() const { return SkeletalMesh; }
     UStaticMeshComponent* GetHeldDiscVisual() const { return HeldDiscVisual; }
+    UDiscGolfOutfitComponent* GetOutfitComponent() const { return OutfitComponent; }
+    UDiscGolfOutfitCatalog* GetOutfitCatalog() const;
+    const FDGOutfitLoadout& GetCurrentOutfitLoadout() const;
+    const TArray<EDGBodyRegion>& GetCoveredOutfitBodyRegions() const { return CoveredOutfitBodyRegions; }
+
+    /** Canonical whole-loadout adapter; never owns animation, release, inventory, or flight. */
+    bool ApplyOutfitLoadoutTransactionally(
+        const FDGOutfitLoadout& Requested,
+        bool bAllowUnavailableItems,
+        FString& OutStatus);
+    void RefreshOutfitForCurrentBodyProfile();
 
     /** Shared by real input and the end-to-end Session 3 smoke. */
     bool TryStartAnimatedRHBHThrow(const FThrowCommand& AuthoritativeCommand);
@@ -86,16 +100,19 @@ private:
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolferPresentationComponent> PresentationComponent;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfThrowComponent> FrameworkThrowComponent;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfAppearanceComponent> CharacterAppearance;
+    UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfOutfitComponent> OutfitComponent;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfRHBHThrowAdapterComponent> RHBHThrowAdapter;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UStaticMeshComponent> HeldDiscVisual;
     UPROPERTY() TObjectPtr<UAnimMontage> RHBHThrowMontage;
     UPROPERTY() TObjectPtr<UDiscGolfCharacterProfile> CharacterProfileTemplate;
     UPROPERTY(Transient) TObjectPtr<UDiscGolfCharacterProfile> RuntimeCharacterProfile;
+    UPROPERTY(Transient) TArray<EDGBodyRegion> CoveredOutfitBodyRegions;
 
     bool bCharacterCreatorPreviewActive = false;
     bool bSession5PipelineValidationMontageActive = false;
     bool bSavedSkeletalTickWhenPaused = false;
     bool bSavedCameraBoomTickWhenPaused = false;
+    bool bSavedPlayerCameraManagerTickWhenPaused = false;
     float SavedPreviewCameraArmLength = 0.0f;
     float SavedPreviewCameraFov = 90.0f;
     FVector SavedPreviewCameraSocketOffset = FVector::ZeroVector;
@@ -115,6 +132,9 @@ private:
 
     UFUNCTION()
     void HandleAnimatedThrowRecovered(int64 AttemptSerial, bool bDiscWasReleased);
+
+    UFUNCTION()
+    void HandleOutfitCoverageChanged(const TArray<EDGBodyRegion>& CoveredRegions);
 
     void InputAim(const FInputActionValue& Value);
     void InputPower(const FInputActionValue& Value);
