@@ -949,6 +949,8 @@ Session 5 therefore closes with an accepted technical pipeline fixture, determin
 
 Status: **PASS for the modular outfit-system and validation scope.** All wardrobe art in this session is generic project-owned blockout content marked `NON_PRODUCTION_PROXY` / `DO_NOT_SHIP`; it is not accepted as shipping character art. Session 7 has not started.
 
+Accepted Session 6 checkpoint: `deda2fb3d47a828c1b1f9adf563368721eab9b24` (`Session 6: integrate modular outfit customization`). The commit contains exactly the audited 84-path Session 6 scope: 18 modified paths and 66 additions. This hash record is a deliberate post-commit changelog update and is not part of the self-referential checkpoint commit.
+
 ### Session 5 checkpoint
 
 Before outfit work began, the accepted 34-path Session 5 scope was committed by itself as `e6e6a57727411a4cc50b890f4d8557bfb803e9e2` with subject `Session 5: add validated mocap ingestion and retarget pipeline`. The 647 unrelated baseline paths were excluded. The earlier end-of-Session-5 statement that Session 6 had not started was correct at that checkpoint and is superseded by this section.
