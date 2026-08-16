@@ -13,6 +13,7 @@
 #include "DiscGolfAnimInstance.h"
 #include "DiscGolfThrowComponent.h"
 #include "DiscGolfTourGameInstance.h"
+#include "DiscGolfSession5MocapValidationPaths.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
@@ -205,6 +206,29 @@ ADiscGolferPawn::ADiscGolferPawn()
 void ADiscGolferPawn::BeginPlay()
 {
     Super::BeginPlay();
+
+    // Session 5 may exercise a pipeline-produced montage only in an explicit,
+    // unattended validation process.  The constructor and every normal game
+    // launch retain the accepted Session 3 prototype montage.
+    if (DiscGolfSession5MocapValidation::IsPipelineRuntimeValidationRequested())
+    {
+        RHBHThrowMontage = LoadObject<UAnimMontage>(
+            nullptr,
+            DiscGolfSession5MocapValidation::PipelineTestMontage);
+        bSession5PipelineValidationMontageActive = RHBHThrowMontage != nullptr;
+        if (bSession5PipelineValidationMontageActive)
+        {
+            UE_LOG(LogDiscGolfTour, Display,
+                TEXT("SESSION 5 MOCAP VALIDATION MONTAGE OVERRIDE: %s (unattended test only; default gameplay unchanged)."),
+                *RHBHThrowMontage->GetPathName());
+        }
+        else
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("SESSION 5 MOCAP VALIDATION MONTAGE OVERRIDE FAILED: %s"),
+                DiscGolfSession5MocapValidation::PipelineTestMontage);
+        }
+    }
 
     if (CharacterProfileTemplate && FrameworkThrowComponent)
     {
@@ -481,6 +505,11 @@ void ADiscGolferPawn::CancelThrowPresentation()
 bool ADiscGolferPawn::IsAnimatedThrowActive() const
 {
     return RHBHThrowAdapter && RHBHThrowAdapter->IsThrowActive();
+}
+
+FString ADiscGolferPawn::GetActiveRHBHThrowMontagePath() const
+{
+    return RHBHThrowMontage ? RHBHThrowMontage->GetPathName() : FString();
 }
 
 bool ADiscGolferPawn::TryStartAnimatedRHBHThrow(const FThrowCommand& AuthoritativeCommand)

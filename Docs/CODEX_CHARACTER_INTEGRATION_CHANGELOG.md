@@ -755,3 +755,190 @@ The Retry7 gameplay-isolation guard recorded zero world discs and zero strokes b
 - Retry7 accepts profile readability and rig behavior on the proxy, not final character-art silhouette quality.
 - Final Fab forest visual acceptance remains pending imported marketplace assets and is outside Session 4.
 - **SESSION 4 ACCEPTANCE: PASS.** One master skeleton supports all accepted profiles and slider extremes; creator preview/persistence, restrained presentation variation, profile-safe held-disc/release alignment, and the Session 3 single-authority throw invariant are all demonstrated. Session 5 and later character-art work have not begun.
+
+---
+
+## Session 5 -- provenance-gated synthetic motion pipeline fixture
+
+Date: 2026-08-15
+
+Status: **TECHNICAL SESSION 5 PIPELINE FIXTURE ACCEPTANCE: PASS. PRODUCTION MOCAP / SHIPPING ACCEPTANCE: BLOCKED / NOT SATISFIED.**
+
+Session 5 establishes a non-destructive source-to-retarget-to-cleanup pipeline without claiming that synthetic test motion is production mocap. A comprehensive read-only inventory of the project, `_BuildKit`, approved `SourceArt` locations, Content/asset-registry evidence, and repository documentation found no locally present FBX, BVH, animation FBX, Blender animation, or other user-owned/licensed RHBH capture with verified production and commercial-use permission. Consequently, no legitimate production mocap clip was available for Session 5.
+
+The accepted Session 3 prototype is project-authored validation motion, not external capture. It is the source for the Session 5 pipeline fixture only under `SYNTHETIC_TEST`, `PROJECT_OWNED_SYNTHETIC`, and `DO_NOT_SHIP`. Every one of the ten newly authored fixture packages below has the same `SYNTHETIC_TEST` / `DO_NOT_SHIP` boundary. The `Production` directory is a pipeline-stage name and does not grant shipping or production-performance approval.
+
+### Motion-source registry and rights decision
+
+The project-owned registry is `SourceArt/DiscGolf/Mocap/motion_source_registry.json`; its validator is `Scripts/validate_motion_source_registry.py`, with the final result recorded in `Saved/CharacterFramework/Session5MotionSourceRegistryValidation.json`.
+
+The final registry validation is `PASS` with nine unique MotionIds, exactly one `PIPELINE_FIXTURE`, and zero external production sources:
+
+- two project-authored `SYNTHETIC_TEST` rows, both `DO_NOT_SHIP`, including the immutable Session 3 prototype record and the distinct Session 5 pipeline-fixture record;
+- seven bundled vendor UE4 mannequin demo-animation rows whose original source files and reuse rights were not established, all `DO_NOT_REPURPOSE` and `DO_NOT_SHIP`;
+- zero production-use approvals.
+
+All nine registry records passed schema, hash, and restriction-policy validation. That result validates the provenance controls; it does not approve all nine records for reuse and is not a substitute for acquiring a real performance and its license records.
+
+### Canonical pipeline paths
+
+The documented project process is `Docs/DG_MOCAP_PIPELINE.md`. The canonical accepted source and target remain:
+
+- source prototype: `/Game/DiscGolf/Animation/Throws/A_DG_RHBH_Prototype`;
+- accepted default montage: `/Game/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype`;
+- target mesh: `/Game/DiscGolf/Characters/Meshes/SK_DG_Master`;
+- target skeleton: `/Game/DiscGolf/Characters/Meshes/SKEL_DG_Master`;
+- target IK Rig: `/Game/DiscGolf/Rigs/IK_DG_Master`.
+
+The exact Session 5 fixture path is:
+
+- source mesh: `/Game/DiscGolf/Animation/Mocap/Source/SK_DG_RHBH_SyntheticSource`;
+- source skeleton: `/Game/DiscGolf/Animation/Mocap/Source/SKEL_DG_RHBH_SyntheticSource`;
+- raw sequence: `/Game/DiscGolf/Animation/Mocap/Source/A_DG_RHBH_SyntheticSource_RAW`;
+- source IK Rig: `/Game/DiscGolf/Animation/Mocap/Rigs/IK_DG_RHBH_SyntheticSource`;
+- IK Retargeter: `/Game/DiscGolf/Animation/Mocap/Rigs/RTG_DG_RHBH_Synthetic_To_Master`;
+- retargeted sequence: `/Game/DiscGolf/Animation/Mocap/Retargeted/A_DG_RHBH_Synthetic_RTG`;
+- cleaned sequence: `/Game/DiscGolf/Animation/Mocap/Cleaned/A_DG_RHBH_Synthetic_CLN`;
+- production-stage test sequence: `/Game/DiscGolf/Animation/Mocap/Production/A_DG_RHBH_SyntheticPipelineTest_v001`;
+- pipeline-test montage: `/Game/DiscGolf/Animation/Mocap/Production/AM_DG_RHBH_SyntheticPipelineTest_v001`;
+- animation library: `/Game/DiscGolf/Animation/Mocap/Production/DA_DG_AnimationLibrary`.
+
+All four animation stages are 60 fps, 168 frames, and approximately 2.8 seconds. The raw fixture has 20 animated bone tracks; retargeted, cleaned, and production-stage sequences have 69. The cleaned and production-stage sequences carry the six required DG curves. Sequence assets own no gameplay events; the montage owns one `DG Release Disc` at frame 96, one `DG Throw Finished` at frame 162, and the seven documented phase events.
+
+### Bind-safe retarget repair and stage history
+
+The first read-only unit probe completed as a diagnostic process, but it rejected the then-current target sequences as usable evidence. `Saved/CharacterFramework/Session5MocapUnitProbe.json` and `Saved/Logs/CharacterFramework_Session5_MocapUnitProbe.log` show the source at approximately 145.69-148.00 cm while retargeted, cleaned, and production samples had collapsed to approximately 1.13-1.47 cm. Its top-level `PASS_READ_ONLY_SESSION5_UNIT_COMPATIBILITY_PROBE` means the probe ran and preserved disk state; it is not an asset-acceptance result.
+
+The repaired authoring path applies `LEGACY_NON_UNIT_ROOT_SCALE_COMPATIBILITY_NORMALIZATION_V1`. It preserves the batch-retargeted root translation and all bone rotations, resets every non-root local translation to the target reference local translation, and restores every target reference local scale, including the legacy root scale of approximately 100. This matches current component scale to the scaled skeletal-mesh bind reference and avoids both the original batch pelvis/root double-scale and the later root-scale-1 skin collapse. The recorded normalized-track contract is `ROOT_PRESERVES_BATCH_TRANSLATION_ROTATION;ALL_LOCAL_SCALES_EQUAL_TARGET_REFERENCE;ALL_NON_ROOT_TRANSLATIONS_EQUAL_TARGET_REFERENCE_LOCALS;COMPONENT_SCALE_MATCHES_BIND_REFERENCE`.
+
+`Saved/Logs/CharacterFramework_Session5_MocapAuthoring_UnitRepair.log` records the intentional rewrite of exactly the retargeted, cleaned, and production-stage sequence packages. The raw source, both fixture rig packages, montage, animation library, and all 11 protected accepted packages remained unchanged. Final evaluated target samples are approximately 113.22-146.71 cm, component-scale ratio error is zero, and maximum sampled segment-ratio error is at floating-point noise (`4.45e-15`). `Saved/Logs/CharacterFramework_Session5_MocapValidation_UnitRepair.log` passed read-only validation, and `Saved/Logs/CharacterFramework_Session5_MocapAuthoring_UnitRepair_Idempotent.log` then returned `PASS_ALREADY_CURRENT_NO_ASSET_WRITES`.
+
+The cleanup recipe remains `ROOT_XY_LOCK_TO_FRAME0;ROOT_Z_DELTA_CLAMP_3CM;REMOVE_SEQUENCE_NOTIFIES;REMOVE_TRANSFORM_CURVES;REAUTHOR_6_DG_CURVES`. The final creation and validation reports are `Saved/CharacterFramework/Session5MocapFixtureCreation.json` and `Saved/CharacterFramework/Session5MocapFixtureValidation.json`. They record four distinct stage hashes, `PASS_NO_DISK_MUTATION` for strict validation, no changed protected package, and no asset write call during final validation.
+
+### Frozen runtime and package authority
+
+Normal gameplay still resolves to `AM_DG_RHBH_Prototype`. The synthetic pipeline montage is not a runtime default and is selectable only by the unattended Session 5 smoke/visual routes. The creation report records `runtime_default_assignment = NONE`, `throw_command_authority = UNCHANGED_RUNTIME_ADAPTER_AND_GAME_MODE`, `release_transform_authority = UNCHANGED_FDGReleaseData_GRIP_WORLD_TRANSFORM`, and `validation_mutation_policy = READ_ONLY_NO_SAVE_NO_MODIFY`. Session 5 adds no release calculation, flight calculation, second gameplay-disc spawn, or alternate throw-command authority.
+
+The final reports froze and rechecked these 11 accepted packages; `accepted_package_integrity` is `PASS_UNCHANGED` with no changed package:
+
+| Protected accepted package | Bytes | Frozen SHA-256 |
+|---|---:|---|
+| `Content/DiscGolf/Characters/Meshes/SK_DG_Master.uasset` | 59,553 | `5C461476D6877DFBE3E6DF08FF48CDF5BB940BC8C883D3E3F43058331DCC186F` |
+| `Content/DiscGolf/Characters/Meshes/SKEL_DG_Master.uasset` | 17,681 | `D40A0C4FE4BFE100A553910E01CCB5C00ACD9D1C927D4C1387F25894541493EA` |
+| `Content/DiscGolf/Rigs/IK_DG_Master.uasset` | 63,490 | `13D29A1D4B4F1E2A6F010D95E052D21A1E974A6789BBFE85AC5E4E260EE72958` |
+| `Content/DiscGolf/Rigs/CR_DG_Master.uasset` | 205,650 | `21BAA6E6C0C885F4F18BFF077FFCE3043916051DFF6675317004B09B2D9E10CF` |
+| `Content/DiscGolf/Animation/ABP_DG_Player.uasset` | 58,351 | `833454B7FC2F5F759795FB641295E1F41DBF0F4F1AB888476FE222D2DFB9D379` |
+| `Content/DiscGolf/Animation/Throws/A_DG_RHBH_Prototype.uasset` | 321,080 | `EA53E0460B958FFA7C8BC1DCACB5A4E6F1C6ABBACE9F177C68A1017C6783ECE6` |
+| `Content/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype.uasset` | 20,451 | `6BCD1C3256668D7F041FE6D33B6910052EE77FA4739A1EF4E60E689A787A8AF8` |
+| `Content/DiscGolf/UI/WBP_DG_CharacterCreator.uasset` | 21,687 | `69D1879FA25B2480EC3A6FED461954E7E824DA58BFCE33A143F2B7CBB405F1B0` |
+| `Content/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter.uasset` | 1,458 | `A0EF3A40A6E1A25E96C1E7B0344681A40D22A672B650708B82ABD22DAEEB6A9B` |
+| `Content/DiscGolf/Tests/Profiles/DA_DG_Test_ShortCompact.uasset` | 1,900 | `8F1421E28C286F42EE6881669648DF40A7EF0E4FCAC944198D1C9F17FF0842DF` |
+| `Content/DiscGolf/Tests/Profiles/DA_DG_Test_TallLongArms.uasset` | 1,900 | `A57F8CF320B67FB48213517127F0D1AC35F1DA79D518DFBE7FE589B6E347327D` |
+
+### Exact ten-package synthetic fixture inventory
+
+| Fixture package | Bytes | SHA-256 |
+|---|---:|---|
+| `Content/DiscGolf/Animation/Mocap/Source/SK_DG_RHBH_SyntheticSource.uasset` | 60,176 | `D949189BFCF25706FAF0899A8FFEFA61FA251BA145E6FE45011EF38C0AD38573` |
+| `Content/DiscGolf/Animation/Mocap/Source/SKEL_DG_RHBH_SyntheticSource.uasset` | 18,838 | `04CE122A7BCF3091E29CF8B603CB2B24C5D6F798536FF813665833CF1463A483` |
+| `Content/DiscGolf/Animation/Mocap/Source/A_DG_RHBH_SyntheticSource_RAW.uasset` | 318,299 | `6DB0ABDA555FA6869F6AD4E40628F301EFC616C773140C49B3F4B6E173AE6B38` |
+| `Content/DiscGolf/Animation/Mocap/Rigs/IK_DG_RHBH_SyntheticSource.uasset` | 56,406 | `E84555BF624114665CFF89B70EA1AB99AF6B06DD326C51770D187BE0FA853570` |
+| `Content/DiscGolf/Animation/Mocap/Rigs/RTG_DG_RHBH_Synthetic_To_Master.uasset` | 14,162 | `FE792D84F4EF462F3E9A513E712FD5467585C39AE3C7CDCF64153F7F06B5916D` |
+| `Content/DiscGolf/Animation/Mocap/Retargeted/A_DG_RHBH_Synthetic_RTG.uasset` | 424,511 | `657901A0D666D68A08FE02153B42651DAC7A354FC04C2F5B35BB5776CD7FC17A` |
+| `Content/DiscGolf/Animation/Mocap/Cleaned/A_DG_RHBH_Synthetic_CLN.uasset` | 413,831 | `14A0CC52195AC0B0990EA3F68DC0D7BEB5A1D9239631F27641B5AAE9DAB96642` |
+| `Content/DiscGolf/Animation/Mocap/Production/A_DG_RHBH_SyntheticPipelineTest_v001.uasset` | 414,050 | `8CFC265B520542970328D4B0A25F4528D0CE480224A3109F0074CECECA62F1F1` |
+| `Content/DiscGolf/Animation/Mocap/Production/AM_DG_RHBH_SyntheticPipelineTest_v001.uasset` | 21,131 | `707463D4ED96C7B9CD70B94E164292BEF6B8301390D3098E146F8BF9D6C2BFDB` |
+| `Content/DiscGolf/Animation/Mocap/Production/DA_DG_AnimationLibrary.uasset` | 2,915 | `620098CD89FEBD991422DE012F34AC58F4AFE45420419737CECAB3D93AEE7955` |
+
+The final stage lineage and hashes are:
+
+| Stage | Canonical package | Predecessor | Bytes | Final SHA-256 |
+|---|---|---|---:|---|
+| Raw | `/Game/DiscGolf/Animation/Mocap/Source/A_DG_RHBH_SyntheticSource_RAW` | accepted Session 3 prototype | 318,299 | `6DB0ABDA555FA6869F6AD4E40628F301EFC616C773140C49B3F4B6E173AE6B38` |
+| Retargeted | `/Game/DiscGolf/Animation/Mocap/Retargeted/A_DG_RHBH_Synthetic_RTG` | raw | 424,511 | `657901A0D666D68A08FE02153B42651DAC7A354FC04C2F5B35BB5776CD7FC17A` |
+| Cleaned | `/Game/DiscGolf/Animation/Mocap/Cleaned/A_DG_RHBH_Synthetic_CLN` | retargeted | 413,831 | `14A0CC52195AC0B0990EA3F68DC0D7BEB5A1D9239631F27641B5AAE9DAB96642` |
+| Production-stage test | `/Game/DiscGolf/Animation/Mocap/Production/A_DG_RHBH_SyntheticPipelineTest_v001` | cleaned | 414,050 | `8CFC265B520542970328D4B0A25F4528D0CE480224A3109F0074CECECA62F1F1` |
+
+### Final verification evidence
+
+| Gate | Final result | Evidence / qualification |
+|---|---|---|
+| Motion-source registry contract | PASS | `Saved/CharacterFramework/Session5MotionSourceRegistryValidation.json`; 9 records, exactly one `PIPELINE_FIXTURE`, zero external production sources, zero errors |
+| Bind-safe fixture repair | PASS | `Saved/Logs/CharacterFramework_Session5_MocapAuthoring_UnitRepair.log`; exactly three intended stage sequence rewrites; `LEGACY_NON_UNIT_ROOT_SCALE_COMPATIBILITY_NORMALIZATION_V1`; 0 errors/warnings |
+| Strict repaired-asset validation | PASS | `Saved/Logs/CharacterFramework_Session5_MocapValidation_UnitRepair.log` and final `Saved/Logs/CharacterFramework_Session5_Final_MocapAssets.log`; `source=SYNTHETIC_TEST`, `shipping=DO_NOT_SHIP`, `retarget=UE5_8_IK_BATCH`, `disk_mutation=NONE`; 0 errors/warnings |
+| Idempotent repair/no-write rerun | PASS | `Saved/Logs/CharacterFramework_Session5_MocapAuthoring_UnitRepair_Idempotent.log`; `PASS_ALREADY_CURRENT_NO_ASSET_WRITES`; 0 errors/warnings |
+| Final reflection compatibility | PASS | `Saved/Logs/CharacterFramework_Session5_Final_Reflection.log`; 4 classes and 4 structs loaded; commandlet reported 0 errors/warnings |
+| Final strict rig/wiring compatibility | PASS | `Saved/Logs/CharacterFramework_Session5_Final_StrictRig.log`; Session 3 wiring and rig validators passed; 69 bones, 4 goals, 4 effectors, 3 profiles, single existing flight authority; commandlet reported 0 errors/warnings |
+| Final Session 4 asset compatibility | PASS | `Saved/Logs/CharacterFramework_Session5_Final_Session4Assets.log`; Control Rig, AnimBP, and creator-widget contracts passed with disk mutation `NONE`; commandlet reported 0 errors/warnings |
+| Combined static Session 5 wiring | PASS | `Saved/CharacterFramework/Session5WiringValidation.json`; final refresh at 2026-08-16 06:52:03 UTC; 12/12 checks and zero errors; `ue_launched = false`, `ubt_launched = false` |
+| Installed plugin and pristine BuildKit | PASS | Included in the 12/12 wiring report: enabled plugin version 1.5.0, 96 tracked plugin files and zero dirty entries; BuildKit inventory 48,821 bytes, SHA-256 `1C0F133DA80E9330AC28E5D9D20A8A60E8A79452BF4DB09E76C42DBF20813361`, 251/251 records with no missing, unexpected, or mismatched file |
+| Final Editor target build | PASS | `DiscGolfTourEditor Win64 Development`; 4 actions; `Result: Succeeded`; 37.23 s; UBT local backup `C:\Users\ridge\AppData\Local\UnrealBuildTool\Log-backup-2026.08.11-01.22.56.txt` |
+| Final runtime target build | PASS | `DiscGolfTour Win64 Development`; 3 actions; `Result: Succeeded`; 59.04 s; UBT local `C:\Users\ridge\AppData\Local\UnrealBuildTool\Log.txt` |
+| Full `DiscGolfTour.` automation regression | PASS | `Saved/Logs/Automation_CharacterFramework_Session5_Final.log`; 115/115 tests completed with `Result={Success}`, no failed/not-run result, `TEST COMPLETE. EXIT CODE: 0` |
+| Existing three-hole gameplay regression | PASS | `Saved/Logs/ThreeHoleRoundSmoke_CharacterFramework_Session5_Final.log`; 3/3 holes, 3 strokes, 11 par, -8 round; manifest, scoring, scorecard, and save snapshot paths active |
+| Default-prototype route gameplay regression | PASS | `Saved/Logs/Session5PrototypeFallback_Baseline_Final.log`; accepted Session 3 one-throw authority contract passed without the Session 5 override, proving the prototype default route remains live |
+| Session 4 profile regression | PASS | `Saved/CharacterFramework/Session4ProfileSmokeReport.json`; 5/5 sequential processes passed: `Saved/Logs/Session4ProfileSmoke_ShortCompact.log`, `Session4ProfileSmoke_Baseline.log`, `Session4ProfileSmoke_TallLongArms.log`, `Session4ProfileSmoke_SliderMin.log`, and `Session4ProfileSmoke_SliderMax.log` |
+| Session 5 pipeline profile regression | PASS | `Saved/CharacterFramework/Session5MocapProfileSmokeReport.json`; 3/3 sequential processes passed: `Saved/Logs/Session5MocapProfileSmoke_ShortCompact.log`, `Session5MocapProfileSmoke_Baseline.log`, and `Session5MocapProfileSmoke_TallLongArms.log`; each recorded pipeline montage selection, one release, authoritative disc, existing flight, follow-through, recovery, next action, and default route untouched |
+| Rendered capture, isolation, and manual review | PASS | `Saved/Logs/CharacterFramework_Session5_MocapVisualCapture.log` and `Saved/CharacterFramework/Screenshots/Session5_MocapPipeline/Session5_MocapPipeline_CaptureManifest.json`; launcher PASS, 10/10 1920x1080 PNGs, minimum independently counted bright pixels 9,985, all machine gates true, and independent manual review of the current 23:04 files accepted all 10 as readable, fully framed, high-contrast, correctly labeled synthetic validation proxies; group frames are separated, held discs are visible at Plant/ReachBack and absent at exact Release/FollowThrough, and all profile results are readable |
+| Persistent/capture isolation | PASS | Final capture manifest recorded 0 baseline/final world discs, 0 baseline/final strokes, all three profile recoveries through `ThrowFinished`, no changed `.uasset`/`.umap` or save-game file, and no package/level save call; its audited capture-output allowlist contains the ten PNGs plus manifest, while the separate harness log is retained as evidence |
+| Production motion and license acceptance | **BLOCKED / NOT SATISFIED** | No legitimate production mocap source was found; every fixture package remains `SYNTHETIC_TEST` / `DO_NOT_SHIP` |
+
+The final capture manifest is 19,406 bytes with SHA-256 `AE5672C4B556DE6ED929BEA03BA413690263C6F6B080E2C79AA94F7070F4D1A1`. Its minimum subject screen-height fraction is `0.289448`, its maximum normalized bone-length ratio error is `0.054759`, every subject is projected and framed, and no gameplay/package/save mutation occurred.
+
+Three earlier rendered attempts are deliberately excluded from acceptance evidence. The 21:18 set produced a machine manifest PASS but was manually rejected because most target/profile frames were microscopic, dark, or missing readable bodies. The 22:31 attempt stopped after three frames with a failed gate, and the 22:48 attempt failed the ShortCompact screen-coverage gate. Only the final 23:04 wrapper rerun, after source-stable capture framing and launcher float-tolerance correction, is cited above. The launcher-only tolerance correction did not change UE source or fixture assets and required no rebuild.
+
+### Exact final Session 5 repository scope
+
+The final status audit is tied to HEAD `ba0b06c6ea578b01a28586300975f4c9f3eb317f` on `main`: 681 porcelain entries comprise 8 intended tracked modifications and 673 untracked paths. Of the untracked paths, 26 are intended Session 5 additions and exactly 647 are pre-existing unrelated paths preserved in place. Nothing is staged, and `git diff --check` passes.
+
+The 8 intended tracked modifications are:
+
+- `Docs/CODEX_CHARACTER_INTEGRATION_CHANGELOG.md`;
+- `Source/DiscGolfTour/DiscGolfSession3SmokeRunner.h`;
+- `Source/DiscGolfTour/DiscGolfSession4VisualCaptureRunner.cpp` (unity-collision-safe internal symbol renames only);
+- `Source/DiscGolfTour/DiscGolfTourGameMode.cpp`;
+- `Source/DiscGolfTour/DiscGolfTourGameMode.h`;
+- `Source/DiscGolfTour/DiscGolferPawn.cpp`;
+- `Source/DiscGolfTour/DiscGolferPawn.h`;
+- `Source/DiscGolfTourEditor/DiscGolfTourEditor.Build.cs`.
+
+The 26 intended untracked Session 5 additions are:
+
+- `Content/DiscGolf/Animation/Mocap/Source/SK_DG_RHBH_SyntheticSource.uasset`;
+- `Content/DiscGolf/Animation/Mocap/Source/SKEL_DG_RHBH_SyntheticSource.uasset`;
+- `Content/DiscGolf/Animation/Mocap/Source/A_DG_RHBH_SyntheticSource_RAW.uasset`;
+- `Content/DiscGolf/Animation/Mocap/Rigs/IK_DG_RHBH_SyntheticSource.uasset`;
+- `Content/DiscGolf/Animation/Mocap/Rigs/RTG_DG_RHBH_Synthetic_To_Master.uasset`;
+- `Content/DiscGolf/Animation/Mocap/Retargeted/A_DG_RHBH_Synthetic_RTG.uasset`;
+- `Content/DiscGolf/Animation/Mocap/Cleaned/A_DG_RHBH_Synthetic_CLN.uasset`;
+- `Content/DiscGolf/Animation/Mocap/Production/A_DG_RHBH_SyntheticPipelineTest_v001.uasset`;
+- `Content/DiscGolf/Animation/Mocap/Production/AM_DG_RHBH_SyntheticPipelineTest_v001.uasset`;
+- `Content/DiscGolf/Animation/Mocap/Production/DA_DG_AnimationLibrary.uasset`;
+- `Docs/DG_MOCAP_PIPELINE.md`;
+- `Scripts/create_dg_character_session5_mocap_fixture.py`;
+- `Scripts/probe_dg_character_session5_mocap_units.py`;
+- `Scripts/run-session5-mocap-profile-smokes.py`;
+- `Scripts/run-session5-mocap-visual-capture.py`;
+- `Scripts/validate_dg_character_session5_mocap_fixture.py`;
+- `Scripts/validate_dg_character_session5_wiring.py`;
+- `Scripts/validate_motion_source_registry.py`;
+- `Source/DiscGolfTour/DiscGolfSession5MocapSmokeRunner.cpp`;
+- `Source/DiscGolfTour/DiscGolfSession5MocapSmokeRunner.h`;
+- `Source/DiscGolfTour/DiscGolfSession5MocapValidationPaths.h`;
+- `Source/DiscGolfTour/DiscGolfSession5MocapVisualCaptureRunner.cpp`;
+- `Source/DiscGolfTour/DiscGolfSession5MocapVisualCaptureRunner.h`;
+- `Source/DiscGolfTourEditor/DiscGolfSession5MocapUtility.cpp`;
+- `Source/DiscGolfTourEditor/DiscGolfSession5MocapUtility.h`;
+- `SourceArt/DiscGolf/Mocap/motion_source_registry.json`.
+
+The 647 unrelated untracked paths remain confined to the known baseline: `Config/DefaultEditor.ini`; `Content/Data/`; `Content/Environment/`; `Content/PN_interactiveSpruceForest/`; `Content/Presentation/`; `Content/Stump_Scanned/`; `Content/WaterMaterials/`; and `SourceArt/PineRidge/`. Their distribution remains Config 1, Content 605, SourceArt 41. No unrelated path was adopted into Session 5 scope.
+
+The final static guard found no tracked or staged generated path under `.idea`, `.vs`, `.vscode`, `Binaries`, `DerivedDataCache`, `Intermediate`, `Saved`, `__pycache__`, `Build/Receipts`, or `Build/Windows/FileOpenOrder`. The installed `Plugins/DiscGolfCharacterFramework` tree and `_BuildKit/DiscGolfCorePlayabilityKit_v1.5` remain clean and pristine. No Session 6 implementation marker exists; Session 6 has not started.
+
+### Warning and acceptance qualifications
+
+The original fixture-authoring run remains historical evidence only. Its 14 warnings were ten expected missing-destination probes before the ten packages existed and four `AssetImportData` dependency warnings. The bind-safe unit-repair authoring, repaired strict validation, idempotent repair rerun, and final reflection/rig/asset commandlets each completed with zero reported errors and zero reported warnings. Live game and capture logs still contain routine engine/editor startup warning lines, including EditorDataStorage registration and generated Enhanced Input fallback messages, plus UE's built-in `UnifiedErrorTest` diagnostic strings; no fatal, critical, assertion, ensure, smoke-fail, or capture-fail marker was found, and the explicit final PASS/return-code gates above are the acceptance evidence. The coordinated final UBT logs contained no compiler warnings.
+
+The UBT records are local Log/backup artifacts rather than project `Saved/Logs` evidence. An earlier Editor link attempt failed before a dependency correction; it is not acceptance evidence. The final source-stable Editor and runtime builds listed above supersede it.
+
+Session 5 therefore closes with an accepted technical pipeline fixture, deterministic provenance enforcement, bind-safe human-scale retarget results, preserved single gameplay authority, the specified final regression matrix passing, and manually accepted validation renders. It still does not contain a shippable motion. Production replacement remains blocked on acquisition of an actual RHBH performance plus documented ownership/license, source metadata, and a registry entry that explicitly permits production use.

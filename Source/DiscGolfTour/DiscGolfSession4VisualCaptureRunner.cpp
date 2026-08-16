@@ -43,7 +43,7 @@ namespace DiscGolfSession4VisualCapture
 {
 constexpr double RuntimeTimeoutSeconds = 8.0;
 constexpr double PoseTimeoutSeconds = 7.0;
-constexpr double ScreenshotTimeoutSeconds = 30.0;
+constexpr double Session4ScreenshotTimeoutSeconds = 30.0;
 constexpr double PoseSettleSeconds = 0.30;
 constexpr float ReachbackSeconds = 54.0f / 60.0f;
 constexpr float PlantSeconds = 70.0f / 60.0f;
@@ -53,7 +53,7 @@ constexpr int32 ExpectedWidth = 1920;
 constexpr int32 ExpectedHeight = 1080;
 constexpr int64 MinimumReadablePngBytes = 32768;
 
-const TCHAR* CaptureFilenames[] = {
+const TCHAR* Session4CaptureFilenames[] = {
     TEXT("01_Neutral_Front_Short_Baseline_Tall.png"),
     TEXT("02_Neutral_Side_Short_Baseline_Tall.png"),
     TEXT("03_Maximum_Reachback_AllProfiles.png"),
@@ -64,13 +64,13 @@ const TCHAR* CaptureFilenames[] = {
     TEXT("08_Slider_Extremes_Min_Max.png")
 };
 
-const TCHAR* ProfileNames[] = {
+const TCHAR* Session4ProfileNames[] = {
     TEXT("ShortCompact"),
     TEXT("Baseline"),
     TEXT("TallLongArms")
 };
 
-const TCHAR* ProfilePaths[] = {
+const TCHAR* Session4ProfilePaths[] = {
     TEXT("/Game/DiscGolf/Tests/Profiles/DA_DG_Test_ShortCompact.DA_DG_Test_ShortCompact"),
     TEXT("/Game/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter.DA_DG_DefaultCharacter"),
     TEXT("/Game/DiscGolf/Tests/Profiles/DA_DG_Test_TallLongArms.DA_DG_Test_TallLongArms")
@@ -91,7 +91,7 @@ const FRequiredAsset RequiredAssetPaths[] = {
     {TEXT("montage"), TEXT("/Game/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype.AM_DG_RHBH_Prototype")}
 };
 
-bool IsFiniteVector(const FVector& Value)
+bool IsSession4FiniteVector(const FVector& Value)
 {
     return !Value.ContainsNaN()
         && FMath::IsFinite(Value.X)
@@ -122,7 +122,7 @@ bool NearlyEqualStyle(const FDGThrowStyle& A, const FDGThrowStyle& B)
         && FMath::IsNearlyEqual(A.SpinMultiplier, B.SpinMultiplier);
 }
 
-int32 ReadBigEndianInt32(const uint8* Bytes)
+int32 ReadSession4BigEndianInt32(const uint8* Bytes)
 {
     return (static_cast<int32>(Bytes[0]) << 24)
         | (static_cast<int32>(Bytes[1]) << 16)
@@ -199,7 +199,7 @@ void ADiscGolfSession4VisualCaptureRunner::Start()
         OutputDirectory,
         TEXT("Session4_CharacterCreator_CaptureManifest.json"));
     IFileManager::Get().MakeDirectory(*OutputDirectory, true);
-    for (const TCHAR* Filename : CaptureFilenames)
+    for (const TCHAR* Filename : Session4CaptureFilenames)
     {
         IFileManager::Get().Delete(
             *FPaths::Combine(OutputDirectory, Filename), false, true, true);
@@ -451,7 +451,7 @@ bool ADiscGolfSession4VisualCaptureRunner::PreflightAssets()
         }
         RequiredAssets.Add(Asset);
     }
-    for (const TCHAR* ProfilePath : ProfilePaths)
+    for (const TCHAR* ProfilePath : Session4ProfilePaths)
     {
         UDiscGolfCharacterProfile* Profile =
             LoadObject<UDiscGolfCharacterProfile>(nullptr, ProfilePath);
@@ -518,13 +518,13 @@ bool ADiscGolfSession4VisualCaptureRunner::SpawnRegularFixtures()
     FixtureLaunchCount = 0;
     FixtureLaunchGripTransforms.Reset();
 
-    for (int32 Index = 0; Index < UE_ARRAY_COUNT(ProfilePaths); ++Index)
+    for (int32 Index = 0; Index < UE_ARRAY_COUNT(Session4ProfilePaths); ++Index)
     {
         UDiscGolfCharacterProfile* Profile =
-            LoadObject<UDiscGolfCharacterProfile>(nullptr, ProfilePaths[Index]);
+            LoadObject<UDiscGolfCharacterProfile>(nullptr, Session4ProfilePaths[Index]);
         if (!Profile || !SpawnFixture(
-                ProfileNames[Index],
-                ProfilePaths[Index],
+                Session4ProfileNames[Index],
+                Session4ProfilePaths[Index],
                 TEXT("AUTHORED_PROFILE"),
                 Profile->Body,
                 Profile->ThrowStyle,
@@ -733,7 +733,7 @@ bool ADiscGolfSession4VisualCaptureRunner::RunHandednessBoundaryAssertion()
         return false;
     }
     UDiscGolfCharacterProfile* BaselineAsset =
-        LoadObject<UDiscGolfCharacterProfile>(nullptr, ProfilePaths[1]);
+        LoadObject<UDiscGolfCharacterProfile>(nullptr, Session4ProfilePaths[1]);
     if (!BaselineAsset)
     {
         return false;
@@ -808,7 +808,7 @@ bool ADiscGolfSession4VisualCaptureRunner::HandleFixtureLaunch(
     return AuthoritativeCommand.ThrowStyle == EThrowStyle::Backhand
         && AuthoritativeCommand.ShotContext == EDiscShotContext::Drive
         && GripWorldTransform.IsValid()
-        && IsFiniteVector(GripWorldTransform.GetLocation())
+        && IsSession4FiniteVector(GripWorldTransform.GetLocation())
         && ValidateNoGameplayMutation();
 }
 
@@ -921,7 +921,7 @@ bool ADiscGolfSession4VisualCaptureRunner::ValidateReleaseGate()
             || Adapter->GetReleaseCommitCountForAttempt() != 1
             || GetMontagePosition(FixtureMeshes[Index]) > ReleaseSeconds + 0.07f
             || !FixtureLaunchGripTransforms[Index].IsValid()
-            || !IsFiniteVector(FixtureLaunchGripTransforms[Index].GetLocation()))
+            || !IsSession4FiniteVector(FixtureLaunchGripTransforms[Index].GetLocation()))
         {
             return false;
         }
@@ -1100,7 +1100,7 @@ bool ADiscGolfSession4VisualCaptureRunner::PrepareCreatorCapture()
             }
         }
         UDiscGolfCharacterProfile* ShortProfile =
-            LoadObject<UDiscGolfCharacterProfile>(nullptr, ProfilePaths[0]);
+            LoadObject<UDiscGolfCharacterProfile>(nullptr, Session4ProfilePaths[0]);
         if (!LiveCreatorWidget || !ShortProfile)
         {
             return false;
@@ -1394,8 +1394,8 @@ bool ADiscGolfSession4VisualCaptureRunner::ValidateCompositeFraming(
                 ? FVector::Distance(Held->GetComponentLocation(), Mesh->GetSocketLocation(TEXT("disc_grip_r")))
                 : TNumericLimits<float>::Max();
             const bool bHeldDiscPassed = Held && Mesh && Held->IsVisible()
-                && IsFiniteVector(Held->GetComponentLocation())
-                && IsFiniteVector(Scale)
+                && IsSession4FiniteVector(Held->GetComponentLocation())
+                && IsSession4FiniteVector(Scale)
                 && Scale.Equals(FVector(0.21f, 0.21f, 0.015f), 0.0025f)
                 // World AABB axes change as the hand tilts; no axis may exceed
                 // the provisional Cylinder radius, but Z is not its thickness.
@@ -1564,8 +1564,8 @@ bool ADiscGolfSession4VisualCaptureRunner::IsPoseFiniteAndPlausible(
 {
     if (!Mesh || !Mesh->GetSkeletalMeshAsset()
         || !Mesh->GetComponentTransform().IsValid()
-        || !IsFiniteVector(Mesh->Bounds.Origin)
-        || !IsFiniteVector(Mesh->Bounds.BoxExtent))
+        || !IsSession4FiniteVector(Mesh->Bounds.Origin)
+        || !IsSession4FiniteVector(Mesh->Bounds.BoxExtent))
     {
         return false;
     }
@@ -1582,7 +1582,7 @@ bool ADiscGolfSession4VisualCaptureRunner::IsPoseFiniteAndPlausible(
     for (const FName Bone : RequiredBones)
     {
         const FVector Location = GetBoneLocation(Mesh, Bone);
-        if (!IsFiniteVector(Location) || FVector::Dist(Location, Pelvis) > 400.0f)
+        if (!IsSession4FiniteVector(Location) || FVector::Dist(Location, Pelvis) > 400.0f)
         {
             return false;
         }
@@ -1742,7 +1742,7 @@ void ADiscGolfSession4VisualCaptureRunner::RequestCapture(
 {
     if (bScreenshotPending
         || CaptureIndex < 0
-        || CaptureIndex >= UE_ARRAY_COUNT(CaptureFilenames)
+        || CaptureIndex >= UE_ARRAY_COUNT(Session4CaptureFilenames)
         || CaptureEvidence.Num() != CaptureIndex)
     {
         Fail(TEXT("capture request was invalid, out of order, or overlapped another screenshot"));
@@ -1750,7 +1750,7 @@ void ADiscGolfSession4VisualCaptureRunner::RequestCapture(
     }
 
     FCaptureEvidence Record;
-    Record.Filename = CaptureFilenames[CaptureIndex];
+    Record.Filename = Session4CaptureFilenames[CaptureIndex];
     Record.Evidence = Evidence;
     Record.Phase = Phase;
     Record.CameraView = CameraView;
@@ -1811,8 +1811,8 @@ bool ADiscGolfSession4VisualCaptureRunner::PollPendingCapture()
 
         FCaptureEvidence& Record = CaptureEvidence[PendingCaptureIndex];
         Record.Bytes = FileSize;
-        Record.Width = ReadBigEndianInt32(&Bytes[16]);
-        Record.Height = ReadBigEndianInt32(&Bytes[20]);
+        Record.Width = ReadSession4BigEndianInt32(&Bytes[16]);
+        Record.Height = ReadSession4BigEndianInt32(&Bytes[20]);
         Record.Sha1 = ComputeSha1(Bytes);
         if (Record.Width != ExpectedWidth || Record.Height != ExpectedHeight
             || Record.Sha1.Len() != FSHAHash::GetStringLen()
@@ -1841,7 +1841,7 @@ bool ADiscGolfSession4VisualCaptureRunner::PollPendingCapture()
         return true;
     }
 
-    if (SecondsInStage() > ScreenshotTimeoutSeconds)
+    if (SecondsInStage() > Session4ScreenshotTimeoutSeconds)
     {
         Fail(FString::Printf(TEXT("screenshot timed out: %s"), *PendingCapturePath));
     }

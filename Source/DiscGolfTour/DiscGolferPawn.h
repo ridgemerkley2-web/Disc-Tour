@@ -39,6 +39,13 @@ public:
     UFUNCTION(BlueprintPure) bool IsAnimatedThrowActive() const;
     UFUNCTION(BlueprintPure) FString GetGolferPresentationStatusText() const;
 
+    /** Read-only evidence for command-line validation; normal gameplay always reports the prototype path. */
+    FString GetActiveRHBHThrowMontagePath() const;
+    bool IsSession5PipelineValidationMontageActive() const
+    {
+        return bSession5PipelineValidationMontageActive;
+    }
+
     /** Session 4 works on a transient copy; preset PrimaryDataAssets stay immutable. */
     bool GetCharacterCreatorProfile(
         FDGBodyProfile& OutBody,
@@ -86,6 +93,7 @@ private:
     UPROPERTY(Transient) TObjectPtr<UDiscGolfCharacterProfile> RuntimeCharacterProfile;
 
     bool bCharacterCreatorPreviewActive = false;
+    bool bSession5PipelineValidationMontageActive = false;
     bool bSavedSkeletalTickWhenPaused = false;
     bool bSavedCameraBoomTickWhenPaused = false;
     float SavedPreviewCameraArmLength = 0.0f;

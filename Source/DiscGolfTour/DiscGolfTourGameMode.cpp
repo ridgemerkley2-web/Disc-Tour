@@ -32,6 +32,8 @@
 #include "DiscGolfSession3SmokeRunner.h"
 #include "DiscGolfSession3VisualCaptureRunner.h"
 #include "DiscGolfSession4VisualCaptureRunner.h"
+#include "DiscGolfSession5MocapSmokeRunner.h"
+#include "DiscGolfSession5MocapVisualCaptureRunner.h"
 #include "DiscGolfEnvironmentController.h"
 #include "DiscGolfWorldFixtureActor.h"
 #include "ThrowControllerComponent.h"
@@ -304,10 +306,15 @@ void ADiscGolfTourGameMode::BeginPlay()
         FCommandLine::Get(), TEXT("Session3VisualCapture"));
     const bool bSession4VisualCaptureRequested = FParse::Param(
         FCommandLine::Get(), TEXT("Session4VisualCapture"));
+    const bool bSession5MocapSmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Session5MocapPipelineSmokeTest"));
+    const bool bSession5MocapVisualCaptureRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Session5MocapVisualCapture"));
     FString InitialCourse = (bRouteTelemetryRequested || bGalleryLakeWaterSmokeRequested
         || bDenseForestSmokeRequested || bGroundGrassSmokeRequested
         || bHole1FlightRouteSmokeRequested || bSession3OneThrowSmokeRequested
-        || bSession3VisualCaptureRequested || bSession4VisualCaptureRequested)
+        || bSession3VisualCaptureRequested || bSession4VisualCaptureRequested
+        || bSession5MocapSmokeRequested || bSession5MocapVisualCaptureRequested)
         ? TEXT("PineRidge") : TEXT("Regression");
     const bool bCourseOverridden = FParse::Value(FCommandLine::Get(), TEXT("Course="), InitialCourse);
     if (!LoadCourse(InitialCourse))
@@ -341,6 +348,8 @@ void ADiscGolfTourGameMode::BeginPlay()
         || bSession3OneThrowSmokeRequested
         || bSession3VisualCaptureRequested
         || bSession4VisualCaptureRequested
+        || bSession5MocapSmokeRequested
+        || bSession5MocapVisualCaptureRequested
         || FParse::Param(FCommandLine::Get(), TEXT("FixtureCollisionSmokeTest"))
         || bGalleryLakeWaterSmokeRequested
         || bDenseForestSmokeRequested
@@ -423,7 +432,47 @@ void ADiscGolfTourGameMode::BeginPlay()
         return;
     }
 
-    if (bSession4VisualCaptureRequested)
+    if (bSession5MocapVisualCaptureRequested)
+    {
+        Session5MocapVisualCaptureRunner =
+            GetWorld()->SpawnActor<ADiscGolfSession5MocapVisualCaptureRunner>();
+        if (!Session5MocapVisualCaptureRunner)
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("DG_SESSION5_MOCAP_VISUAL_CAPTURE: FAIL runner could not spawn."));
+            FPlatformMisc::RequestExitWithStatus(false, 1);
+            return;
+        }
+        FTimerHandle Session5MocapVisualTimer;
+        GetWorldTimerManager().SetTimer(
+            Session5MocapVisualTimer,
+            FTimerDelegate::CreateUObject(
+                Session5MocapVisualCaptureRunner,
+                &ADiscGolfSession5MocapVisualCaptureRunner::Start),
+            0.5f,
+            false);
+    }
+    else if (bSession5MocapSmokeRequested)
+    {
+        Session5MocapSmokeRunner =
+            GetWorld()->SpawnActor<ADiscGolfSession5MocapSmokeRunner>();
+        if (!Session5MocapSmokeRunner)
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("SESSION 5 MOCAP PIPELINE SMOKE FAIL: runner could not spawn."));
+            FPlatformMisc::RequestExitWithStatus(false, 1);
+            return;
+        }
+        FTimerHandle Session5MocapSmokeTimer;
+        GetWorldTimerManager().SetTimer(
+            Session5MocapSmokeTimer,
+            FTimerDelegate::CreateUObject(
+                Session5MocapSmokeRunner,
+                &ADiscGolfSession5MocapSmokeRunner::Start),
+            0.5f,
+            false);
+    }
+    else if (bSession4VisualCaptureRequested)
     {
         Session4VisualCaptureRunner = GetWorld()->SpawnActor<ADiscGolfSession4VisualCaptureRunner>();
         if (!Session4VisualCaptureRunner)

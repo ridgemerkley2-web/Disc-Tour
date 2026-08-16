@@ -26,6 +26,8 @@ class ADiscGolfFixtureQaRunner;
 class ADiscGolfSession3SmokeRunner;
 class ADiscGolfSession3VisualCaptureRunner;
 class ADiscGolfSession4VisualCaptureRunner;
+class ADiscGolfSession5MocapSmokeRunner;
+class ADiscGolfSession5MocapVisualCaptureRunner;
 
 USTRUCT()
 struct FDiscGolfHole1FlightRouteResult
@@ -192,6 +194,8 @@ private:
     UPROPERTY() TObjectPtr<ADiscGolfSession3SmokeRunner> Session3SmokeRunner;
     UPROPERTY() TObjectPtr<ADiscGolfSession3VisualCaptureRunner> Session3VisualCaptureRunner;
     UPROPERTY() TObjectPtr<ADiscGolfSession4VisualCaptureRunner> Session4VisualCaptureRunner;
+    UPROPERTY() TObjectPtr<ADiscGolfSession5MocapSmokeRunner> Session5MocapSmokeRunner;
+    UPROPERTY() TObjectPtr<ADiscGolfSession5MocapVisualCaptureRunner> Session5MocapVisualCaptureRunner;
     UPROPERTY() FDiscGolfCourseManifestDefinition ActiveCourseManifest;
     UPROPERTY() TArray<FDiscGolfHoleBlockoutDefinition> ActiveHoleDefinitions;
     UPROPERTY() FDiscGolfRoundState RoundState;

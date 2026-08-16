@@ -28,9 +28,9 @@ class DISCGOLFTOUR_API ADiscGolfSession3SmokeRunner : public AActor
 
 public:
     ADiscGolfSession3SmokeRunner();
-    void Start();
+    virtual void Start();
 
-private:
+protected:
     enum class EStage : uint8
     {
         WaitingForGameplay,
@@ -89,8 +89,8 @@ private:
     int32 CountWorldGolfers() const;
     void SetStage(EStage NewStage);
     double SecondsInStage() const;
-    void Fail(const FString& Reason);
-    void Pass();
+    virtual void Fail(const FString& Reason);
+    virtual void Pass();
 
     UFUNCTION()
     void HandleThrowRecovered(int64 AttemptSerial, bool bDiscWasReleased);

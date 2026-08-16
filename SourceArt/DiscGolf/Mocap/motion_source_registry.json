@@ -1,0 +1,555 @@
+{
+  "schema": "disc_golf_motion_source_registry",
+  "schema_version": 1,
+  "policy": {
+    "external_production_sources_present": false,
+    "shipping_requires_usage_status": "CLEARED_FOR_PRODUCTION",
+    "registry_root": "SourceArt/DiscGolf/Mocap",
+    "unknown_rights_policy": "DO_NOT_SHIP"
+  },
+  "sources": [
+    {
+      "source_id": "session3_rhbh_prototype",
+      "display_name": "Session 3 deterministic RHBH prototype",
+      "motion_id": "DG-RHBH-SYNTHETIC-0001",
+      "source_filename": "DiscGolfSession3AssetUtility.cpp",
+      "creator_or_source": "DiscGolfTour project",
+      "acquisition_method": "PROJECT_AUTHORED_DETERMINISTIC_CPP",
+      "license_permission_status": "PROJECT_OWNED_SYNTHETIC_TEST_ONLY",
+      "original_frame_rate": 60,
+      "handedness": "RIGHT",
+      "throw_type": "RHBH",
+      "import_date": "2026-08-15",
+      "pipeline_role": "LEGACY_SYNTHETIC_PROTOTYPE",
+      "source_kind": "SYNTHETIC_TEST",
+      "usage_status": "DO_NOT_SHIP",
+      "rights_status": "PROJECT_AUTHORED",
+      "performer": "NOT_APPLICABLE",
+      "license_or_release": "NOT_APPLICABLE_SYNTHETIC",
+      "external_production_claim": false,
+      "rights_evidence": [
+        {
+          "type": "AUTHORING_SOURCE",
+          "reference": "Source/DiscGolfTourEditor/DiscGolfSession3AssetUtility.cpp"
+        },
+        {
+          "type": "GIT_COMMIT",
+          "reference": "114b4fa5a570e12745a8f58b8898ab17f5bc7487"
+        }
+      ],
+      "content_assets": [
+        "/Game/DiscGolf/Animation/Throws/A_DG_RHBH_Prototype",
+        "/Game/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype"
+      ],
+      "files": [
+        {
+          "path": "Source/DiscGolfTourEditor/DiscGolfSession3AssetUtility.cpp",
+          "role": "SYNTHETIC_AUTHORING_SOURCE",
+          "bytes": 62751,
+          "sha256": "DC4F917E1096BE2DC3E7A4AE684F718C564B58B281429255F706E854A68C36E3"
+        },
+        {
+          "path": "Content/DiscGolf/Animation/Throws/A_DG_RHBH_Prototype.uasset",
+          "role": "SYNTHETIC_ANIMATION_SEQUENCE",
+          "bytes": 321080,
+          "sha256": "EA53E0460B958FFA7C8BC1DCACB5A4E6F1C6ABBACE9F177C68A1017C6783ECE6"
+        },
+        {
+          "path": "Content/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype.uasset",
+          "role": "SYNTHETIC_ANIMATION_MONTAGE",
+          "bytes": 20451,
+          "sha256": "6BCD1C3256668D7F041FE6D33B6910052EE77FA4739A1EF4E60E689A787A8AF8"
+        }
+      ],
+      "import_metadata": {
+        "source_path_recorded_in_asset": null,
+        "source_file_present": false,
+        "source_skeleton": "/Game/DiscGolf/Characters/Meshes/SKEL_DG_Master"
+      },
+      "raw_asset_path": null,
+      "retargeted_asset_path": null,
+      "cleaned_asset_path": null,
+      "production_asset_path": null,
+      "production_status": "SYNTHETIC_TEST_DO_NOT_SHIP",
+      "restrictions": [
+        "SYNTHETIC_TEST_ONLY",
+        "DO_NOT_LABEL_AS_MOCAP",
+        "DO_NOT_CLAIM_EXTERNAL_PERFORMANCE",
+        "DO_NOT_SHIP"
+      ]
+    },
+    {
+      "source_id": "session5_synthetic_pipeline_fixture",
+      "display_name": "Session 5 synthetic RHBH pipeline fixture",
+      "motion_id": "DG-RHBH-SYNTHETIC-PIPELINE-0001",
+      "source_filename": "A_DG_RHBH_Prototype.uasset",
+      "creator_or_source": "DiscGolfTour project accepted Session 3 prototype",
+      "acquisition_method": "DERIVED_FROM_ACCEPTED_PROJECT_SYNTHETIC_PROTOTYPE",
+      "license_permission_status": "PROJECT_OWNED_SYNTHETIC_TEST_ONLY",
+      "original_frame_rate": 60,
+      "handedness": "RIGHT",
+      "throw_type": "RHBH",
+      "import_date": "2026-08-15",
+      "pipeline_role": "PIPELINE_FIXTURE",
+      "source_kind": "SYNTHETIC_TEST",
+      "usage_status": "DO_NOT_SHIP",
+      "rights_status": "PROJECT_AUTHORED",
+      "performer": "NOT_APPLICABLE",
+      "license_or_release": "NOT_APPLICABLE_SYNTHETIC",
+      "external_production_claim": false,
+      "rights_evidence": [
+        {
+          "type": "AUTHORING_SOURCE",
+          "reference": "Source/DiscGolfTourEditor/DiscGolfSession3AssetUtility.cpp"
+        },
+        {
+          "type": "GIT_COMMIT",
+          "reference": "114b4fa5a570e12745a8f58b8898ab17f5bc7487"
+        }
+      ],
+      "content_assets": [
+        "/Game/DiscGolf/Animation/Mocap/Source/A_DG_RHBH_SyntheticSource_RAW",
+        "/Game/DiscGolf/Animation/Mocap/Retargeted/A_DG_RHBH_Synthetic_RTG",
+        "/Game/DiscGolf/Animation/Mocap/Cleaned/A_DG_RHBH_Synthetic_CLN",
+        "/Game/DiscGolf/Animation/Mocap/Production/A_DG_RHBH_SyntheticPipelineTest_v001",
+        "/Game/DiscGolf/Animation/Mocap/Production/AM_DG_RHBH_SyntheticPipelineTest_v001"
+      ],
+      "files": [
+        {
+          "path": "Source/DiscGolfTourEditor/DiscGolfSession3AssetUtility.cpp",
+          "role": "SYNTHETIC_AUTHORING_SOURCE",
+          "bytes": 62751,
+          "sha256": "DC4F917E1096BE2DC3E7A4AE684F718C564B58B281429255F706E854A68C36E3"
+        },
+        {
+          "path": "Content/DiscGolf/Animation/Throws/A_DG_RHBH_Prototype.uasset",
+          "role": "PIPELINE_FIXTURE_SOURCE_SEQUENCE",
+          "bytes": 321080,
+          "sha256": "EA53E0460B958FFA7C8BC1DCACB5A4E6F1C6ABBACE9F177C68A1017C6783ECE6"
+        },
+        {
+          "path": "Content/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype.uasset",
+          "role": "PIPELINE_FIXTURE_SOURCE_MONTAGE",
+          "bytes": 20451,
+          "sha256": "6BCD1C3256668D7F041FE6D33B6910052EE77FA4739A1EF4E60E689A787A8AF8"
+        }
+      ],
+      "import_metadata": {
+        "source_path_recorded_in_asset": "/Game/DiscGolf/Animation/Throws/A_DG_RHBH_Prototype",
+        "source_file_present": true,
+        "source_skeleton": "/Game/DiscGolf/Characters/Meshes/SKEL_DG_Master"
+      },
+      "raw_asset_path": "/Game/DiscGolf/Animation/Mocap/Source/A_DG_RHBH_SyntheticSource_RAW",
+      "retargeted_asset_path": "/Game/DiscGolf/Animation/Mocap/Retargeted/A_DG_RHBH_Synthetic_RTG",
+      "cleaned_asset_path": "/Game/DiscGolf/Animation/Mocap/Cleaned/A_DG_RHBH_Synthetic_CLN",
+      "production_asset_path": "/Game/DiscGolf/Animation/Mocap/Production/A_DG_RHBH_SyntheticPipelineTest_v001",
+      "production_status": "SYNTHETIC_TEST_DO_NOT_SHIP",
+      "restrictions": [
+        "SYNTHETIC_TEST_ONLY",
+        "PIPELINE_FIXTURE_ONLY",
+        "DO_NOT_LABEL_AS_MOCAP",
+        "DO_NOT_CLAIM_EXTERNAL_PERFORMANCE",
+        "DO_NOT_SHIP"
+      ]
+    },
+    {
+      "source_id": "vendor_ue4_mannequin_idle",
+      "display_name": "Vendor UE4 mannequin ThirdPersonIdle",
+      "motion_id": "DG-VENDOR-UE4-IDLE-0001",
+      "source_filename": "ThirdPersonIdle.FBX",
+      "creator_or_source": "UNKNOWN_VENDOR_DEMO_SOURCE",
+      "acquisition_method": "PROJECT_NATURE_VENDOR_BUNDLE_IMPORT",
+      "license_permission_status": "UNKNOWN_RECEIPT_PENDING",
+      "original_frame_rate": "UNKNOWN",
+      "handedness": "NOT_APPLICABLE",
+      "throw_type": "NOT_DISC_GOLF_THROW",
+      "import_date": "2026-08-14",
+      "pipeline_role": "UNUSABLE_VENDOR_DEMO",
+      "source_kind": "VENDOR_DEMO_ANIMATION",
+      "usage_status": "DO_NOT_REPURPOSE",
+      "rights_status": "UNVERIFIED",
+      "performer": "UNKNOWN",
+      "license_or_release": "MISSING",
+      "external_production_claim": false,
+      "rights_evidence": [
+        {
+          "type": "PROJECT_RECORD",
+          "reference": "Docs/FAB_ASSET_MANIFEST.md"
+        }
+      ],
+      "content_assets": [
+        "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonIdle"
+      ],
+      "files": [
+        {
+          "path": "Content/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonIdle.uasset",
+          "role": "VENDOR_ANIMATION_SEQUENCE",
+          "bytes": 142357,
+          "sha256": "0CA64803C3B07ACD20F7111453F8F5D3860C708B2B04A08A11ECDCE4DE401D5B"
+        }
+      ],
+      "import_metadata": {
+        "source_path_recorded_in_asset": "C:/Users/Taizyd.Korambayill/Desktop/TP_Template_Animations/ThirdPersonIdle.FBX",
+        "source_file_present": false,
+        "source_timestamp_unix": 1452100428,
+        "source_md5": "cd89cd4d192fb57ab1db4c9af0860b53",
+        "source_skeleton": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Character/Mesh/UE4_Mannequin_Skeleton"
+      },
+      "raw_asset_path": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonIdle",
+      "retargeted_asset_path": null,
+      "cleaned_asset_path": null,
+      "production_asset_path": null,
+      "production_status": "DO_NOT_SHIP_DO_NOT_REPURPOSE",
+      "restrictions": [
+        "DO_NOT_REPURPOSE",
+        "DO_NOT_SHIP",
+        "LICENSE_UNVERIFIED",
+        "VENDOR_DEMO_CONTENT",
+        "NOT_DISC_GOLF_THROW",
+        "MISSING_ORIGINAL_SOURCE"
+      ]
+    },
+    {
+      "source_id": "vendor_ue4_mannequin_run",
+      "display_name": "Vendor UE4 mannequin ThirdPersonRun",
+      "motion_id": "DG-VENDOR-UE4-RUN-0001",
+      "source_filename": "ThirdPersonRun.FBX",
+      "creator_or_source": "UNKNOWN_VENDOR_DEMO_SOURCE",
+      "acquisition_method": "PROJECT_NATURE_VENDOR_BUNDLE_IMPORT",
+      "license_permission_status": "UNKNOWN_RECEIPT_PENDING",
+      "original_frame_rate": "UNKNOWN",
+      "handedness": "NOT_APPLICABLE",
+      "throw_type": "NOT_DISC_GOLF_THROW",
+      "import_date": "2026-08-14",
+      "pipeline_role": "UNUSABLE_VENDOR_DEMO",
+      "source_kind": "VENDOR_DEMO_ANIMATION",
+      "usage_status": "DO_NOT_REPURPOSE",
+      "rights_status": "UNVERIFIED",
+      "performer": "UNKNOWN",
+      "license_or_release": "MISSING",
+      "external_production_claim": false,
+      "rights_evidence": [
+        {
+          "type": "PROJECT_RECORD",
+          "reference": "Docs/FAB_ASSET_MANIFEST.md"
+        }
+      ],
+      "content_assets": [
+        "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonRun"
+      ],
+      "files": [
+        {
+          "path": "Content/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonRun.uasset",
+          "role": "VENDOR_ANIMATION_SEQUENCE",
+          "bytes": 113153,
+          "sha256": "A4FF8B838473100B4F191477F7C34C4D28CF53EB0B310D76EB69BB5E8C6D037F"
+        }
+      ],
+      "import_metadata": {
+        "source_path_recorded_in_asset": "C:/Users/Taizyd.Korambayill/Desktop/TP_Template_Animations/ThirdPersonRun.FBX",
+        "source_file_present": false,
+        "source_timestamp_unix": 1452100428,
+        "source_md5": "890714093fe33d873eeb430caf9341a2",
+        "source_skeleton": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Character/Mesh/UE4_Mannequin_Skeleton"
+      },
+      "raw_asset_path": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonRun",
+      "retargeted_asset_path": null,
+      "cleaned_asset_path": null,
+      "production_asset_path": null,
+      "production_status": "DO_NOT_SHIP_DO_NOT_REPURPOSE",
+      "restrictions": [
+        "DO_NOT_REPURPOSE",
+        "DO_NOT_SHIP",
+        "LICENSE_UNVERIFIED",
+        "VENDOR_DEMO_CONTENT",
+        "NOT_DISC_GOLF_THROW",
+        "MISSING_ORIGINAL_SOURCE"
+      ]
+    },
+    {
+      "source_id": "vendor_ue4_mannequin_walk",
+      "display_name": "Vendor UE4 mannequin ThirdPersonWalk",
+      "motion_id": "DG-VENDOR-UE4-WALK-0001",
+      "source_filename": "ThirdPersonWalk.FBX",
+      "creator_or_source": "UNKNOWN_VENDOR_DEMO_SOURCE",
+      "acquisition_method": "PROJECT_NATURE_VENDOR_BUNDLE_IMPORT",
+      "license_permission_status": "UNKNOWN_RECEIPT_PENDING",
+      "original_frame_rate": "UNKNOWN",
+      "handedness": "NOT_APPLICABLE",
+      "throw_type": "NOT_DISC_GOLF_THROW",
+      "import_date": "2026-08-14",
+      "pipeline_role": "UNUSABLE_VENDOR_DEMO",
+      "source_kind": "VENDOR_DEMO_ANIMATION",
+      "usage_status": "DO_NOT_REPURPOSE",
+      "rights_status": "UNVERIFIED",
+      "performer": "UNKNOWN",
+      "license_or_release": "MISSING",
+      "external_production_claim": false,
+      "rights_evidence": [
+        {
+          "type": "PROJECT_RECORD",
+          "reference": "Docs/FAB_ASSET_MANIFEST.md"
+        }
+      ],
+      "content_assets": [
+        "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonWalk"
+      ],
+      "files": [
+        {
+          "path": "Content/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonWalk.uasset",
+          "role": "VENDOR_ANIMATION_SEQUENCE",
+          "bytes": 123070,
+          "sha256": "1FF807301B7DBF63A50E38F5B743D61C75ED9CA5AD1A042D5001837D3EE4B1D8"
+        }
+      ],
+      "import_metadata": {
+        "source_path_recorded_in_asset": "C:/Users/Taizyd.Korambayill/Desktop/TP_Template_Animations/ThirdPersonWalk.FBX",
+        "source_file_present": false,
+        "source_timestamp_unix": 1452100428,
+        "source_md5": "158cb519ac906fe9d7778159f55c9fe0",
+        "source_skeleton": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Character/Mesh/UE4_Mannequin_Skeleton"
+      },
+      "raw_asset_path": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonWalk",
+      "retargeted_asset_path": null,
+      "cleaned_asset_path": null,
+      "production_asset_path": null,
+      "production_status": "DO_NOT_SHIP_DO_NOT_REPURPOSE",
+      "restrictions": [
+        "DO_NOT_REPURPOSE",
+        "DO_NOT_SHIP",
+        "LICENSE_UNVERIFIED",
+        "VENDOR_DEMO_CONTENT",
+        "NOT_DISC_GOLF_THROW",
+        "MISSING_ORIGINAL_SOURCE"
+      ]
+    },
+    {
+      "source_id": "vendor_ue4_mannequin_jump_combined",
+      "display_name": "Vendor UE4 mannequin ThirdPerson_Jump",
+      "motion_id": "DG-VENDOR-UE4-JUMP-COMBINED-0001",
+      "source_filename": "ThirdPerson_Jump.FBX",
+      "creator_or_source": "UNKNOWN_VENDOR_DEMO_SOURCE",
+      "acquisition_method": "PROJECT_NATURE_VENDOR_BUNDLE_IMPORT",
+      "license_permission_status": "UNKNOWN_RECEIPT_PENDING",
+      "original_frame_rate": "UNKNOWN",
+      "handedness": "NOT_APPLICABLE",
+      "throw_type": "NOT_DISC_GOLF_THROW",
+      "import_date": "2026-08-14",
+      "pipeline_role": "UNUSABLE_VENDOR_DEMO",
+      "source_kind": "VENDOR_DEMO_ANIMATION",
+      "usage_status": "DO_NOT_REPURPOSE",
+      "rights_status": "UNVERIFIED",
+      "performer": "UNKNOWN",
+      "license_or_release": "MISSING",
+      "external_production_claim": false,
+      "rights_evidence": [
+        {
+          "type": "PROJECT_RECORD",
+          "reference": "Docs/FAB_ASSET_MANIFEST.md"
+        }
+      ],
+      "content_assets": [
+        "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPerson_Jump"
+      ],
+      "files": [
+        {
+          "path": "Content/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPerson_Jump.uasset",
+          "role": "VENDOR_ANIMATION_SEQUENCE",
+          "bytes": 109433,
+          "sha256": "700C1A30F9A1F688F367AC4E5D22A8BDE4183779AD4A359883F102327315BE6C"
+        }
+      ],
+      "import_metadata": {
+        "source_path_recorded_in_asset": "C:/Users/Taizyd.Korambayill/Desktop/TP_Template_Animations/ThirdPerson_Jump.FBX",
+        "source_file_present": false,
+        "source_timestamp_unix": 1452100428,
+        "source_md5": "8838c06b7746fb9957dd502c398f4219",
+        "source_skeleton": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Character/Mesh/UE4_Mannequin_Skeleton"
+      },
+      "raw_asset_path": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPerson_Jump",
+      "retargeted_asset_path": null,
+      "cleaned_asset_path": null,
+      "production_asset_path": null,
+      "production_status": "DO_NOT_SHIP_DO_NOT_REPURPOSE",
+      "restrictions": [
+        "DO_NOT_REPURPOSE",
+        "DO_NOT_SHIP",
+        "LICENSE_UNVERIFIED",
+        "VENDOR_DEMO_CONTENT",
+        "NOT_DISC_GOLF_THROW",
+        "MISSING_ORIGINAL_SOURCE"
+      ]
+    },
+    {
+      "source_id": "vendor_ue4_mannequin_jump_start",
+      "display_name": "Vendor UE4 mannequin ThirdPersonJump_Start",
+      "motion_id": "DG-VENDOR-UE4-JUMP-START-0001",
+      "source_filename": "ThirdPersonJump_Start.FBX",
+      "creator_or_source": "UNKNOWN_VENDOR_DEMO_SOURCE",
+      "acquisition_method": "PROJECT_NATURE_VENDOR_BUNDLE_IMPORT",
+      "license_permission_status": "UNKNOWN_RECEIPT_PENDING",
+      "original_frame_rate": "UNKNOWN",
+      "handedness": "NOT_APPLICABLE",
+      "throw_type": "NOT_DISC_GOLF_THROW",
+      "import_date": "2026-08-14",
+      "pipeline_role": "UNUSABLE_VENDOR_DEMO",
+      "source_kind": "VENDOR_DEMO_ANIMATION",
+      "usage_status": "DO_NOT_REPURPOSE",
+      "rights_status": "UNVERIFIED",
+      "performer": "UNKNOWN",
+      "license_or_release": "MISSING",
+      "external_production_claim": false,
+      "rights_evidence": [
+        {
+          "type": "PROJECT_RECORD",
+          "reference": "Docs/FAB_ASSET_MANIFEST.md"
+        }
+      ],
+      "content_assets": [
+        "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonJump_Start"
+      ],
+      "files": [
+        {
+          "path": "Content/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonJump_Start.uasset",
+          "role": "VENDOR_ANIMATION_SEQUENCE",
+          "bytes": 111725,
+          "sha256": "3997F7D59C0FF33A3A88A35275C0B79A392D83ADED1338CEAA528F2C182E7A26"
+        }
+      ],
+      "import_metadata": {
+        "source_path_recorded_in_asset": "C:/Users/Taizyd.Korambayill/Desktop/TP_Template_Animations/ThirdPersonJump_Start.FBX",
+        "source_file_present": false,
+        "source_timestamp_unix": 1452100428,
+        "source_md5": "d3e59da86cce2ea452c1471b0d67ca4e",
+        "source_skeleton": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Character/Mesh/UE4_Mannequin_Skeleton"
+      },
+      "raw_asset_path": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonJump_Start",
+      "retargeted_asset_path": null,
+      "cleaned_asset_path": null,
+      "production_asset_path": null,
+      "production_status": "DO_NOT_SHIP_DO_NOT_REPURPOSE",
+      "restrictions": [
+        "DO_NOT_REPURPOSE",
+        "DO_NOT_SHIP",
+        "LICENSE_UNVERIFIED",
+        "VENDOR_DEMO_CONTENT",
+        "NOT_DISC_GOLF_THROW",
+        "MISSING_ORIGINAL_SOURCE"
+      ]
+    },
+    {
+      "source_id": "vendor_ue4_mannequin_jump_loop",
+      "display_name": "Vendor UE4 mannequin ThirdPersonJump_Loop",
+      "motion_id": "DG-VENDOR-UE4-JUMP-LOOP-0001",
+      "source_filename": "ThirdPersonJump_Loop.FBX",
+      "creator_or_source": "UNKNOWN_VENDOR_DEMO_SOURCE",
+      "acquisition_method": "PROJECT_NATURE_VENDOR_BUNDLE_IMPORT",
+      "license_permission_status": "UNKNOWN_RECEIPT_PENDING",
+      "original_frame_rate": "UNKNOWN",
+      "handedness": "NOT_APPLICABLE",
+      "throw_type": "NOT_DISC_GOLF_THROW",
+      "import_date": "2026-08-14",
+      "pipeline_role": "UNUSABLE_VENDOR_DEMO",
+      "source_kind": "VENDOR_DEMO_ANIMATION",
+      "usage_status": "DO_NOT_REPURPOSE",
+      "rights_status": "UNVERIFIED",
+      "performer": "UNKNOWN",
+      "license_or_release": "MISSING",
+      "external_production_claim": false,
+      "rights_evidence": [
+        {
+          "type": "PROJECT_RECORD",
+          "reference": "Docs/FAB_ASSET_MANIFEST.md"
+        }
+      ],
+      "content_assets": [
+        "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonJump_Loop"
+      ],
+      "files": [
+        {
+          "path": "Content/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonJump_Loop.uasset",
+          "role": "VENDOR_ANIMATION_SEQUENCE",
+          "bytes": 115452,
+          "sha256": "7A98D5C53772B7C6E678921661D97FB00EE6CF41F8549845AB851CECCA3B6DC5"
+        }
+      ],
+      "import_metadata": {
+        "source_path_recorded_in_asset": "C:/Users/Taizyd.Korambayill/Desktop/TP_Template_Animations/ThirdPersonJump_Loop.FBX",
+        "source_file_present": false,
+        "source_timestamp_unix": 1452100428,
+        "source_md5": "0c36f6dc7768bb94028f60bb902d9b54",
+        "source_skeleton": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Character/Mesh/UE4_Mannequin_Skeleton"
+      },
+      "raw_asset_path": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonJump_Loop",
+      "retargeted_asset_path": null,
+      "cleaned_asset_path": null,
+      "production_asset_path": null,
+      "production_status": "DO_NOT_SHIP_DO_NOT_REPURPOSE",
+      "restrictions": [
+        "DO_NOT_REPURPOSE",
+        "DO_NOT_SHIP",
+        "LICENSE_UNVERIFIED",
+        "VENDOR_DEMO_CONTENT",
+        "NOT_DISC_GOLF_THROW",
+        "MISSING_ORIGINAL_SOURCE"
+      ]
+    },
+    {
+      "source_id": "vendor_ue4_mannequin_jump_end",
+      "display_name": "Vendor UE4 mannequin ThirdPersonJump_End",
+      "motion_id": "DG-VENDOR-UE4-JUMP-END-0001",
+      "source_filename": "ThirdPersonJump_End.FBX",
+      "creator_or_source": "UNKNOWN_VENDOR_DEMO_SOURCE",
+      "acquisition_method": "PROJECT_NATURE_VENDOR_BUNDLE_IMPORT",
+      "license_permission_status": "UNKNOWN_RECEIPT_PENDING",
+      "original_frame_rate": "UNKNOWN",
+      "handedness": "NOT_APPLICABLE",
+      "throw_type": "NOT_DISC_GOLF_THROW",
+      "import_date": "2026-08-14",
+      "pipeline_role": "UNUSABLE_VENDOR_DEMO",
+      "source_kind": "VENDOR_DEMO_ANIMATION",
+      "usage_status": "DO_NOT_REPURPOSE",
+      "rights_status": "UNVERIFIED",
+      "performer": "UNKNOWN",
+      "license_or_release": "MISSING",
+      "external_production_claim": false,
+      "rights_evidence": [
+        {
+          "type": "PROJECT_RECORD",
+          "reference": "Docs/FAB_ASSET_MANIFEST.md"
+        }
+      ],
+      "content_assets": [
+        "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonJump_End"
+      ],
+      "files": [
+        {
+          "path": "Content/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonJump_End.uasset",
+          "role": "VENDOR_ANIMATION_SEQUENCE",
+          "bytes": 109451,
+          "sha256": "7139B89B71EB252DA2639E2440CADECBC514F7F84F75A6A007BD4B3B48D68BDE"
+        }
+      ],
+      "import_metadata": {
+        "source_path_recorded_in_asset": "C:/Users/Taizyd.Korambayill/Desktop/TP_Template_Animations/ThirdPersonJump_End.FBX",
+        "source_file_present": false,
+        "source_timestamp_unix": 1452100428,
+        "source_md5": "baa4613a16f1ddc4098dc0d42b4e8e19",
+        "source_skeleton": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Character/Mesh/UE4_Mannequin_Skeleton"
+      },
+      "raw_asset_path": "/Game/PN_interactiveSpruceForest/UE4_Mannequin/Mannequin/Animations/ThirdPersonJump_End",
+      "retargeted_asset_path": null,
+      "cleaned_asset_path": null,
+      "production_asset_path": null,
+      "production_status": "DO_NOT_SHIP_DO_NOT_REPURPOSE",
+      "restrictions": [
+        "DO_NOT_REPURPOSE",
+        "DO_NOT_SHIP",
+        "LICENSE_UNVERIFIED",
+        "VENDOR_DEMO_CONTENT",
+        "NOT_DISC_GOLF_THROW",
+        "MISSING_ORIGINAL_SOURCE"
+      ]
+    }
+  ]
+}
