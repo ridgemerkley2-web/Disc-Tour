@@ -6,12 +6,13 @@
 #include "DiscGolfRoundState.h"
 #include "DiscGolfPlayerExperience.h"
 #include "DiscGolfCharacterProfileRuntime.h"
+#include "DiscGolfCustomizationTypes.h"
 #include "DiscGolfOutfitTypes.h"
 #include "DiscGolfSaveGame.generated.h"
 
 namespace DiscGolfSaveSchema
 {
-    inline constexpr int32 CurrentVersion = 8;
+    inline constexpr int32 CurrentVersion = 9;
 
     constexpr bool IsCurrent(const int32 Version)
     {
@@ -43,7 +44,13 @@ public:
     UPROPERTY(BlueprintReadWrite, SaveGame) FName PracticeMoldId = TEXT("Apex");
     UPROPERTY(BlueprintReadWrite, SaveGame) EDiscPlastic PracticePlastic = EDiscPlastic::Tour;
     UPROPERTY(BlueprintReadWrite, SaveGame) FDiscGolfPlayerSettings PlayerSettings;
+    /** Schema-9 authority for the complete character; contains stable IDs and values only. */
+    UPROPERTY(BlueprintReadWrite, SaveGame) FDGFullCharacterCustomization CharacterCustomization;
+
+    // Schema-8 migration and accepted Session 4/6 compatibility mirrors.
+    // Keep both names and SaveGame flags: CPF_Deprecated would prevent old
+    // archives from loading these fields. Schema-9 runtime reads the complete
+    // CharacterCustomization payload exclusively.
     UPROPERTY(BlueprintReadWrite, SaveGame) FDiscGolfCharacterProfileSaveData CharacterProfile;
-    /** Stable catalog IDs only; visual assets are resolved by the installed outfit framework. */
     UPROPERTY(BlueprintReadWrite, SaveGame) FDGOutfitLoadout OutfitLoadout;
 };

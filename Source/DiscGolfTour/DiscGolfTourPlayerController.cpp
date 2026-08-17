@@ -318,6 +318,17 @@ bool ADiscGolfTourPlayerController::OpenCharacterCreator()
     CharacterCreatorOpeningOutfit = DiscGolfOutfitRuntime::NormalizeForPersistence(
         Golfer->GetCurrentOutfitLoadout());
     CharacterCreatorDraftOutfit = CharacterCreatorOpeningOutfit;
+    CharacterCreatorOpeningCustomization =
+        Golfer->GetCurrentFullCharacterCustomization();
+    CharacterCreatorOpeningCustomization.Body = CharacterCreatorOpeningBody;
+    CharacterCreatorOpeningCustomization.ThrowStyle = CharacterCreatorOpeningThrowStyle;
+    CharacterCreatorOpeningCustomization.Identity.Handedness =
+        CharacterCreatorOpeningHandedness;
+    CharacterCreatorOpeningCustomization.Outfit = CharacterCreatorOpeningOutfit;
+    DiscGolfFullCharacterRuntime::NormalizeForPersistence(
+        CharacterCreatorOpeningCustomization);
+    CharacterCreatorDraftCustomization = CharacterCreatorOpeningCustomization;
+    SyncLegacyCreatorDraftsFromFull();
 
     const bool bOpenedControlsMenuHere = !bControlsMenuOpen;
     if (bOpenedControlsMenuHere)
@@ -355,12 +366,8 @@ bool ADiscGolfTourPlayerController::OpenCharacterCreator()
         return false;
     }
 
-    CharacterCreatorWidget->InitializeCreator(
-        this,
-        CharacterCreatorOpeningBody,
-        CharacterCreatorOpeningThrowStyle,
-        CharacterCreatorOpeningHandedness,
-        CharacterCreatorOpeningOutfit);
+    CharacterCreatorWidget->InitializeFullCreator(
+        this, CharacterCreatorOpeningCustomization);
     if (!CharacterCreatorWidget->AddToPlayerScreen(1000))
     {
         CharacterCreatorWidget = nullptr;
@@ -453,6 +460,53 @@ bool ADiscGolfTourPlayerController::PreviewCharacterCreatorDraft(
     CharacterCreatorStatusText = SafeHandedness == EDGHandedness::Left
         ? TEXT("Left handed saved-data preview. Animated LHBH is unavailable; gameplay uses the existing non-animated fallback.")
         : TEXT("Live right-handed profile preview applied to the existing player pawn.");
+    CharacterCreatorDraftCustomization =
+        Golfer->GetCurrentFullCharacterCustomization();
+    SyncLegacyCreatorDraftsFromFull();
+    return true;
+}
+
+void ADiscGolfTourPlayerController::SyncLegacyCreatorDraftsFromFull()
+{
+    CharacterCreatorDraftCustomization.Outfit =
+        DiscGolfOutfitRuntime::NormalizeForPersistence(
+            CharacterCreatorDraftCustomization.Outfit);
+    CharacterCreatorDraftOutfit = CharacterCreatorDraftCustomization.Outfit;
+}
+
+bool ADiscGolfTourPlayerController::PreviewFullCharacterCreatorDraft(
+    const FDGFullCharacterCustomization& CharacterCustomization)
+{
+    if (!bCharacterCreatorOpen)
+    {
+        return false;
+    }
+    ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn());
+    if (!Golfer || !Golfer->IsCharacterProfileChangeSafe())
+    {
+        CharacterCreatorStatusText =
+            TEXT("Preview blocked until the active gameplay transition finishes.");
+        return false;
+    }
+
+    FDGFullCharacterCustomization Candidate = CharacterCustomization;
+    DiscGolfFullCharacterRuntime::NormalizeForPersistence(Candidate);
+    FString Status;
+    if (!Golfer->PreviewFullCharacterCustomization(Candidate, Status))
+    {
+        CharacterCreatorStatusText = Status.IsEmpty()
+            ? TEXT("The full-character draft was rejected; the last valid preview remains active.")
+            : Status;
+        return false;
+    }
+    CharacterCreatorDraftCustomization =
+        Golfer->GetCurrentFullCharacterCustomization();
+    SyncLegacyCreatorDraftsFromFull();
+    CharacterCreatorStatusText = Status.IsEmpty()
+        ? (CharacterCreatorDraftCustomization.Identity.Handedness == EDGHandedness::Left
+            ? TEXT("Full left-handed identity preview applied. Animated LHBH remains unavailable.")
+            : TEXT("Full character draft previewed on the existing possessed pawn."))
+        : Status;
     return true;
 }
 
@@ -535,6 +589,150 @@ bool ADiscGolfTourPlayerController::ResetCharacterCreatorDraft(
     return true;
 }
 
+bool ADiscGolfTourPlayerController::ResetCharacterCreatorCurrentTab(
+    int32 TabIndex,
+    FDGFullCharacterCustomization& OutDraft)
+{
+    if (!bCharacterCreatorOpen)
+    {
+        return false;
+    }
+    FDGFullCharacterCustomization Candidate = CharacterCreatorDraftCustomization;
+    const FDGFullCharacterCustomization Defaults =
+        DiscGolfFullCharacterRuntime::MakeDefaultCustomization();
+    switch (FMath::Clamp(TabIndex, 0, 6))
+    {
+        case 0: Candidate.Identity = Defaults.Identity; break;
+        case 1:
+            Candidate.Body = Defaults.Body;
+            Candidate.BodyBuild = Defaults.BodyBuild;
+            break;
+        case 2: Candidate.Face = Defaults.Face; break;
+        case 3: Candidate.Hair = Defaults.Hair; break;
+        case 4: Candidate.Appearance = Defaults.Appearance; break;
+        case 5: Candidate.ThrowStyle = Defaults.ThrowStyle; break;
+        case 6: Candidate.Outfit = Defaults.Outfit; break;
+        default: return false;
+    }
+    if (!PreviewFullCharacterCreatorDraft(Candidate))
+    {
+        return false;
+    }
+    OutDraft = CharacterCreatorDraftCustomization;
+    CharacterCreatorStatusText = TEXT("Current tab reset to schema defaults. Apply to save or Cancel to restore the opening character.");
+    return true;
+}
+
+bool ADiscGolfTourPlayerController::ResetCharacterCreatorAll(
+    FDGFullCharacterCustomization& OutDraft)
+{
+    if (!bCharacterCreatorOpen
+        || !PreviewFullCharacterCreatorDraft(
+            DiscGolfFullCharacterRuntime::MakeDefaultCustomization()))
+    {
+        return false;
+    }
+    OutDraft = CharacterCreatorDraftCustomization;
+    CharacterCreatorStatusText = TEXT("All seven categories reset to schema defaults. Apply to save or Cancel to restore.");
+    return true;
+}
+
+bool ADiscGolfTourPlayerController::RandomizeCharacterCreatorDraft(
+    const FDiscGolfCharacterRandomizeLocks& Locks,
+    FDGFullCharacterCustomization& OutDraft)
+{
+    if (!bCharacterCreatorOpen)
+    {
+        return false;
+    }
+    const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn());
+    if (!Golfer)
+    {
+        return false;
+    }
+    FRandomStream Random(static_cast<int32>(FPlatformTime::Cycles()));
+    const FDGFullCharacterCustomization Candidate =
+        DiscGolfFullCharacterRuntime::Randomize(
+            CharacterCreatorDraftCustomization,
+            Locks,
+            Golfer->GetCosmeticCatalog(),
+            Golfer->GetOutfitCatalog(),
+            Random);
+    if (!PreviewFullCharacterCreatorDraft(Candidate))
+    {
+        return false;
+    }
+    OutDraft = CharacterCreatorDraftCustomization;
+    CharacterCreatorStatusText = TEXT("Valid catalog-backed character randomized; locked categories were preserved.");
+    return true;
+}
+
+bool ADiscGolfTourPlayerController::ApplyCharacterCreatorFacePreset(
+    FName PresetId,
+    FDGFullCharacterCustomization& OutDraft)
+{
+    if (!bCharacterCreatorOpen)
+    {
+        return false;
+    }
+    FDGFullCharacterCustomization Candidate = CharacterCreatorDraftCustomization;
+    if (!DiscGolfFullCharacterRuntime::ApplyFacePreset(PresetId, Candidate.Face)
+        || !PreviewFullCharacterCreatorDraft(Candidate))
+    {
+        CharacterCreatorStatusText = TEXT("Requested face preset is unavailable; the current face was retained.");
+        return false;
+    }
+    OutDraft = CharacterCreatorDraftCustomization;
+    CharacterCreatorStatusText = FString::Printf(
+        TEXT("%s face preset applied; individual sliders remain editable."),
+        *PresetId.ToString());
+    return true;
+}
+
+bool ADiscGolfTourPlayerController::SelectCharacterCreatorCosmetic(
+    EDGCosmeticKind Kind,
+    FName ItemId,
+    FDGFullCharacterCustomization& OutDraft)
+{
+    if (!bCharacterCreatorOpen)
+    {
+        return false;
+    }
+    const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn());
+    FDGFullCharacterCustomization Candidate = CharacterCreatorDraftCustomization;
+    FString Status;
+    if (!Golfer || !DiscGolfFullCharacterRuntime::SetCosmeticSelection(
+            Candidate, Kind, ItemId, Golfer->GetCosmeticCatalog(), Status)
+        || !PreviewFullCharacterCreatorDraft(Candidate))
+    {
+        CharacterCreatorStatusText = Status.IsEmpty()
+            ? TEXT("That cosmetic could not be previewed; the last valid selection remains active.")
+            : Status;
+        return false;
+    }
+    OutDraft = CharacterCreatorDraftCustomization;
+    CharacterCreatorStatusText = Status;
+    return true;
+}
+
+TArray<FDiscGolfCosmeticOption>
+ADiscGolfTourPlayerController::GetCharacterCreatorCosmeticOptions(
+    EDGCosmeticKind Kind) const
+{
+    const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn());
+    // RebuildWidget queries immutable options during AddToPlayerScreen, just
+    // before OpenCharacterCreator flips the public open bit. The widget ptr is
+    // already assigned at that point; mutation APIs remain strictly gated.
+    if ((!bCharacterCreatorOpen && !CharacterCreatorWidget) || !Golfer)
+    {
+        return {};
+    }
+    return DiscGolfFullCharacterRuntime::GetCosmeticOptions(
+        Golfer->GetCosmeticCatalog(),
+        Kind,
+        CharacterCreatorDraftCustomization.Body.HeightCm);
+}
+
 bool ADiscGolfTourPlayerController::ApplyCharacterCreatorDraft(
     const FDGBodyProfile& Body,
     const FDGThrowStyle& ThrowStyle,
@@ -578,6 +776,31 @@ bool ADiscGolfTourPlayerController::ApplyCharacterCreatorDraft(
     return true;
 }
 
+bool ADiscGolfTourPlayerController::ApplyFullCharacterCreatorDraft(
+    const FDGFullCharacterCustomization& CharacterCustomization)
+{
+    if (!bCharacterCreatorOpen
+        || !PreviewFullCharacterCreatorDraft(CharacterCustomization))
+    {
+        return false;
+    }
+    UDiscGolfTourGameInstance* Instance =
+        Cast<UDiscGolfTourGameInstance>(GetGameInstance());
+    if (!Instance || !Instance->UpdateFullCharacterCustomization(
+            CharacterCreatorDraftCustomization))
+    {
+        CharacterCreatorStatusText = TEXT("Full-character save failed. The creator remains open and the saved profile was not replaced.");
+        return false;
+    }
+    CharacterCreatorStatusText =
+        CharacterCreatorDraftCustomization.Identity.Handedness == EDGHandedness::Left
+        ? TEXT("Complete character saved. Animated LHBH remains deferred; the gameplay fallback is active.")
+        : TEXT("Complete character saved to the existing local player profile.");
+    ControlsStatusText = CharacterCreatorStatusText;
+    CloseCharacterCreator(false);
+    return true;
+}
+
 void ADiscGolfTourPlayerController::CancelCharacterCreator()
 {
     if (!bCharacterCreatorOpen)
@@ -598,6 +821,19 @@ void ADiscGolfTourPlayerController::RotateCharacterCreatorPreview(float DeltaYaw
     if (ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn()))
     {
         Golfer->RotateCharacterCreatorPreview(FMath::Clamp(DeltaYawDegrees, -45.0f, 45.0f));
+    }
+}
+
+void ADiscGolfTourPlayerController::ZoomCharacterCreatorPreview(float DeltaArmLength)
+{
+    if (!bCharacterCreatorOpen || !FMath::IsFinite(DeltaArmLength))
+    {
+        return;
+    }
+    if (ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(GetPawn()))
+    {
+        Golfer->ZoomCharacterCreatorPreview(
+            FMath::Clamp(DeltaArmLength, -100.0f, 100.0f));
     }
 }
 
@@ -642,6 +878,8 @@ bool ADiscGolfTourPlayerController::PreviewCharacterCreatorOutfitSelection(
     }
 
     CharacterCreatorDraftOutfit = Golfer->GetCurrentOutfitLoadout();
+    CharacterCreatorDraftCustomization = Golfer->GetCurrentFullCharacterCustomization();
+    SyncLegacyCreatorDraftsFromFull();
     OutDraft = CharacterCreatorDraftOutfit;
     CharacterCreatorStatusText = ApplyStatus.IsEmpty()
         ? SelectionStatus : ApplyStatus;
@@ -664,6 +902,8 @@ bool ADiscGolfTourPlayerController::ResetCharacterCreatorOutfit(
         return false;
     }
     CharacterCreatorDraftOutfit = Golfer->GetCurrentOutfitLoadout();
+    CharacterCreatorDraftCustomization = Golfer->GetCurrentFullCharacterCustomization();
+    SyncLegacyCreatorDraftsFromFull();
     OutDraft = CharacterCreatorDraftOutfit;
     CharacterCreatorStatusText = TEXT("Outfit draft reset to None in every slot. Apply to save or Cancel to restore.");
     return true;
@@ -722,6 +962,8 @@ bool ADiscGolfTourPlayerController::RandomizeCharacterCreatorOutfit(
         return false;
     }
     CharacterCreatorDraftOutfit = Golfer->GetCurrentOutfitLoadout();
+    CharacterCreatorDraftCustomization = Golfer->GetCurrentFullCharacterCustomization();
+    SyncLegacyCreatorDraftsFromFull();
     OutDraft = CharacterCreatorDraftOutfit;
     CharacterCreatorStatusText = TEXT("Compatible proxy outfit randomized. Apply to save or Cancel to restore.");
     return true;
@@ -756,6 +998,40 @@ bool ADiscGolfTourPlayerController::PrepareCharacterCreatorForSession6VisualEvid
     return true;
 }
 
+bool ADiscGolfTourPlayerController::PrepareCharacterCreatorForSession7VisualEvidence(
+    int32 TabIndex,
+    const FDGFullCharacterCustomization& Draft)
+{
+    if (!FParse::Param(FCommandLine::Get(), TEXT("Session7FullCharacterVisualCapture"))
+        || !bCharacterCreatorOpen || !CharacterCreatorWidget)
+    {
+        return false;
+    }
+    if (!PreviewFullCharacterCreatorDraft(Draft))
+    {
+        return false;
+    }
+    CharacterCreatorWidget->PrepareSession7VisualEvidence(
+        FMath::Clamp(TabIndex, 0, 6), CharacterCreatorDraftCustomization);
+    return true;
+}
+
+int32 ADiscGolfTourPlayerController::GetCharacterCreatorActiveTabIndex() const
+{
+    return CharacterCreatorWidget
+        ? CharacterCreatorWidget->GetActiveCreatorTabIndex() : INDEX_NONE;
+}
+
+void ADiscGolfTourPlayerController::GetSession7CharacterCreatorVisibleControlIds(
+    TArray<FString>& OutControlIds) const
+{
+    OutControlIds.Reset();
+    if (bCharacterCreatorOpen && CharacterCreatorWidget)
+    {
+        CharacterCreatorWidget->GetSession7VisibleControlIds(OutControlIds);
+    }
+}
+
 void ADiscGolfTourPlayerController::CloseCharacterCreator(bool bRestoreOpeningProfile)
 {
     if (!bCharacterCreatorOpen)
@@ -767,6 +1043,24 @@ void ADiscGolfTourPlayerController::CloseCharacterCreator(bool bRestoreOpeningPr
     {
         if (bRestoreOpeningProfile)
         {
+            FString FullRestoreStatus;
+            if (!Golfer->ApplyFullCharacterCustomizationTransactionally(
+                    CharacterCreatorOpeningCustomization,
+                    true,
+                    FullRestoreStatus))
+            {
+                ControlsStatusText = TEXT("Cancel is waiting for a safe full-character transition; the creator remains open.");
+                if (!FullRestoreStatus.IsEmpty())
+                {
+                    ControlsStatusText += TEXT(" ") + FullRestoreStatus;
+                }
+                CharacterCreatorStatusText = ControlsStatusText;
+                return;
+            }
+
+            // Preserve the accepted Session 4/6 compatibility seam after the
+            // complete snapshot has been restored. These values are slices of
+            // CharacterCreatorOpeningCustomization, not a competing draft.
             FDGBodyProfile PreviousBody;
             FDGThrowStyle PreviousStyle;
             EDGHandedness PreviousHandedness = EDGHandedness::Right;

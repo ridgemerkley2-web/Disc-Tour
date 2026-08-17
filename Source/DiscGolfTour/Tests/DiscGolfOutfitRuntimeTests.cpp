@@ -232,8 +232,8 @@ bool FDiscGolfOutfitSaveGameSerializationTest::RunTest(const FString& Parameters
         Restored->Serialize(Archive);
     }
 
-    TestEqual(TEXT("The atomic payload retains schema 8"),
-        Restored->SaveSchemaVersion, 8);
+    TestEqual(TEXT("The atomic payload retains schema 9"),
+        Restored->SaveSchemaVersion, 9);
     TestEqual(TEXT("The character half of the payload persists"),
         Restored->CharacterProfile.HeightCm, 199.0f);
     TestTrue(TEXT("Stable slot/item/variant outfit identities persist"),
@@ -243,7 +243,7 @@ bool FDiscGolfOutfitSaveGameSerializationTest::RunTest(const FString& Parameters
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfOutfitCurrentSchemaNormalizationTest,
-    "DiscGolfTour.Character.Session6.Outfit.CurrentSchemaNormalization",
+    "DiscGolfTour.Character.Session7.Outfit.Schema8Migration",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FDiscGolfOutfitCurrentSchemaNormalizationTest::RunTest(const FString& Parameters)
@@ -259,8 +259,10 @@ bool FDiscGolfOutfitCurrentSchemaNormalizationTest::RunTest(const FString& Param
 
     const DiscGolfProfilePersistence::EMigrationResult Result =
         DiscGolfProfilePersistence::MigrateToCurrent(*Save);
-    TestTrue(TEXT("Schema 8 remains current while its payload is normalized"),
-        Result == DiscGolfProfilePersistence::EMigrationResult::AlreadyCurrent);
+    TestTrue(TEXT("Schema 8 migrates into the complete schema-9 payload"),
+        Result == DiscGolfProfilePersistence::EMigrationResult::Migrated);
+    TestEqual(TEXT("Schema 8 advances to schema 9"),
+        Save->SaveSchemaVersion, 9);
     TestEqual(TEXT("Duplicate current slots collapse"),
         Save->OutfitLoadout.Equipped.Num(), 2);
     if (Save->OutfitLoadout.Equipped.Num() == 2)

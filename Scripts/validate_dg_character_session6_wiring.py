@@ -56,8 +56,10 @@ def main() -> int:
     camera_errors = []
     if 'Camera/PlayerCameraManager.h' not in pawn_source:
         camera_errors.append("Pawn is missing the PlayerCameraManager include")
-    if pawn_source.count("PlayerCameraManager->UpdateCamera(0.0f)") != 2:
-        camera_errors.append("Pawn must refresh the paused creator camera exactly twice")
+    if pawn_source.count("PlayerCameraManager->UpdateCamera(0.0f)") != 3:
+        camera_errors.append(
+            "Pawn must refresh the paused creator camera exactly once at begin, "
+            "restore, and the Session 7 zoom successor seam")
     if pawn_source.count(
             "CameraBoom->SocketOffset = FVector(0.0f, -120.0f, 70.0f);") != 1:
         camera_errors.append("Pawn must use the exact Session 6 right-pane preview offset")
@@ -66,9 +68,10 @@ def main() -> int:
     spring_arm_tick_call = (
         "CameraBoom->TickComponent(0.0f,"
         "ELevelTick::LEVELTICK_All,nullptr);")
-    if compact_pawn_source.count(spring_arm_tick_call) != 2:
+    if compact_pawn_source.count(spring_arm_tick_call) != 3:
         camera_errors.append(
-            "Pawn must deterministically propagate the spring arm exactly twice")
+            "Pawn must deterministically propagate the spring arm exactly once "
+            "at begin, restore, and the Session 7 zoom successor seam")
     if pawn_header.count(saved_pcm_tick_member) != 1:
         camera_errors.append(
             "Pawn must own exactly one saved PlayerCameraManager paused-tick flag")
@@ -142,6 +145,30 @@ def main() -> int:
     if end_preview.count("if (PlayerCameraManager)") != 1:
         camera_errors.append(
             "End preview camera-manager paused-tick restoration must remain null-safe")
+    zoom_preview = pawn_source.split(
+        "void ADiscGolferPawn::ZoomCharacterCreatorPreview(float DeltaArmLength)", 1
+    )[-1].split("void ADiscGolferPawn::SetupPlayerInputComponent", 1)[0]
+    compact_zoom_preview = re.sub(r"\s+", "", zoom_preview)
+    zoom_arm = compact_zoom_preview.find(
+        "CameraBoom->TargetArmLength=FMath::Clamp("
+        "CameraBoom->TargetArmLength+DeltaArmLength,300.0f,620.0f);")
+    zoom_spring_tick = compact_zoom_preview.find(spring_arm_tick_call)
+    zoom_update = compact_zoom_preview.find(
+        "PlayerController->PlayerCameraManager->UpdateCamera(0.0f);")
+    if (min(zoom_arm, zoom_spring_tick, zoom_update) < 0
+            or not (zoom_arm < zoom_spring_tick < zoom_update)):
+        camera_errors.append(
+            "Session 7 zoom must clamp the accepted 300..620 cm arm, propagate "
+            "the registered spring arm, then refresh PlayerCameraManager")
+    if (compact_zoom_preview.count(spring_arm_tick_call) != 1
+            or compact_zoom_preview.count(
+                "if(CameraBoom->IsRegistered())") != 1
+            or compact_zoom_preview.count(
+                "PlayerController&&PlayerController->PlayerCameraManager") != 1
+            or "!FMath::IsFinite(DeltaArmLength)" not in zoom_preview):
+        camera_errors.append(
+            "Session 7 zoom successor seam must remain finite, registered, "
+            "controller-safe, and single-propagation")
     record(
         "real_paused_creator_camera_cache_is_refreshed_and_restored",
         camera_errors,
@@ -158,7 +185,9 @@ def main() -> int:
          "spring_arm_propagated_before_restore_camera_refresh": (
              0 <= end_spring_tick < end_update),
          "paused_tick_restored_after_camera_refresh": (
-             0 <= end_update < end_restore_tick)},
+             0 <= end_update < end_restore_tick),
+         "zoom_clamped_then_propagated_then_refreshed": (
+             0 <= zoom_arm < zoom_spring_tick < zoom_update)},
     )
 
     errors, evidence = exact_tokens(
@@ -231,7 +260,9 @@ def main() -> int:
         "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
         ("Session6OutfitThrowSmokeTest", "ADiscGolfSession6OutfitSmokeRunner",
          "Session6OutfitVisualCapture", "Session6OutfitValidationNoSave",
-         "if (bRegressionActive || bSession6OutfitValidationNoSave) return;"),
+         "bSession7FullCharacterValidationNoSave",
+         "Session7FullCharacterThrowSmokeTest",
+         "Session7FullCharacterVisualCapture"),
     )
     record("explicit_command_line_harness_hooks", errors, evidence)
 
@@ -246,17 +277,30 @@ def main() -> int:
         'TEXT("Session6OutfitValidationNoSave")',
         'TEXT("Session6OutfitThrowSmokeTest")',
         'TEXT("Session6OutfitVisualCapture")',
+        'TEXT("Session7FullCharacterValidationNoSave")',
+        'TEXT("Session7FullCharacterThrowSmokeTest")',
+        'TEXT("Session7FullCharacterVisualCapture")',
         "&& (FParse::Param(",
         "|| FParse::Param(",
-        "if (bRegressionActive || bSession6OutfitValidationNoSave) return;",
+        "!= FParse::Param(",
     ):
         if token not in save_function:
             no_save_errors.append(f"SavePracticeRoundSnapshot missing fail-closed token: {token}")
+    compact_save_function = re.sub(r"\s+", "", save_function)
+    expected_combined_boundary = (
+        "if(bRegressionActive||bSession6OutfitValidationNoSave"
+        "||bSession7FullCharacterValidationNoSave)return;")
+    if compact_save_function.count(expected_combined_boundary) != 1:
+        no_save_errors.append(
+            "practice snapshot boundary must have exactly one combined "
+            "regression/Session6/Session7 early return")
     record(
         "session6_no_save_flag_is_fail_closed_at_practice_snapshot_boundary",
         no_save_errors,
         {"flag_occurrences_in_game_mode": game_mode.count(
-            'TEXT("Session6OutfitValidationNoSave")')},
+            'TEXT("Session6OutfitValidationNoSave")'),
+         "combined_boundary_occurrences": compact_save_function.count(
+             expected_combined_boundary)},
     )
 
     visual_runner_path = (

@@ -1,0 +1,406 @@
+{
+  "schema": "DiscGolfTour.Session7ProxyCustomizationSourceManifest.v1",
+  "status": "PASS_GENERATED_SOURCE_FIXTURE",
+  "content_status": "NON_PRODUCTION_PROXY",
+  "shipping_status": "DO_NOT_SHIP",
+  "brand_id": "dg_generic",
+  "brand_status": "GENERIC_UNBRANDED",
+  "external_sources": [],
+  "logos": [],
+  "rights_status": "PROJECT_LOCAL_GENERATED_TEST_FIXTURE_DERIVED_FROM_ACCEPTED_PROJECT_PROXY",
+  "production_license_claim": "NONE",
+  "geometry_recipe_id": "SESSION7_GENERIC_CUSTOMIZATION_BLOCKOUT_V1",
+  "deterministic_export_contract": "PYTHONHASHSEED_0;FBX_HEADER_2000_01_01;RESET_EXPORTER_UUID_MAPS",
+  "generation_idempotence_policy": "MANIFEST_HASH_GATED_ALREADY_CURRENT_NO_WRITE",
+  "blender_version": "5.2.0 LTS",
+  "generator": "SourceArt/DiscGolf/Characters/Customization/Proxy/generate_session7_proxy_customization.py",
+  "generator_sha256": "57E687FE7B0AD24E47BCB98E643106C7DCB98651962CF1EB5A30334F16E65DE1",
+  "catalog_spec": "SourceArt/DiscGolf/Characters/Customization/Proxy/proxy_customization_catalog_spec.json",
+  "catalog_spec_sha256": "27E6B2C74AA5F1F254CC499627FF8A2347F39727E823A4D0B4F769213D59FE45",
+  "blend_source": "SourceArt/DiscGolf/Characters/Customization/Proxy/DG_Session7_ProxyCustomization.blend",
+  "blend_source_bytes": 124435,
+  "blend_source_sha256": "8F75C3536A5849B8DC6E0ACB4447385E035948D6069F7D2B0174B16C689CC7D9",
+  "master_source_blend": "SourceArt/DiscGolf/Characters/SK_DG_Master_Proxy.blend",
+  "master_source_blend_sha256": "24E5B920A5EDC70E4DB51D4CFE4E02EEB65ED9D57C30640E2899C12AA320A40C",
+  "master_source_fbx": "SourceArt/DiscGolf/Characters/SK_DG_Master_Proxy.fbx",
+  "master_source_fbx_sha256": "82ED7FC89A572A346460CCB5530EA493B8397BC0D8BECBC2E22C64B8A31CD683",
+  "skeleton_contract": "Plugins/DiscGolfCharacterFramework/Config/DG_MasterSkeletonContract.json",
+  "skeleton_contract_sha256": "E2223DE774CE26900BD482130939EAAB6F813023EBB689447FCB00697C34A7B2",
+  "bone_count": 69,
+  "head_attachment_policy": "LEADER_POSE_ACCEPTED_SKEL_DG_MASTER",
+  "head_skinning_policy": "FULL_69_BONE_EXPORT_HEAD_BONE_RIGID_WEIGHTS",
+  "static_attachment_policy": "REST_HEAD_BONE_LOCAL_IDENTITY_WITH_ABSOLUTE_RUNTIME_SCALE",
+  "legacy_head_policy": "OPAQUE_ROUNDED_BOX_SHELL_ENCLOSES_FROZEN_HEAD_GEO_AT_ALL_SUPPORTED_EXTREMES",
+  "legacy_head_enclosure_validation": {
+    "status": "PASS_CONSERVATIVE_SIMULTANEOUS_NEGATIVE_EXTREMES",
+    "minimum_proxy_half_extents_m": [
+      0.12034999653697015,
+      0.12420000493526459,
+      0.14299999725818635
+    ],
+    "required_half_extents_with_clearance_m": [
+      0.11999999940395355,
+      0.11000000149011611,
+      0.13999999523162843
+    ],
+    "supported_extremes": [
+      -1.0,
+      1.0
+    ],
+    "extreme_combination_count": 32,
+    "blendshape_combination_rule": "ADDITIVE_DELTAS"
+  },
+  "actual_head_shell_validation": {
+    "status": "PASS_ACTUAL_SHELL_VERTEX_ENDPOINT_ENCLOSURE",
+    "shell_vertex_count": 96,
+    "extreme_combination_count": 32,
+    "minimum_axis_clearance_beyond_required_m": [
+      0.013399995863437653,
+      0.025000005960464478,
+      0.020999908447265625
+    ]
+  },
+  "head_local_cosmetic_validation": {
+    "status": "PASS_HEAD_LOCAL_OVERLAP_AT_SUPPORTED_VISIBLE_EXTREMES",
+    "maximum_upper_head_half_width_m": 0.15659999549388887,
+    "maximum_head_top_m": 1.8889999967813491,
+    "rest_armature_space_bounds": {
+      "hair_short": {
+        "minimum_m": [
+          -0.17900000512599945,
+          -0.12999999523162842,
+          1.7149999141693115
+        ],
+        "maximum_m": [
+          0.17900000512599945,
+          0.1599999964237213,
+          1.9129999876022339
+        ]
+      },
+      "hair_medium": {
+        "minimum_m": [
+          -0.18299999833106995,
+          -0.11500000953674316,
+          1.590000033378601
+        ],
+        "maximum_m": [
+          0.18299999833106995,
+          0.17999999225139618,
+          1.934999942779541
+        ]
+      },
+      "hair_mohawk": {
+        "minimum_m": [
+          -0.03400000184774399,
+          -0.12999999523162842,
+          1.8299999237060547
+        ],
+        "maximum_m": [
+          0.03400000184774399,
+          0.1550000011920929,
+          2.065000057220459
+        ]
+      },
+      "facialhair_stubble": {
+        "minimum_m": [
+          -0.14499999582767487,
+          -0.15399999916553497,
+          1.53000009059906
+        ],
+        "maximum_m": [
+          0.14499999582767487,
+          -0.0949999988079071,
+          1.6549999713897705
+        ]
+      },
+      "facialhair_beard": {
+        "minimum_m": [
+          -0.1550000011920929,
+          -0.1850000023841858,
+          1.4749999046325684
+        ],
+        "maximum_m": [
+          0.1550000011920929,
+          -0.09000000357627869,
+          1.6699999570846558
+        ]
+      },
+      "brow_default": {
+        "minimum_m": [
+          -0.0989999994635582,
+          -0.164000004529953,
+          1.7599999904632568
+        ],
+        "maximum_m": [
+          0.0989999994635582,
+          -0.14399999380111694,
+          1.7799999713897705
+        ]
+      },
+      "brow_alt": {
+        "minimum_m": [
+          -0.10103020071983337,
+          -0.17376123368740082,
+          1.7649999856948853
+        ],
+        "maximum_m": [
+          0.10103020071983337,
+          -0.13423876464366913,
+          1.784999966621399
+        ]
+      }
+    },
+    "hat_hair_policy": "HAT_HAIR_COVERAGE_HIDES_COMPONENT;STORED_HAIR_ID_UNCHANGED;REMOVE_RESTORES"
+  },
+  "visible_morphs": {
+    "head_width": "DG_Face_HeadWidth",
+    "head_height": "DG_Face_HeadHeight",
+    "cheek_fullness": "DG_Face_CheekFullness",
+    "jaw_width": "DG_Face_JawWidth",
+    "chin_length": "DG_Face_ChinLength"
+  },
+  "deferred_visual_morphs": {
+    "brow_height": "DG_Face_BrowHeight",
+    "brow_depth": "DG_Face_BrowDepth",
+    "eye_size": "DG_Face_EyeSize",
+    "eye_spacing": "DG_Face_EyeSpacing",
+    "eye_depth": "DG_Face_EyeDepth",
+    "nose_width": "DG_Face_NoseWidth",
+    "nose_length": "DG_Face_NoseLength",
+    "nose_bridge": "DG_Face_NoseBridge",
+    "cheek_width": "DG_Face_CheekWidth",
+    "jaw_height": "DG_Face_JawHeight",
+    "chin_width": "DG_Face_ChinWidth",
+    "mouth_width": "DG_Face_MouthWidth",
+    "lip_fullness": "DG_Face_LipFullness",
+    "ear_size": "DG_Face_EarSize",
+    "ear_angle": "DG_Face_EarAngle"
+  },
+  "head_source_material": "DG_HeadProxy_SourceSlot",
+  "hair_source_material": "DG_HairProxy_SourceSlot",
+  "head_output": {
+    "mesh_asset": "/Game/DiscGolf/Characters/Customization/Head/SK_DG_Head_Proxy",
+    "source_fbx": "FBX/SK_DG_Head_Proxy.fbx",
+    "bytes": 172892,
+    "sha256": "372430C9D5CCB814CB3CB9F408799FE80B1B04DE725C4D9879696F5881C2ECEB",
+    "roundtrip_validation": {
+      "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+      "mesh_count": 1,
+      "armature_count": 1,
+      "bone_count": 69,
+      "vertex_count": 300,
+      "polygon_count": 314,
+      "material_slot_count": 1,
+      "vertex_color_attributes": [
+        "DG_SurfaceMask"
+      ],
+      "morph_targets": [
+        "DG_Face_HeadWidth",
+        "DG_Face_HeadHeight",
+        "DG_Face_CheekFullness",
+        "DG_Face_JawWidth",
+        "DG_Face_ChinLength"
+      ],
+      "bounds_blender_units": [
+        0.3603343069553375,
+        0.31186673045158386,
+        0.3779999017715454
+      ]
+    }
+  },
+  "fbx_outputs": [
+    {
+      "item_id": "hair_short",
+      "kind": "Hair",
+      "mesh_kind": "Static",
+      "mesh_asset": "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Hair_Short_Proxy",
+      "source_fbx": "FBX/SM_DG_Hair_Short_Proxy.fbx",
+      "attach_socket": "head",
+      "relative_attachment_transform": "Identity",
+      "bytes": 15676,
+      "sha256": "46043F07869AA6354B6A2481FF955F2CD87A2F1544CE26D4FD4B3DF989ACCCF6",
+      "roundtrip_validation": {
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "mesh_count": 1,
+        "armature_count": 0,
+        "bone_count": 0,
+        "vertex_count": 32,
+        "polygon_count": 24,
+        "material_slot_count": 1,
+        "vertex_color_attributes": [],
+        "morph_targets": [],
+        "bounds_blender_units": [
+          0.3580000251531601,
+          0.19800011813640594,
+          0.28999999165534973
+        ]
+      }
+    },
+    {
+      "item_id": "hair_medium",
+      "kind": "Hair",
+      "mesh_kind": "Static",
+      "mesh_asset": "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Hair_Medium_Proxy",
+      "source_fbx": "FBX/SM_DG_Hair_Medium_Proxy.fbx",
+      "attach_socket": "head",
+      "relative_attachment_transform": "Identity",
+      "bytes": 15676,
+      "sha256": "38B4AD9237561A8384B1A9358002B5943BBE8DBA08B5C411B55FA63DAEB94369",
+      "roundtrip_validation": {
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "mesh_count": 1,
+        "armature_count": 0,
+        "bone_count": 0,
+        "vertex_count": 32,
+        "polygon_count": 24,
+        "material_slot_count": 1,
+        "vertex_color_attributes": [],
+        "morph_targets": [],
+        "bounds_blender_units": [
+          0.3660000264644623,
+          0.34499995596706867,
+          0.29500000178813934
+        ]
+      }
+    },
+    {
+      "item_id": "hair_mohawk",
+      "kind": "Hair",
+      "mesh_kind": "Static",
+      "mesh_asset": "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Hair_Mohawk_Proxy",
+      "source_fbx": "FBX/SM_DG_Hair_Mohawk_Proxy.fbx",
+      "attach_socket": "head",
+      "relative_attachment_transform": "Identity",
+      "bytes": 15548,
+      "sha256": "B9D6FB1136984DA0DAF2457F0FEA72E94250FDDB00A7A34295E4D5593D82EB51",
+      "roundtrip_validation": {
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "mesh_count": 1,
+        "armature_count": 0,
+        "bone_count": 0,
+        "vertex_count": 24,
+        "polygon_count": 18,
+        "material_slot_count": 1,
+        "vertex_color_attributes": [],
+        "morph_targets": [],
+        "bounds_blender_units": [
+          0.06800002604722977,
+          0.2350001335144043,
+          0.2849999964237213
+        ]
+      }
+    },
+    {
+      "item_id": "facialhair_stubble",
+      "kind": "FacialHair",
+      "mesh_kind": "Static",
+      "mesh_asset": "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_FacialHair_Stubble_Proxy",
+      "source_fbx": "FBX/SM_DG_FacialHair_Stubble_Proxy.fbx",
+      "attach_socket": "head",
+      "relative_attachment_transform": "Identity",
+      "bytes": 15532,
+      "sha256": "A58CADBE9D69C2CAF25034FBBDDDF09F270B16B2D0DE36B08135C54438C51A54",
+      "roundtrip_validation": {
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "mesh_count": 1,
+        "armature_count": 0,
+        "bone_count": 0,
+        "vertex_count": 24,
+        "polygon_count": 18,
+        "material_slot_count": 1,
+        "vertex_color_attributes": [],
+        "morph_targets": [],
+        "bounds_blender_units": [
+          0.28999999165534973,
+          0.12499990686774254,
+          0.05900000035762787
+        ]
+      }
+    },
+    {
+      "item_id": "facialhair_beard",
+      "kind": "FacialHair",
+      "mesh_kind": "Static",
+      "mesh_asset": "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_FacialHair_Beard_Proxy",
+      "source_fbx": "FBX/SM_DG_FacialHair_Beard_Proxy.fbx",
+      "attach_socket": "head",
+      "relative_attachment_transform": "Identity",
+      "bytes": 15676,
+      "sha256": "4A9012AC6B956A0189ADDD1F655BC79DDBE40B29DFB370C37F7501D1A1E0642D",
+      "roundtrip_validation": {
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "mesh_count": 1,
+        "armature_count": 0,
+        "bone_count": 0,
+        "vertex_count": 32,
+        "polygon_count": 24,
+        "material_slot_count": 1,
+        "vertex_color_attributes": [],
+        "morph_targets": [],
+        "bounds_blender_units": [
+          0.310000017285347,
+          0.1950000822544098,
+          0.0949999988079071
+        ]
+      }
+    },
+    {
+      "item_id": "brow_default",
+      "kind": "Eyebrow",
+      "mesh_kind": "Static",
+      "mesh_asset": "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Brow_Default_Proxy",
+      "source_fbx": "FBX/SM_DG_Brow_Default_Proxy.fbx",
+      "attach_socket": "head",
+      "relative_attachment_transform": "Identity",
+      "bytes": 15404,
+      "sha256": "D41E4AEB6B7E4EF56CEB9EF222F39F1E71A02FE4AA410E2187D8471E7E51D021",
+      "roundtrip_validation": {
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "mesh_count": 1,
+        "armature_count": 0,
+        "bone_count": 0,
+        "vertex_count": 16,
+        "polygon_count": 12,
+        "material_slot_count": 1,
+        "vertex_color_attributes": [],
+        "morph_targets": [],
+        "bounds_blender_units": [
+          0.1979999989271164,
+          0.02000001072883606,
+          0.02000001072883606
+        ]
+      }
+    },
+    {
+      "item_id": "brow_alt",
+      "kind": "Eyebrow",
+      "mesh_kind": "Static",
+      "mesh_asset": "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Brow_Alt_Proxy",
+      "source_fbx": "FBX/SM_DG_Brow_Alt_Proxy.fbx",
+      "attach_socket": "head",
+      "relative_attachment_transform": "Identity",
+      "bytes": 15500,
+      "sha256": "2D6E2DE44AF31FA192440A73755F8A1F1728D4C61F94C6B4CED877E81DC508B8",
+      "roundtrip_validation": {
+        "status": "PASS_BLENDER_5_2_FBX_ROUNDTRIP",
+        "mesh_count": 1,
+        "armature_count": 0,
+        "bone_count": 0,
+        "vertex_count": 16,
+        "polygon_count": 12,
+        "material_slot_count": 1,
+        "vertex_color_attributes": [],
+        "morph_targets": [],
+        "bounds_blender_units": [
+          0.20206040143966675,
+          0.02000001072883606,
+          0.03952246904373169
+        ]
+      }
+    }
+  ],
+  "static_mesh_count": 7,
+  "catalog_item_count": 17,
+  "network_access": "NONE",
+  "asset_acquisition": "NONE"
+}

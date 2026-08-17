@@ -10,6 +10,9 @@
 #include "DiscGolfCharacterProfileRuntime.h"
 #include "DiscGolfCharacterProfile.h"
 #include "DiscGolfAppearanceComponent.h"
+#include "DiscGolfCharacterCustomizationComponent.h"
+#include "DiscGolfCosmeticCatalog.h"
+#include "DiscGolfFullCharacterRuntime.h"
 #include "DiscGolfOutfitCatalog.h"
 #include "DiscGolfOutfitComponent.h"
 #include "DiscGolfOutfitRuntime.h"
@@ -31,6 +34,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "UObject/ConstructorHelpers.h"
 
 namespace
@@ -133,6 +137,8 @@ ADiscGolferPawn::ADiscGolferPawn()
     static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMesh(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> MasterGolferMesh(
         TEXT("/Game/DiscGolf/Characters/Meshes/SK_DG_Master.SK_DG_Master"));
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> ModularProxyHead(
+        DiscGolfFullCharacterRuntime::HeadMeshObjectPath);
     static ConstructorHelpers::FClassFinder<UAnimInstance> PlayerAnimationBlueprint(
         TEXT("/Game/DiscGolf/Animation/ABP_DG_Player"));
     static ConstructorHelpers::FObjectFinder<UAnimMontage> RHBHMontage(
@@ -170,6 +176,22 @@ ADiscGolferPawn::ADiscGolferPawn()
     }
     SkeletalMesh->SetVisibility(false);
 
+    ModularHeadMesh = CreateDefaultSubobject<USkeletalMeshComponent>(
+        TEXT("ModularCharacterHead"));
+    ModularHeadMesh->SetupAttachment(SkeletalMesh);
+    ModularHeadMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    ModularHeadMesh->SetGenerateOverlapEvents(false);
+    ModularHeadMesh->SetCanEverAffectNavigation(false);
+    ModularHeadMesh->SetSimulatePhysics(false);
+    ModularHeadMesh->VisibilityBasedAnimTickOption =
+        EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
+    ModularHeadMesh->bEnableUpdateRateOptimizations = false;
+    if (ModularProxyHead.Succeeded())
+    {
+        ModularHeadMesh->SetSkeletalMeshAsset(ModularProxyHead.Object);
+    }
+    ModularHeadMesh->SetVisibility(false);
+
     HeldDiscVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldDiscVisual"));
     HeldDiscVisual->SetupAttachment(SkeletalMesh, TEXT("disc_grip_r"));
     // Follow the profiled grip position/orientation without multiplying the
@@ -199,6 +221,8 @@ ADiscGolferPawn::ADiscGolferPawn()
     PresentationComponent = CreateDefaultSubobject<UDiscGolferPresentationComponent>(TEXT("GolferPresentation"));
     FrameworkThrowComponent = CreateDefaultSubobject<UDiscGolfThrowComponent>(TEXT("CharacterFrameworkThrow"));
     CharacterAppearance = CreateDefaultSubobject<UDiscGolfAppearanceComponent>(TEXT("CharacterAppearance"));
+    CharacterCustomization = CreateDefaultSubobject<UDiscGolfCharacterCustomizationComponent>(
+        TEXT("CharacterCustomization"));
     OutfitComponent = CreateDefaultSubobject<UDiscGolfOutfitComponent>(TEXT("CharacterOutfit"));
     if (DefaultCharacterProfile.Succeeded())
     {
@@ -212,6 +236,14 @@ ADiscGolferPawn::ADiscGolferPawn()
 void ADiscGolferPawn::BeginPlay()
 {
     Super::BeginPlay();
+
+    FDGFullCharacterCustomization StartupCustomization =
+        DiscGolfFullCharacterRuntime::MakeDefaultCustomization();
+    if (const UDiscGolfTourGameInstance* Instance =
+            Cast<UDiscGolfTourGameInstance>(GetGameInstance()))
+    {
+        StartupCustomization = Instance->GetFullCharacterCustomization();
+    }
 
     // Session 5 may exercise a pipeline-produced montage only in an explicit,
     // unattended validation process.  The constructor and every normal game
@@ -245,13 +277,10 @@ void ADiscGolferPawn::BeginPlay()
             RuntimeCharacterProfile->SetFlags(RF_Transient);
             FrameworkThrowComponent->CharacterProfile = RuntimeCharacterProfile;
 
-            FDGBodyProfile SavedBody = RuntimeCharacterProfile->Body;
-            FDGThrowStyle SavedStyle = RuntimeCharacterProfile->ThrowStyle;
-            EDGHandedness SavedHandedness = RuntimeCharacterProfile->Handedness;
-            if (const UDiscGolfTourGameInstance* Instance = Cast<UDiscGolfTourGameInstance>(GetGameInstance()))
-            {
-                Instance->GetCharacterProfile(SavedBody, SavedStyle, SavedHandedness);
-            }
+            FDGBodyProfile SavedBody = StartupCustomization.Body;
+            FDGThrowStyle SavedStyle = StartupCustomization.ThrowStyle;
+            EDGHandedness SavedHandedness =
+                StartupCustomization.Identity.Handedness;
             FString Session4OverrideLabel;
             if (ResolveSession4ProfileOverride(
                     this, SavedBody, SavedStyle, SavedHandedness, Session4OverrideLabel))
@@ -260,12 +289,22 @@ void ADiscGolferPawn::BeginPlay()
                     TEXT("SESSION 4 PROFILE OVERRIDE: %s (transient, save slot unchanged)."),
                     *Session4OverrideLabel);
             }
+            StartupCustomization.Body = SavedBody;
+            StartupCustomization.ThrowStyle = SavedStyle;
+            StartupCustomization.Identity.Handedness = SavedHandedness;
             ApplyCharacterProfileUnchecked(SavedBody, SavedStyle, SavedHandedness);
         }
     }
 
     const bool bHasSkeletalAsset = SkeletalMesh && SkeletalMesh->GetSkeletalMeshAsset() != nullptr;
     if (SkeletalMesh) SkeletalMesh->SetVisibility(bHasSkeletalAsset);
+    const bool bHasModularHead = bHasSkeletalAsset && ModularHeadMesh
+        && ModularHeadMesh->GetSkeletalMeshAsset() != nullptr;
+    if (ModularHeadMesh)
+    {
+        ModularHeadMesh->SetLeaderPoseComponent(SkeletalMesh);
+        ModularHeadMesh->SetVisibility(bHasModularHead);
+    }
     if (BodyMesh) BodyMesh->SetVisibility(!bHasSkeletalAsset);
     if (HeadMesh) HeadMesh->SetVisibility(!bHasSkeletalAsset);
     if (PresentationComponent) PresentationComponent->SetSkeletalAssetsReady(bHasSkeletalAsset);
@@ -276,16 +315,31 @@ void ADiscGolferPawn::BeginPlay()
         OutfitComponent->OnBodyCoverageChanged.AddUniqueDynamic(
             this, &ADiscGolferPawn::HandleOutfitCoverageChanged);
 
-        FDGOutfitLoadout SavedLoadout;
-        if (const UDiscGolfTourGameInstance* Instance = Cast<UDiscGolfTourGameInstance>(GetGameInstance()))
-        {
-            SavedLoadout = Instance->GetOutfitLoadout();
-        }
+        const FDGOutfitLoadout SavedLoadout = StartupCustomization.Outfit;
         FString OutfitStatus;
         if (!ApplyOutfitLoadoutTransactionally(SavedLoadout, true, OutfitStatus)
             || !OutfitStatus.IsEmpty())
         {
             UE_LOG(LogDiscGolfTour, Warning, TEXT("Outfit startup recovery: %s"), *OutfitStatus);
+        }
+    }
+    if (CharacterCustomization)
+    {
+        CharacterCustomization->CosmeticCatalog = LoadObject<UDiscGolfCosmeticCatalog>(
+            nullptr, DiscGolfFullCharacterRuntime::CosmeticCatalogObjectPath);
+        const FDiscGolfFullCustomizationResolution Resolution =
+            DiscGolfFullCharacterRuntime::ResolveForRuntime(
+                StartupCustomization,
+                CharacterCustomization->CosmeticCatalog,
+                GetOutfitCatalog());
+        CharacterCustomization->Current = Resolution.Character;
+        CharacterCustomization->Current.Outfit = GetCurrentOutfitLoadout();
+        ApplyFullCustomizationVisuals();
+        if (!Resolution.Warnings.IsEmpty())
+        {
+            UE_LOG(LogDiscGolfTour, Warning,
+                TEXT("Full-character startup recovery: %s"),
+                *FString::Join(Resolution.Warnings, TEXT(" ")));
         }
     }
     if (RHBHThrowAdapter)
@@ -339,6 +393,18 @@ bool ADiscGolferPawn::PreviewCharacterCreatorProfile(
         return false;
     }
 
+    if (CharacterCustomization)
+    {
+        FDGFullCharacterCustomization Candidate =
+            GetCurrentFullCharacterCustomization();
+        Candidate.Body = Body;
+        Candidate.ThrowStyle = Style;
+        Candidate.Identity.Handedness = Handedness;
+        FString IgnoredStatus;
+        return ApplyFullCharacterCustomizationTransactionally(
+            Candidate, true, IgnoredStatus);
+    }
+
     ApplyCharacterProfileUnchecked(Body, Style, Handedness);
     return true;
 }
@@ -368,8 +434,112 @@ void ADiscGolferPawn::ApplyCharacterProfileUnchecked(
     {
         CharacterAppearance->ApplyStandardMorphs(SkeletalMesh, RuntimeCharacterProfile->Body);
     }
+    if (CharacterCustomization)
+    {
+        CharacterCustomization->Current.Body = RuntimeCharacterProfile->Body;
+        CharacterCustomization->Current.ThrowStyle = RuntimeCharacterProfile->ThrowStyle;
+        CharacterCustomization->Current.Identity.Handedness =
+            RuntimeCharacterProfile->Handedness;
+    }
     RefreshOutfitForCurrentBodyProfile();
     RefreshCharacterProfilePresentation();
+}
+
+FDGFullCharacterCustomization ADiscGolferPawn::GetCurrentFullCharacterCustomization() const
+{
+    FDGFullCharacterCustomization Result = CharacterCustomization
+        ? CharacterCustomization->Current
+        : DiscGolfFullCharacterRuntime::MakeDefaultCustomization();
+    if (RuntimeCharacterProfile)
+    {
+        Result.Body = RuntimeCharacterProfile->Body;
+        Result.ThrowStyle = RuntimeCharacterProfile->ThrowStyle;
+        Result.Identity.Handedness = RuntimeCharacterProfile->Handedness;
+        Result.Identity.DisplayName = RuntimeCharacterProfile->DisplayName.ToString();
+    }
+    Result.Outfit = GetCurrentOutfitLoadout();
+    DiscGolfFullCharacterRuntime::NormalizeForPersistence(Result);
+    return Result;
+}
+
+UDiscGolfCosmeticCatalog* ADiscGolferPawn::GetCosmeticCatalog() const
+{
+    return CharacterCustomization ? CharacterCustomization->CosmeticCatalog.Get() : nullptr;
+}
+
+bool ADiscGolferPawn::PreviewFullCharacterCustomization(
+    const FDGFullCharacterCustomization& Requested,
+    FString& OutStatus)
+{
+    if (!IsCharacterProfileChangeSafe())
+    {
+        OutStatus = TEXT("Full-character preview is blocked until gameplay returns to a safe state.");
+        return false;
+    }
+    return ApplyFullCharacterCustomizationTransactionally(
+        Requested, true, OutStatus);
+}
+
+bool ADiscGolferPawn::ApplyFullCharacterCustomizationTransactionally(
+    const FDGFullCharacterCustomization& Requested,
+    bool bAllowUnavailableItems,
+    FString& OutStatus)
+{
+    OutStatus.Reset();
+    if (!CharacterCustomization || !RuntimeCharacterProfile
+        || !SkeletalMesh || !OutfitComponent)
+    {
+        OutStatus = TEXT("Full-character runtime is unavailable; the current character was retained.");
+        return false;
+    }
+
+    const FDGFullCharacterCustomization Previous =
+        GetCurrentFullCharacterCustomization();
+    const FDiscGolfFullCustomizationResolution Resolution =
+        DiscGolfFullCharacterRuntime::ResolveForRuntime(
+            Requested, GetCosmeticCatalog(), GetOutfitCatalog());
+    if (!Resolution.bAllCosmeticsResolved && !bAllowUnavailableItems)
+    {
+        OutStatus = FString::Join(Resolution.Warnings, TEXT(" "));
+        return false;
+    }
+
+    CharacterCustomization->Current = Resolution.Character;
+    ApplyCharacterProfileUnchecked(
+        Resolution.Character.Body,
+        Resolution.Character.ThrowStyle,
+        Resolution.Character.Identity.Handedness);
+    RuntimeCharacterProfile->DisplayName =
+        FText::FromString(Resolution.Character.Identity.DisplayName);
+
+    FString OutfitStatus;
+    if (!ApplyOutfitLoadoutTransactionally(
+            Resolution.Character.Outfit, true, OutfitStatus))
+    {
+        CharacterCustomization->Current = Previous;
+        ApplyCharacterProfileUnchecked(
+            Previous.Body, Previous.ThrowStyle, Previous.Identity.Handedness);
+        RuntimeCharacterProfile->DisplayName =
+            FText::FromString(Previous.Identity.DisplayName);
+        FString RollbackStatus;
+        ApplyOutfitLoadoutTransactionally(
+            Previous.Outfit, true, RollbackStatus);
+        ApplyFullCustomizationVisuals();
+        OutStatus = OutfitStatus.IsEmpty()
+            ? TEXT("Full-character preview failed; the previous character was restored.")
+            : OutfitStatus;
+        return false;
+    }
+
+    CharacterCustomization->Current.Outfit = GetCurrentOutfitLoadout();
+    ApplyFullCustomizationVisuals();
+    TArray<FString> StatusParts = Resolution.Warnings;
+    if (!OutfitStatus.IsEmpty())
+    {
+        StatusParts.Add(OutfitStatus);
+    }
+    OutStatus = FString::Join(StatusParts, TEXT(" "));
+    return true;
 }
 
 UDiscGolfOutfitCatalog* ADiscGolferPawn::GetOutfitCatalog() const
@@ -433,6 +603,10 @@ bool ADiscGolferPawn::ApplyOutfitLoadoutTransactionally(
         return false;
     }
 
+    if (CharacterCustomization)
+    {
+        CharacterCustomization->Current.Outfit = OutfitComponent->CurrentLoadout;
+    }
     RefreshOutfitForCurrentBodyProfile();
     if (!Resolution.Warnings.IsEmpty())
     {
@@ -460,6 +634,78 @@ void ADiscGolferPawn::HandleOutfitCoverageChanged(
         return static_cast<uint8>(A) < static_cast<uint8>(B);
     });
     CoveredOutfitBodyRegions.SetNum(Algo::Unique(CoveredOutfitBodyRegions));
+
+    const bool bShouldHideHair =
+        CoveredOutfitBodyRegions.Contains(EDGBodyRegion::Hair);
+    if (bHairHiddenByOutfitCoverage != bShouldHideHair)
+    {
+        bHairHiddenByOutfitCoverage = bShouldHideHair;
+        RebuildCustomizationHairForCoverage();
+    }
+}
+
+void ADiscGolferPawn::ApplyFullCustomizationVisuals()
+{
+    if (!CharacterCustomization || !SkeletalMesh)
+    {
+        return;
+    }
+    if (RuntimeCharacterProfile)
+    {
+        RuntimeCharacterProfile->DisplayName =
+            FText::FromString(CharacterCustomization->Current.Identity.DisplayName);
+    }
+    CharacterCustomization->ApplyBodyMorphs(SkeletalMesh);
+    if (ModularHeadMesh && ModularHeadMesh->GetSkeletalMeshAsset())
+    {
+        CharacterCustomization->ApplyBodyMorphs(ModularHeadMesh);
+        CharacterCustomization->ApplyFaceMorphs(ModularHeadMesh);
+        CharacterCustomization->ApplySkinAndEyeMaterials(
+            nullptr, ModularHeadMesh);
+        const float ScarProxy =
+            CharacterCustomization->Current.Appearance.ScarId
+                == FName(TEXT("scar_none")) ? 0.0f : 1.0f;
+        const float TattooProxy =
+            CharacterCustomization->Current.Appearance.TattooIds.IsEmpty()
+                ? 0.0f : 1.0f;
+        for (int32 MaterialIndex = 0;
+            MaterialIndex < ModularHeadMesh->GetNumMaterials();
+            ++MaterialIndex)
+        {
+            UMaterialInstanceDynamic* MID = Cast<UMaterialInstanceDynamic>(
+                ModularHeadMesh->GetMaterial(MaterialIndex));
+            if (MID)
+            {
+                MID->SetScalarParameterValue(TEXT("DG_ScarProxy"), ScarProxy);
+                MID->SetScalarParameterValue(TEXT("DG_TattooProxy"), TattooProxy);
+            }
+        }
+        RebuildCustomizationHairForCoverage();
+        ModularHeadMesh->RefreshBoneTransforms();
+        ModularHeadMesh->MarkRenderDynamicDataDirty();
+    }
+    SkeletalMesh->MarkRenderDynamicDataDirty();
+}
+
+void ADiscGolferPawn::RebuildCustomizationHairForCoverage()
+{
+    if (!CharacterCustomization || !ModularHeadMesh
+        || !ModularHeadMesh->GetSkeletalMeshAsset())
+    {
+        return;
+    }
+
+    // Outfit coverage suppresses only the visible hairstyle. The stable
+    // selection remains in Current and therefore survives Apply, Cancel,
+    // save/reload and removing the hat; beard and eyebrows always rebuild.
+    const FName SelectedHairStyleId =
+        CharacterCustomization->Current.Hair.HairStyleId;
+    if (bHairHiddenByOutfitCoverage)
+    {
+        CharacterCustomization->Current.Hair.HairStyleId = TEXT("hair_none");
+    }
+    CharacterCustomization->RebuildHair(ModularHeadMesh);
+    CharacterCustomization->Current.Hair.HairStyleId = SelectedHairStyleId;
 }
 
 void ADiscGolferPawn::RefreshCharacterProfilePresentation()
@@ -595,6 +841,27 @@ void ADiscGolferPawn::RotateCharacterCreatorPreview(float DeltaYawDegrees)
     FRotator Rotation = SkeletalMesh->GetRelativeRotation();
     Rotation.Yaw = FMath::UnwindDegrees(Rotation.Yaw + FMath::Clamp(DeltaYawDegrees, -45.0f, 45.0f));
     SkeletalMesh->SetRelativeRotation(Rotation);
+}
+
+void ADiscGolferPawn::ZoomCharacterCreatorPreview(float DeltaArmLength)
+{
+    if (!bCharacterCreatorPreviewActive || !CameraBoom
+        || !FMath::IsFinite(DeltaArmLength))
+    {
+        return;
+    }
+    CameraBoom->TargetArmLength = FMath::Clamp(
+        CameraBoom->TargetArmLength + DeltaArmLength, 300.0f, 620.0f);
+    if (CameraBoom->IsRegistered())
+    {
+        CameraBoom->TickComponent(0.0f, ELevelTick::LEVELTICK_All, nullptr);
+    }
+    if (const APlayerController* PlayerController =
+            Cast<APlayerController>(GetController());
+        PlayerController && PlayerController->PlayerCameraManager)
+    {
+        PlayerController->PlayerCameraManager->UpdateCamera(0.0f);
+    }
 }
 
 void ADiscGolferPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

@@ -303,8 +303,8 @@ bool FDiscGolfCharacterProfileDiskSlotRoundTripTest::RunTest(const FString& Para
     if (Restored)
     {
         const FDiscGolfCharacterProfileSaveData& Actual = Restored->CharacterProfile;
-        TestEqual(TEXT("Disk-slot payload retains schema 8"),
-            Restored->SaveSchemaVersion, 8);
+        TestEqual(TEXT("Disk-slot payload retains schema 9"),
+            Restored->SaveSchemaVersion, 9);
         TestEqual(TEXT("Disk-slot payload retains the current save schema"),
             Restored->SaveSchemaVersion, DiscGolfSaveSchema::CurrentVersion);
         TestTrue(TEXT("Handedness survives disk-slot persistence"),
@@ -374,10 +374,10 @@ bool FDiscGolfCharacterProfileSchemaMigrationTest::RunTest(const FString& Parame
     const DiscGolfProfilePersistence::EMigrationResult Result =
         DiscGolfProfilePersistence::MigrateToCurrent(*Legacy);
 
-    TestTrue(TEXT("Schema 6 profile performs every migration through Session 6"),
+    TestTrue(TEXT("Schema 6 profile performs every migration through Session 7"),
         Result == DiscGolfProfilePersistence::EMigrationResult::Migrated);
-    TestEqual(TEXT("Schema 6 profile advances to schema 8"),
-        Legacy->SaveSchemaVersion, 8);
+    TestEqual(TEXT("Schema 6 profile advances to schema 9"),
+        Legacy->SaveSchemaVersion, 9);
     TestTrue(TEXT("Legacy save reconstructs baseline body defaults"),
         NearlyEqual(Legacy->CharacterProfile.HeightCm, 183.0f)
         && NearlyEqual(Legacy->CharacterProfile.WingspanScale, 1.0f)
@@ -413,7 +413,7 @@ bool FDiscGolfCharacterProfileSchema7OutfitMigrationTest::RunTest(const FString&
 
     TestTrue(TEXT("Schema 7 performs the Session 6 outfit migration"),
         Result == DiscGolfProfilePersistence::EMigrationResult::Migrated);
-    TestEqual(TEXT("Schema 7 advances to schema 8"), Legacy->SaveSchemaVersion, 8);
+    TestEqual(TEXT("Schema 7 advances to schema 9"), Legacy->SaveSchemaVersion, 9);
     TestTrue(TEXT("Schema 7 deterministically starts with an empty outfit"),
         Legacy->OutfitLoadout.Equipped.IsEmpty());
     return true;
@@ -428,6 +428,7 @@ bool FDiscGolfCharacterProfileFutureSchemaGuardTest::RunTest(const FString& Para
     UDiscGolfSaveGame* Future = NewObject<UDiscGolfSaveGame>();
     Future->SaveSchemaVersion = DiscGolfSaveSchema::CurrentVersion + 1;
     Future->CharacterProfile.HeightCm = 999.0f;
+    Future->CharacterCustomization.Identity.DisplayName = TEXT("Future Payload");
     Future->PlayerSettings.GraphicsQuality = 99;
 
     const DiscGolfProfilePersistence::EMigrationResult Result =
@@ -439,6 +440,9 @@ bool FDiscGolfCharacterProfileFutureSchemaGuardTest::RunTest(const FString& Para
         Future->SaveSchemaVersion, DiscGolfSaveSchema::CurrentVersion + 1);
     TestTrue(TEXT("Future character data is not normalized by older code"),
         NearlyEqual(Future->CharacterProfile.HeightCm, 999.0f));
+    TestEqual(TEXT("Future full-character data is not normalized by older code"),
+        Future->CharacterCustomization.Identity.DisplayName,
+        FString(TEXT("Future Payload")));
     TestEqual(TEXT("Future settings data is not normalized by older code"),
         Future->PlayerSettings.GraphicsQuality, 99);
 

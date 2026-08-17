@@ -30,10 +30,16 @@ EXPECTED_ASSETS = (
     "Content/DiscGolf/Tests/Profiles/DA_DG_Test_TallLongArms.uasset",
 )
 
-ALLOWED_SESSION6_PLUGIN_CHANGE = (
+SESSION5_PLUGIN_BASELINE = "e6e6a57727411a4cc50b890f4d8557bfb803e9e2"
+EXPECTED_ACCEPTED_PLUGIN_CHANGES = (
     "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
-    "Private/DiscGolfOutfitComponent.cpp"
+    "Private/DiscGolfCharacterCustomizationComponent.cpp",
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
+    "Private/DiscGolfOutfitComponent.cpp",
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
+    "Public/DiscGolfCharacterTypes.h",
 )
+OUTFIT_COMPONENT_PATH = EXPECTED_ACCEPTED_PLUGIN_CHANGES[1]
 
 
 def _read(relative: str) -> str:
@@ -51,7 +57,7 @@ def main() -> None:
     game_mode = _read("Source/DiscGolfTour/DiscGolfTourGameMode.cpp")
     game_mode_header = _read("Source/DiscGolfTour/DiscGolfTourGameMode.h")
     smoke = _read("Source/DiscGolfTour/DiscGolfSession3SmokeRunner.cpp")
-    outfit_component = _read(ALLOWED_SESSION6_PLUGIN_CHANGE)
+    outfit_component = _read(OUTFIT_COMPONENT_PATH)
     build_rules = _read("Source/DiscGolfTour/DiscGolfTour.Build.cs")
     project = json.loads(_read("DiscGolfTour.uproject"))
 
@@ -158,6 +164,23 @@ def main() -> None:
     _require(checks, "exact_required_asset_set_present", not missing_assets,
              f"missing={missing_assets}; expected_count={len(EXPECTED_ASSETS)}")
 
+    # Compare to the accepted pre-outfit Session 5 checkpoint instead of
+    # expecting a dirty working tree.  The old gate became stale as soon as
+    # the accepted Session 6 outfit repair was committed: `git status` went
+    # clean even though the installed plugin still contained the reviewed
+    # adaptation.  This comparison remains exact before and after a Session 7
+    # commit and permits only the three bounded Session 6/7 integration files.
+    plugin_diff_result = subprocess.run(
+        ["git", "diff", "--name-only", "--diff-filter=ACDMRTUXB",
+         SESSION5_PLUGIN_BASELINE, "--", "Plugins/DiscGolfCharacterFramework"],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    plugin_diff = sorted({line.strip().replace("\\", "/")
+                          for line in plugin_diff_result.stdout.splitlines()
+                          if line.strip()})
     plugin_status = subprocess.run(
         ["git", "status", "--porcelain=v1", "--untracked-files=all", "--",
          "Plugins/DiscGolfCharacterFramework"],
@@ -166,11 +189,15 @@ def main() -> None:
         text=True,
         check=True,
     ).stdout.splitlines()
-    plugin_diff = sorted({line[3:].replace("\\", "/")
-                          for line in plugin_status if len(line) >= 4})
-    _require(checks, "installed_plugin_change_is_exact_session6_safety_allowlist",
-             plugin_diff == [ALLOWED_SESSION6_PLUGIN_CHANGE],
-             f"allowed={[ALLOWED_SESSION6_PLUGIN_CHANGE]}; actual={plugin_diff}")
+    plugin_untracked = sorted({line[3:].replace("\\", "/")
+                               for line in plugin_status
+                               if line.startswith("?? ")})
+    _require(checks, "installed_plugin_change_is_exact_accepted_integration_allowlist",
+             plugin_diff == sorted(EXPECTED_ACCEPTED_PLUGIN_CHANGES)
+             and not plugin_untracked,
+             f"baseline={SESSION5_PLUGIN_BASELINE}; "
+             f"allowed={sorted(EXPECTED_ACCEPTED_PLUGIN_CHANGES)}; "
+             f"actual={plugin_diff}; untracked={plugin_untracked}")
     _require(checks, "session6_plugin_variant_resolution_is_canonical",
              all(token in outfit_component for token in (
                  "const bool bHasVariant = Item->FindVariant(VariantId, Variant);",
@@ -200,7 +227,9 @@ def main() -> None:
         "checks": checks,
         "asset_count": len(EXPECTED_ASSETS),
         "release_data_fields_consumed": release_fields,
-        "allowed_session6_plugin_change": ALLOWED_SESSION6_PLUGIN_CHANGE,
+        "accepted_successor_plugin_change_allowlist": list(
+            EXPECTED_ACCEPTED_PLUGIN_CHANGES
+        ),
         "plugin_source_changes": plugin_diff,
         "failed_checks": [item["check"] for item in failed],
         "writes": [str(REPORT_PATH)],
@@ -215,8 +244,8 @@ def main() -> None:
     print(
         "SESSION3 WIRING VALIDATION PASS: "
         f"checks={len(checks)} assets={len(EXPECTED_ASSETS)} "
-        "release_fields=GripWorldTransform plugin_changes=1 "
-        "session6_outfit_safety_allowlist=1"
+        "release_fields=GripWorldTransform plugin_changes=3 "
+        "session6_session7_plugin_safety_allowlist=1"
     )
 
 

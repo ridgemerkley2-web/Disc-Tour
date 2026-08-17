@@ -947,7 +947,7 @@ Session 5 therefore closes with an accepted technical pipeline fixture, determin
 
 ## Session 6 - Modular outfit customization
 
-Status: **PASS for the modular outfit-system and validation scope.** All wardrobe art in this session is generic project-owned blockout content marked `NON_PRODUCTION_PROXY` / `DO_NOT_SHIP`; it is not accepted as shipping character art. Session 7 has not started.
+Status: **PASS for the modular outfit-system and validation scope.** All wardrobe art in this session is generic project-owned blockout content marked `NON_PRODUCTION_PROXY` / `DO_NOT_SHIP`; it is not accepted as shipping character art. At the point captured by this Session 6 section, Session 7 had not started; the later Session 7 entry supersedes that forward-looking statement.
 
 Accepted Session 6 checkpoint: `deda2fb3d47a828c1b1f9adf563368721eab9b24` (`Session 6: integrate modular outfit customization`). The commit contains exactly the audited 84-path Session 6 scope: 18 modified paths and 66 additions. This hash record is a deliberate post-commit changelog update and is not part of the self-referential checkpoint commit.
 
@@ -1097,7 +1097,7 @@ All six required bones project inside the viewport; at least four remain inside 
 - Coverage is exact metadata only. The protected single-material proxy body has no authored per-region mask layer, so Session 6 does not visually hide Torso/Arms/Hips/Legs/Feet/Hair. Production body-mask art/material work remains.
 - No item has cloth simulation, morph targets, a PhysicsAsset, gameplay collision, overlaps, navigation influence, production LODs, final lightmap UVs, or production-fit polish. Profile-specific clipping remains possible.
 - Static accessories are accepted-bone rest-local Identity fixtures. Their fit is provisional even though runtime transform/scale safety is validated across the profiles.
-- The bag is visual only; equipment inventory is explicitly deferred. Hair/face/skin/eyes, MetaHuman, forehand, putting, and all Session 7 work remain out of scope and unstarted.
+- The bag is visual only; equipment inventory is explicitly deferred. At the Session 6 checkpoint, hair/face/skin/eyes and all Session 7 work were deferred; the later Session 7 entry records their proxy integration. MetaHuman, forehand, putting, and equipment inventory remain deferred.
 
 ### Exact Session 6 repository scope
 
@@ -1204,4 +1204,306 @@ Project-owned DCC/source fixture (19):
 - `SourceArt/DiscGolf/Outfits/Proxy/FBX/SM_DG_Headwear_ProxyCap01.fbx`;
 - `SourceArt/DiscGolf/Outfits/Proxy/FBX/SM_DG_Wrist_ProxyBandLeft01.fbx`.
 
-The unrelated baseline remains exactly: `Config/DefaultEditor.ini` (1), `Content/Data` (8), `Content/Environment` (4), `Content/PN_interactiveSpruceForest` (363), `Content/Presentation` (60), `Content/Stump_Scanned` (63), `Content/WaterMaterials` (107), and `SourceArt/PineRidge` (41). Generated `Binaries`, `Intermediate`, `Saved`, and `DerivedDataCache` evidence is not repository scope. No Session 7 path or implementation was introduced.
+The unrelated baseline remains exactly: `Config/DefaultEditor.ini` (1), `Content/Data` (8), `Content/Environment` (4), `Content/PN_interactiveSpruceForest` (363), `Content/Presentation` (60), `Content/Stump_Scanned` (63), `Content/WaterMaterials` (107), and `SourceArt/PineRidge` (41). Generated `Binaries`, `Intermediate`, `Saved`, and `DerivedDataCache` evidence is not repository scope. No Session 7 path or implementation was introduced by the Session 6 checkpoint; see the later Session 7 entry for the subsequent work.
+
+## 2026-08-16 — Session 7 full character customizer
+
+Status: **PASS for the intended full-character technical/proxy scope.** All new head, hair, facial-hair, eyebrow, scar, and tattoo content is project-owned generic validation content marked `NON_PRODUCTION_PROXY` / `DO_NOT_SHIP`. It is not production character art.
+
+Session 6 implementation checkpoint: `deda2fb3d47a828c1b1f9adf563368721eab9b24` (`Session 6: integrate modular outfit customization`). Session 6 documentation checkpoint: `ec02860ddeec6cf59891d3c4aaaaf474d4b282fd` (`Docs: record Session 6 checkpoint`). Session 7 was implemented after the documentation-only checkpoint and remains uncommitted at this record; nothing is staged.
+
+Session 7 extends the existing creator, possessed player pawn, save flow, accepted 69-bone skeleton, Control Rig, Animation Blueprint, Session 3 RHBH, Session 4 body/throw-style controls, and Session 6 outfit system. It does not add a second avatar, preview pawn, save authority, outfit authority, throw path, gameplay disc, flight solver, inventory, or scoring system.
+
+### One seven-tab creator
+
+The native creator now has exactly seven tabs in this order:
+
+1. `Identity`
+2. `Body`
+3. `Face`
+4. `Hair`
+5. `Appearance`
+6. `Throw Style`
+7. `Outfit`
+
+The same draft survives tab switches. The creator exposes live preview on the existing possessed pawn, rotate, zoom, category locks, Reset Current Tab, Reset All, valid-catalog Randomize, Cancel, and Apply / Save & Continue. Existing Session 4 and Session 6 compatibility seams remain intact.
+
+Identity persists display name, handedness, stable `VoiceId`, and stable `PronounSetId`. Voice entries are data hooks only and ship no audio. Left-handed identity can be selected and persisted, but the UI explicitly states that the accepted animation remains RHBH; Session 7 does not claim or create an animated LHBH.
+
+Body retains the accepted height, wingspan, shoulder width, torso length, leg length, hand size, and body mass contract, and adds the prepared visual build controls for muscularity, body fat, chest, waist, hips, arms, and legs. Throw Style retains its presentation-only controls. Normalization forces power and spin multipliers to `1.0`; customization never becomes aim, timing, release, disc-physics, hyzer, nose-angle, wind, flight, inventory, or scoring authority.
+
+### Modular proxy head and face contract
+
+The canonical modular head is `/Game/DiscGolf/Characters/Customization/Head/SK_DG_Head_Proxy.SK_DG_Head_Proxy`. It uses the accepted `/Game/DiscGolf/Characters/Meshes/SKEL_DG_Master.SKEL_DG_Master`, has no new skeleton or PhysicsAsset, and follows the existing body through Leader Pose. Its generated opaque rounded-box shell conservatively encloses the protected legacy `head_geo` for all 32 additive combinations of the five prepared morph extremes; the source report records minimum clearance of 0.0134 / 0.0250 / 0.0210 m on X/Y/Z.
+
+All 20 normalized `DG_Face_*` channels are stable data, UI, runtime, reset, randomize, save, migration, and reload keys:
+
+- `HeadWidth`, `HeadHeight`, `BrowHeight`, `BrowDepth`;
+- `EyeSize`, `EyeSpacing`, `EyeDepth`;
+- `NoseWidth`, `NoseLength`, `NoseBridge`;
+- `CheekWidth`, `CheekFullness`;
+- `JawWidth`, `JawHeight`;
+- `ChinWidth`, `ChinLength`;
+- `MouthWidth`, `LipFullness`;
+- `EarSize`, `EarAngle`.
+
+Exactly five channels visibly deform this proxy: `DG_Face_HeadWidth`, `DG_Face_HeadHeight`, `DG_Face_CheekFullness`, `DG_Face_JawWidth`, and `DG_Face_ChinLength`. The other 15 are intentionally labeled `DATA / UI` and remain production-visual deferred. Runtime drives all 20 contract targets on every apply and treats an omitted key as zero, so selecting `Default`, Reset, or a sparse map cannot leave stale morph weights. Missing morph targets on a future mesh are skipped safely rather than fabricated.
+
+The four generic presets are `face_default`, `face_square`, `face_narrow`, and `face_round`. A preset seeds normalized values, after which individual sliders remain editable. Presets never create a pawn, skeleton, or mesh variant.
+
+### Cosmetic catalog and stable IDs
+
+The canonical catalog is `/Game/DiscGolf/Characters/Customization/Data/DA_DG_CosmeticCatalog.DA_DG_CosmeticCatalog`. It contains exactly 17 stable IDs, with duplicate IDs, wrong-kind references, unknown IDs, and missing assets rejected or normalized by kind:
+
+- Hair: `hair_none`, `hair_short`, `hair_medium`, `hair_mohawk`.
+- Facial hair: `facialhair_none`, `facialhair_stubble`, `facialhair_beard`.
+- Eyebrows: `brow_default`, `brow_alt`.
+- Scars: `scar_none`, `scar_proxy`.
+- Tattoos: `tattoo_none`, `tattoo_proxy`.
+- Voice data: `voice_default`, `voice_alt`.
+- Pronoun data: `pronouns_default`, `pronouns_they_them`.
+
+`tattoo_none` canonicalizes to an empty `TattooIds` array rather than persisting a phantom tattoo. Missing hair, facial hair, eyebrows, scar, tattoo, or outfit entries resolve to safe none/default values; the complete character still loads and the accepted RHBH remains playable.
+
+Seven generic static cosmetics are authored in accepted-head rest-local space with Identity relative transforms and attach to `head`: short, medium, and mohawk hair; stubble and beard; default and alternate brows. Spawned cosmetics use absolute scale, are collision/overlap/navigation/physics free, and keep the selected `DG_HairColor` parameter. The same safety seam is applied by the installed UE 5.8-compatible customization component; the installed plugin is not replaced with the BuildKit copy.
+
+Session 6 Hair coverage drives the hat interaction without erasing identity data:
+
+`selected hair -> equip covering headwear -> temporarily rebuild as hair_none -> remove headwear -> rebuild the stored HairStyleId`.
+
+Beard and eyebrows remain present while hair is hidden. Apply/reload, Cancel, missing-hair fallback, and hat removal all preserve or restore the correct canonical selection.
+
+### Head appearance materials
+
+The canonical head material is `/Game/DiscGolf/Materials/CharacterCustomization/M_DG_HeadProxy.M_DG_HeadProxy`; the canonical cosmetic material is `/Game/DiscGolf/Materials/CharacterCustomization/M_DG_HairProxy.M_DG_HairProxy`.
+
+The head MID exposes `DG_SkinTone`, `DG_EyeColor`, `DG_Complexion`, `DG_Freckles`, `DG_SunExposure`, `DG_ScarProxy`, and `DG_TattooProxy`. The hair/cosmetic MID exposes `DG_HairColor`. The accepted protected master body has no editable character surface slot, so skin/eye/complexion/freckle/sun/scar/tattoo visuals are proven on the modular head only. The UI and evidence say this explicitly; Session 7 does not claim whole-body skin shading.
+
+The first otherwise-complete visual run exposed a real UE renderer warning because `M_DG_HeadProxy` had SkeletalMesh usage but not MorphTargets usage. That set was rejected. The author path now sets and reads back both `MATUSAGE_SkeletalMesh` and `MATUSAGE_MorphTargets`; the strict validator checks both with a read-only API. One authorized reconciliation saved only `M_DG_HeadProxy.uasset`, changing it from 16,628-byte SHA-256 `C0E879E641C69E31E7E1C772FBEF5F3CFE505F3C5DF38FF824B5C68CD3E9399C` to final 16,683-byte SHA-256 `29460576856634BC6803C84A4B1065ADA418FFD07EC670389749BFB417D8C022`. Every other Session 7 output and all 13 protected packages remained byte-identical. A second author run reported `PASS_ALREADY_CURRENT_NO_ASSET_WRITES`.
+
+### Schema 9 persistence, migration, Apply, and Cancel
+
+`UDiscGolfSaveGame` advances from schema 8 to schema 9. `FDGFullCharacterCustomization` is the sole current read authority. The schema-8 `CharacterProfile` and `OutfitLoadout` fields remain serialized compatibility mirrors so older archives and accepted Session 6 tests continue to work, but they are written from the normalized full payload and are not an independent current truth.
+
+Explicit schema-8 to schema-9 migration preserves body, throw style, handedness, and outfit, and safely initializes identity, body build, face, hair, appearance, voice, and pronoun fields. The installed plugin's seven body and eight throw-style scalar fields now carry `SaveGame`, which is required for nested `ArIsSaveGame` struct serialization. Capability, intent, release, and gameplay-authority fields do not gain `SaveGame`.
+
+Apply normalizes the full draft, transactionally applies the existing outfit loadout plus granular body/face/head-material/hair operations, performs one save transaction, and rolls presentation and in-memory data back on failure. Cancel restores the exact opening `FDGFullCharacterCustomization` snapshot without a save. Randomize selects only exact catalog entries, respects category locks, keeps power/spin at `1.0`, and can then be either applied/reloaded or canceled back to the opening state.
+
+The Session 7 validation-slot parser is fail-closed: only both dedicated Session 7 validation guards plus the exact `DiscGolfTour_Automation_Session7FullCharacter_` prefix and a bounded ASCII alphanumeric/underscore suffix can redirect persistence. Every matrix process uses its own unique temporary slot, and the visual run uses a separate unique temporary slot; each guarded process/run deletes its slot and independently compares the production save before/after. Dedicated schema-8 migration, Randomize -> Apply, and visual Apply flows verify disk reload and reconstruction.
+
+### Deterministic source and provenance
+
+Session 7 uses a project-owned generator rather than vendor or scraped content:
+
+`SourceArt/DiscGolf/Characters/Customization/Proxy/generate_session7_proxy_customization.py -> DG_Session7_ProxyCustomization.blend -> one skeletal head FBX + seven static cosmetic FBXs -> 28 Unreal packages`.
+
+Generation used Blender 5.2 with deterministic export metadata and `PYTHONHASHSEED=0`. Key frozen source records are:
+
+- generator: 42,899 bytes, SHA-256 `57E687FE7B0AD24E47BCB98E643106C7DCB98651962CF1EB5A30334F16E65DE1`;
+- catalog spec: 12,265 bytes, SHA-256 `27E6B2C74AA5F1F254CC499627FF8A2347F39727E823A4D0B4F769213D59FE45`;
+- `.blend`: 124,435 bytes, SHA-256 `8F75C3536A5849B8DC6E0ACB4447385E035948D6069F7D2B0174B16C689CC7D9`;
+- head FBX: 172,892 bytes, SHA-256 `372430C9D5CCB814CB3CB9F408799FE80B1B04DE725C4D9879696F5881C2ECEB`;
+- source manifest: 14,172 bytes, SHA-256 `4481300D0079B7B9E0360B82885E2665BF016362FBB2BECE0E708718C18C4711`.
+
+The head FBX round trip contains one mesh, one armature, the exact accepted 69-name/parent hierarchy, 300 vertices, 314 polygons, vertex-color `DG_SurfaceMask`, and the exact five visible morphs. Every static FBX round trip contains one mesh, no armature, and one source material slot. Generator rerun was byte- and timestamp-idempotent.
+
+The source and brand/license audits report `dg_generic`, empty external-source/logo arrays, zero forbidden brand hits, no vendor acquisition, no network acquisition, and `NON_PRODUCTION_PROXY` / `DO_NOT_SHIP` provenance. No Premium Disc Golf artwork, manufacturer graphic, celebrity, or professional-player likeness was introduced.
+
+### Final build and validation evidence
+
+| Gate | Result | Evidence |
+|---|---|---|
+| Final Editor build | PASS | `Saved/Logs/Build_DiscGolfTourEditor_Session7_MorphUsageFinal.log`; `DiscGolfTourEditor Win64 Development`, 6 actions, `Result: Succeeded`, 81.17 s, zero compiler warnings/errors |
+| Final runtime build | PASS | `Saved/Logs/Build_DiscGolfTour_Session7_MorphUsageFinal.log`; `DiscGolfTour Win64 Development`, 5 actions, `Result: Succeeded`, 83.38 s, zero compiler warnings/errors |
+| Static successor gates | PASS | Session 3 wiring 23/23; Session 4 wiring 91/91; Session 6 wiring 15/15; Session 7 plugin contract 5/5; Session 7 wiring 14/14 |
+| Reflection | PASS | `Saved/Logs/CharacterFramework_Session7_FrozenFinal_Reflection.log`; 4 classes and 4 structs loaded |
+| Strict rig and authority | PASS | `Saved/Logs/CharacterFramework_Session7_FrozenFinal_StrictRig.log`; 69 bones, 4 goals, 4 effectors, 3 profiles, one release, one finish, `SINGLE_EXISTING_FLIGHT_PATH` |
+| Session 4/5 asset compatibility | PASS | `CharacterFramework_Session7_FrozenFinal_Session4Assets.log` and `...Session5Assets.log`; disk mutation none; Session 5 remains synthetic `DO_NOT_SHIP` |
+| Session 6 compatibility | PASS | Fresh strict `PASS_NO_DISK_MUTATION` for 15 items / 9 skeletal / 6 static; no-write `PASS_NO_WRITE` for 43 protected/owned files |
+| Session 7 source and brand | PASS | `Session7ProxySourceValidation.json` and `Session7BrandLicenseAudit.json`; generated source audited, 17 IDs, no brand/vendor hits |
+| Session 7 strict assets | PASS | `Saved/Logs/CharacterFramework_Session7_FrozenFinal_Session7Assets.log`; `PASS_NO_DISK_MUTATION`, 17 items, one head, seven static meshes, visible 5 / deferred 15, both head-material usage flags true |
+| Session 7 independent no-write | PASS | `Saved/Logs/CharacterFramework_Session7_FrozenFinal_Session7NoWrite.log`; `PASS_NO_WRITE`, 41 files, disk/registry mutation none, save/import/factory/delete calls zero |
+| Idempotent author rerun | PASS | `Saved/Logs/Session7CustomizationAssetAuthorIdempotence_MorphUsageFinal.log`; `PASS_ALREADY_CURRENT_NO_ASSET_WRITES`, no hash/size/timestamp change |
+| Full automation | PASS | `Saved/Logs/Automation_CharacterFramework_Session7_FrozenFinal.log`; exactly 132/132 `DiscGolfTour.` tests succeeded, zero non-success, exit code 0 |
+| Session 3 one-throw | PASS | `Saved/Logs/Session3OneThrowSmoke_CharacterFramework_Session7_FrozenFinal.log`; one animation/release/authoritative disc/existing flight, FollowThrough, Recovery, camera/input/next-action recovery; cancel launched zero discs |
+| Session 4 profile matrix | PASS | `Saved/CharacterFramework/Session4ProfileSmokeReport.json`; ShortCompact, Baseline, TallLongArms, SliderMin, SliderMax passed 5/5 |
+| Session 5 normal fallback | PASS | `Saved/Logs/Session5PrototypeFallback_Baseline_Session7_FrozenFinal.log`; standard Session 3 path passed without Session 5 validation override |
+| Session 5 mocap profile matrix | PASS | `Saved/CharacterFramework/Session5MocapProfileSmokeReport.json`; ShortCompact, Baseline, TallLongArms passed 3/3; synthetic pipeline remains `DO_NOT_SHIP` |
+| Three-hole gameplay | PASS | `Saved/Logs/ThreeHoleRoundSmoke_CharacterFramework_Session7_FrozenFinal.log`; 3/3 holes, 3 strokes, par 11, -8, scoring/scorecard/save snapshot active |
+| Session 6 outfit matrix | PASS | `Saved/CharacterFramework/Session6OutfitThrowMatrix.json`; exact 6/6, changed packages/save games empty, production save unchanged across the guarded interval |
+| Session 7 full-character matrix | PASS | `Saved/CharacterFramework/Session7FullCharacterMatrix.json`; exact 12/12 ordered rows, all temporary slots deleted, changed packages/save games empty, production save unchanged across the guarded interval |
+| Session 7 visual machine gates | PASS | Current manifest and launcher below; all 31 launcher checks true, failures/decode errors empty, no material fallback warning |
+| Independent manual visual review | PASS | Exact current 24 PNGs accepted for technical/proxy scope; evidence qualifications documented below |
+
+The exact Session 7 runtime matrix rows are:
+
+1. `BaselineDefaultShortSimple`
+2. `BaselineSquareBeardHatFull`
+3. `ShortNarrowMedium`
+4. `TallRoundBeardFull`
+5. `BodyFaceExtremes`
+6. `MissingHair`
+7. `MissingFacialHairEyebrow`
+8. `MissingScarTattooOutfit`
+9. `Schema8Migration`
+10. `RandomizeApplyReload`
+11. `RandomizeCancel`
+12. `CompleteCharacterRHBH`
+
+Every row recorded one Session 7 PASS and one inherited accepted Session 3 PASS. The schema row preserved body, throw style, and outfit while initializing new fields. Missing-content rows safely reconstructed and threw. Randomize Apply reloaded the exact normalized full payload; Randomize Cancel restored the opening payload without saving. The complete-character row retained stable master-mesh and `disc_grip_r` bone identity while allowing the expected profile-dependent evaluated grip transform to move; the live transform remained finite, nonzero, and bounded. Gameplay aim, timing, power, spin, shot context, inventory, release, disc spawning, and flight authority remained unchanged.
+
+### Final 24-shot evidence and manual review
+
+The final manifest is `Saved/CharacterFramework/Screenshots/Session7_FullCharacter/Session7_FullCharacter_CaptureManifest.json`, 57,400 bytes, SHA-256 `76104D3E2909F40D1EE5F7F7B0C99C323F51E5B516CDF3C3C8403BCB20CB0CD5`. The independent launcher report is `Session7_FullCharacter_LaunchValidation.json`, 6,935 bytes, SHA-256 `69A1EF5EB8585DF79DD95E893848DAC75B8CA6F3307348069730A8ACDB04CCFD`. The runtime log is `Saved/Logs/CharacterFramework_Session7_FullCharacterVisual.log`, SHA-256 `0978C0C22E3871C79C09DEF186E8E5B8C14C5137AE13C8A65FACA143E6B251EC`.
+
+All 24 current PNGs decode as 1920x1080 and match manifest hashes. The launcher passed all 31 gates. The manifest and independent launcher together prove canonical head/hair/outfit materials, head MorphTargets usage, exact MID parameters, five live morph weights, all attachment/collision/Leader Pose contracts, exact 64-degree creator/profile/throw FOV, exact 50-degree face/hair/appearance close-up FOV, one release at 1.600 s, FollowThrough at approximately 2.035 s, world-disc delta zero, stroke delta zero, package/save changes empty, temporary slot deletion, and production-save SHA unchanged from the final `A9996D3A...A491A14` baseline.
+
+Independent pixel deltas passed: face presets `0.1415 / 0.1398 / 0.1398 > 0.13`; hair `4.205`; skin `1.4472`; eye `0.1535`; hat hide/restore `8.2348`. The 0.13 face threshold is the rounded 50-degree projection recalibration of the earlier 34-degree 0.20 threshold (`tan(17 deg) / tan(25 deg) = 0.6556`, giving `0.1311`).
+
+Manual review accepted:
+
+1. full creator overview;
+2. Identity;
+3. Body;
+4. 20-channel Face contract;
+5. Hair/facial-hair/brow catalog and colors;
+6. head-only Appearance controls and truthful body deferral;
+7. Throw Style presentation controls;
+8. all 11 Outfit categories/item/variant UI;
+9. Default face;
+10. Square face;
+11. Narrow face;
+12. Round face;
+13. short hair;
+14. medium hair;
+15. beard and alternate brows;
+16. second skin tone plus complexion/freckle/sun/scar/tattoo state;
+17. second eye color;
+18. hat present with selected hair hidden and beard/brows retained;
+19. hat removed with the same selected hair restored;
+20. ShortCompact complete character;
+21. Baseline complete character;
+22. TallLongArms complete character;
+23. complete-character accepted RHBH Release;
+24. later complete-character FollowThrough.
+
+Evidence qualifications: captures 01 and 02 are distinct PNG files with unique hashes but decode to the same default-Identity pixels, with one serving as the overview and one as the dedicated Identity requirement; the set therefore has 24 ordered files and 23 unique decoded pixel states. Validation annotations overlap the creator subtitle/tab-strip area in captures 09-19 and the top-left course HUD area in captures 20-24; the selected tab, selected-state marker, controls, proxy subject, and throw phase remain readable, but these are evidence frames rather than polished shipping-UI presentation. No startup/shader overlay, actual head/hair/outfit pop, misplaced attachment, duplicate pawn, duplicate gameplay disc, or material fallback appears. The large regular gaps between block body parts are the declared protected `DO_NOT_SHIP` master-proxy topology, not runtime detachment.
+
+### Save-file mutation disclosure
+
+The complete regression sweep is **not** globally no-write. The legacy unisolated Session 3, Session 4, Session 5, and three-hole gameplay smokes exercise normal practice-round persistence. The pre-regression-suite production save was 4,478 bytes, SHA-256 `AD384C4BA1DA763EDEBDB6FFE506F51BC4ACA8AE8E66CC23D1CF1884441C430C`; those flows performed the schema-8 to schema-9 migration and subsequent normal progress snapshots. No exact backup of that original hash was found. Immediately before the final frozen sweep the schema-9 file was 5,498 bytes, SHA-256 `57C11747FD88A600D5FA088659E80C1AFF15060239D0CB3DD2698E7E19938D65`; the final three-hole snapshot left the current 5,212-byte SHA-256 `A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14`.
+
+Before checkpoint staging, that exact accepted current baseline was copied byte-for-byte to `C:\DGTour_Backups\Session7_Accepted\DiscGolfTour_Profile_0_Session7_Accepted.sav`. The external backup is also 5,212 bytes with SHA-256 `A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14`. This is explicitly the accepted post-migration/progress Session 7 baseline, not the unavailable original pre-regression save. The backup is outside the Git repository and is not committed. Future automation must use isolated temporary slots or a separate test-save directory rather than mutate this baseline.
+
+By contrast, the Session 6 matrix, Session 7 matrix, Session 7 validation-slot Apply/reload/Cancel path, and final visual run are explicitly guarded and independently prove no package or save changes across their own intervals. Both final matrices and the final visual run preserved the `A9996D3A...A491A14` production baseline and deleted every temporary GUID slot. Legacy smoke reports also write ignored `Saved` telemetry/trajectory artifacts; they are not repository content.
+
+### Honest limitations and stop boundary
+
+- The head and cosmetics are blockout validation art. The head uses rigid proxy weighting and a conservative shell, not production anatomy, topology, skinning, expressions, phonemes, LODs, or facial animation.
+- Only 5 of 20 morph channels visibly affect the proxy. The other 15 are implemented as stable data/UI/runtime/persistence keys but need production morph art.
+- Appearance rendering is modular-head-only because the accepted master body has no editable character material slot. Whole-body skin matching remains production material/art work.
+- Hair, beard, and brows are static head-local blockouts. There is no Groom, physics, strand simulation, production hairline, hat-compatible alternate hairstyle, or final ergonomics.
+- Voice and pronouns are stable identity data; no voice content is authored.
+- Left-handed identity is stored, but the only accepted throw animation remains RHBH.
+- The cosmetic catalog root is loaded by canonical object path and its dependency graph is coherent, but the current packaging configuration has no Session 7-specific AlwaysCook rule. Editor/runtime validation passes; packaged-cook inclusion of the string-loaded catalog root remains unproven and should be tested before a shipping build.
+- The evidence overlay is functional rather than polished, and captures 01/02 intentionally show the same default Identity state for two separate requirements.
+- Production face art, MetaHuman, production Groom hair, licensed clothing, forehand, putting, and equipment inventory were not started. Session 8 was not started.
+
+### Exact Session 7 repository scope
+
+This record is based on `main` at HEAD `ec02860ddeec6cf59891d3c4aaaaf474d4b282fd`. With this changelog edit, Session 7 owns exactly 76 working-tree paths: 20 tracked modifications and 56 untracked additions. Nothing is staged. `git diff --check` passes.
+
+The 20 modified paths are:
+
+- `Docs/CODEX_CHARACTER_INTEGRATION_CHANGELOG.md`;
+- `Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/Private/DiscGolfCharacterCustomizationComponent.cpp`;
+- `Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/Public/DiscGolfCharacterTypes.h`;
+- `Scripts/validate_dg_character_session3_wiring.py`;
+- `Scripts/validate_dg_character_session4_wiring.py`;
+- `Scripts/validate_dg_character_session6_wiring.py`;
+- `Source/DiscGolfTour/DiscGolfCharacterCreatorWidget.cpp`;
+- `Source/DiscGolfTour/DiscGolfCharacterCreatorWidget.h`;
+- `Source/DiscGolfTour/DiscGolfSaveGame.h`;
+- `Source/DiscGolfTour/DiscGolfTourGameInstance.cpp`;
+- `Source/DiscGolfTour/DiscGolfTourGameInstance.h`;
+- `Source/DiscGolfTour/DiscGolfTourGameMode.cpp`;
+- `Source/DiscGolfTour/DiscGolfTourGameMode.h`;
+- `Source/DiscGolfTour/DiscGolfTourPlayerController.cpp`;
+- `Source/DiscGolfTour/DiscGolfTourPlayerController.h`;
+- `Source/DiscGolfTour/DiscGolferPawn.cpp`;
+- `Source/DiscGolfTour/DiscGolferPawn.h`;
+- `Source/DiscGolfTour/Tests/DiscGolfCharacterProfileRuntimeTests.cpp`;
+- `Source/DiscGolfTour/Tests/DiscGolfOutfitRuntimeTests.cpp`;
+- `Source/DiscGolfTour/Tests/DiscGolfSaveSchemaTests.cpp`.
+
+The 56 added paths are:
+
+Unreal packages (28):
+
+- `Content/DiscGolf/Characters/Customization/Head/SK_DG_Head_Proxy.uasset`;
+- `Content/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Brow_Alt_Proxy.uasset`;
+- `Content/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Brow_Default_Proxy.uasset`;
+- `Content/DiscGolf/Characters/Customization/Cosmetics/SM_DG_FacialHair_Beard_Proxy.uasset`;
+- `Content/DiscGolf/Characters/Customization/Cosmetics/SM_DG_FacialHair_Stubble_Proxy.uasset`;
+- `Content/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Hair_Medium_Proxy.uasset`;
+- `Content/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Hair_Mohawk_Proxy.uasset`;
+- `Content/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Hair_Short_Proxy.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/DA_DG_CosmeticCatalog.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Brow_Alt.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Brow_Default.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_FacialHair_Beard.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_FacialHair_None.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_FacialHair_Stubble.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Hair_Medium.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Hair_Mohawk.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Hair_None.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Hair_Short.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Pronouns_Default.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Pronouns_TheyThem.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Scar_None.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Scar_Proxy.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Tattoo_None.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Tattoo_Proxy.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Voice_Alt.uasset`;
+- `Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Voice_Default.uasset`;
+- `Content/DiscGolf/Materials/CharacterCustomization/M_DG_HairProxy.uasset`;
+- `Content/DiscGolf/Materials/CharacterCustomization/M_DG_HeadProxy.uasset`.
+
+Scripts and validators (9):
+
+- `Scripts/create_dg_character_session7_customization_assets.py`;
+- `Scripts/run-session7-full-character-matrix.py`;
+- `Scripts/run-session7-full-character-visual-capture.py`;
+- `Scripts/validate_dg_character_session7_brand_license.py`;
+- `Scripts/validate_dg_character_session7_customization_assets.py`;
+- `Scripts/validate_dg_character_session7_customization_no_write.py`;
+- `Scripts/validate_dg_character_session7_plugin_contract.py`;
+- `Scripts/validate_dg_character_session7_proxy_source.py`;
+- `Scripts/validate_dg_character_session7_wiring.py`.
+
+Runtime and test additions (7):
+
+- `Source/DiscGolfTour/DiscGolfFullCharacterRuntime.cpp`;
+- `Source/DiscGolfTour/DiscGolfFullCharacterRuntime.h`;
+- `Source/DiscGolfTour/DiscGolfSession7FullCharacterSmokeRunner.cpp`;
+- `Source/DiscGolfTour/DiscGolfSession7FullCharacterSmokeRunner.h`;
+- `Source/DiscGolfTour/DiscGolfSession7FullCharacterVisualCaptureRunner.cpp`;
+- `Source/DiscGolfTour/DiscGolfSession7FullCharacterVisualCaptureRunner.h`;
+- `Source/DiscGolfTour/Tests/DiscGolfFullCharacterRuntimeTests.cpp`.
+
+Project-owned source fixture (12):
+
+- `SourceArt/DiscGolf/Characters/Customization/Proxy/DG_Session7_ProxyCustomization.blend`;
+- `SourceArt/DiscGolf/Characters/Customization/Proxy/FBX/SK_DG_Head_Proxy.fbx`;
+- `SourceArt/DiscGolf/Characters/Customization/Proxy/FBX/SM_DG_Brow_Alt_Proxy.fbx`;
+- `SourceArt/DiscGolf/Characters/Customization/Proxy/FBX/SM_DG_Brow_Default_Proxy.fbx`;
+- `SourceArt/DiscGolf/Characters/Customization/Proxy/FBX/SM_DG_FacialHair_Beard_Proxy.fbx`;
+- `SourceArt/DiscGolf/Characters/Customization/Proxy/FBX/SM_DG_FacialHair_Stubble_Proxy.fbx`;
+- `SourceArt/DiscGolf/Characters/Customization/Proxy/FBX/SM_DG_Hair_Medium_Proxy.fbx`;
+- `SourceArt/DiscGolf/Characters/Customization/Proxy/FBX/SM_DG_Hair_Mohawk_Proxy.fbx`;
+- `SourceArt/DiscGolf/Characters/Customization/Proxy/FBX/SM_DG_Hair_Short_Proxy.fbx`;
+- `SourceArt/DiscGolf/Characters/Customization/Proxy/generate_session7_proxy_customization.py`;
+- `SourceArt/DiscGolf/Characters/Customization/Proxy/proxy_customization_catalog_spec.json`;
+- `SourceArt/DiscGolf/Characters/Customization/Proxy/proxy_customization_source_manifest.json`.
+
+The unrelated baseline remains exactly 647 untracked paths and is excluded: `Config/DefaultEditor.ini` (1), `Content/Data` (8), `Content/Environment` (4), `Content/PN_interactiveSpruceForest` (363), `Content/Presentation` (60), `Content/Stump_Scanned` (63), `Content/WaterMaterials` (107), and `SourceArt/PineRidge` (41). Ignored `Binaries`, `Intermediate`, `Saved`, and `DerivedDataCache` evidence is not repository scope. `_BuildKit` is unchanged. No Session 8, MetaHuman, Groom, forehand, putting, or equipment-inventory implementation path is present.

@@ -36,6 +36,8 @@
 #include "DiscGolfSession5MocapVisualCaptureRunner.h"
 #include "DiscGolfSession6OutfitSmokeRunner.h"
 #include "DiscGolfSession6OutfitVisualCaptureRunner.h"
+#include "DiscGolfSession7FullCharacterSmokeRunner.h"
+#include "DiscGolfSession7FullCharacterVisualCaptureRunner.h"
 #include "DiscGolfEnvironmentController.h"
 #include "DiscGolfWorldFixtureActor.h"
 #include "ThrowControllerComponent.h"
@@ -316,12 +318,18 @@ void ADiscGolfTourGameMode::BeginPlay()
         FCommandLine::Get(), TEXT("Session6OutfitThrowSmokeTest"));
     const bool bSession6OutfitVisualCaptureRequested = FParse::Param(
         FCommandLine::Get(), TEXT("Session6OutfitVisualCapture"));
+    const bool bSession7FullCharacterSmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Session7FullCharacterThrowSmokeTest"));
+    const bool bSession7FullCharacterVisualCaptureRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Session7FullCharacterVisualCapture"));
     FString InitialCourse = (bRouteTelemetryRequested || bGalleryLakeWaterSmokeRequested
         || bDenseForestSmokeRequested || bGroundGrassSmokeRequested
         || bHole1FlightRouteSmokeRequested || bSession3OneThrowSmokeRequested
         || bSession3VisualCaptureRequested || bSession4VisualCaptureRequested
         || bSession5MocapSmokeRequested || bSession5MocapVisualCaptureRequested
-        || bSession6OutfitSmokeRequested || bSession6OutfitVisualCaptureRequested)
+        || bSession6OutfitSmokeRequested || bSession6OutfitVisualCaptureRequested
+        || bSession7FullCharacterSmokeRequested
+        || bSession7FullCharacterVisualCaptureRequested)
         ? TEXT("PineRidge") : TEXT("Regression");
     const bool bCourseOverridden = FParse::Value(FCommandLine::Get(), TEXT("Course="), InitialCourse);
     if (!LoadCourse(InitialCourse))
@@ -359,6 +367,8 @@ void ADiscGolfTourGameMode::BeginPlay()
         || bSession5MocapVisualCaptureRequested
         || bSession6OutfitSmokeRequested
         || bSession6OutfitVisualCaptureRequested
+        || bSession7FullCharacterSmokeRequested
+        || bSession7FullCharacterVisualCaptureRequested
         || FParse::Param(FCommandLine::Get(), TEXT("FixtureCollisionSmokeTest"))
         || bGalleryLakeWaterSmokeRequested
         || bDenseForestSmokeRequested
@@ -441,7 +451,47 @@ void ADiscGolfTourGameMode::BeginPlay()
         return;
     }
 
-    if (bSession6OutfitVisualCaptureRequested)
+    if (bSession7FullCharacterVisualCaptureRequested)
+    {
+        Session7FullCharacterVisualCaptureRunner =
+            GetWorld()->SpawnActor<ADiscGolfSession7FullCharacterVisualCaptureRunner>();
+        if (!Session7FullCharacterVisualCaptureRunner)
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("DG_SESSION7_FULL_CHARACTER_VISUAL_CAPTURE: FAIL runner could not spawn."));
+            FPlatformMisc::RequestExitWithStatus(false, 1);
+            return;
+        }
+        FTimerHandle Session7VisualTimer;
+        GetWorldTimerManager().SetTimer(
+            Session7VisualTimer,
+            FTimerDelegate::CreateUObject(
+                Session7FullCharacterVisualCaptureRunner,
+                &ADiscGolfSession7FullCharacterVisualCaptureRunner::Start),
+            0.5f,
+            false);
+    }
+    else if (bSession7FullCharacterSmokeRequested)
+    {
+        Session7FullCharacterSmokeRunner =
+            GetWorld()->SpawnActor<ADiscGolfSession7FullCharacterSmokeRunner>();
+        if (!Session7FullCharacterSmokeRunner)
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("SESSION 7 FULL CHARACTER THROW SMOKE FAIL: runner could not spawn."));
+            FPlatformMisc::RequestExitWithStatus(false, 1);
+            return;
+        }
+        FTimerHandle Session7SmokeTimer;
+        GetWorldTimerManager().SetTimer(
+            Session7SmokeTimer,
+            FTimerDelegate::CreateUObject(
+                Session7FullCharacterSmokeRunner,
+                &ADiscGolfSession7FullCharacterSmokeRunner::Start),
+            0.5f,
+            false);
+    }
+    else if (bSession6OutfitVisualCaptureRequested)
     {
         Session6OutfitVisualCaptureRunner =
             GetWorld()->SpawnActor<ADiscGolfSession6OutfitVisualCaptureRunner>();
@@ -3042,7 +3092,14 @@ void ADiscGolfTourGameMode::SavePracticeRoundSnapshot()
                 FCommandLine::Get(), TEXT("Session6OutfitThrowSmokeTest"))
             || FParse::Param(
                 FCommandLine::Get(), TEXT("Session6OutfitVisualCapture")));
-    if (bRegressionActive || bSession6OutfitValidationNoSave) return;
+    const bool bSession7FullCharacterValidationNoSave = FParse::Param(
+        FCommandLine::Get(), TEXT("Session7FullCharacterValidationNoSave"))
+        && (FParse::Param(
+                FCommandLine::Get(), TEXT("Session7FullCharacterThrowSmokeTest"))
+            != FParse::Param(
+                FCommandLine::Get(), TEXT("Session7FullCharacterVisualCapture")));
+    if (bRegressionActive || bSession6OutfitValidationNoSave
+        || bSession7FullCharacterValidationNoSave) return;
     UDiscGolfTourGameInstance* GameInstance = Cast<UDiscGolfTourGameInstance>(GetGameInstance());
     UDiscGolfSaveGame* Profile = GameInstance ? GameInstance->GetProfile() : nullptr;
     if (!GameInstance || !Profile) return;

@@ -8,6 +8,7 @@
 #include "Styling/CoreStyle.h"
 #include "Widgets/Images/SImage.h"
 #include "Widgets/Input/SButton.h"
+#include "Widgets/Input/SEditableTextBox.h"
 #include "Widgets/Input/SSlider.h"
 #include "Widgets/Layout/SBorder.h"
 #include "Widgets/Layout/SBox.h"
@@ -42,8 +43,20 @@ void UDiscGolfCharacterCreatorWidget::InitializeCreator(
     const FDGOutfitLoadout& InOutfit)
 {
     OwningDiscGolfController = InController;
-    DraftOutfit = DiscGolfOutfitRuntime::NormalizeForPersistence(InOutfit);
-    SetDraftProfile(InBody, InThrowStyle, InHandedness);
+    DraftCustomization = DiscGolfFullCharacterRuntime::MakeDefaultCustomization();
+    DraftCustomization.Body = InBody;
+    DraftCustomization.ThrowStyle = InThrowStyle;
+    DraftCustomization.Identity.Handedness = InHandedness;
+    DraftCustomization.Outfit = DiscGolfOutfitRuntime::NormalizeForPersistence(InOutfit);
+    SetDraftCustomization(DraftCustomization);
+}
+
+void UDiscGolfCharacterCreatorWidget::InitializeFullCreator(
+    ADiscGolfTourPlayerController* InController,
+    const FDGFullCharacterCustomization& InCharacter)
+{
+    OwningDiscGolfController = InController;
+    SetDraftCustomization(InCharacter);
 }
 
 void UDiscGolfCharacterCreatorWidget::SetDraftProfile(
@@ -54,6 +67,7 @@ void UDiscGolfCharacterCreatorWidget::SetDraftProfile(
     DraftBody = InBody;
     DraftThrowStyle = InThrowStyle;
     DraftHandedness = InHandedness;
+    SyncLegacyDraftSlices();
     RebuildOutfitLists();
     InvalidateLayoutAndVolatility();
 }
@@ -66,6 +80,19 @@ void UDiscGolfCharacterCreatorWidget::GetDraftProfile(
     OutBody = DraftBody;
     OutThrowStyle = DraftThrowStyle;
     OutHandedness = DraftHandedness;
+}
+
+void UDiscGolfCharacterCreatorWidget::SetDraftCustomization(
+    const FDGFullCharacterCustomization& InCharacter)
+{
+    DraftCustomization = InCharacter;
+    DiscGolfFullCharacterRuntime::NormalizeForPersistence(DraftCustomization);
+    DraftBody = DraftCustomization.Body;
+    DraftThrowStyle = DraftCustomization.ThrowStyle;
+    DraftHandedness = DraftCustomization.Identity.Handedness;
+    DraftOutfit = DraftCustomization.Outfit;
+    RebuildOutfitLists();
+    InvalidateLayoutAndVolatility();
 }
 
 TSharedPtr<SWidget> UDiscGolfCharacterCreatorWidget::GetInitialFocusWidget() const
@@ -81,17 +108,127 @@ void UDiscGolfCharacterCreatorWidget::PrepareSession6VisualOutfitEvidence(
     {
         OutfitSlot = EDGOutfitSlot::Top;
     }
-    ActiveCreatorTabIndex = 1;
+    ActiveCreatorTabIndex = 6;
     SelectedOutfitSlot = OutfitSlot;
     DraftOutfit = DiscGolfOutfitRuntime::NormalizeForPersistence(InOutfit);
+    DraftCustomization.Outfit = DraftOutfit;
     PendingOutfitFocusRequest = EOutfitFocusRequest::CurrentItem;
     RebuildOutfitLists();
     InvalidateLayoutAndVolatility();
 }
 
+void UDiscGolfCharacterCreatorWidget::PrepareSession7VisualEvidence(
+    int32 TabIndex,
+    const FDGFullCharacterCustomization& InCharacter)
+{
+    SetDraftCustomization(InCharacter);
+    ActiveCreatorTabIndex = FMath::Clamp(TabIndex, 0, 6);
+    if (ActiveCreatorTabIndex == 6)
+    {
+        PendingOutfitFocusRequest = EOutfitFocusRequest::CurrentItem;
+        RebuildOutfitLists();
+    }
+    if (FSlateApplication::IsInitialized())
+    {
+        if (const TSharedPtr<SButton>* TabButton = CreatorTabButtons.Find(ActiveCreatorTabIndex))
+        {
+            if (TabButton->IsValid())
+            {
+                FSlateApplication::Get().SetKeyboardFocus(*TabButton, EFocusCause::SetDirectly);
+            }
+        }
+    }
+    InvalidateLayoutAndVolatility();
+}
+
+void UDiscGolfCharacterCreatorWidget::GetSession7VisibleControlIds(
+    TArray<FString>& OutControlIds) const
+{
+    OutControlIds.Reset();
+    switch (FMath::Clamp(ActiveCreatorTabIndex, 0, 6))
+    {
+        case 0:
+            OutControlIds = {
+                TEXT("DisplayName"), TEXT("Handedness"), TEXT("Voice"),
+                TEXT("Pronouns") };
+            break;
+        case 1:
+            OutControlIds = {
+                TEXT("Height"), TEXT("Wingspan"), TEXT("ShoulderWidth"),
+                TEXT("TorsoLength"), TEXT("LegLength"), TEXT("HandScale"),
+                TEXT("Mass"), TEXT("Muscularity"), TEXT("BodyFat"),
+                TEXT("Chest"), TEXT("Waist"), TEXT("Hips"), TEXT("Arms"),
+                TEXT("Legs"), TEXT("BodyPresets") };
+            break;
+        case 2:
+            OutControlIds = {
+                TEXT("FacePresets"), TEXT("HeadWidth"), TEXT("HeadHeight"),
+                TEXT("BrowHeight"), TEXT("BrowDepth"), TEXT("EyeSize"),
+                TEXT("EyeSpacing"), TEXT("EyeDepth"), TEXT("NoseWidth"),
+                TEXT("NoseLength"), TEXT("NoseBridge"), TEXT("CheekWidth"),
+                TEXT("CheekFullness"), TEXT("JawWidth"), TEXT("JawHeight"),
+                TEXT("ChinWidth"), TEXT("ChinLength"), TEXT("MouthWidth"),
+                TEXT("LipFullness"), TEXT("EarSize"), TEXT("EarAngle") };
+            break;
+        case 3:
+            OutControlIds = {
+                TEXT("HairStyle"), TEXT("FacialHair"), TEXT("Eyebrow"),
+                TEXT("HairColor"), TEXT("FacialHairColor"),
+                TEXT("EyebrowColor") };
+            break;
+        case 4:
+            OutControlIds = {
+                TEXT("SkinTone"), TEXT("EyeColor"), TEXT("Complexion"),
+                TEXT("Freckles"), TEXT("SunExposure"), TEXT("Scar"),
+                TEXT("Tattoo") };
+            break;
+        case 5:
+            OutControlIds = {
+                TEXT("RunUp"), TEXT("ReachBack"), TEXT("TorsoRotation"),
+                TEXT("Brace"), TEXT("Explosiveness"), TEXT("FollowThrough") };
+            break;
+        case 6:
+            OutControlIds = {
+                TEXT("Headwear"), TEXT("Eyewear"), TEXT("Top"),
+                TEXT("Outerwear"), TEXT("Bottom"), TEXT("Socks"),
+                TEXT("Footwear"), TEXT("Glove"), TEXT("Wrist"), TEXT("Bag"),
+                TEXT("Accessory"), TEXT("Item"), TEXT("Variant") };
+            break;
+        default:
+            break;
+    }
+}
+
 TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
 {
     using namespace DiscGolfCharacterCreatorStyle;
+
+    CreatorTabButtons.Reset();
+    const TArray<FString> TabLabels = {
+        TEXT("IDENTITY"), TEXT("BODY"), TEXT("FACE"), TEXT("HAIR"),
+        TEXT("APPEARANCE"), TEXT("THROW STYLE"), TEXT("OUTFIT") };
+    TSharedRef<SWrapBox> TabBar = SNew(SWrapBox).UseAllottedSize(true);
+    for (int32 Index = 0; Index < TabLabels.Num(); ++Index)
+    {
+        TSharedPtr<SButton> TabButton;
+        TabBar->AddSlot()
+        .Padding(FMargin(0.0f, 0.0f, 6.0f, 6.0f))
+        [
+            SAssignNew(TabButton, SButton)
+            .Text_Lambda([this, Index, Label = TabLabels[Index]]()
+            {
+                return FText::FromString(
+                    FString(ActiveCreatorTabIndex == Index ? TEXT("● ") : TEXT(""))
+                    + Label);
+            })
+            .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleCreatorTab, Index)
+        ];
+        CreatorTabButtons.Add(Index, TabButton);
+        if (Index == 0)
+        {
+            InitialFocusButton = TabButton;
+        }
+    }
 
     RootSlateWidget =
         SNew(SOverlay)
@@ -109,7 +246,7 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
             .AutoWidth()
             [
                 SNew(SBox)
-                .WidthOverride(760.0f)
+                .WidthOverride(900.0f)
                 [
                     SNew(SBorder)
                     .BorderImage(FAppStyle::GetBrush("WhiteBrush"))
@@ -130,7 +267,7 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
                         .Padding(0.0f, 2.0f, 0.0f, 14.0f)
                         [
                             SNew(STextBlock)
-                            .Text(FText::FromString(TEXT("SESSION 6  //  ONE MASTER SKELETON  //  MODULAR OUTFIT PREVIEW")))
+                            .Text(FText::FromString(TEXT("SESSION 7  //  FULL CHARACTER PROXY  //  ONE EXISTING PLAYER")))
                             .ColorAndOpacity(Muted)
                             .Font(FCoreStyle::GetDefaultFontStyle("Regular", 10))
                         ]
@@ -138,51 +275,7 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
                         .AutoHeight()
                         .Padding(0.0f, 0.0f, 0.0f, 12.0f)
                         [
-                            SNew(SHorizontalBox)
-                            + SHorizontalBox::Slot()
-                            .AutoWidth()
-                            .Padding(0.0f, 0.0f, 8.0f, 0.0f)
-                            [
-                                SNew(SButton)
-                                .Text(FText::FromString(TEXT("BODY & THROW")))
-                                .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleCreatorTab, 0)
-                            ]
-                            + SHorizontalBox::Slot()
-                            .AutoWidth()
-                            [
-                                SNew(SButton)
-                                .Text(FText::FromString(TEXT("OUTFIT")))
-                                .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleCreatorTab, 1)
-                            ]
-                        ]
-                        + SVerticalBox::Slot()
-                        .AutoHeight()
-                        .Padding(0.0f, 0.0f, 0.0f, 12.0f)
-                        [
-                            SNew(SHorizontalBox)
-                            + SHorizontalBox::Slot()
-                            .AutoWidth()
-                            .Padding(0.0f, 0.0f, 8.0f, 0.0f)
-                            [
-                                SAssignNew(InitialFocusButton, SButton)
-                                .Text(FText::FromString(TEXT("BASELINE")))
-                                .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandlePreset, FName(TEXT("Baseline")))
-                            ]
-                            + SHorizontalBox::Slot()
-                            .AutoWidth()
-                            .Padding(0.0f, 0.0f, 8.0f, 0.0f)
-                            [
-                                SNew(SButton)
-                                .Text(FText::FromString(TEXT("SHORT COMPACT")))
-                                .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandlePreset, FName(TEXT("ShortCompact")))
-                            ]
-                            + SHorizontalBox::Slot()
-                            .AutoWidth()
-                            [
-                                SNew(SButton)
-                                .Text(FText::FromString(TEXT("TALL / LONG ARMS")))
-                                .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandlePreset, FName(TEXT("TallLongArms")))
-                            ]
+                            TabBar
                         ]
                         + SVerticalBox::Slot()
                         .FillHeight(1.0f)
@@ -191,48 +284,27 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
                             .WidgetIndex_Lambda([this]() { return ActiveCreatorTabIndex; })
                             + SWidgetSwitcher::Slot()
                             [
-                                SNew(SScrollBox)
-                                + SScrollBox::Slot()
-                                [
-                                    SNew(SVerticalBox)
-                                    + SVerticalBox::Slot()
-                                    .AutoHeight()
-                                    .Padding(0.0f, 4.0f)
-                                    [
-                                        SNew(STextBlock)
-                                        .Text(FText::FromString(TEXT("BODY")))
-                                        .ColorAndOpacity(Signal)
-                                        .Font(FCoreStyle::GetDefaultFontStyle("Bold", 16))
-                                    ]
-                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("HEIGHT")), ECreatorField::Height, 150.0f, 210.0f)]
-                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("WINGSPAN")), ECreatorField::Wingspan, 0.92f, 1.08f)]
-                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("SHOULDER WIDTH")), ECreatorField::ShoulderWidth, 0.92f, 1.08f)]
-                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("TORSO LENGTH")), ECreatorField::TorsoLength, 0.94f, 1.06f)]
-                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("LEG LENGTH")), ECreatorField::LegLength, 0.94f, 1.06f)]
-                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("HAND SIZE")), ECreatorField::HandScale, 0.94f, 1.06f)]
-                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("BODY MASS")), ECreatorField::Mass, 45.0f, 160.0f)]
-                                    + SVerticalBox::Slot()
-                                    .AutoHeight()
-                                    .Padding(0.0f, 14.0f, 0.0f, 8.0f)
-                                    [
-                                        SNew(SSeparator)
-                                    ]
-                                    + SVerticalBox::Slot()
-                                    .AutoHeight()
-                                    .Padding(0.0f, 4.0f)
-                                    [
-                                        SNew(STextBlock)
-                                        .Text(FText::FromString(TEXT("THROW STYLE  //  PRESENTATION ONLY")))
-                                        .ColorAndOpacity(Signal)
-                                        .Font(FCoreStyle::GetDefaultFontStyle("Bold", 16))
-                                    ]
-                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("RUN-UP INTENSITY")), ECreatorField::RunUp, 0.0f, 1.0f)]
-                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("REACHBACK")), ECreatorField::ReachBack, 0.0f, 1.0f)]
-                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("TORSO ROTATION")), ECreatorField::TorsoRotation, 0.0f, 1.0f)]
-                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("BRACE INTENSITY")), ECreatorField::Brace, 0.0f, 1.0f)]
-                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("EXPLOSIVENESS")), ECreatorField::Explosiveness, 0.0f, 1.0f)]
-                                    + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("FOLLOW-THROUGH")), ECreatorField::FollowThrough, 0.0f, 1.0f)]
-                                ]
+                                BuildIdentityTab()
+                            ]
+                            + SWidgetSwitcher::Slot()
+                            [
+                                BuildBodyTab()
+                            ]
+                            + SWidgetSwitcher::Slot()
+                            [
+                                BuildFaceTab()
+                            ]
+                            + SWidgetSwitcher::Slot()
+                            [
+                                BuildHairTab()
+                            ]
+                            + SWidgetSwitcher::Slot()
+                            [
+                                BuildAppearanceTab()
+                            ]
+                            + SWidgetSwitcher::Slot()
+                            [
+                                BuildThrowStyleTab()
                             ]
                             + SWidgetSwitcher::Slot()
                             [
@@ -258,8 +330,32 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
                             .Padding(0.0f, 0.0f, 8.0f, 0.0f)
                             [
                                 SNew(SButton)
-                                .Text(FText::FromString(TEXT("RESET EDITS")))
-                                .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleReset)
+                                .Text_UObject(this, &UDiscGolfCharacterCreatorWidget::GetCurrentLockText)
+                                .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleToggleCurrentCategoryLock)
+                            ]
+                            + SHorizontalBox::Slot()
+                            .AutoWidth()
+                            .Padding(0.0f, 0.0f, 8.0f, 0.0f)
+                            [
+                                SNew(SButton)
+                                .Text(FText::FromString(TEXT("RESET CURRENT TAB")))
+                                .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleResetCurrentTab)
+                            ]
+                            + SHorizontalBox::Slot()
+                            .AutoWidth()
+                            .Padding(0.0f, 0.0f, 8.0f, 0.0f)
+                            [
+                                SNew(SButton)
+                                .Text(FText::FromString(TEXT("RESET ALL")))
+                                .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleResetAll)
+                            ]
+                            + SHorizontalBox::Slot()
+                            .AutoWidth()
+                            .Padding(0.0f, 0.0f, 8.0f, 0.0f)
+                            [
+                                SNew(SButton)
+                                .Text(FText::FromString(TEXT("RANDOMIZE")))
+                                .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleRandomize)
                             ]
                             + SHorizontalBox::Slot()
                             .FillWidth(1.0f)
@@ -278,7 +374,7 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
                             .AutoWidth()
                             [
                                 SNew(SButton)
-                                .Text(FText::FromString(TEXT("APPLY & SAVE")))
+                                .Text(FText::FromString(TEXT("APPLY / SAVE & CONTINUE")))
                                 .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleApply)
                             ]
                         ]
@@ -310,6 +406,15 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
                         SNew(STextBlock)
                         .Text(FText::FromString(TEXT("The existing possessed golfer is the preview subject. No duplicate player is spawned.")))
                         .ColorAndOpacity(Muted)
+                        .AutoWrapText(true)
+                    ]
+                    + SVerticalBox::Slot()
+                    .AutoHeight()
+                    .Padding(0.0f, 0.0f, 0.0f, 14.0f)
+                    [
+                        SNew(STextBlock)
+                        .Text(FText::FromString(TEXT("PROXY / DO NOT SHIP. Five face targets are visibly prepared; fifteen remain data/UI mapped for production art.")))
+                        .ColorAndOpacity(Warning)
                         .AutoWrapText(true)
                     ]
                     + SVerticalBox::Slot()
@@ -384,10 +489,26 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
                         ]
                         + SHorizontalBox::Slot()
                         .AutoWidth()
+                        .Padding(0.0f, 0.0f, 8.0f, 0.0f)
                         [
                             SNew(SButton)
                             .Text(FText::FromString(TEXT("ROTATE RIGHT")))
                             .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleRotateRight)
+                        ]
+                        + SHorizontalBox::Slot()
+                        .AutoWidth()
+                        .Padding(0.0f, 0.0f, 8.0f, 0.0f)
+                        [
+                            SNew(SButton)
+                            .Text(FText::FromString(TEXT("ZOOM IN")))
+                            .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleZoomIn)
+                        ]
+                        + SHorizontalBox::Slot()
+                        .AutoWidth()
+                        [
+                            SNew(SButton)
+                            .Text(FText::FromString(TEXT("ZOOM OUT")))
+                            .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleZoomOut)
                         ]
                     ]
                     + SVerticalBox::Slot()
@@ -413,11 +534,434 @@ void UDiscGolfCharacterCreatorWidget::ReleaseSlateResources(bool bReleaseChildre
     RootSlateWidget.Reset();
     InitialFocusButton.Reset();
     CreatorTabSwitcher.Reset();
+    CreatorTabButtons.Reset();
     OutfitItemList.Reset();
     OutfitVariantList.Reset();
     OutfitCategoryButtons.Reset();
     OutfitItemButtons.Reset();
     OutfitVariantButtons.Reset();
+}
+
+TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::BuildIdentityTab()
+{
+    using namespace DiscGolfCharacterCreatorStyle;
+    return SNew(SScrollBox)
+        + SScrollBox::Slot()
+        [
+            SNew(SVerticalBox)
+            + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 4.0f, 0.0f, 8.0f)
+            [
+                SNew(STextBlock)
+                .Text(FText::FromString(TEXT("IDENTITY")))
+                .ColorAndOpacity(Signal)
+                .Font(FCoreStyle::GetDefaultFontStyle("Bold", 16))
+            ]
+            + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 3.0f)
+            [
+                SNew(STextBlock)
+                .Text(FText::FromString(TEXT("DISPLAY NAME  //  32 CHARACTERS MAX")))
+                .ColorAndOpacity(Paper)
+            ]
+            + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 3.0f, 0.0f, 12.0f)
+            [
+                SNew(SEditableTextBox)
+                .Text_Lambda([this]()
+                {
+                    return FText::FromString(DraftCustomization.Identity.DisplayName);
+                })
+                .OnTextCommitted_UObject(
+                    this,
+                    &UDiscGolfCharacterCreatorWidget::HandleDisplayNameCommitted)
+            ]
+            + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 3.0f)
+            [
+                SNew(STextBlock)
+                .Text(FText::FromString(TEXT("HANDEDNESS")))
+                .ColorAndOpacity(Paper)
+            ]
+            + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 3.0f, 0.0f, 12.0f)
+            [
+                SNew(SHorizontalBox)
+                + SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 8.0f, 0.0f)
+                [
+                    SNew(SButton)
+                    .Text_Lambda([this]()
+                    {
+                        return FText::FromString(
+                            DraftCustomization.Identity.Handedness == EDGHandedness::Right
+                                ? TEXT("● RIGHT") : TEXT("RIGHT"));
+                    })
+                    .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleRightHanded)
+                ]
+                + SHorizontalBox::Slot().AutoWidth()
+                [
+                    SNew(SButton)
+                    .Text_Lambda([this]()
+                    {
+                        return FText::FromString(
+                            DraftCustomization.Identity.Handedness == EDGHandedness::Left
+                                ? TEXT("● LEFT") : TEXT("LEFT"));
+                    })
+                    .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleLeftHanded)
+                ]
+            ]
+            + SVerticalBox::Slot().AutoHeight()
+            [
+                BuildCosmeticOptionGroup(
+                    FText::FromString(TEXT("VOICE ID  //  DATA HOOK ONLY")),
+                    EDGCosmeticKind::Voice)
+            ]
+            + SVerticalBox::Slot().AutoHeight()
+            [
+                BuildCosmeticOptionGroup(
+                    FText::FromString(TEXT("PRONOUN SET")),
+                    EDGCosmeticKind::PronounSet)
+            ]
+        ];
+}
+
+TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::BuildBodyTab()
+{
+    using namespace DiscGolfCharacterCreatorStyle;
+    return SNew(SScrollBox)
+        + SScrollBox::Slot()
+        [
+            SNew(SVerticalBox)
+            + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 4.0f, 0.0f, 8.0f)
+            [
+                SNew(STextBlock)
+                .Text(FText::FromString(TEXT("BODY  //  ACCEPTED CONTROL RIG LIMITS")))
+                .ColorAndOpacity(Signal)
+                .Font(FCoreStyle::GetDefaultFontStyle("Bold", 16))
+            ]
+            + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 10.0f)
+            [
+                SNew(SHorizontalBox)
+                + SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 8.0f, 0.0f)
+                [
+                    SNew(SButton)
+                    .Text(FText::FromString(TEXT("BASELINE")))
+                    .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandlePreset, FName(TEXT("Baseline")))
+                ]
+                + SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 8.0f, 0.0f)
+                [
+                    SNew(SButton)
+                    .Text(FText::FromString(TEXT("SHORT COMPACT")))
+                    .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandlePreset, FName(TEXT("ShortCompact")))
+                ]
+                + SHorizontalBox::Slot().AutoWidth()
+                [
+                    SNew(SButton)
+                    .Text(FText::FromString(TEXT("TALL / LONG ARMS")))
+                    .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandlePreset, FName(TEXT("TallLongArms")))
+                ]
+            ]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("HEIGHT")), ECreatorField::Height, 150.0f, 210.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("WINGSPAN")), ECreatorField::Wingspan, 0.92f, 1.08f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("SHOULDER WIDTH")), ECreatorField::ShoulderWidth, 0.92f, 1.08f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("TORSO LENGTH")), ECreatorField::TorsoLength, 0.94f, 1.06f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("LEG LENGTH")), ECreatorField::LegLength, 0.94f, 1.06f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("HAND SIZE")), ECreatorField::HandScale, 0.94f, 1.06f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("BODY MASS")), ECreatorField::Mass, 45.0f, 160.0f)]
+            + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 10.0f, 0.0f, 4.0f)
+            [
+                SNew(STextBlock)
+                .Text(FText::FromString(TEXT("BODY BUILD")))
+                .ColorAndOpacity(Paper)
+                .Font(FCoreStyle::GetDefaultFontStyle("Bold", 13))
+            ]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("MUSCULARITY")), ECreatorField::Muscularity, 0.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("BODY FAT")), ECreatorField::BodyFat, 0.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("CHEST")), ECreatorField::Chest, -1.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("WAIST")), ECreatorField::Waist, -1.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("HIPS")), ECreatorField::Hips, -1.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("ARMS")), ECreatorField::Arms, -1.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("LEGS")), ECreatorField::Legs, -1.0f, 1.0f)]
+        ];
+}
+
+TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::BuildFaceTab()
+{
+    using namespace DiscGolfCharacterCreatorStyle;
+    TSharedRef<SVerticalBox> Controls = SNew(SVerticalBox);
+    Controls->AddSlot().AutoHeight().Padding(0.0f, 4.0f, 0.0f, 5.0f)
+    [
+        SNew(STextBlock)
+        .Text(FText::FromString(TEXT("FACE  //  20-CHANNEL CONTRACT")))
+        .ColorAndOpacity(Signal)
+        .Font(FCoreStyle::GetDefaultFontStyle("Bold", 16))
+    ];
+    Controls->AddSlot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 8.0f)
+    [
+        SNew(STextBlock)
+        .Text(FText::FromString(TEXT("Five channels visibly deform this generated proxy. The other fifteen are persisted and UI-mapped for later production art.")))
+        .ColorAndOpacity(Warning)
+        .AutoWrapText(true)
+    ];
+    Controls->AddSlot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 8.0f)
+    [
+        SNew(SHorizontalBox)
+        + SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 8.0f, 0.0f)
+        [
+            SNew(SButton).Text(FText::FromString(TEXT("DEFAULT")))
+            .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleFacePreset, FName(TEXT("face_default")))
+        ]
+        + SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 8.0f, 0.0f)
+        [
+            SNew(SButton).Text(FText::FromString(TEXT("SQUARE")))
+            .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleFacePreset, FName(TEXT("face_square")))
+        ]
+        + SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, 8.0f, 0.0f)
+        [
+            SNew(SButton).Text(FText::FromString(TEXT("NARROW")))
+            .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleFacePreset, FName(TEXT("face_narrow")))
+        ]
+        + SHorizontalBox::Slot().AutoWidth()
+        [
+            SNew(SButton).Text(FText::FromString(TEXT("ROUND")))
+            .OnClicked_UObject(this, &UDiscGolfCharacterCreatorWidget::HandleFacePreset, FName(TEXT("face_round")))
+        ]
+    ];
+    for (FName MorphKey : DiscGolfFullCharacterRuntime::GetFaceMorphKeys())
+    {
+        Controls->AddSlot().AutoHeight()[BuildFaceSliderRow(MorphKey)];
+    }
+    return SNew(SScrollBox) + SScrollBox::Slot()[Controls];
+}
+
+TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::BuildHairTab()
+{
+    using namespace DiscGolfCharacterCreatorStyle;
+    static const TArray<FLinearColor> HairColors = {
+        FLinearColor(0.03f, 0.02f, 0.015f), FLinearColor(0.16f, 0.07f, 0.025f),
+        FLinearColor(0.42f, 0.22f, 0.08f), FLinearColor(0.72f, 0.55f, 0.30f),
+        FLinearColor(0.56f, 0.08f, 0.03f), FLinearColor(0.58f, 0.58f, 0.60f) };
+    return SNew(SScrollBox) + SScrollBox::Slot()
+        [
+            SNew(SVerticalBox)
+            + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 4.0f, 0.0f, 4.0f)
+            [
+                SNew(STextBlock).Text(FText::FromString(TEXT("HAIR  //  GENERATED PROXY ATTACHMENTS")))
+                .ColorAndOpacity(Signal).Font(FCoreStyle::GetDefaultFontStyle("Bold", 16))
+            ]
+            + SVerticalBox::Slot().AutoHeight()[BuildCosmeticOptionGroup(FText::FromString(TEXT("HAIR STYLE")), EDGCosmeticKind::Hair)]
+            + SVerticalBox::Slot().AutoHeight()[BuildColorSwatches(FText::FromString(TEXT("HAIR COLOR")), EColorField::Hair, HairColors)]
+            + SVerticalBox::Slot().AutoHeight()[BuildCosmeticOptionGroup(FText::FromString(TEXT("FACIAL HAIR")), EDGCosmeticKind::FacialHair)]
+            + SVerticalBox::Slot().AutoHeight()[BuildColorSwatches(FText::FromString(TEXT("FACIAL HAIR COLOR")), EColorField::FacialHair, HairColors)]
+            + SVerticalBox::Slot().AutoHeight()[BuildCosmeticOptionGroup(FText::FromString(TEXT("EYEBROWS")), EDGCosmeticKind::Eyebrow)]
+            + SVerticalBox::Slot().AutoHeight()[BuildColorSwatches(FText::FromString(TEXT("EYEBROW COLOR")), EColorField::Eyebrow, HairColors)]
+        ];
+}
+
+TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::BuildAppearanceTab()
+{
+    using namespace DiscGolfCharacterCreatorStyle;
+    static const TArray<FLinearColor> SkinColors = {
+        FLinearColor(0.94f, 0.73f, 0.57f), FLinearColor(0.76f, 0.51f, 0.35f),
+        FLinearColor(0.55f, 0.35f, 0.24f), FLinearColor(0.34f, 0.20f, 0.13f),
+        FLinearColor(0.17f, 0.09f, 0.055f) };
+    static const TArray<FLinearColor> EyeColors = {
+        FLinearColor(0.12f, 0.22f, 0.17f), FLinearColor(0.10f, 0.22f, 0.38f),
+        FLinearColor(0.27f, 0.16f, 0.08f), FLinearColor(0.38f, 0.34f, 0.15f),
+        FLinearColor(0.42f, 0.44f, 0.46f) };
+    return SNew(SScrollBox) + SScrollBox::Slot()
+        [
+            SNew(SVerticalBox)
+            + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 4.0f, 0.0f, 4.0f)
+            [
+                SNew(STextBlock).Text(FText::FromString(TEXT("APPEARANCE  //  HEAD PROXY MATERIAL")))
+                .ColorAndOpacity(Signal).Font(FCoreStyle::GetDefaultFontStyle("Bold", 16))
+            ]
+            + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 8.0f)
+            [
+                SNew(STextBlock)
+                .Text(FText::FromString(TEXT("The accepted master body has no editable surface slot. Skin and eye swatches are visibly proven on the modular head only.")))
+                .ColorAndOpacity(Warning).AutoWrapText(true)
+            ]
+            + SVerticalBox::Slot().AutoHeight()[BuildColorSwatches(FText::FromString(TEXT("SKIN TONE")), EColorField::Skin, SkinColors)]
+            + SVerticalBox::Slot().AutoHeight()[BuildColorSwatches(FText::FromString(TEXT("EYE COLOR")), EColorField::Eye, EyeColors)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("COMPLEXION")), ECreatorField::Complexion, 0.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("FRECKLES")), ECreatorField::Freckles, 0.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("SUN EXPOSURE")), ECreatorField::SunExposure, 0.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildCosmeticOptionGroup(FText::FromString(TEXT("SCAR HOOK")), EDGCosmeticKind::Scar)]
+            + SVerticalBox::Slot().AutoHeight()[BuildCosmeticOptionGroup(FText::FromString(TEXT("TATTOO HOOK")), EDGCosmeticKind::Tattoo)]
+        ];
+}
+
+TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::BuildThrowStyleTab()
+{
+    using namespace DiscGolfCharacterCreatorStyle;
+    return SNew(SScrollBox) + SScrollBox::Slot()
+        [
+            SNew(SVerticalBox)
+            + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 4.0f, 0.0f, 4.0f)
+            [
+                SNew(STextBlock).Text(FText::FromString(TEXT("THROW STYLE  //  PRESENTATION ONLY")))
+                .ColorAndOpacity(Signal).Font(FCoreStyle::GetDefaultFontStyle("Bold", 16))
+            ]
+            + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 8.0f)
+            [
+                SNew(STextBlock)
+                .Text(FText::FromString(TEXT("These values shape animation presentation. Power, spin, aim, release, disc physics and flight remain authoritative gameplay systems.")))
+                .ColorAndOpacity(Warning).AutoWrapText(true)
+            ]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("RUN-UP INTENSITY")), ECreatorField::RunUp, 0.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("REACHBACK")), ECreatorField::ReachBack, 0.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("TORSO ROTATION")), ECreatorField::TorsoRotation, 0.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("BRACE INTENSITY")), ECreatorField::Brace, 0.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("EXPLOSIVENESS")), ECreatorField::Explosiveness, 0.0f, 1.0f)]
+            + SVerticalBox::Slot().AutoHeight()[BuildSliderRow(FText::FromString(TEXT("FOLLOW-THROUGH")), ECreatorField::FollowThrough, 0.0f, 1.0f)]
+        ];
+}
+
+TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::BuildFaceSliderRow(FName MorphKey)
+{
+    const TWeakObjectPtr<UDiscGolfCharacterCreatorWidget> WeakThis(this);
+    const bool bProxyVisible =
+        DiscGolfFullCharacterRuntime::GetVisibleProxyFaceMorphKeys().Contains(MorphKey);
+    return SNew(SHorizontalBox)
+        + SHorizontalBox::Slot().FillWidth(0.42f).VAlign(VAlign_Center).Padding(0.0f, 4.0f, 12.0f, 4.0f)
+        [
+            SNew(STextBlock)
+            .Text(FText::Format(
+                FText::FromString(bProxyVisible ? TEXT("{0}  [PROXY VISIBLE]") : TEXT("{0}  [DATA / UI]")),
+                DiscGolfFullCharacterRuntime::GetFaceMorphDisplayName(MorphKey)))
+            .ColorAndOpacity(bProxyVisible
+                ? DiscGolfCharacterCreatorStyle::Paper
+                : DiscGolfCharacterCreatorStyle::Muted)
+        ]
+        + SHorizontalBox::Slot().FillWidth(0.46f).VAlign(VAlign_Center).Padding(0.0f, 4.0f)
+        [
+            SNew(SSlider)
+            .Value_Lambda([WeakThis, MorphKey]()
+            {
+                const UDiscGolfCharacterCreatorWidget* Self = WeakThis.Get();
+                const float* Value = Self
+                    ? Self->DraftCustomization.Face.MorphValues.Find(MorphKey) : nullptr;
+                return (FMath::Clamp(Value ? *Value : 0.0f, -1.0f, 1.0f) + 1.0f) * 0.5f;
+            })
+            .OnValueChanged_Lambda([WeakThis, MorphKey](float NormalizedValue)
+            {
+                if (UDiscGolfCharacterCreatorWidget* Self = WeakThis.Get())
+                {
+                    Self->HandleFaceSliderChanged(NormalizedValue, MorphKey);
+                }
+            })
+        ]
+        + SHorizontalBox::Slot().FillWidth(0.12f).HAlign(HAlign_Right).VAlign(VAlign_Center)
+        [
+            SNew(STextBlock)
+            .Text_Lambda([WeakThis, MorphKey]()
+            {
+                const UDiscGolfCharacterCreatorWidget* Self = WeakThis.Get();
+                const float* Value = Self
+                    ? Self->DraftCustomization.Face.MorphValues.Find(MorphKey) : nullptr;
+                return FText::FromString(FString::Printf(TEXT("%+.2f"), Value ? *Value : 0.0f));
+            })
+            .ColorAndOpacity(DiscGolfCharacterCreatorStyle::Signal)
+        ];
+}
+
+TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::BuildCosmeticOptionGroup(
+    const FText& Label,
+    EDGCosmeticKind Kind)
+{
+    using namespace DiscGolfCharacterCreatorStyle;
+    TSharedRef<SWrapBox> OptionsBox = SNew(SWrapBox).UseAllottedSize(true);
+    const ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get();
+    const TArray<FDiscGolfCosmeticOption> Options = Controller
+        ? Controller->GetCharacterCreatorCosmeticOptions(Kind)
+        : TArray<FDiscGolfCosmeticOption>();
+    for (const FDiscGolfCosmeticOption& Option : Options)
+    {
+        OptionsBox->AddSlot().Padding(FMargin(0.0f, 0.0f, 6.0f, 6.0f))
+        [
+            SNew(SButton)
+            .IsEnabled(Option.bCompatible)
+            .Text_Lambda([this, Kind, ItemId = Option.ItemId, Name = Option.DisplayName]()
+            {
+                const FString Prefix = GetSelectedCosmeticId(Kind) == ItemId
+                    ? TEXT("● ") : TEXT("");
+                return FText::FromString(Prefix + Name.ToString());
+            })
+            .ToolTipText(FText::FromString(Option.CompatibilityReason))
+            .OnClicked_UObject(
+                this,
+                &UDiscGolfCharacterCreatorWidget::HandleCosmeticSelection,
+                Kind,
+                Option.ItemId)
+        ];
+    }
+    if (Options.IsEmpty())
+    {
+        OptionsBox->AddSlot()
+        [
+            SNew(STextBlock)
+            .Text(FText::FromString(TEXT("Catalog option unavailable; safe default retained.")))
+            .ColorAndOpacity(Warning)
+        ];
+    }
+    return SNew(SVerticalBox)
+        + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 8.0f, 0.0f, 4.0f)
+        [
+            SNew(STextBlock).Text(Label).ColorAndOpacity(Paper)
+            .Font(FCoreStyle::GetDefaultFontStyle("Bold", 13))
+        ]
+        + SVerticalBox::Slot().AutoHeight()[OptionsBox];
+}
+
+TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::BuildColorSwatches(
+    const FText& Label,
+    EColorField Field,
+    TConstArrayView<FLinearColor> Colors)
+{
+    using namespace DiscGolfCharacterCreatorStyle;
+    TSharedRef<SHorizontalBox> Swatches = SNew(SHorizontalBox);
+    for (const FLinearColor Color : Colors)
+    {
+        Swatches->AddSlot().AutoWidth().Padding(0.0f, 0.0f, 8.0f, 0.0f)
+        [
+            SNew(SButton)
+            .ContentPadding(FMargin(3.0f))
+            .ToolTipText(FText::FromString(Color.ToFColor(true).ToHex()))
+            .OnClicked_Lambda([this, Field, Color]()
+            {
+                return HandleColorSelection(Field, Color);
+            })
+            [
+                SNew(SBox).WidthOverride(42.0f).HeightOverride(26.0f)
+                [
+                    SNew(SBorder)
+                    .BorderImage(FAppStyle::GetBrush("WhiteBrush"))
+                    .BorderBackgroundColor(Color)
+                ]
+            ]
+        ];
+    }
+    return SNew(SVerticalBox)
+        + SVerticalBox::Slot().AutoHeight().Padding(0.0f, 8.0f, 0.0f, 4.0f)
+        [
+            SNew(STextBlock)
+            .Text_Lambda([this, Label, Field]()
+            {
+                FLinearColor Current = FLinearColor::Black;
+                switch (Field)
+                {
+                    case EColorField::Hair: Current = DraftCustomization.Hair.HairColor; break;
+                    case EColorField::FacialHair: Current = DraftCustomization.Hair.FacialHairColor; break;
+                    case EColorField::Eyebrow: Current = DraftCustomization.Hair.EyebrowColor; break;
+                    case EColorField::Skin: Current = DraftCustomization.Appearance.SkinTone; break;
+                    case EColorField::Eye: Current = DraftCustomization.Appearance.EyeColor; break;
+                    default: break;
+                }
+                return FText::Format(
+                    FText::FromString(TEXT("{0}  //  SELECTED #{1}")),
+                    Label,
+                    FText::FromString(Current.ToFColor(true).ToHex()));
+            })
+            .ColorAndOpacity(Paper)
+        ]
+        + SVerticalBox::Slot().AutoHeight()[Swatches];
 }
 
 TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::BuildOutfitTab()
@@ -788,12 +1332,22 @@ float UDiscGolfCharacterCreatorWidget::GetFieldValue(ECreatorField Field) const
         case ECreatorField::LegLength: return DraftBody.LegLengthScale;
         case ECreatorField::HandScale: return DraftBody.HandScale;
         case ECreatorField::Mass: return DraftBody.MassKg;
+        case ECreatorField::Muscularity: return DraftCustomization.BodyBuild.Muscularity;
+        case ECreatorField::BodyFat: return DraftCustomization.BodyBuild.BodyFat;
+        case ECreatorField::Chest: return DraftCustomization.BodyBuild.Chest;
+        case ECreatorField::Waist: return DraftCustomization.BodyBuild.Waist;
+        case ECreatorField::Hips: return DraftCustomization.BodyBuild.Hips;
+        case ECreatorField::Arms: return DraftCustomization.BodyBuild.Arms;
+        case ECreatorField::Legs: return DraftCustomization.BodyBuild.Legs;
         case ECreatorField::RunUp: return DraftThrowStyle.RunUpIntensity;
         case ECreatorField::ReachBack: return DraftThrowStyle.ReachBackAmount;
         case ECreatorField::TorsoRotation: return DraftThrowStyle.TorsoRotation;
         case ECreatorField::Brace: return DraftThrowStyle.BraceIntensity;
         case ECreatorField::Explosiveness: return DraftThrowStyle.Explosiveness;
         case ECreatorField::FollowThrough: return DraftThrowStyle.FollowThrough;
+        case ECreatorField::Complexion: return DraftCustomization.Appearance.Complexion;
+        case ECreatorField::Freckles: return DraftCustomization.Appearance.Freckles;
+        case ECreatorField::SunExposure: return DraftCustomization.Appearance.SunExposure;
         default: return 0.0f;
     }
 }
@@ -809,14 +1363,25 @@ void UDiscGolfCharacterCreatorWidget::SetFieldValue(ECreatorField Field, float V
         case ECreatorField::LegLength: DraftBody.LegLengthScale = Value; break;
         case ECreatorField::HandScale: DraftBody.HandScale = Value; break;
         case ECreatorField::Mass: DraftBody.MassKg = Value; break;
+        case ECreatorField::Muscularity: DraftCustomization.BodyBuild.Muscularity = Value; break;
+        case ECreatorField::BodyFat: DraftCustomization.BodyBuild.BodyFat = Value; break;
+        case ECreatorField::Chest: DraftCustomization.BodyBuild.Chest = Value; break;
+        case ECreatorField::Waist: DraftCustomization.BodyBuild.Waist = Value; break;
+        case ECreatorField::Hips: DraftCustomization.BodyBuild.Hips = Value; break;
+        case ECreatorField::Arms: DraftCustomization.BodyBuild.Arms = Value; break;
+        case ECreatorField::Legs: DraftCustomization.BodyBuild.Legs = Value; break;
         case ECreatorField::RunUp: DraftThrowStyle.RunUpIntensity = Value; break;
         case ECreatorField::ReachBack: DraftThrowStyle.ReachBackAmount = Value; break;
         case ECreatorField::TorsoRotation: DraftThrowStyle.TorsoRotation = Value; break;
         case ECreatorField::Brace: DraftThrowStyle.BraceIntensity = Value; break;
         case ECreatorField::Explosiveness: DraftThrowStyle.Explosiveness = Value; break;
         case ECreatorField::FollowThrough: DraftThrowStyle.FollowThrough = Value; break;
+        case ECreatorField::Complexion: DraftCustomization.Appearance.Complexion = Value; break;
+        case ECreatorField::Freckles: DraftCustomization.Appearance.Freckles = Value; break;
+        case ECreatorField::SunExposure: DraftCustomization.Appearance.SunExposure = Value; break;
         default: break;
     }
+    SyncLegacyDraftSlices();
 }
 
 FText UDiscGolfCharacterCreatorWidget::GetFieldValueText(ECreatorField Field) const
@@ -853,11 +1418,28 @@ void UDiscGolfCharacterCreatorWidget::HandleSliderChanged(
 
 void UDiscGolfCharacterCreatorWidget::SubmitPreview()
 {
+    SyncLegacyDraftSlices();
     if (ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get())
     {
-        Controller->PreviewCharacterCreatorDraft(DraftBody, DraftThrowStyle, DraftHandedness);
+        if (Controller->PreviewFullCharacterCreatorDraft(DraftCustomization))
+        {
+            SetDraftCustomization(Controller->GetCharacterCreatorDraftCustomization());
+        }
     }
     RebuildOutfitLists();
+}
+
+void UDiscGolfCharacterCreatorWidget::SyncLegacyDraftSlices()
+{
+    DraftCustomization.Body = DraftBody;
+    DraftCustomization.ThrowStyle = DraftThrowStyle;
+    DraftCustomization.Identity.Handedness = DraftHandedness;
+    DraftCustomization.Outfit = DraftOutfit;
+    DiscGolfFullCharacterRuntime::NormalizeForPersistence(DraftCustomization);
+    DraftBody = DraftCustomization.Body;
+    DraftThrowStyle = DraftCustomization.ThrowStyle;
+    DraftHandedness = DraftCustomization.Identity.Handedness;
+    DraftOutfit = DraftCustomization.Outfit;
 }
 
 FReply UDiscGolfCharacterCreatorWidget::HandleRightHanded()
@@ -883,7 +1465,7 @@ FReply UDiscGolfCharacterCreatorWidget::HandlePreset(FName PresetId)
         EDGHandedness Handedness = EDGHandedness::Right;
         if (Controller->LoadCharacterCreatorPreset(PresetId, Body, ThrowStyle, Handedness))
         {
-            SetDraftProfile(Body, ThrowStyle, Handedness);
+            SetDraftCustomization(Controller->GetCharacterCreatorDraftCustomization());
         }
     }
     return FReply::Handled();
@@ -898,9 +1480,56 @@ FReply UDiscGolfCharacterCreatorWidget::HandleReset()
         EDGHandedness Handedness = EDGHandedness::Right;
         if (Controller->ResetCharacterCreatorDraft(Body, ThrowStyle, Handedness))
         {
-            SetDraftProfile(Body, ThrowStyle, Handedness);
+            SetDraftCustomization(Controller->GetCharacterCreatorDraftCustomization());
         }
     }
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleResetCurrentTab()
+{
+    if (ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get())
+    {
+        FDGFullCharacterCustomization Updated;
+        if (Controller->ResetCharacterCreatorCurrentTab(
+                ActiveCreatorTabIndex, Updated))
+        {
+            SetDraftCustomization(Updated);
+        }
+    }
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleResetAll()
+{
+    if (ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get())
+    {
+        FDGFullCharacterCustomization Updated;
+        if (Controller->ResetCharacterCreatorAll(Updated))
+        {
+            SetDraftCustomization(Updated);
+        }
+    }
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleRandomize()
+{
+    if (ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get())
+    {
+        FDGFullCharacterCustomization Updated;
+        if (Controller->RandomizeCharacterCreatorDraft(RandomizeLocks, Updated))
+        {
+            SetDraftCustomization(Updated);
+        }
+    }
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleToggleCurrentCategoryLock()
+{
+    SetCurrentCategoryLocked(!IsCurrentCategoryLocked());
+    InvalidateLayoutAndVolatility();
     return FReply::Handled();
 }
 
@@ -908,7 +1537,8 @@ FReply UDiscGolfCharacterCreatorWidget::HandleApply()
 {
     if (ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get())
     {
-        Controller->ApplyCharacterCreatorDraft(DraftBody, DraftThrowStyle, DraftHandedness);
+        SyncLegacyDraftSlices();
+        Controller->ApplyFullCharacterCreatorDraft(DraftCustomization);
     }
     return FReply::Handled();
 }
@@ -924,8 +1554,8 @@ FReply UDiscGolfCharacterCreatorWidget::HandleCancel()
 
 FReply UDiscGolfCharacterCreatorWidget::HandleCreatorTab(int32 TabIndex)
 {
-    ActiveCreatorTabIndex = FMath::Clamp(TabIndex, 0, 1);
-    if (ActiveCreatorTabIndex == 1)
+    ActiveCreatorTabIndex = FMath::Clamp(TabIndex, 0, 6);
+    if (ActiveCreatorTabIndex == 6)
     {
         RebuildOutfitLists();
     }
@@ -965,7 +1595,9 @@ FReply UDiscGolfCharacterCreatorWidget::HandleOutfitItem(FName ItemId)
         if (Controller->PreviewCharacterCreatorOutfitSelection(
                 SelectedOutfitSlot, ItemId, VariantId, Updated))
         {
+            SetDraftCustomization(Controller->GetCharacterCreatorDraftCustomization());
             DraftOutfit = Updated;
+            DraftCustomization.Outfit = Updated;
             PendingOutfitFocusRequest = EOutfitFocusRequest::CurrentItem;
         }
     }
@@ -988,7 +1620,9 @@ FReply UDiscGolfCharacterCreatorWidget::HandleOutfitVariant(FName VariantId)
         if (Controller->PreviewCharacterCreatorOutfitSelection(
                 SelectedOutfitSlot, Entry->ItemId, VariantId, Updated))
         {
+            SetDraftCustomization(Controller->GetCharacterCreatorDraftCustomization());
             DraftOutfit = Updated;
+            DraftCustomization.Outfit = Updated;
             PendingOutfitFocusRequest = EOutfitFocusRequest::CurrentVariant;
         }
     }
@@ -1003,7 +1637,9 @@ FReply UDiscGolfCharacterCreatorWidget::HandleResetOutfit()
         FDGOutfitLoadout Updated;
         if (Controller->ResetCharacterCreatorOutfit(Updated))
         {
+            SetDraftCustomization(Controller->GetCharacterCreatorDraftCustomization());
             DraftOutfit = Updated;
+            DraftCustomization.Outfit = Updated;
         }
     }
     RebuildOutfitLists();
@@ -1017,7 +1653,9 @@ FReply UDiscGolfCharacterCreatorWidget::HandleRandomizeOutfit()
         FDGOutfitLoadout Updated;
         if (Controller->RandomizeCharacterCreatorOutfit(Updated))
         {
+            SetDraftCustomization(Controller->GetCharacterCreatorDraftCustomization());
             DraftOutfit = Updated;
+            DraftCustomization.Outfit = Updated;
         }
     }
     RebuildOutfitLists();
@@ -1042,12 +1680,156 @@ FReply UDiscGolfCharacterCreatorWidget::HandleRotateRight()
     return FReply::Handled();
 }
 
+FReply UDiscGolfCharacterCreatorWidget::HandleZoomIn()
+{
+    if (ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get())
+    {
+        Controller->ZoomCharacterCreatorPreview(-40.0f);
+    }
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleZoomOut()
+{
+    if (ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get())
+    {
+        Controller->ZoomCharacterCreatorPreview(40.0f);
+    }
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleFacePreset(FName PresetId)
+{
+    if (ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get())
+    {
+        FDGFullCharacterCustomization Updated;
+        if (Controller->ApplyCharacterCreatorFacePreset(PresetId, Updated))
+        {
+            SetDraftCustomization(Updated);
+        }
+    }
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleCosmeticSelection(
+    EDGCosmeticKind Kind,
+    FName ItemId)
+{
+    if (ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get())
+    {
+        FDGFullCharacterCustomization Updated;
+        if (Controller->SelectCharacterCreatorCosmetic(Kind, ItemId, Updated))
+        {
+            SetDraftCustomization(Updated);
+        }
+    }
+    return FReply::Handled();
+}
+
+FReply UDiscGolfCharacterCreatorWidget::HandleColorSelection(
+    EColorField Field,
+    FLinearColor Color)
+{
+    Color.A = 1.0f;
+    switch (Field)
+    {
+        case EColorField::Hair: DraftCustomization.Hair.HairColor = Color; break;
+        case EColorField::FacialHair: DraftCustomization.Hair.FacialHairColor = Color; break;
+        case EColorField::Eyebrow: DraftCustomization.Hair.EyebrowColor = Color; break;
+        case EColorField::Skin: DraftCustomization.Appearance.SkinTone = Color; break;
+        case EColorField::Eye: DraftCustomization.Appearance.EyeColor = Color; break;
+        default: break;
+    }
+    SubmitPreview();
+    return FReply::Handled();
+}
+
+void UDiscGolfCharacterCreatorWidget::HandleDisplayNameCommitted(
+    const FText& Text,
+    ETextCommit::Type CommitType)
+{
+    if (CommitType == ETextCommit::Default)
+    {
+        return;
+    }
+    DraftCustomization.Identity.DisplayName = Text.ToString();
+    SubmitPreview();
+}
+
+void UDiscGolfCharacterCreatorWidget::HandleFaceSliderChanged(
+    float NormalizedValue,
+    FName MorphKey)
+{
+    if (!DiscGolfFullCharacterRuntime::GetFaceMorphKeys().Contains(MorphKey))
+    {
+        return;
+    }
+    DraftCustomization.Face.MorphValues.FindOrAdd(MorphKey) =
+        FMath::Lerp(-1.0f, 1.0f, FMath::Clamp(NormalizedValue, 0.0f, 1.0f));
+    SubmitPreview();
+}
+
+FName UDiscGolfCharacterCreatorWidget::GetSelectedCosmeticId(
+    EDGCosmeticKind Kind) const
+{
+    switch (Kind)
+    {
+        case EDGCosmeticKind::Hair: return DraftCustomization.Hair.HairStyleId;
+        case EDGCosmeticKind::FacialHair: return DraftCustomization.Hair.FacialHairId;
+        case EDGCosmeticKind::Eyebrow: return DraftCustomization.Hair.EyebrowId;
+        case EDGCosmeticKind::Scar: return DraftCustomization.Appearance.ScarId;
+        case EDGCosmeticKind::Tattoo:
+            return DraftCustomization.Appearance.TattooIds.IsEmpty()
+                ? FName(TEXT("tattoo_none"))
+                : DraftCustomization.Appearance.TattooIds[0];
+        case EDGCosmeticKind::Voice: return DraftCustomization.Identity.VoiceId;
+        case EDGCosmeticKind::PronounSet: return DraftCustomization.Identity.PronounSetId;
+        default: return NAME_None;
+    }
+}
+
 FText UDiscGolfCharacterCreatorWidget::GetStatusText() const
 {
     const ADiscGolfTourPlayerController* Controller = OwningDiscGolfController.Get();
     return FText::FromString(Controller
         ? Controller->GetCharacterCreatorStatusText()
         : FString(TEXT("Character creator controller unavailable.")));
+}
+
+FText UDiscGolfCharacterCreatorWidget::GetCurrentLockText() const
+{
+    return FText::FromString(IsCurrentCategoryLocked()
+        ? TEXT("UNLOCK TAB") : TEXT("LOCK TAB"));
+}
+
+bool UDiscGolfCharacterCreatorWidget::IsCurrentCategoryLocked() const
+{
+    switch (FMath::Clamp(ActiveCreatorTabIndex, 0, 6))
+    {
+        case 0: return RandomizeLocks.bIdentity;
+        case 1: return RandomizeLocks.bBody;
+        case 2: return RandomizeLocks.bFace;
+        case 3: return RandomizeLocks.bHair;
+        case 4: return RandomizeLocks.bAppearance;
+        case 5: return RandomizeLocks.bThrowStyle;
+        case 6: return RandomizeLocks.bOutfit;
+        default: return false;
+    }
+}
+
+void UDiscGolfCharacterCreatorWidget::SetCurrentCategoryLocked(bool bLocked)
+{
+    switch (FMath::Clamp(ActiveCreatorTabIndex, 0, 6))
+    {
+        case 0: RandomizeLocks.bIdentity = bLocked; break;
+        case 1: RandomizeLocks.bBody = bLocked; break;
+        case 2: RandomizeLocks.bFace = bLocked; break;
+        case 3: RandomizeLocks.bHair = bLocked; break;
+        case 4: RandomizeLocks.bAppearance = bLocked; break;
+        case 5: RandomizeLocks.bThrowStyle = bLocked; break;
+        case 6: RandomizeLocks.bOutfit = bLocked; break;
+        default: break;
+    }
 }
 
 FText UDiscGolfCharacterCreatorWidget::GetHandednessText() const

@@ -24,6 +24,18 @@ static float DGCentered(float Value, float Center, float HalfRange)
     return FMath::Clamp((Value - Center) / HalfRange, -1.0f, 1.0f);
 }
 
+static void DGSetMorphTargetIfAvailable(
+    USkeletalMeshComponent* MeshComp,
+    FName MorphName,
+    float Value)
+{
+    USkeletalMesh* Mesh = MeshComp ? MeshComp->GetSkeletalMeshAsset() : nullptr;
+    if (Mesh && Mesh->FindMorphTarget(MorphName))
+    {
+        MeshComp->SetMorphTarget(MorphName, Value);
+    }
+}
+
 void UDiscGolfCharacterCustomizationComponent::ApplyBodyMorphs(USkeletalMeshComponent* MeshComp)
 {
     if (!MeshComp)
@@ -31,19 +43,31 @@ void UDiscGolfCharacterCustomizationComponent::ApplyBodyMorphs(USkeletalMeshComp
         return;
     }
 
-    MeshComp->SetMorphTarget(TEXT("DG_Height"), DGCentered(Current.Body.HeightCm, 183.0f, 27.0f));
-    MeshComp->SetMorphTarget(TEXT("DG_ShoulderWidth"), DGCentered(Current.Body.ShoulderWidthScale, 1.0f, 0.08f));
-    MeshComp->SetMorphTarget(TEXT("DG_TorsoLength"), DGCentered(Current.Body.TorsoLengthScale, 1.0f, 0.06f));
-    MeshComp->SetMorphTarget(TEXT("DG_LegLength"), DGCentered(Current.Body.LegLengthScale, 1.0f, 0.06f));
-    MeshComp->SetMorphTarget(TEXT("DG_HandScale"), DGCentered(Current.Body.HandScale, 1.0f, 0.06f));
+    DGSetMorphTargetIfAvailable(MeshComp, TEXT("DG_Height"),
+        DGCentered(Current.Body.HeightCm, 183.0f, 27.0f));
+    DGSetMorphTargetIfAvailable(MeshComp, TEXT("DG_ShoulderWidth"),
+        DGCentered(Current.Body.ShoulderWidthScale, 1.0f, 0.08f));
+    DGSetMorphTargetIfAvailable(MeshComp, TEXT("DG_TorsoLength"),
+        DGCentered(Current.Body.TorsoLengthScale, 1.0f, 0.06f));
+    DGSetMorphTargetIfAvailable(MeshComp, TEXT("DG_LegLength"),
+        DGCentered(Current.Body.LegLengthScale, 1.0f, 0.06f));
+    DGSetMorphTargetIfAvailable(MeshComp, TEXT("DG_HandScale"),
+        DGCentered(Current.Body.HandScale, 1.0f, 0.06f));
 
-    MeshComp->SetMorphTarget(TEXT("DG_Body_Muscularity"), FMath::Clamp(Current.BodyBuild.Muscularity, 0.0f, 1.0f));
-    MeshComp->SetMorphTarget(TEXT("DG_Body_BodyFat"), FMath::Clamp(Current.BodyBuild.BodyFat, 0.0f, 1.0f));
-    MeshComp->SetMorphTarget(TEXT("DG_Body_Chest"), FMath::Clamp(Current.BodyBuild.Chest, -1.0f, 1.0f));
-    MeshComp->SetMorphTarget(TEXT("DG_Body_Waist"), FMath::Clamp(Current.BodyBuild.Waist, -1.0f, 1.0f));
-    MeshComp->SetMorphTarget(TEXT("DG_Body_Hips"), FMath::Clamp(Current.BodyBuild.Hips, -1.0f, 1.0f));
-    MeshComp->SetMorphTarget(TEXT("DG_Body_Arms"), FMath::Clamp(Current.BodyBuild.Arms, -1.0f, 1.0f));
-    MeshComp->SetMorphTarget(TEXT("DG_Body_Legs"), FMath::Clamp(Current.BodyBuild.Legs, -1.0f, 1.0f));
+    DGSetMorphTargetIfAvailable(MeshComp, TEXT("DG_Body_Muscularity"),
+        FMath::Clamp(Current.BodyBuild.Muscularity, 0.0f, 1.0f));
+    DGSetMorphTargetIfAvailable(MeshComp, TEXT("DG_Body_BodyFat"),
+        FMath::Clamp(Current.BodyBuild.BodyFat, 0.0f, 1.0f));
+    DGSetMorphTargetIfAvailable(MeshComp, TEXT("DG_Body_Chest"),
+        FMath::Clamp(Current.BodyBuild.Chest, -1.0f, 1.0f));
+    DGSetMorphTargetIfAvailable(MeshComp, TEXT("DG_Body_Waist"),
+        FMath::Clamp(Current.BodyBuild.Waist, -1.0f, 1.0f));
+    DGSetMorphTargetIfAvailable(MeshComp, TEXT("DG_Body_Hips"),
+        FMath::Clamp(Current.BodyBuild.Hips, -1.0f, 1.0f));
+    DGSetMorphTargetIfAvailable(MeshComp, TEXT("DG_Body_Arms"),
+        FMath::Clamp(Current.BodyBuild.Arms, -1.0f, 1.0f));
+    DGSetMorphTargetIfAvailable(MeshComp, TEXT("DG_Body_Legs"),
+        FMath::Clamp(Current.BodyBuild.Legs, -1.0f, 1.0f));
 }
 
 void UDiscGolfCharacterCustomizationComponent::ApplyFaceMorphs(USkeletalMeshComponent* HeadMesh)
@@ -76,12 +100,14 @@ void UDiscGolfCharacterCustomizationComponent::ApplyFaceMorphs(USkeletalMeshComp
         {TEXT("ear_angle"), TEXT("DG_Face_EarAngle")}
     };
 
-    for (const TPair<FName, float>& Pair : Current.Face.MorphValues)
+    // Drive the complete frozen contract every time. Iterating only the keys
+    // present in the new profile leaves a previously selected preset stuck on
+    // omitted targets when Reset/Cancel returns to a sparse/default map.
+    for (const TPair<FName, FName>& Pair : MorphMap)
     {
-        if (const FName* MorphName = MorphMap.Find(Pair.Key))
-        {
-            HeadMesh->SetMorphTarget(*MorphName, FMath::Clamp(Pair.Value, -1.0f, 1.0f));
-        }
+        const float Value = Current.Face.MorphValues.FindRef(Pair.Key);
+        DGSetMorphTargetIfAvailable(
+            HeadMesh, Pair.Value, FMath::Clamp(Value, -1.0f, 1.0f));
     }
 }
 
@@ -98,7 +124,12 @@ void UDiscGolfCharacterCustomizationComponent::ApplyColorToAllMaterials(
     const int32 Count = MeshComp->GetNumMaterials();
     for (int32 Index = 0; Index < Count; ++Index)
     {
-        if (UMaterialInstanceDynamic* MID = MeshComp->CreateAndSetMaterialInstanceDynamic(Index))
+        UMaterialInstanceDynamic* MID = Cast<UMaterialInstanceDynamic>(MeshComp->GetMaterial(Index));
+        if (!MID)
+        {
+            MID = MeshComp->CreateAndSetMaterialInstanceDynamic(Index);
+        }
+        if (MID)
         {
             MID->SetVectorParameterValue(ParameterName, Value);
         }
@@ -118,7 +149,12 @@ void UDiscGolfCharacterCustomizationComponent::ApplyScalarToAllMaterials(
     const int32 Count = MeshComp->GetNumMaterials();
     for (int32 Index = 0; Index < Count; ++Index)
     {
-        if (UMaterialInstanceDynamic* MID = MeshComp->CreateAndSetMaterialInstanceDynamic(Index))
+        UMaterialInstanceDynamic* MID = Cast<UMaterialInstanceDynamic>(MeshComp->GetMaterial(Index));
+        if (!MID)
+        {
+            MID = MeshComp->CreateAndSetMaterialInstanceDynamic(Index);
+        }
+        if (MID)
         {
             MID->SetScalarParameterValue(ParameterName, Value);
         }
@@ -169,15 +205,26 @@ void UDiscGolfCharacterCustomizationComponent::SpawnCosmeticMesh(
         {
             USkeletalMeshComponent* Comp = NewObject<USkeletalMeshComponent>(GetOwner(), NAME_None, RF_Transient);
             Comp->SetupAttachment(HeadMesh, Item->AttachSocket);
-            Comp->SetRelativeTransform(Item->RelativeAttachmentTransform);
-            Comp->RegisterComponent();
             Comp->SetSkeletalMesh(Mesh);
+            Comp->SetRelativeTransform(Item->RelativeAttachmentTransform);
             Comp->SetLeaderPoseComponent(HeadMesh);
+            Comp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            Comp->SetGenerateOverlapEvents(false);
+            Comp->SetCanEverAffectNavigation(false);
+            Comp->SetSimulatePhysics(false);
+            Comp->ComponentTags.AddUnique(TEXT("DG_CustomizationCosmetic"));
+            Comp->ComponentTags.AddUnique(Item->ItemId);
+            Comp->RegisterComponent();
 
             const int32 Count = Comp->GetNumMaterials();
             for (int32 Index = 0; Index < Count; ++Index)
             {
-                if (UMaterialInstanceDynamic* MID = Comp->CreateAndSetMaterialInstanceDynamic(Index))
+                UMaterialInstanceDynamic* MID = Cast<UMaterialInstanceDynamic>(Comp->GetMaterial(Index));
+                if (!MID)
+                {
+                    MID = Comp->CreateAndSetMaterialInstanceDynamic(Index);
+                }
+                if (MID)
                 {
                     MID->SetVectorParameterValue(ColorParameterName, Color);
                 }
@@ -194,14 +241,29 @@ void UDiscGolfCharacterCustomizationComponent::SpawnCosmeticMesh(
         {
             UStaticMeshComponent* Comp = NewObject<UStaticMeshComponent>(GetOwner(), NAME_None, RF_Transient);
             Comp->SetupAttachment(HeadMesh, Item->AttachSocket);
-            Comp->SetRelativeTransform(Item->RelativeAttachmentTransform);
-            Comp->RegisterComponent();
             Comp->SetStaticMesh(Mesh);
+            Comp->SetRelativeTransform(Item->RelativeAttachmentTransform);
+            // The accepted master skeleton has a legacy root/socket scale.
+            // Accessories follow the head socket's translation/rotation but
+            // retain their authored centimeter scale, matching outfit safety.
+            Comp->SetAbsolute(false, false, true);
+            Comp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            Comp->SetGenerateOverlapEvents(false);
+            Comp->SetCanEverAffectNavigation(false);
+            Comp->SetSimulatePhysics(false);
+            Comp->ComponentTags.AddUnique(TEXT("DG_CustomizationCosmetic"));
+            Comp->ComponentTags.AddUnique(Item->ItemId);
+            Comp->RegisterComponent();
 
             const int32 Count = Comp->GetNumMaterials();
             for (int32 Index = 0; Index < Count; ++Index)
             {
-                if (UMaterialInstanceDynamic* MID = Comp->CreateAndSetMaterialInstanceDynamic(Index))
+                UMaterialInstanceDynamic* MID = Cast<UMaterialInstanceDynamic>(Comp->GetMaterial(Index));
+                if (!MID)
+                {
+                    MID = Comp->CreateAndSetMaterialInstanceDynamic(Index);
+                }
+                if (MID)
                 {
                     MID->SetVectorParameterValue(ColorParameterName, Color);
                 }

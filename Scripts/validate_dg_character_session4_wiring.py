@@ -29,6 +29,16 @@ DEFAULT_REPORT = (
     DEFAULT_ROOT / "Saved" / "CharacterFramework" / "Session4WiringValidation.json"
 )
 
+SESSION5_PLUGIN_BASELINE = "e6e6a57727411a4cc50b890f4d8557bfb803e9e2"
+EXPECTED_SUCCESSOR_PLUGIN_CHANGES = (
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
+    "Private/DiscGolfCharacterCustomizationComponent.cpp",
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
+    "Private/DiscGolfOutfitComponent.cpp",
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
+    "Public/DiscGolfCharacterTypes.h",
+)
+
 SCHEMA_RELATIVE_PATH = Path(
     "Plugins/DiscGolfCharacterFramework/Config/DG_CharacterCreatorSchema.json"
 )
@@ -437,12 +447,16 @@ def _validate_runtime_schema_and_dto(validator: Validator) -> None:
     gi_header = validator.text("Source/DiscGolfTour/DiscGolfTourGameInstance.h")
     gi_cpp = validator.text("Source/DiscGolfTour/DiscGolfTourGameInstance.cpp")
     validator.add(
-        "save.schema_v8_successor",
+        "save.schema_v9_successor_preserves_schema8_mirrors",
         "persistence",
-        re.search(r"CurrentVersion\s*=\s*8\s*;", save_header) is not None
+        re.search(r"CurrentVersion\s*=\s*9\s*;", save_header) is not None
+        and "SaveGame) FDGFullCharacterCustomization CharacterCustomization;" in save_header
         and "SaveGame) FDiscGolfCharacterProfileSaveData CharacterProfile;" in save_header
-        and "SaveGame) FDGOutfitLoadout OutfitLoadout;" in save_header,
-        "Session 6 successor schema is v8 and owns one profile plus stable outfit payload",
+        and "SaveGame) FDGOutfitLoadout OutfitLoadout;" in save_header
+        and "SaveSchemaVersion < 9" in gi_cpp
+        and "InOutProfile.SaveSchemaVersion = 9;" in gi_cpp
+        and "InOutProfile.CharacterCustomization" in gi_cpp,
+        "Schema 9 owns the complete character while retaining exact schema-8 migration mirrors",
     )
     validator.contains_all(
         "save.game_instance_api",
@@ -731,10 +745,12 @@ def _validate_ui(validator: Validator) -> None:
         "ui",
         widget_cpp_path,
         (
-            "BASELINE", "SHORT COMPACT", "TALL / LONG ARMS", "RESET EDITS",
-            "APPLY & SAVE", "CANCEL", "RIGHT", "LEFT", "ROTATE LEFT", "ROTATE RIGHT",
+            "BASELINE", "SHORT COMPACT", "TALL / LONG ARMS",
+            "RESET CURRENT TAB", "RESET ALL", "RANDOMIZE",
+            "APPLY / SAVE & CONTINUE", "CANCEL", "RIGHT", "LEFT",
+            "ROTATE LEFT", "ROTATE RIGHT", "ZOOM IN", "ZOOM OUT",
         ),
-        "Creator provides required presets, handedness, preview rotation, and transactional actions",
+        "Successor creator retains presets and handedness while exposing the frozen global transaction controls",
     )
     controller_api = (
         "OpenCharacterCreator",
@@ -1004,22 +1020,32 @@ def _validate_assets_and_paths(validator: Validator) -> None:
 
 
 def _validate_plugin_immutability(validator: Validator) -> None:
-    allowed_path = (
-        "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
-        "Private/DiscGolfOutfitComponent.cpp"
-    )
-    outfit_component = validator.text(allowed_path)
-    required_safety_tokens = (
+    customization_path, outfit_path, types_path = EXPECTED_SUCCESSOR_PLUGIN_CHANGES
+    customization_component = validator.text(customization_path)
+    outfit_component = validator.text(outfit_path)
+    character_types = validator.text(types_path)
+    required_outfit_tokens = (
         "SetCollisionEnabled(ECollisionEnabled::NoCollision)",
         "SetGenerateOverlapEvents(false)",
         "SetCanEverAffectNavigation(false)",
         "SetAbsolute(false, false, true)",
         "VariantId = Variant.VariantId",
     )
+    required_customization_tokens = (
+        "static void DGSetMorphTargetIfAvailable(",
+        "GetSkeletalMeshAsset()",
+        "FindMorphTarget(MorphName)",
+        "for (const TPair<FName, FName>& Pair : MorphMap)",
+        "Current.Face.MorphValues.FindRef(Pair.Key)",
+        "SetLeaderPoseComponent(HeadMesh)",
+        "SetCollisionEnabled(ECollisionEnabled::NoCollision)",
+        "SetAbsolute(false, false, true)",
+    )
     try:
-        result = subprocess.run(
+        diff_result = subprocess.run(
             [
-                "git", "status", "--porcelain", "--untracked-files=all", "--",
+                "git", "diff", "--name-only", "--diff-filter=ACDMRTUXB",
+                SESSION5_PLUGIN_BASELINE, "--",
                 "Plugins/DiscGolfCharacterFramework",
             ],
             cwd=validator.root,
@@ -1030,21 +1056,68 @@ def _validate_plugin_immutability(validator: Validator) -> None:
             timeout=15.0,
             check=False,
         )
-        entries = [line for line in result.stdout.splitlines() if line.strip()]
-        changed_paths = [line[3:].strip() for line in entries if len(line) >= 4]
+        status_result = subprocess.run(
+            [
+                "git", "status", "--porcelain=v1", "--untracked-files=all", "--",
+                "Plugins/DiscGolfCharacterFramework",
+            ],
+            cwd=validator.root,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=15.0,
+            check=False,
+        )
+        changed_paths = sorted({
+            line.strip().replace("\\", "/")
+            for line in diff_result.stdout.splitlines() if line.strip()
+        })
+        status_entries = [
+            line for line in status_result.stdout.splitlines() if line.strip()
+        ]
+        untracked_paths = sorted({
+            line[3:].strip().replace("\\", "/")
+            for line in status_entries if line.startswith("?? ")
+        })
+        customization_morph_writes = customization_component.count(
+            "MeshComp->SetMorphTarget(MorphName, Value);")
+        body_block = character_types.split("struct DISCGOLFCHARACTERFRAMEWORK_API FDGBodyProfile", 1)[-1].split(
+            "USTRUCT(BlueprintType)", 1
+        )[0]
+        throw_block = character_types.split("struct DISCGOLFCHARACTERFRAMEWORK_API FDGThrowStyle", 1)[-1].split(
+            "USTRUCT(BlueprintType)", 1
+        )[0]
         passed = (
-            result.returncode == 0
-            and all(path == allowed_path for path in changed_paths)
-            and all(token in outfit_component for token in required_safety_tokens)
+            diff_result.returncode == 0
+            and status_result.returncode == 0
+            and changed_paths == sorted(EXPECTED_SUCCESSOR_PLUGIN_CHANGES)
+            and not untracked_paths
+            and all(token in outfit_component for token in required_outfit_tokens)
+            and all(token in customization_component for token in required_customization_tokens)
+            and customization_morph_writes == 1
+            and body_block.count("SaveGame") == 7
+            and throw_block.count("SaveGame") == 8
+            and character_types.count("SaveGame") == 15
         )
         evidence: Any = {
-            "return_code": result.returncode,
-            "status_entries": entries,
-            "allowed_path": allowed_path,
+            "diff_return_code": diff_result.returncode,
+            "status_return_code": status_result.returncode,
+            "baseline": SESSION5_PLUGIN_BASELINE,
+            "allowed_paths": list(EXPECTED_SUCCESSOR_PLUGIN_CHANGES),
             "changed_paths": changed_paths,
-            "missing_safety_tokens": [
-                token for token in required_safety_tokens if token not in outfit_component
+            "untracked_paths": untracked_paths,
+            "missing_outfit_tokens": [
+                token for token in required_outfit_tokens if token not in outfit_component
             ],
+            "missing_customization_tokens": [
+                token for token in required_customization_tokens
+                if token not in customization_component
+            ],
+            "guarded_morph_write_count": customization_morph_writes,
+            "body_savegame_fields": body_block.count("SaveGame"),
+            "throw_style_savegame_fields": throw_block.count("SaveGame"),
+            "whole_file_savegame_tokens": character_types.count("SaveGame"),
         }
     except (OSError, subprocess.TimeoutExpired) as exc:
         passed = False
@@ -1053,7 +1126,7 @@ def _validate_plugin_immutability(validator: Validator) -> None:
         "plugin.installed_source_unchanged",
         "plugin",
         passed,
-        "Installed UE 5.8 plugin has only the bounded Session 6 runtime-safety adaptation",
+        "Installed UE 5.8 plugin differs from Session 5 in exactly the three reviewed Session 6/7 integration files and seams",
         evidence,
     )
 

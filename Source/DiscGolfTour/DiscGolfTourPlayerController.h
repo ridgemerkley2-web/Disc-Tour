@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "DiscGolfCharacterTypes.h"
+#include "DiscGolfFullCharacterRuntime.h"
 #include "DiscGolfOutfitRuntime.h"
 #include "GameFramework/PlayerController.h"
 #include "DiscGolfTourPlayerController.generated.h"
@@ -65,6 +66,10 @@ public:
         EDGHandedness Handedness);
 
     UFUNCTION(BlueprintCallable, Category="Disc Golf|Character Creator")
+    bool PreviewFullCharacterCreatorDraft(
+        const FDGFullCharacterCustomization& CharacterCustomization);
+
+    UFUNCTION(BlueprintCallable, Category="Disc Golf|Character Creator")
     bool LoadCharacterCreatorPreset(
         FName PresetId,
         FDGBodyProfile& OutBody,
@@ -84,10 +89,34 @@ public:
         EDGHandedness Handedness);
 
     UFUNCTION(BlueprintCallable, Category="Disc Golf|Character Creator")
+    bool ApplyFullCharacterCreatorDraft(
+        const FDGFullCharacterCustomization& CharacterCustomization);
+
+    bool ResetCharacterCreatorCurrentTab(
+        int32 TabIndex,
+        FDGFullCharacterCustomization& OutDraft);
+    bool ResetCharacterCreatorAll(FDGFullCharacterCustomization& OutDraft);
+    bool RandomizeCharacterCreatorDraft(
+        const FDiscGolfCharacterRandomizeLocks& Locks,
+        FDGFullCharacterCustomization& OutDraft);
+    bool ApplyCharacterCreatorFacePreset(
+        FName PresetId,
+        FDGFullCharacterCustomization& OutDraft);
+    bool SelectCharacterCreatorCosmetic(
+        EDGCosmeticKind Kind,
+        FName ItemId,
+        FDGFullCharacterCustomization& OutDraft);
+    TArray<FDiscGolfCosmeticOption> GetCharacterCreatorCosmeticOptions(
+        EDGCosmeticKind Kind) const;
+
+    UFUNCTION(BlueprintCallable, Category="Disc Golf|Character Creator")
     void CancelCharacterCreator();
 
     UFUNCTION(BlueprintCallable, Category="Disc Golf|Character Creator")
     void RotateCharacterCreatorPreview(float DeltaYawDegrees);
+
+    UFUNCTION(BlueprintCallable, Category="Disc Golf|Character Creator")
+    void ZoomCharacterCreatorPreview(float DeltaArmLength);
 
     bool PreviewCharacterCreatorOutfitSelection(
         EDGOutfitSlot Slot,
@@ -102,6 +131,16 @@ public:
     {
         return CharacterCreatorDraftOutfit;
     }
+    const FDGFullCharacterCustomization& GetCharacterCreatorDraftCustomization() const
+    {
+        return CharacterCreatorDraftCustomization;
+    }
+    bool PrepareCharacterCreatorForSession7VisualEvidence(
+        int32 TabIndex,
+        const FDGFullCharacterCustomization& Draft);
+    int32 GetCharacterCreatorActiveTabIndex() const;
+    void GetSession7CharacterCreatorVisibleControlIds(
+        TArray<FString>& OutControlIds) const;
 
     UFUNCTION(BlueprintPure, Category="Disc Golf|Character Creator")
     FString GetCharacterCreatorStatusText() const { return CharacterCreatorStatusText; }
@@ -139,6 +178,8 @@ private:
     EDGHandedness CharacterCreatorOpeningHandedness = EDGHandedness::Right;
     FDGOutfitLoadout CharacterCreatorOpeningOutfit;
     FDGOutfitLoadout CharacterCreatorDraftOutfit;
+    FDGFullCharacterCustomization CharacterCreatorOpeningCustomization;
+    FDGFullCharacterCustomization CharacterCreatorDraftCustomization;
 
     UEnhancedInputLocalPlayerSubsystem* GetEnhancedInputSubsystem() const;
     UEnhancedInputUserSettings* GetEnhancedInputUserSettings() const;
@@ -156,6 +197,7 @@ private:
     void MoveSettingsSelection(int32 Direction);
     void AdjustSelectedSetting(int32 Direction);
     void CloseCharacterCreator(bool bRestoreOpeningProfile);
+    void SyncLegacyCreatorDraftsFromFull();
     bool ResolveCharacterCreatorPreset(
         FName PresetId,
         FDGBodyProfile& OutBody,

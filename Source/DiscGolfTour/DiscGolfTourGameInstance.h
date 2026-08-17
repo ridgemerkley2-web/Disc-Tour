@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "DiscGolfCharacterProfileRuntime.h"
+#include "DiscGolfCustomizationTypes.h"
 #include "DiscGolfOutfitTypes.h"
 #include "DiscGolfPlayerExperience.h"
 #include "Engine/GameInstance.h"
@@ -29,6 +30,11 @@ namespace DiscGolfProfilePersistence
     DISCGOLFTOUR_API bool TryResolveSession6OutfitValidationSaveSlot(
         const TCHAR* CommandLine,
         FString& OutSaveSlot);
+
+    /** Strict isolated-slot grammar for Session 7 visual and throw validation. */
+    DISCGOLFTOUR_API bool TryResolveSession7FullCharacterValidationSaveSlot(
+        const TCHAR* CommandLine,
+        FString& OutSaveSlot);
 }
 
 UCLASS()
@@ -46,6 +52,14 @@ public:
 
     UFUNCTION(BlueprintPure)
     FDiscGolfCharacterProfileSaveData GetCharacterProfile() const;
+
+    UFUNCTION(BlueprintPure)
+    FDGFullCharacterCustomization GetFullCharacterCustomization() const;
+
+    /** Sole schema-9 full-character save transaction. */
+    UFUNCTION(BlueprintCallable)
+    bool UpdateFullCharacterCustomization(
+        const FDGFullCharacterCustomization& CharacterCustomization);
 
     UFUNCTION(BlueprintCallable)
     bool UpdateCharacterProfile(const FDiscGolfCharacterProfileSaveData& CharacterProfile);
@@ -76,9 +90,16 @@ public:
         return bUsingSession6OutfitValidationSaveSlot ? SaveSlot : FString();
     }
 
+    /** Empty in normal gameplay; read-only C++ seam for Session 7 cleanup/proof. */
+    FString GetSession7FullCharacterValidationSaveSlot() const
+    {
+        return bUsingSession7FullCharacterValidationSaveSlot ? SaveSlot : FString();
+    }
+
 private:
     bool SaveProfileInternal();
     UPROPERTY() TObjectPtr<UDiscGolfSaveGame> Profile;
     FString SaveSlot = TEXT("DiscGolfTour_Profile_0");
     bool bUsingSession6OutfitValidationSaveSlot = false;
+    bool bUsingSession7FullCharacterValidationSaveSlot = false;
 };

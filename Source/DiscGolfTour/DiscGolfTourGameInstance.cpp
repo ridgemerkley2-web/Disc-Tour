@@ -1,6 +1,7 @@
 #include "DiscGolfTourGameInstance.h"
 #include "DiscGolfTour.h"
 #include "DiscGolfSaveGame.h"
+#include "DiscGolfFullCharacterRuntime.h"
 #include "DiscGolfOutfitRuntime.h"
 #include "DiscGolfPlayerExperience.h"
 #include "Kismet/GameplayStatics.h"
@@ -52,6 +53,27 @@ bool OutfitLoadoutsExactlyMatch(
         if (EntryA.Slot != EntryB.Slot
             || EntryA.ItemId != EntryB.ItemId
             || EntryA.VariantId != EntryB.VariantId)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool IsSafeValidationSlotSuffix(const FString& Suffix)
+{
+    constexpr int32 MaximumSuffixLength = 48;
+    if (Suffix.IsEmpty() || Suffix.Len() > MaximumSuffixLength)
+    {
+        return false;
+    }
+    for (const TCHAR Character : Suffix)
+    {
+        const bool bSafeAscii = (Character >= TEXT('A') && Character <= TEXT('Z'))
+            || (Character >= TEXT('a') && Character <= TEXT('z'))
+            || (Character >= TEXT('0') && Character <= TEXT('9'))
+            || Character == TEXT('_');
+        if (!bSafeAscii)
         {
             return false;
         }
@@ -118,13 +140,49 @@ DiscGolfProfilePersistence::EMigrationResult DiscGolfProfilePersistence::Migrate
         InOutProfile.SaveSchemaVersion = 8;
         bMigrated = true;
     }
+    if (InOutProfile.SaveSchemaVersion < 9)
+    {
+        // Schema 8 stored body/build/throw/handedness and outfit in the two
+        // legacy properties below. Populate every new identity/face/hair/
+        // appearance field from deterministic framework defaults, then copy
+        // every accepted Session 4/6 value without consulting display labels
+        // or content assets. A synthetic pre-v9 value in the new property is
+        // overwritten so legacy archives cannot smuggle non-schema data.
+        FDiscGolfCharacterProfileSaveData LegacyCharacter =
+            InOutProfile.CharacterProfile;
+        LegacyCharacter.Sanitize();
+        FDGFullCharacterCustomization Migrated =
+            DiscGolfFullCharacterRuntime::MakeDefaultCustomization();
+        Migrated.Identity.Handedness = LegacyCharacter.GetHandedness();
+        Migrated.Body = LegacyCharacter.ToBodyProfile();
+        Migrated.BodyBuild = LegacyCharacter.ToBodyBuildProfile();
+        Migrated.ThrowStyle = LegacyCharacter.ToThrowStyle();
+        Migrated.Outfit = DiscGolfOutfitRuntime::NormalizeForPersistence(
+            InOutProfile.OutfitLoadout);
+        DiscGolfFullCharacterRuntime::NormalizeForPersistence(Migrated);
+        InOutProfile.CharacterCustomization = MoveTemp(Migrated);
+        InOutProfile.SaveSchemaVersion = 9;
+        bMigrated = true;
+    }
 
     if (DiscGolfSaveSchema::IsCurrent(InOutProfile.SaveSchemaVersion))
     {
         InOutProfile.PlayerSettings.Normalize();
-        InOutProfile.CharacterProfile.Sanitize();
-        InOutProfile.OutfitLoadout = DiscGolfOutfitRuntime::NormalizeForPersistence(
-            InOutProfile.OutfitLoadout);
+        DiscGolfFullCharacterRuntime::NormalizeForPersistence(
+            InOutProfile.CharacterCustomization);
+
+        // Compatibility mirrors keep accepted Session 4/6 readers and
+        // isolated regression fixtures working. They are never a schema-9
+        // read authority and are updated only from the complete payload.
+        InOutProfile.CharacterProfile =
+            FDiscGolfCharacterProfileSaveData::FromFramework(
+                InOutProfile.CharacterCustomization.Body,
+                InOutProfile.CharacterCustomization.ThrowStyle,
+                InOutProfile.CharacterCustomization.Identity.Handedness,
+                InOutProfile.CharacterCustomization.BodyBuild);
+        InOutProfile.OutfitLoadout =
+            DiscGolfOutfitRuntime::NormalizeForPersistence(
+                InOutProfile.CharacterCustomization.Outfit);
     }
     return bMigrated ? EMigrationResult::Migrated : EMigrationResult::AlreadyCurrent;
 }
@@ -152,29 +210,57 @@ bool DiscGolfProfilePersistence::TryResolveSession6OutfitValidationSaveSlot(
 
     constexpr TCHAR RequiredPrefix[] =
         TEXT("DiscGolfTour_Automation_Session6Outfit_");
-    constexpr int32 MaximumSuffixLength = 48;
     if (!RequestedSlot.StartsWith(RequiredPrefix, ESearchCase::CaseSensitive))
     {
         return false;
     }
 
     const FString Suffix = RequestedSlot.RightChop(UE_ARRAY_COUNT(RequiredPrefix) - 1);
-    if (Suffix.IsEmpty() || Suffix.Len() > MaximumSuffixLength)
+    if (!IsSafeValidationSlotSuffix(Suffix)) return false;
+
+    OutSaveSlot = MoveTemp(RequestedSlot);
+    return true;
+}
+
+bool DiscGolfProfilePersistence::TryResolveSession7FullCharacterValidationSaveSlot(
+    const TCHAR* CommandLine,
+    FString& OutSaveSlot)
+{
+    OutSaveSlot.Reset();
+    if (!CommandLine
+        || !FParse::Param(CommandLine, TEXT("Session7FullCharacterValidationNoSave")))
     {
         return false;
     }
-    for (const TCHAR Character : Suffix)
+    const bool bVisual = FParse::Param(
+        CommandLine, TEXT("Session7FullCharacterVisualCapture"));
+    const bool bThrow = FParse::Param(
+        CommandLine, TEXT("Session7FullCharacterThrowSmokeTest"));
+    if (bVisual == bThrow)
     {
-        const bool bSafeAscii = (Character >= TEXT('A') && Character <= TEXT('Z'))
-            || (Character >= TEXT('a') && Character <= TEXT('z'))
-            || (Character >= TEXT('0') && Character <= TEXT('9'))
-            || Character == TEXT('_');
-        if (!bSafeAscii)
-        {
-            return false;
-        }
+        return false;
     }
 
+    FString RequestedSlot;
+    if (!FParse::Value(
+            CommandLine,
+            TEXT("Session7FullCharacterValidationSaveSlot="),
+            RequestedSlot))
+    {
+        return false;
+    }
+    constexpr TCHAR RequiredPrefix[] =
+        TEXT("DiscGolfTour_Automation_Session7FullCharacter_");
+    if (!RequestedSlot.StartsWith(RequiredPrefix, ESearchCase::CaseSensitive))
+    {
+        return false;
+    }
+    const FString Suffix = RequestedSlot.RightChop(
+        UE_ARRAY_COUNT(RequiredPrefix) - 1);
+    if (!IsSafeValidationSlotSuffix(Suffix))
+    {
+        return false;
+    }
     OutSaveSlot = MoveTemp(RequestedSlot);
     return true;
 }
@@ -183,13 +269,35 @@ void UDiscGolfTourGameInstance::Init()
 {
     Super::Init();
 
+    FString RequestedSession7Slot;
+    const bool bSession7ValidationSlotWasRequested = FParse::Value(
+        FCommandLine::Get(),
+        TEXT("Session7FullCharacterValidationSaveSlot="),
+        RequestedSession7Slot);
+    FString ValidatedSession7Slot;
+    if (DiscGolfProfilePersistence::TryResolveSession7FullCharacterValidationSaveSlot(
+            FCommandLine::Get(), ValidatedSession7Slot))
+    {
+        SaveSlot = MoveTemp(ValidatedSession7Slot);
+        bUsingSession7FullCharacterValidationSaveSlot = true;
+        UE_LOG(LogDiscGolfTour, Display,
+            TEXT("SESSION 7 FULL CHARACTER VALIDATION SAVE SLOT: %s (validation-only; production slot unchanged)."),
+            *SaveSlot);
+    }
+    else if (bSession7ValidationSlotWasRequested)
+    {
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Rejected unsafe or incompletely gated Session 7 full-character validation save slot; retaining the production profile slot."));
+    }
+
     FString RequestedValidationSlot;
     const bool bValidationSlotWasRequested = FParse::Value(
         FCommandLine::Get(),
         TEXT("Session6OutfitValidationSaveSlot="),
         RequestedValidationSlot);
     FString ValidatedValidationSlot;
-    if (DiscGolfProfilePersistence::TryResolveSession6OutfitValidationSaveSlot(
+    if (!bUsingSession7FullCharacterValidationSaveSlot
+        && DiscGolfProfilePersistence::TryResolveSession6OutfitValidationSaveSlot(
             FCommandLine::Get(), ValidatedValidationSlot))
     {
         SaveSlot = MoveTemp(ValidatedValidationSlot);
@@ -198,7 +306,8 @@ void UDiscGolfTourGameInstance::Init()
             TEXT("SESSION 6 OUTFIT VALIDATION SAVE SLOT: %s (validation-only; production slot unchanged)."),
             *SaveSlot);
     }
-    else if (bValidationSlotWasRequested)
+    else if (!bUsingSession7FullCharacterValidationSaveSlot
+        && bValidationSlotWasRequested)
     {
         UE_LOG(LogDiscGolfTour, Warning,
             TEXT("Rejected unsafe or incompletely gated Session 6 outfit validation save slot; retaining the production profile slot."));
@@ -226,6 +335,8 @@ void UDiscGolfTourGameInstance::Init()
     const FDiscGolfCharacterProfileSaveData CharacterProfileBeforeMigration =
         Profile->CharacterProfile;
     const FDGOutfitLoadout OutfitBeforeMigration = Profile->OutfitLoadout;
+    const FDGFullCharacterCustomization FullCharacterBeforeMigration =
+        Profile->CharacterCustomization;
     const DiscGolfProfilePersistence::EMigrationResult MigrationResult =
         DiscGolfProfilePersistence::MigrateToCurrent(*Profile);
     if (MigrationResult == DiscGolfProfilePersistence::EMigrationResult::FutureSchemaRejected)
@@ -238,7 +349,9 @@ void UDiscGolfTourGameInstance::Init()
     if (MigrationResult == DiscGolfProfilePersistence::EMigrationResult::Migrated ||
         !CharacterProfilesExactlyMatch(CharacterProfileBeforeMigration, Profile->CharacterProfile) ||
         !OutfitLoadoutsExactlyMatch(
-            OutfitBeforeMigration, Profile->OutfitLoadout))
+            OutfitBeforeMigration, Profile->OutfitLoadout) ||
+        !DiscGolfFullCharacterRuntime::AreCustomizationsEquivalent(
+            FullCharacterBeforeMigration, Profile->CharacterCustomization))
     {
         SaveProfile();
     }
@@ -280,8 +393,25 @@ FDiscGolfCharacterProfileSaveData UDiscGolfTourGameInstance::GetCharacterProfile
         return FDiscGolfCharacterProfileSaveData();
     }
 
-    FDiscGolfCharacterProfileSaveData Result = Profile->CharacterProfile;
+    const FDGFullCharacterCustomization Full = GetFullCharacterCustomization();
+    FDiscGolfCharacterProfileSaveData Result =
+        FDiscGolfCharacterProfileSaveData::FromFramework(
+            Full.Body,
+            Full.ThrowStyle,
+            Full.Identity.Handedness,
+            Full.BodyBuild);
     Result.Sanitize();
+    return Result;
+}
+
+FDGFullCharacterCustomization UDiscGolfTourGameInstance::GetFullCharacterCustomization() const
+{
+    if (!Profile || !DiscGolfSaveSchema::IsCurrent(Profile->SaveSchemaVersion))
+    {
+        return DiscGolfFullCharacterRuntime::MakeDefaultCustomization();
+    }
+    FDGFullCharacterCustomization Result = Profile->CharacterCustomization;
+    DiscGolfFullCharacterRuntime::NormalizeForPersistence(Result);
     return Result;
 }
 
@@ -310,7 +440,8 @@ bool UDiscGolfTourGameInstance::UpdateCharacterProfile(
         return false;
     }
 
-    return UpdateCharacterProfileAndOutfit(CharacterProfile, Profile->OutfitLoadout);
+    return UpdateCharacterProfileAndOutfit(
+        CharacterProfile, GetFullCharacterCustomization().Outfit);
 }
 
 bool UDiscGolfTourGameInstance::UpdateCharacterProfile(
@@ -323,7 +454,8 @@ bool UDiscGolfTourGameInstance::UpdateCharacterProfile(
         return false;
     }
 
-    const FDGBodyBuildProfile ExistingBuild = Profile->CharacterProfile.ToBodyBuildProfile();
+    const FDGBodyBuildProfile ExistingBuild =
+        GetFullCharacterCustomization().BodyBuild;
     return UpdateCharacterProfile(FDiscGolfCharacterProfileSaveData::FromFramework(
         Body, ThrowStyle, Handedness, ExistingBuild));
 }
@@ -331,7 +463,8 @@ bool UDiscGolfTourGameInstance::UpdateCharacterProfile(
 FDGOutfitLoadout UDiscGolfTourGameInstance::GetOutfitLoadout() const
 {
     return Profile && DiscGolfSaveSchema::IsCurrent(Profile->SaveSchemaVersion)
-        ? DiscGolfOutfitRuntime::NormalizeForPersistence(Profile->OutfitLoadout)
+        ? DiscGolfOutfitRuntime::NormalizeForPersistence(
+            GetFullCharacterCustomization().Outfit)
         : FDGOutfitLoadout();
 }
 
@@ -344,13 +477,44 @@ bool UDiscGolfTourGameInstance::UpdateCharacterProfileAndOutfit(
         return false;
     }
 
-    const FDiscGolfCharacterProfileSaveData PreviousCharacter = Profile->CharacterProfile;
+    FDiscGolfCharacterProfileSaveData Safe = CharacterProfile;
+    Safe.Sanitize();
+    FDGFullCharacterCustomization Full = GetFullCharacterCustomization();
+    Full.Identity.Handedness = Safe.GetHandedness();
+    Full.Body = Safe.ToBodyProfile();
+    Full.BodyBuild = Safe.ToBodyBuildProfile();
+    Full.ThrowStyle = Safe.ToThrowStyle();
+    Full.Outfit = DiscGolfOutfitRuntime::NormalizeForPersistence(OutfitLoadout);
+    return UpdateFullCharacterCustomization(Full);
+}
+
+bool UDiscGolfTourGameInstance::UpdateFullCharacterCustomization(
+    const FDGFullCharacterCustomization& CharacterCustomization)
+{
+    if (!Profile || !DiscGolfSaveSchema::IsCurrent(Profile->SaveSchemaVersion))
+    {
+        return false;
+    }
+
+    const FDGFullCharacterCustomization PreviousFull =
+        Profile->CharacterCustomization;
+    const FDiscGolfCharacterProfileSaveData PreviousCharacter =
+        Profile->CharacterProfile;
     const FDGOutfitLoadout PreviousOutfit = Profile->OutfitLoadout;
-    Profile->CharacterProfile = CharacterProfile;
-    Profile->CharacterProfile.Sanitize();
-    Profile->OutfitLoadout = DiscGolfOutfitRuntime::NormalizeForPersistence(OutfitLoadout);
+
+    Profile->CharacterCustomization = CharacterCustomization;
+    DiscGolfFullCharacterRuntime::NormalizeForPersistence(
+        Profile->CharacterCustomization);
+    Profile->CharacterProfile = FDiscGolfCharacterProfileSaveData::FromFramework(
+        Profile->CharacterCustomization.Body,
+        Profile->CharacterCustomization.ThrowStyle,
+        Profile->CharacterCustomization.Identity.Handedness,
+        Profile->CharacterCustomization.BodyBuild);
+    Profile->OutfitLoadout = DiscGolfOutfitRuntime::NormalizeForPersistence(
+        Profile->CharacterCustomization.Outfit);
     if (!SaveProfileInternal())
     {
+        Profile->CharacterCustomization = PreviousFull;
         Profile->CharacterProfile = PreviousCharacter;
         Profile->OutfitLoadout = PreviousOutfit;
         return false;
