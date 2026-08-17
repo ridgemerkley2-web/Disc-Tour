@@ -1210,7 +1210,7 @@ The unrelated baseline remains exactly: `Config/DefaultEditor.ini` (1), `Content
 
 Status: **PASS for the intended full-character technical/proxy scope.** All new head, hair, facial-hair, eyebrow, scar, and tattoo content is project-owned generic validation content marked `NON_PRODUCTION_PROXY` / `DO_NOT_SHIP`. It is not production character art.
 
-Session 6 implementation checkpoint: `deda2fb3d47a828c1b1f9adf563368721eab9b24` (`Session 6: integrate modular outfit customization`). Session 6 documentation checkpoint: `ec02860ddeec6cf59891d3c4aaaaf474d4b282fd` (`Docs: record Session 6 checkpoint`). Session 7 was implemented after the documentation-only checkpoint and remains uncommitted at this record; nothing is staged.
+Session 6 implementation checkpoint: `deda2fb3d47a828c1b1f9adf563368721eab9b24` (`Session 6: integrate modular outfit customization`). Session 6 documentation checkpoint: `ec02860ddeec6cf59891d3c4aaaaf474d4b282fd` (`Docs: record Session 6 checkpoint`). Session 7 implementation checkpoint: `2448abbc3813ec8d07be7d539a788520b9b39b58` (`Session 7: integrate full proxy character customizer`). The Session 7 implementation commit has exactly the accepted 76-path scope and is followed by a separate documentation-only checkpoint rather than an amend.
 
 Session 7 extends the existing creator, possessed player pawn, save flow, accepted 69-bone skeleton, Control Rig, Animation Blueprint, Session 3 RHBH, Session 4 body/throw-style controls, and Session 6 outfit system. It does not add a second avatar, preview pawn, save authority, outfit authority, throw path, gameplay disc, flight solver, inventory, or scoring system.
 
@@ -1411,7 +1411,7 @@ By contrast, the Session 6 matrix, Session 7 matrix, Session 7 validation-slot A
 
 ### Exact Session 7 repository scope
 
-This record is based on `main` at HEAD `ec02860ddeec6cf59891d3c4aaaaf474d4b282fd`. With this changelog edit, Session 7 owns exactly 76 working-tree paths: 20 tracked modifications and 56 untracked additions. Nothing is staged. `git diff --check` passes.
+The Session 7 implementation commit `2448abbc3813ec8d07be7d539a788520b9b39b58` has parent `ec02860ddeec6cf59891d3c4aaaaf474d4b282fd` and owns exactly 76 paths: 20 modifications and 56 additions. Its committed path/status set matches the inventory below exactly, and `git diff --check` passed before checkpointing.
 
 The 20 modified paths are:
 
