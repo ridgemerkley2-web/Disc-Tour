@@ -1507,3 +1507,137 @@ Project-owned source fixture (12):
 - `SourceArt/DiscGolf/Characters/Customization/Proxy/proxy_customization_source_manifest.json`.
 
 The unrelated baseline remains exactly 647 untracked paths and is excluded: `Config/DefaultEditor.ini` (1), `Content/Data` (8), `Content/Environment` (4), `Content/PN_interactiveSpruceForest` (363), `Content/Presentation` (60), `Content/Stump_Scanned` (63), `Content/WaterMaterials` (107), and `SourceArt/PineRidge` (41). Ignored `Binaries`, `Intermediate`, `Saved`, and `DerivedDataCache` evidence is not repository scope. `_BuildKit` is unchanged. No Session 8, MetaHuman, Groom, forehand, putting, or equipment-inventory implementation path is present.
+
+## 2026-08-16 — Session 8A MetaHuman backend scaffold and packaged DGMaster closure
+
+Status: **BLOCKED for MetaHuman visual-backend acceptance; PASS for the bounded fail-closed adapter, cook-closure, and regression-preservation scope.** No MetaHuman character, likeness, Groom, clothing, or vendor asset was fabricated. The Session 7 generic `DO_NOT_SHIP` proxy remains the visible and authoritative development backend, and Session 9 has not started.
+
+Session 7 implementation checkpoint: `2448abbc3813ec8d07be7d539a788520b9b39b58` (`Session 7: integrate full proxy character customizer`). Session 7 documentation checkpoint and Session 8A starting HEAD: `2c54be19a119264d42f11db5470399e021d050cd` (`Docs: record Session 7 checkpoint`). The bounded Session 8A implementation checkpoint is `b046d4577944d99cf70a944dbd18a3649678811d` (`Session 8A: harden avatar backend and prove DGMaster cook closure`), with the Session 7 documentation checkpoint as its direct parent. It contains exactly 32 implementation paths: 12 modifications and 20 additions. This changelog was deliberately excluded from that implementation commit so the blocked acceptance record could be checkpointed separately. Neither checkpoint is presented as completed MetaHuman visual integration.
+
+### Availability and acceptance boundary
+
+The installed engine is Unreal Engine 5.8.1. The engine contains the MetaHuman Creator 1.0.0 Beta plugin shell, but its descriptor is `EnabledByDefault=false`, the project does not enable it, and the official `MetaHumanCharacter/Content/Optional` Core Data payload required by UE's `IsOptionalMetaHumanContentInstalled` contract is absent. No project package supplies an assembled MetaHuman actor, DNA/head/body, Groom, target IK rig, DG-to-MetaHuman retargeter, MetaHuman visual AnimBP, backend profile, or MetaHuman-compatible wardrobe. Mounting engine `MetaHumanSDK` during startup is not treated as project enablement or visual readiness.
+
+The refreshed `Saved/CharacterFramework/Session8AvailabilityAudit.json` is honestly `BLOCKED`, has zero integrity errors, and records exactly six blockers:
+
+- `METAHUMAN_CREATOR_CORE_DATA_OPTIONAL_PAYLOAD_MISSING`;
+- `METAHUMAN_CREATOR_NOT_EXPLICITLY_ENABLED_IN_PROJECT`;
+- `NO_CANONICAL_ASSEMBLED_METAHUMAN_VISUAL_ACTOR`;
+- `NO_CANONICAL_DGMASTER_TO_METAHUMAN_RETARGET`;
+- `NO_CANONICAL_METAHUMAN_BACKEND_PROFILE`;
+- `NO_PROJECT_METAHUMAN_NAMED_PACKAGES`.
+
+Its exact Core Data status is `MISSING_BY_UE_IS_OPTIONAL_METAHUMAN_CONTENT_INSTALLED_CONTRACT`. The earlier cook-author prerequisite is no longer a blocker because the two bounded DGMaster cook assets were authored and validated. The availability report's filesystem-only cook-groundwork field remains conservatively worded; the later strict, no-write, package, and runtime closure evidence below is the authoritative proof for that bounded scope.
+
+No new plugin was enabled in `DiscGolfTour.uproject`. The existing enabled project list remains Enhanced Input, Procedural Mesh Component, PCG, Python Script Plugin, Editor Scripting Utilities, Control Rig, IKRig, Full Body IK, Skeletal Mesh Modeling Tools, and DiscGolfCharacterFramework. There is no project MetaHuman, HairStrands, RigLogic, or experimental MetaHumanRuntime dependency.
+
+Premium Disc Golf art is explicitly out of Session 8 scope and remains `NOT_BUNDLED`. The post-author brand report passes with acquisitions=0, vendor assets=0, MetaHuman project packages=0, Premium-logo hits=0, and only the qualification `PREMIUM_DISC_GOLF_ART_OUT_OF_SESSION8_SCOPE_AND_NOT_BUNDLED`. The optional candidates Brushify Forest, Easy Waterscape, Fluid Flux, Modern Clothes Pack, and Ultra Dynamic Sky remain `NOT_ACQUIRED`; none is owned, installed, or integrated. No manufacturer mark, copied disc stamp, celebrity likeness, paid Fab content, or scraped art was added.
+
+### Dormant backend architecture
+
+The installed generic avatar-backend component was hardened without adding a MetaHuman or IKRig module dependency. It now validates the selected profile, source mesh, class, owner, world, attachment, and candidate structure; configures a hidden deferred candidate through success-bearing Blueprint-native hooks; disables physics/collision/overlap/navigation on presentation primitives; adds source-mesh tick prerequisites; preserves the old visual until the candidate has passed verification; swaps atomically; exposes dynamically verified ready state; and cleans pending/active actors during unregister/end play. Failed candidate construction does not destroy the current backend. A project adapter and actor-interface contract define the later MetaHuman seam, but their native base behavior fails closed.
+
+`ADiscGolferPawn` owns exactly one dormant `UDiscGolfMetaHumanAvatarBackendComponent`. Session 8 assigns it no MetaHuman profile and makes zero Build/Apply/Destroy calls, so it cannot hide or replace the Session 7 presentation. The stable vocabulary is `dg_master` and reserved `metahuman_assembled`; the latter is not selectable while its canonical content is absent. The quality vocabulary `Prototype`, `GameplayPerformance`, `GameplayHigh`, and `Showcase` is defined only as policy/data groundwork; no MetaHuman quality or performance result is claimed.
+
+The authoritative path remains the single possessed DG pawn and `SkeletalMesh` using `SK_DG_Master` / `SKEL_DG_Master`, `IK_DG_Master`, `CR_DG_Master`, `ABP_DG_Player`, the accepted RHBH montage/notify, `disc_grip_r`, `DiscGolfTourGameMode.RequestThrowFromGrip`, and `DiscActor.DiscFlightComponent`. The adapter owns no input, aim, power, timing, spin, inventory, release, disc-spawn, flight, scoring, or progression authority.
+
+The intended future MetaHuman paths are recorded but deliberately absent:
+
+- backend profile: `/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default`;
+- visual actor: `/Game/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default`;
+- retargeter: `/Game/DiscGolf/Characters/MetaHuman/RTG_DGMaster_To_MetaHuman`;
+- target IK rig and visual AnimBP: not available and therefore not invented.
+
+Because no assembled actor exists, there is no accepted assembly/optimization type, target body preset, face preset, Groom mapping, outfit adapter, held-disc visual method, release-alignment result, retarget-pose result, creator close-up, backend switch, performance measurement, or MetaHuman visual evidence. Proxy face/body/hair/appearance/outfit controls remain unchanged. No unsupported proxy slider is mislabeled as a MetaHuman control.
+
+Save schema remains 9. A MetaHuman backend selection/preset is not persisted because no selectable MetaHuman backend exists. The reserved stable ID is source vocabulary only; no migration or fabricated UObject path was added. The accepted Session 7 full-customization payload remains the sole character-data authority.
+
+### Cook closure and authored packages
+
+Session 8 adds two narrow `AlwaysCook` Primary Asset scans in `Config/DefaultGame.ini`: `DGRuntimeCookManifest` under `/Game/DiscGolf/Cook` and `DiscGolfAvatarBackendProfile` under `/Game/DiscGolf/Characters/Avatar/Data`. The source manifest freezes exactly 69 runtime packages and 12 explicit editor/source fixtures that must remain absent from the package. It includes the string-loaded Session 6/7 catalogs, meshes, materials, creator dependencies, accepted rig/animation assets, and the canonical DGMaster backend profile; it does not include any reserved MetaHuman path.
+
+One authorized author run created exactly two packages and changed no pre-existing Content file:
+
+- `Content/DiscGolf/Cook/DA_DG_RuntimeCookManifest.uasset` — 25,483 bytes, SHA-256 `63415DEA2A5F92766FB39B532E629B4AC6A1C1BC56E2D6BD4CD41C0222E5A429`;
+- `Content/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster.uasset` — 2,181 bytes, SHA-256 `55B360A41567175DED0BFAA30CB073201A5B0FFDFB1102F5CAE4EDAEAF09D1A7`.
+
+The DGMaster profile is a generic dormant fallback with no visual actor, retarget asset, or runtime face-sculpting claim. Strict validation is `PASS_NO_DISK_MUTATION`; the independent wrapper is `PASS_NO_WRITE`; the repeat author run is `PASS_ALREADY_CURRENT_NO_ASSET_WRITES` with factory/save/import/delete calls all zero. Full Content moved from 686 to 688 files solely through the two additions and then remained byte-identical.
+
+The final Windows Development package is under `C:\DGTour_Packages\Session8_Final_185629fc-9f81-4ee5-b05b-7a67e96155e1`. UAT build/cook/stage/pak/IoStore/archive completed with `BUILD SUCCESSFUL`, exit 0, 632 of 639 discovered packages cooked and seven platform-only skips. The IoStore response contains all 69 expected runtime packages exactly once, the manifest/profile, and zero of the 12 excluded or three reserved MetaHuman packages.
+
+The packaged inner executable, not the small bootstrap, ran the fail-closed closure smoke. It proved 69 package-store entries and 69 usable exports: 66 direct assets plus the exact typed generated classes for `CR_DG_Master_C`, `ABP_DG_Player_C`, and `WBP_DG_CharacterCreator_C`. It also proved one native pawn, one outfit component, one character-customization component, one dormant avatar adapter, the native RHBH/release/flight authorities, 12 excluded fixtures absent, and all three reserved MetaHuman packages absent. `Saved/CharacterFramework/Session8CookClosureSmoke.json` passes every launcher gate. This is a proxy/DGMaster Development cook-closure result, not a MetaHuman or shipping-art package acceptance.
+
+### Fresh validation and regression matrix
+
+| Gate | Final result |
+| --- | --- |
+| Editor build | PASS; final runner rebuild 4/4, `Result: Succeeded`, no compiler diagnostic; log SHA-256 `C02090456904601F99E8F212D4FD7C94EE65464589F1C2F4166E7978B657E6AC` |
+| Runtime build | PASS; final runner rebuild 3/3, `Result: Succeeded`, no compiler diagnostic; log SHA-256 `4030F6D30534D313F87F4B21C359C745A65EF90BBD6C0F5BED7EE23ACEE4C632` |
+| Static successor gates | PASS; Session 3 24/24, Session 4 91/91, Session 6 15/15, Session 7 plugin 6/6, Session 7 full 14/14, Session 8 15/15 |
+| Session 8 availability | BLOCKED honestly; six MetaHuman blockers, author prerequisite cleared, zero integrity errors |
+| Session 8 brand/license | PASS; generic/unbranded only, no acquisition/vendor/brand/MH package |
+| Session 8 cook assets | PASS strict/no-write/idempotence; 69 runtime, 12 excluded, 83 watched DiscGolf packages |
+| UAT package | PASS; full cook/stage/pak/IoStore/archive, exit 0; log SHA-256 `37AF682067FE497C15466FAD2D2CDE321CC27D07143D5EE056B157FFBFE5B7AC` |
+| Packaged DGMaster closure | PASS; exact 69 packages/exports = 66 direct + 3 typed generated; report SHA-256 `47E0AE63180A822B53174A01426A247C52F9313EB1609B871432FAD5191FE048` |
+| Reflection | PASS; four classes and four structs |
+| Strict DG rig/authority | PASS; 69 bones, four goals, four effectors, three profiles, one release/finish, single existing flight path |
+| Full automation | PASS; exact 134/134 unique successes, prior frozen 132-name set plus two Session 8 tests, sorted test-set SHA-256 `7A38883893E489E15EAD95D3FD441B38CE491A65C40162352AA5625FB7E1FA19` |
+| Session 3 one-throw | PASS; one input/animation/release/authoritative disc/flight/recovery and cancellation launches zero discs |
+| Session 4 profiles | PASS 5/5: ShortCompact, Baseline, TallLongArms, SliderMin, SliderMax |
+| Session 5 fallback and fixture matrix | PASS; normal Baseline prototype fallback plus synthetic `DO_NOT_SHIP` profiles 3/3 |
+| Session 6 outfit matrix | PASS 6/6, including missing-item fallback; project package/save snapshots unchanged |
+| Session 7 full-character matrix | PASS exact 12/12, including schema migration, missing-content fallback, Randomize Apply/reload, Cancel, and complete-character RHBH |
+| Three-hole smoke | PASS; 3/3 holes, three strokes, par 11, -8 round |
+
+The required MetaHuman asset/retargeter/mapping/backend-switch/performance/visual matrix was not run because its input content does not exist. No proxy screenshots are substituted for MetaHuman evidence.
+
+### Save and mutation safety
+
+The sole production save remains `C:\DGTour\Saved\SaveGames\DiscGolfTour_Profile_0.sav`, 5,212 bytes, SHA-256 `A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14`. The accepted external backup at `C:\DGTour_Backups\Session7_Accepted\DiscGolfTour_Profile_0_Session7_Accepted.sav` remains byte-identical with the same size/hash. Neither is repository content.
+
+Every final Session 8 commandlet, automation process, gameplay smoke, and matrix used a fresh external GUID `-UserDir` or one fresh external GUID per accepted matrix launcher. Legacy Session 3/4/5 and three-hole flows created or rewrote only their disposable external profile, as expected. Session 6/7 guards also preserved project state. The packaged closure created exactly one 2,827-byte isolated profile, recorded it, and removed its UUID directory. Every GUID run directory and all run residue were inspected and deleted; only the empty parent test roots remain. The project SaveGames directory, production save, backup, and all 688 Content files are unchanged across the final regression boundary. This is no production/backup/Content mutation, not a false claim of zero isolated test writes.
+
+### Exact Session 8A repository scope
+
+The bounded Session 8A checkpoint owns exactly 33 unique repository paths relative to the Session 7 documentation checkpoint: 13 modifications and 20 additions. The implementation commit records 32 paths (12 modifications and all 20 additions); the separate documentation-only checkpoint records this changelog as the thirteenth modification. None of the 647 unrelated baseline paths is included.
+
+The 13 modified paths are:
+
+- `Docs/CODEX_CHARACTER_INTEGRATION_CHANGELOG.md`;
+- `Config/DefaultGame.ini`;
+- `Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/Private/DiscGolfAvatarBackendComponent.cpp`;
+- `Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/Public/DiscGolfAvatarBackendComponent.h`;
+- `Scripts/validate_dg_character_session3_wiring.py`;
+- `Scripts/validate_dg_character_session4_wiring.py`;
+- `Scripts/validate_dg_character_session6_wiring.py`;
+- `Scripts/validate_dg_character_session7_plugin_contract.py`;
+- `Scripts/validate_dg_character_session7_wiring.py`;
+- `Source/DiscGolfTour/DiscGolfTourGameMode.cpp`;
+- `Source/DiscGolfTour/DiscGolfTourGameMode.h`;
+- `Source/DiscGolfTour/DiscGolferPawn.cpp`;
+- `Source/DiscGolfTour/DiscGolferPawn.h`.
+
+The 20 added paths are:
+
+- `Config/DG_RuntimeCookManifest.json`;
+- `Content/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster.uasset`;
+- `Content/DiscGolf/Cook/DA_DG_RuntimeCookManifest.uasset`;
+- `Scripts/audit_dg_character_session8_availability.py`;
+- `Scripts/create_dg_character_session8_cook_assets.py`;
+- `Scripts/run-session8-cook-closure-smoke.py`;
+- `Scripts/validate_dg_character_session8_brand_license.py`;
+- `Scripts/validate_dg_character_session8_cook_assets.py`;
+- `Scripts/validate_dg_character_session8_cook_no_write.py`;
+- `Scripts/validate_dg_character_session8_wiring.py`;
+- `Source/DiscGolfTour/DiscGolfAvatarBackendRuntime.cpp`;
+- `Source/DiscGolfTour/DiscGolfAvatarBackendRuntime.h`;
+- `Source/DiscGolfTour/DiscGolfMetaHumanAvatarBackendComponent.cpp`;
+- `Source/DiscGolfTour/DiscGolfMetaHumanAvatarBackendComponent.h`;
+- `Source/DiscGolfTour/DiscGolfMetaHumanVisualContract.h`;
+- `Source/DiscGolfTour/DiscGolfRuntimeCookManifest.cpp`;
+- `Source/DiscGolfTour/DiscGolfRuntimeCookManifest.h`;
+- `Source/DiscGolfTour/DiscGolfSession8CookClosureRunner.cpp`;
+- `Source/DiscGolfTour/DiscGolfSession8CookClosureRunner.h`;
+- `Source/DiscGolfTour/Tests/DiscGolfAvatarBackendRuntimeTests.cpp`.
+
+The unrelated baseline remains exactly 647 untracked paths and is excluded: `Config/DefaultEditor.ini` (1), `Content/Data` (8), `Content/Environment` (4), `Content/PN_interactiveSpruceForest` (363), `Content/Presentation` (60), `Content/Stump_Scanned` (63), `Content/WaterMaterials` (107), and `SourceArt/PineRidge` (41). Ignored `Binaries`, `Intermediate`, `Saved`, and `DerivedDataCache` evidence is not repository scope. `_BuildKit` is unchanged. No vendor package, Premium branding, assembled MetaHuman, Groom, forehand, putting, equipment inventory, production mocap, or Session 9 implementation was added.
