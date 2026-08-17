@@ -21,6 +21,7 @@ class UDiscGolfRHBHThrowAdapterComponent;
 class UDiscGolfAppearanceComponent;
 class UDiscGolfCharacterProfile;
 class UDiscGolfCharacterCustomizationComponent;
+class UDiscGolfMetaHumanAvatarBackendComponent;
 class UDiscGolfCosmeticCatalog;
 class UDiscGolfOutfitCatalog;
 class UDiscGolfOutfitComponent;
@@ -85,6 +86,10 @@ public:
     {
         return CharacterCustomization;
     }
+    UDiscGolfMetaHumanAvatarBackendComponent* GetAvatarBackendComponent() const
+    {
+        return AvatarBackendComponent;
+    }
     USkeletalMeshComponent* GetModularHeadMesh() const { return ModularHeadMesh; }
     UDiscGolfCosmeticCatalog* GetCosmeticCatalog() const;
     bool IsHairHiddenByOutfitCoverage() const { return bHairHiddenByOutfitCoverage; }
@@ -124,6 +129,7 @@ private:
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfAppearanceComponent> CharacterAppearance;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfCharacterCustomizationComponent> CharacterCustomization;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfOutfitComponent> OutfitComponent;
+    UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfMetaHumanAvatarBackendComponent> AvatarBackendComponent;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfRHBHThrowAdapterComponent> RHBHThrowAdapter;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UStaticMeshComponent> HeldDiscVisual;
     UPROPERTY() TObjectPtr<UAnimMontage> RHBHThrowMontage;

@@ -262,7 +262,9 @@ def main() -> int:
          "Session6OutfitVisualCapture", "Session6OutfitValidationNoSave",
          "bSession7FullCharacterValidationNoSave",
          "Session7FullCharacterThrowSmokeTest",
-         "Session7FullCharacterVisualCapture"),
+         "Session7FullCharacterVisualCapture",
+         "bSession8CookClosureValidationNoSave",
+         "Session8ValidationNoSave", "Session8CookClosureSmokeTest"),
     )
     record("explicit_command_line_harness_hooks", errors, evidence)
 
@@ -271,8 +273,14 @@ def main() -> int:
         "void ADiscGolfTourGameMode::SavePracticeRoundSnapshot()", 1
     )[-1].split("UDiscGolfTourGameInstance* GameInstance", 1)[0]
     no_save_errors = []
-    if game_mode.count('TEXT("Session6OutfitValidationNoSave")') != 1:
-        no_save_errors.append("validation no-save flag must occur exactly once in GameMode source")
+    for flag in (
+        "Session6OutfitValidationNoSave",
+        "Session7FullCharacterValidationNoSave",
+        "Session8ValidationNoSave",
+    ):
+        if game_mode.count(f'TEXT("{flag}")') != 1:
+            no_save_errors.append(
+                f"{flag} must occur exactly once in GameMode source")
     for token in (
         'TEXT("Session6OutfitValidationNoSave")',
         'TEXT("Session6OutfitThrowSmokeTest")',
@@ -280,6 +288,8 @@ def main() -> int:
         'TEXT("Session7FullCharacterValidationNoSave")',
         'TEXT("Session7FullCharacterThrowSmokeTest")',
         'TEXT("Session7FullCharacterVisualCapture")',
+        'TEXT("Session8ValidationNoSave")',
+        'TEXT("Session8CookClosureSmokeTest")',
         "&& (FParse::Param(",
         "|| FParse::Param(",
         "!= FParse::Param(",
@@ -287,20 +297,56 @@ def main() -> int:
         if token not in save_function:
             no_save_errors.append(f"SavePracticeRoundSnapshot missing fail-closed token: {token}")
     compact_save_function = re.sub(r"\s+", "", save_function)
+    expected_guard_boundaries = (
+        (
+            "constboolbSession6OutfitValidationNoSave=FParse::Param("
+            'FCommandLine::Get(),TEXT("Session6OutfitValidationNoSave"))'
+            "&&(FParse::Param(FCommandLine::Get(),"
+            'TEXT("Session6OutfitThrowSmokeTest"))||FParse::Param('
+            'FCommandLine::Get(),TEXT("Session6OutfitVisualCapture")));'
+        ),
+        (
+            "constboolbSession7FullCharacterValidationNoSave=FParse::Param("
+            'FCommandLine::Get(),TEXT("Session7FullCharacterValidationNoSave"))'
+            "&&(FParse::Param(FCommandLine::Get(),"
+            'TEXT("Session7FullCharacterThrowSmokeTest"))!=FParse::Param('
+            'FCommandLine::Get(),TEXT("Session7FullCharacterVisualCapture")));'
+        ),
+        (
+            "constboolbSession8CookClosureValidationNoSave=FParse::Param("
+            'FCommandLine::Get(),TEXT("Session8ValidationNoSave"))'
+            "&&FParse::Param(FCommandLine::Get(),"
+            'TEXT("Session8CookClosureSmokeTest"));'
+        ),
+    )
+    for guard in expected_guard_boundaries:
+        if compact_save_function.count(guard) != 1:
+            no_save_errors.append(
+                "practice snapshot must contain each exact Session6/Session7/"
+                "Session8 guarded no-save conjunction exactly once")
     expected_combined_boundary = (
         "if(bRegressionActive||bSession6OutfitValidationNoSave"
-        "||bSession7FullCharacterValidationNoSave)return;")
+        "||bSession7FullCharacterValidationNoSave"
+        "||bSession8CookClosureValidationNoSave)return;")
     if compact_save_function.count(expected_combined_boundary) != 1:
         no_save_errors.append(
             "practice snapshot boundary must have exactly one combined "
-            "regression/Session6/Session7 early return")
+            "regression/Session6/Session7/Session8 early return")
+    if compact_save_function.count("return;") != 1:
+        no_save_errors.append(
+            "practice snapshot guard prefix must contain exactly one early return")
     record(
         "session6_no_save_flag_is_fail_closed_at_practice_snapshot_boundary",
         no_save_errors,
         {"flag_occurrences_in_game_mode": game_mode.count(
             'TEXT("Session6OutfitValidationNoSave")'),
          "combined_boundary_occurrences": compact_save_function.count(
-             expected_combined_boundary)},
+             expected_combined_boundary),
+         "exact_guard_occurrences": {
+             f"session{index + 6}": compact_save_function.count(guard)
+             for index, guard in enumerate(expected_guard_boundaries)
+         },
+         "early_return_occurrences": compact_save_function.count("return;")},
     )
 
     visual_runner_path = (

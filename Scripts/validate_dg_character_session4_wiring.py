@@ -30,13 +30,24 @@ DEFAULT_REPORT = (
 )
 
 SESSION5_PLUGIN_BASELINE = "e6e6a57727411a4cc50b890f4d8557bfb803e9e2"
-EXPECTED_SUCCESSOR_PLUGIN_CHANGES = (
+SESSION7_PLUGIN_BASELINE = "2c54be19a119264d42f11db5470399e021d050cd"
+SESSION6_SESSION7_PLUGIN_CHANGES = (
     "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
     "Private/DiscGolfCharacterCustomizationComponent.cpp",
     "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
     "Private/DiscGolfOutfitComponent.cpp",
     "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
     "Public/DiscGolfCharacterTypes.h",
+)
+SESSION8_PLUGIN_CHANGES = (
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
+    "Private/DiscGolfAvatarBackendComponent.cpp",
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
+    "Public/DiscGolfAvatarBackendComponent.h",
+)
+EXPECTED_SUCCESSOR_PLUGIN_CHANGES = (
+    *SESSION6_SESSION7_PLUGIN_CHANGES,
+    *SESSION8_PLUGIN_CHANGES,
 )
 
 SCHEMA_RELATIVE_PATH = Path(
@@ -1020,10 +1031,13 @@ def _validate_assets_and_paths(validator: Validator) -> None:
 
 
 def _validate_plugin_immutability(validator: Validator) -> None:
-    customization_path, outfit_path, types_path = EXPECTED_SUCCESSOR_PLUGIN_CHANGES
+    customization_path, outfit_path, types_path = SESSION6_SESSION7_PLUGIN_CHANGES
+    avatar_cpp_path, avatar_header_path = SESSION8_PLUGIN_CHANGES
     customization_component = validator.text(customization_path)
     outfit_component = validator.text(outfit_path)
     character_types = validator.text(types_path)
+    avatar_cpp = validator.text(avatar_cpp_path)
+    avatar_header = validator.text(avatar_header_path)
     required_outfit_tokens = (
         "SetCollisionEnabled(ECollisionEnabled::NoCollision)",
         "SetGenerateOverlapEvents(false)",
@@ -1056,6 +1070,20 @@ def _validate_plugin_immutability(validator: Validator) -> None:
             timeout=15.0,
             check=False,
         )
+        session8_diff_result = subprocess.run(
+            [
+                "git", "diff", "--name-only", "--diff-filter=ACDMRTUXB",
+                SESSION7_PLUGIN_BASELINE, "--",
+                "Plugins/DiscGolfCharacterFramework",
+            ],
+            cwd=validator.root,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=15.0,
+            check=False,
+        )
         status_result = subprocess.run(
             [
                 "git", "status", "--porcelain=v1", "--untracked-files=all", "--",
@@ -1073,6 +1101,10 @@ def _validate_plugin_immutability(validator: Validator) -> None:
             line.strip().replace("\\", "/")
             for line in diff_result.stdout.splitlines() if line.strip()
         })
+        session8_changed_paths = sorted({
+            line.strip().replace("\\", "/")
+            for line in session8_diff_result.stdout.splitlines() if line.strip()
+        })
         status_entries = [
             line for line in status_result.stdout.splitlines() if line.strip()
         ]
@@ -1088,10 +1120,55 @@ def _validate_plugin_immutability(validator: Validator) -> None:
         throw_block = character_types.split("struct DISCGOLFCHARACTERFRAMEWORK_API FDGThrowStyle", 1)[-1].split(
             "USTRUCT(BlueprintType)", 1
         )[0]
+        avatar_header_tokens = (
+            "bool ApplyCustomizationToVisual(",
+            "bool IsVisualBackendReady() const;",
+            "FDGAvatarBackendState GetAvatarBackendState() const;",
+            "AActor* GetActiveVisualActor() const;",
+            "UDiscGolfAvatarBackendProfile* GetActiveBackendProfile() const;",
+            "USkeletalMeshComponent* GetActiveAnimationSourceMesh() const;",
+            "UFUNCTION(BlueprintNativeEvent, Category=\"Disc Golf|Avatar\")",
+            "virtual bool ConfigureVisualBackend_Implementation(",
+            "virtual bool ApplyVisualCustomization_Implementation(",
+            "TObjectPtr<AActor> PendingVisualActor;",
+            "TObjectPtr<UDiscGolfAvatarBackendProfile> ActiveBackendProfile;",
+            "TObjectPtr<USkeletalMeshComponent> ActiveAnimationSourceMesh;",
+            "FDGAvatarBackendState ActiveBackendState;",
+        )
+        avatar_cpp_tokens = (
+            "SpawnActorDeferred<AActor>",
+            "CandidateActor->SetActorHiddenInGame(true);",
+            "CandidateActor->SetActorEnableCollision(false);",
+            "CandidateActor->FinishSpawning(SpawnTransform);",
+            "CandidateActor->AttachToComponent(",
+            "AnimationSourceMesh,",
+            "FAttachmentTransformRules::SnapToTargetNotIncludingScale",
+            "const bool bConfigured = ConfigureVisualBackend(",
+            "const bool bCandidateReady = bConfigured",
+            "CandidateRoot->IsAttachedTo(AnimationSourceMesh)",
+            "ActiveBackendState.bVisualReady = true;",
+            "OnAvatarBackendReady.Broadcast(ReadyState);",
+            "Primitive->SetSimulatePhysics(false);",
+            "Primitive->SetCollisionEnabled(ECollisionEnabled::NoCollision);",
+            "Primitive->SetGenerateOverlapEvents(false);",
+            "TargetMesh->AddTickPrerequisiteComponent(AnimationSourceMesh);",
+        )
+        base_configure_fails_closed = re.search(
+            r"ConfigureVisualBackend_Implementation\([^)]*\)\s*\{\s*return false;\s*\}",
+            avatar_cpp,
+            re.DOTALL,
+        ) is not None
+        base_apply_fails_closed = re.search(
+            r"ApplyVisualCustomization_Implementation\([^)]*\)\s*\{\s*return false;\s*\}",
+            avatar_cpp,
+            re.DOTALL,
+        ) is not None
         passed = (
             diff_result.returncode == 0
+            and session8_diff_result.returncode == 0
             and status_result.returncode == 0
             and changed_paths == sorted(EXPECTED_SUCCESSOR_PLUGIN_CHANGES)
+            and session8_changed_paths == sorted(SESSION8_PLUGIN_CHANGES)
             and not untracked_paths
             and all(token in outfit_component for token in required_outfit_tokens)
             and all(token in customization_component for token in required_customization_tokens)
@@ -1099,13 +1176,25 @@ def _validate_plugin_immutability(validator: Validator) -> None:
             and body_block.count("SaveGame") == 7
             and throw_block.count("SaveGame") == 8
             and character_types.count("SaveGame") == 15
+            and all(token in avatar_header for token in avatar_header_tokens)
+            and all(token in avatar_cpp for token in avatar_cpp_tokens)
+            and avatar_cpp.count("SpawnActorDeferred<AActor>") == 1
+            and avatar_cpp.count("OnAvatarBackendReady.Broadcast(") == 1
+            and avatar_cpp.find("const bool bCandidateReady = bConfigured")
+            < avatar_cpp.find("SpawnedVisualActor = CandidateActor;")
+            and base_configure_fails_closed
+            and base_apply_fails_closed
         )
         evidence: Any = {
             "diff_return_code": diff_result.returncode,
+            "session8_diff_return_code": session8_diff_result.returncode,
             "status_return_code": status_result.returncode,
             "baseline": SESSION5_PLUGIN_BASELINE,
+            "session8_baseline": SESSION7_PLUGIN_BASELINE,
             "allowed_paths": list(EXPECTED_SUCCESSOR_PLUGIN_CHANGES),
+            "session8_allowed_paths": list(SESSION8_PLUGIN_CHANGES),
             "changed_paths": changed_paths,
+            "session8_changed_paths": session8_changed_paths,
             "untracked_paths": untracked_paths,
             "missing_outfit_tokens": [
                 token for token in required_outfit_tokens if token not in outfit_component
@@ -1118,6 +1207,18 @@ def _validate_plugin_immutability(validator: Validator) -> None:
             "body_savegame_fields": body_block.count("SaveGame"),
             "throw_style_savegame_fields": throw_block.count("SaveGame"),
             "whole_file_savegame_tokens": character_types.count("SaveGame"),
+            "missing_avatar_header_tokens": [
+                token for token in avatar_header_tokens if token not in avatar_header
+            ],
+            "missing_avatar_cpp_tokens": [
+                token for token in avatar_cpp_tokens if token not in avatar_cpp
+            ],
+            "avatar_deferred_spawn_count": avatar_cpp.count(
+                "SpawnActorDeferred<AActor>"),
+            "avatar_ready_broadcast_count": avatar_cpp.count(
+                "OnAvatarBackendReady.Broadcast("),
+            "avatar_base_configure_fails_closed": base_configure_fails_closed,
+            "avatar_base_apply_fails_closed": base_apply_fails_closed,
         }
     except (OSError, subprocess.TimeoutExpired) as exc:
         passed = False
@@ -1126,7 +1227,7 @@ def _validate_plugin_immutability(validator: Validator) -> None:
         "plugin.installed_source_unchanged",
         "plugin",
         passed,
-        "Installed UE 5.8 plugin differs from Session 5 in exactly the three reviewed Session 6/7 integration files and seams",
+        "Installed UE 5.8 plugin differs from Session 5 in exactly five reviewed files, with Session 8 limited to two fail-closed avatar-backend files",
         evidence,
     )
 

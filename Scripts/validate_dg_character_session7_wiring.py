@@ -22,6 +22,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "Saved/CharacterFramework/Session7FullCharacterWiringReport.json"
 SESSION6_DOC_CHECKPOINT = "ec02860ddeec6cf59891d3c4aaaaf474d4b282fd"
+SESSION7_CHECKPOINT = "2c54be19a119264d42f11db5470399e021d050cd"
 
 FULL_SCHEMA = (
     ROOT / "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Config/"
@@ -196,9 +197,9 @@ def _git(*args: str) -> subprocess.CompletedProcess[str]:
     )
 
 
-def _added_lines(relative: str) -> str:
+def _added_lines_since(checkpoint: str, relative: str) -> str:
     result = _git(
-        "diff", "--unified=0", SESSION6_DOC_CHECKPOINT, "--", relative,
+        "diff", "--unified=0", checkpoint, "--", relative,
     )
     if result.returncode != 0:
         return ""
@@ -206,6 +207,10 @@ def _added_lines(relative: str) -> str:
         line[1:] for line in result.stdout.splitlines()
         if line.startswith("+") and not line.startswith("+++")
     )
+
+
+def _added_lines(relative: str) -> str:
+    return _added_lines_since(SESSION6_DOC_CHECKPOINT, relative)
 
 
 def main() -> int:
@@ -467,6 +472,9 @@ def main() -> int:
         "Session7FullCharacterVisualCapture",
         "ADiscGolfSession7FullCharacterVisualCaptureRunner",
         "Session7FullCharacterValidationNoSave",
+        "Session6OutfitValidationNoSave",
+        "Session8ValidationNoSave",
+        "Session8CookClosureSmokeTest",
     )
     game_mode_missing = [token for token in game_mode_tokens if token not in game_mode]
     game_mode_errors = [
@@ -476,13 +484,53 @@ def main() -> int:
     save_function = game_mode_cpp.split(
         "void ADiscGolfTourGameMode::SavePracticeRoundSnapshot()", 1
     )[-1].split("UDiscGolfTourGameInstance* GameInstance", 1)[0]
-    for token in (
+    compact_save_function = re.sub(r"\s+", "", save_function)
+    expected_guard_boundaries = (
+        (
+            "constboolbSession6OutfitValidationNoSave=FParse::Param("
+            'FCommandLine::Get(),TEXT("Session6OutfitValidationNoSave"))'
+            "&&(FParse::Param(FCommandLine::Get(),"
+            'TEXT("Session6OutfitThrowSmokeTest"))||FParse::Param('
+            'FCommandLine::Get(),TEXT("Session6OutfitVisualCapture")));'
+        ),
+        (
+            "constboolbSession7FullCharacterValidationNoSave=FParse::Param("
+            'FCommandLine::Get(),TEXT("Session7FullCharacterValidationNoSave"))'
+            "&&(FParse::Param(FCommandLine::Get(),"
+            'TEXT("Session7FullCharacterThrowSmokeTest"))!=FParse::Param('
+            'FCommandLine::Get(),TEXT("Session7FullCharacterVisualCapture")));'
+        ),
+        (
+            "constboolbSession8CookClosureValidationNoSave=FParse::Param("
+            'FCommandLine::Get(),TEXT("Session8ValidationNoSave"))'
+            "&&FParse::Param(FCommandLine::Get(),"
+            'TEXT("Session8CookClosureSmokeTest"));'
+        ),
+    )
+    for guard in expected_guard_boundaries:
+        if compact_save_function.count(guard) != 1:
+            game_mode_errors.append(
+                "practice-save boundary must contain each exact Session6/"
+                "Session7/Session8 guarded no-save conjunction exactly once")
+    expected_combined_boundary = (
+        "if(bRegressionActive||bSession6OutfitValidationNoSave"
+        "||bSession7FullCharacterValidationNoSave"
+        "||bSession8CookClosureValidationNoSave)return;")
+    if compact_save_function.count(expected_combined_boundary) != 1:
+        game_mode_errors.append(
+            "practice-save boundary must contain the single combined "
+            "regression/Session6/Session7/Session8 early return")
+    if compact_save_function.count("return;") != 1:
+        game_mode_errors.append(
+            "practice-save guard prefix must contain exactly one early return")
+    for flag in (
+        "Session6OutfitValidationNoSave",
         "Session7FullCharacterValidationNoSave",
-        "Session7FullCharacterThrowSmokeTest",
-        "Session7FullCharacterVisualCapture",
+        "Session8ValidationNoSave",
     ):
-        if token not in save_function:
-            game_mode_errors.append(f"practice-save no-write boundary lacks {token}")
+        if game_mode_cpp.count(f'TEXT("{flag}")') != 1:
+            game_mode_errors.append(
+                f"GameMode must contain exactly one {flag} flag parse")
     _record(checks, "explicit_session7_harness_and_no_save_boundary", game_mode_errors, {
         "missing_tokens": game_mode_missing,
         "save_function_has_session7_guard": all(
@@ -492,6 +540,13 @@ def main() -> int:
                 "Session7FullCharacterVisualCapture",
             )
         ),
+        "exact_guard_occurrences": {
+            f"session{index + 6}": compact_save_function.count(guard)
+            for index, guard in enumerate(expected_guard_boundaries)
+        },
+        "combined_boundary_occurrences": compact_save_function.count(
+            expected_combined_boundary),
+        "early_return_occurrences": compact_save_function.count("return;"),
     })
 
     smoke = _read("Source/DiscGolfTour/DiscGolfSession7FullCharacterSmokeRunner.cpp")
@@ -741,7 +796,7 @@ def main() -> int:
     )
 
     restricted_tokens = (
-        "MetaHuman", "GroomComponent", "ForehandMontage", "PuttingMontage",
+        "GroomComponent", "ForehandMontage", "PuttingMontage",
         "EquipmentInventory",
     )
     restricted_hits: list[dict] = []
@@ -752,10 +807,55 @@ def main() -> int:
         for token in restricted_tokens:
             if token in added:
                 restricted_hits.append({"file": path, "token": token})
+    expected_session8_pawn_additions = {
+        "Source/DiscGolfTour/DiscGolferPawn.cpp": (
+            '#include "DiscGolfMetaHumanAvatarBackendComponent.h"',
+            "AvatarBackendComponent =",
+            "CreateDefaultSubobject<UDiscGolfMetaHumanAvatarBackendComponent>(",
+            'TEXT("MetaHumanVisualBackend"));',
+        ),
+        "Source/DiscGolfTour/DiscGolferPawn.h": (
+            "class UDiscGolfMetaHumanAvatarBackendComponent;",
+            "UDiscGolfMetaHumanAvatarBackendComponent* "
+            "GetAvatarBackendComponent() const",
+            "{",
+            "return AvatarBackendComponent;",
+            "}",
+            "UPROPERTY(VisibleAnywhere) "
+            "TObjectPtr<UDiscGolfMetaHumanAvatarBackendComponent> "
+            "AvatarBackendComponent;",
+        ),
+    }
+    actual_session8_pawn_additions = {
+        path: tuple(
+            line.strip() for line in _added_lines_since(
+                SESSION7_CHECKPOINT, path
+            ).splitlines() if line.strip()
+        )
+        for path in expected_session8_pawn_additions
+    }
+    successor_errors = [
+        f"deferred marker added: {hit}" for hit in restricted_hits
+    ]
+    if actual_session8_pawn_additions != expected_session8_pawn_additions:
+        successor_errors.append(
+            "Session 8 Pawn delta is not exactly the one dormant avatar-backend "
+            "component include/construction/getter/property contract")
     _record(
         checks, "session8_and_deferred_systems_not_started",
-        [f"deferred marker added: {hit}" for hit in restricted_hits],
-        {"hits": restricted_hits},
+        successor_errors,
+        {
+            "remaining_deferred_hits": restricted_hits,
+            "session8_baseline": SESSION7_CHECKPOINT,
+            "expected_dormant_pawn_additions": (
+                expected_session8_pawn_additions
+            ),
+            "actual_dormant_pawn_additions": actual_session8_pawn_additions,
+            "dormant_pawn_delta_exact": (
+                actual_session8_pawn_additions
+                == expected_session8_pawn_additions
+            ),
+        },
     )
 
     status = _git("status", "--porcelain=v1", "--untracked-files=all")

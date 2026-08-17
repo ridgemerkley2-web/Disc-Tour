@@ -13,6 +13,7 @@
 #include "DiscGolfCharacterCustomizationComponent.h"
 #include "DiscGolfCosmeticCatalog.h"
 #include "DiscGolfFullCharacterRuntime.h"
+#include "DiscGolfMetaHumanAvatarBackendComponent.h"
 #include "DiscGolfOutfitCatalog.h"
 #include "DiscGolfOutfitComponent.h"
 #include "DiscGolfOutfitRuntime.h"
@@ -224,6 +225,9 @@ ADiscGolferPawn::ADiscGolferPawn()
     CharacterCustomization = CreateDefaultSubobject<UDiscGolfCharacterCustomizationComponent>(
         TEXT("CharacterCustomization"));
     OutfitComponent = CreateDefaultSubobject<UDiscGolfOutfitComponent>(TEXT("CharacterOutfit"));
+    AvatarBackendComponent =
+        CreateDefaultSubobject<UDiscGolfMetaHumanAvatarBackendComponent>(
+            TEXT("MetaHumanVisualBackend"));
     if (DefaultCharacterProfile.Succeeded())
     {
         CharacterProfileTemplate = DefaultCharacterProfile.Object;

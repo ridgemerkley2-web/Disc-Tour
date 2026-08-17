@@ -1,0 +1,168 @@
+{
+  "schema": "DiscGolfTour.RuntimeCookManifestSource.v1",
+  "schema_version": 1,
+  "manifest_id": "dg_runtime_v1",
+  "source_contract": "Accepted Sessions 2-7 /Game/DiscGolf technical runtime closure at Session 8 start",
+  "content_status": "ACCEPTED_TECHNICAL_PIPELINE_WITH_NON_PRODUCTION_PROXY_VISUALS",
+  "shipping_status": "DO_NOT_CLAIM_SHIPPING_ART_APPROVAL",
+  "authority": "COOK_DISCOVERY_ONLY_NO_GAMEPLAY_OR_RELEASE_AUTHORITY",
+  "expected_runtime_package_count": 69,
+  "expected_excluded_package_count": 12,
+  "asset_outputs": {
+    "runtime_cook_manifest": {
+      "package": "/Game/DiscGolf/Cook/DA_DG_RuntimeCookManifest",
+      "object": "/Game/DiscGolf/Cook/DA_DG_RuntimeCookManifest.DA_DG_RuntimeCookManifest",
+      "class": "/Script/DiscGolfTour.DiscGolfRuntimeCookManifest",
+      "primary_asset_type": "DGRuntimeCookManifest"
+    },
+    "dg_master_backend_profile": {
+      "package": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster",
+      "object": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster.DA_DG_AvatarBackend_DGMaster",
+      "class": "/Script/DiscGolfCharacterFramework.DiscGolfAvatarBackendProfile",
+      "primary_asset_type": "DiscGolfAvatarBackendProfile",
+      "backend_id": "dg_master",
+      "backend": "DGMaster",
+      "preferred_quality_profile_id": "Prototype",
+      "visual_actor_class": null,
+      "retarget_asset": null,
+      "use_runtime_retargeting": false,
+      "runtime_face_sculpting": false,
+      "purpose": "Accepted project proxy fallback/research backend"
+    }
+  },
+  "reserved_optional_metahuman_entry_points": {
+    "backend_id": "metahuman_assembled",
+    "backend_profile": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default.DA_DG_AvatarBackend_MetaHuman_Default",
+    "assembled_visual_actor_class": "/Game/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default.BP_DG_MetaHuman_Default_C",
+    "retarget_asset": "/Game/DiscGolf/Characters/MetaHuman/RTG_DGMaster_To_MetaHuman.RTG_DGMaster_To_MetaHuman",
+    "authoring_status": "BLOCKED_UNTIL_REAL_PROJECT_METAHUMAN_CONTENT_EXISTS",
+    "created_by_session8_cook_author": false
+  },
+  "runtime_package_groups": [
+    {
+      "provenance": "ACCEPTED_SESSION2_MASTER_RIG_FOUNDATION",
+      "shipping_status": "NON_PRODUCTION_PROXY_TECHNICAL_ACCEPTANCE",
+      "packages": [
+        "/Game/DiscGolf/Characters/Meshes/SK_DG_Master",
+        "/Game/DiscGolf/Characters/Meshes/SKEL_DG_Master",
+        "/Game/DiscGolf/Rigs/CR_DG_Master",
+        "/Game/DiscGolf/Rigs/IK_DG_Master"
+      ]
+    },
+    {
+      "provenance": "ACCEPTED_SESSION3_SINGLE_RHBH_RUNTIME",
+      "shipping_status": "PROTOTYPE_ANIMATION_TECHNICAL_ACCEPTANCE",
+      "packages": [
+        "/Game/DiscGolf/Animation/ABP_DG_Player",
+        "/Game/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype",
+        "/Game/DiscGolf/Animation/Throws/A_DG_RHBH_Prototype"
+      ]
+    },
+    {
+      "provenance": "ACCEPTED_SESSION4_CHARACTER_PROFILE_AND_CREATOR_ENTRY",
+      "shipping_status": "TECHNICAL_CREATOR_ACCEPTANCE",
+      "packages": [
+        "/Game/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter",
+        "/Game/DiscGolf/UI/WBP_DG_CharacterCreator"
+      ]
+    },
+    {
+      "provenance": "ACCEPTED_SESSION6_MODULAR_OUTFIT_PROXY",
+      "shipping_status": "NON_PRODUCTION_PROXY_DO_NOT_SHIP",
+      "packages": [
+        "/Game/DiscGolf/Materials/Outfits/M_DG_OutfitProxy",
+        "/Game/DiscGolf/Outfits/Accessories/SM_DG_Accessory_ProxyTowelLeft01",
+        "/Game/DiscGolf/Outfits/Bags/SM_DG_Bag_ProxyBackpack01",
+        "/Game/DiscGolf/Outfits/Bottoms/SK_DG_Bottom_ProxyPants01",
+        "/Game/DiscGolf/Outfits/Bottoms/SK_DG_Bottom_ProxyShorts01",
+        "/Game/DiscGolf/Outfits/Data/DA_DG_OutfitCatalog",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Accessory_TowelLeft01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Bag_Backpack01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Bottom_Pants01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Bottom_Shorts01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Eyewear_Sport01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Footwear_Low01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Footwear_Trail01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Glove_Pair01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Headwear_Beanie01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Headwear_Cap01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Outerwear_Jacket01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Socks_Crew01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Top_LongSleeve01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Top_Tee01",
+        "/Game/DiscGolf/Outfits/Data/Items/DA_DG_Outfit_Proxy_Wrist_BandLeft01",
+        "/Game/DiscGolf/Outfits/Eyewear/SM_DG_Eyewear_ProxySport01",
+        "/Game/DiscGolf/Outfits/Footwear/SK_DG_Footwear_ProxyLow01",
+        "/Game/DiscGolf/Outfits/Footwear/SK_DG_Footwear_ProxyTrail01",
+        "/Game/DiscGolf/Outfits/Gloves/SK_DG_Glove_ProxyPair01",
+        "/Game/DiscGolf/Outfits/Headwear/SM_DG_Headwear_ProxyBeanie01",
+        "/Game/DiscGolf/Outfits/Headwear/SM_DG_Headwear_ProxyCap01",
+        "/Game/DiscGolf/Outfits/Outerwear/SK_DG_Outerwear_ProxyJacket01",
+        "/Game/DiscGolf/Outfits/Socks/SK_DG_Socks_ProxyCrew01",
+        "/Game/DiscGolf/Outfits/Tops/SK_DG_Top_ProxyLongSleeve01",
+        "/Game/DiscGolf/Outfits/Tops/SK_DG_Top_ProxyTee01",
+        "/Game/DiscGolf/Outfits/Wrist/SM_DG_Wrist_ProxyBandLeft01"
+      ]
+    },
+    {
+      "provenance": "ACCEPTED_SESSION7_FULL_CUSTOMIZATION_PROXY",
+      "shipping_status": "NON_PRODUCTION_PROXY_DO_NOT_SHIP",
+      "packages": [
+        "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Brow_Alt_Proxy",
+        "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Brow_Default_Proxy",
+        "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_FacialHair_Beard_Proxy",
+        "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_FacialHair_Stubble_Proxy",
+        "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Hair_Medium_Proxy",
+        "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Hair_Mohawk_Proxy",
+        "/Game/DiscGolf/Characters/Customization/Cosmetics/SM_DG_Hair_Short_Proxy",
+        "/Game/DiscGolf/Characters/Customization/Data/DA_DG_CosmeticCatalog",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Brow_Alt",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Brow_Default",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_FacialHair_Beard",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_FacialHair_None",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_FacialHair_Stubble",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Hair_Medium",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Hair_Mohawk",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Hair_None",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Hair_Short",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Pronouns_Default",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Pronouns_TheyThem",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Scar_None",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Scar_Proxy",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Tattoo_None",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Tattoo_Proxy",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Voice_Alt",
+        "/Game/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Voice_Default",
+        "/Game/DiscGolf/Characters/Customization/Head/SK_DG_Head_Proxy",
+        "/Game/DiscGolf/Materials/CharacterCustomization/M_DG_HairProxy",
+        "/Game/DiscGolf/Materials/CharacterCustomization/M_DG_HeadProxy"
+      ]
+    }
+  ],
+  "excluded_package_groups": [
+    {
+      "provenance": "SESSION4_VALIDATION_PROFILE_FIXTURES",
+      "reason": "TEST_PROFILE_NOT_A_RUNTIME_COOK_ROOT",
+      "packages": [
+        "/Game/DiscGolf/Tests/Profiles/DA_DG_Test_ShortCompact",
+        "/Game/DiscGolf/Tests/Profiles/DA_DG_Test_TallLongArms"
+      ]
+    },
+    {
+      "provenance": "SESSION5_PROJECT_OWNED_SYNTHETIC_PIPELINE_FIXTURE",
+      "reason": "SYNTHETIC_TEST_DO_NOT_SHIP",
+      "packages": [
+        "/Game/DiscGolf/Animation/Mocap/Cleaned/A_DG_RHBH_Synthetic_CLN",
+        "/Game/DiscGolf/Animation/Mocap/Production/AM_DG_RHBH_SyntheticPipelineTest_v001",
+        "/Game/DiscGolf/Animation/Mocap/Production/A_DG_RHBH_SyntheticPipelineTest_v001",
+        "/Game/DiscGolf/Animation/Mocap/Production/DA_DG_AnimationLibrary",
+        "/Game/DiscGolf/Animation/Mocap/Retargeted/A_DG_RHBH_Synthetic_RTG",
+        "/Game/DiscGolf/Animation/Mocap/Rigs/IK_DG_RHBH_SyntheticSource",
+        "/Game/DiscGolf/Animation/Mocap/Rigs/RTG_DG_RHBH_Synthetic_To_Master",
+        "/Game/DiscGolf/Animation/Mocap/Source/A_DG_RHBH_SyntheticSource_RAW",
+        "/Game/DiscGolf/Animation/Mocap/Source/SKEL_DG_RHBH_SyntheticSource",
+        "/Game/DiscGolf/Animation/Mocap/Source/SK_DG_RHBH_SyntheticSource"
+      ]
+    }
+  ]
+}

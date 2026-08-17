@@ -38,6 +38,7 @@
 #include "DiscGolfSession6OutfitVisualCaptureRunner.h"
 #include "DiscGolfSession7FullCharacterSmokeRunner.h"
 #include "DiscGolfSession7FullCharacterVisualCaptureRunner.h"
+#include "DiscGolfSession8CookClosureRunner.h"
 #include "DiscGolfEnvironmentController.h"
 #include "DiscGolfWorldFixtureActor.h"
 #include "ThrowControllerComponent.h"
@@ -322,6 +323,8 @@ void ADiscGolfTourGameMode::BeginPlay()
         FCommandLine::Get(), TEXT("Session7FullCharacterThrowSmokeTest"));
     const bool bSession7FullCharacterVisualCaptureRequested = FParse::Param(
         FCommandLine::Get(), TEXT("Session7FullCharacterVisualCapture"));
+    const bool bSession8CookClosureSmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Session8CookClosureSmokeTest"));
     FString InitialCourse = (bRouteTelemetryRequested || bGalleryLakeWaterSmokeRequested
         || bDenseForestSmokeRequested || bGroundGrassSmokeRequested
         || bHole1FlightRouteSmokeRequested || bSession3OneThrowSmokeRequested
@@ -369,6 +372,7 @@ void ADiscGolfTourGameMode::BeginPlay()
         || bSession6OutfitVisualCaptureRequested
         || bSession7FullCharacterSmokeRequested
         || bSession7FullCharacterVisualCaptureRequested
+        || bSession8CookClosureSmokeRequested
         || FParse::Param(FCommandLine::Get(), TEXT("FixtureCollisionSmokeTest"))
         || bGalleryLakeWaterSmokeRequested
         || bDenseForestSmokeRequested
@@ -451,7 +455,27 @@ void ADiscGolfTourGameMode::BeginPlay()
         return;
     }
 
-    if (bSession7FullCharacterVisualCaptureRequested)
+    if (bSession8CookClosureSmokeRequested)
+    {
+        Session8CookClosureRunner =
+            GetWorld()->SpawnActor<ADiscGolfSession8CookClosureRunner>();
+        if (!Session8CookClosureRunner)
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("DG_SESSION8_COOK_CLOSURE_SMOKE: FAIL reason=runner could not spawn"));
+            FPlatformMisc::RequestExitWithStatus(false, 1);
+            return;
+        }
+        FTimerHandle Session8CookClosureTimer;
+        GetWorldTimerManager().SetTimer(
+            Session8CookClosureTimer,
+            FTimerDelegate::CreateUObject(
+                Session8CookClosureRunner,
+                &ADiscGolfSession8CookClosureRunner::Start),
+            0.5f,
+            false);
+    }
+    else if (bSession7FullCharacterVisualCaptureRequested)
     {
         Session7FullCharacterVisualCaptureRunner =
             GetWorld()->SpawnActor<ADiscGolfSession7FullCharacterVisualCaptureRunner>();
@@ -3098,8 +3122,13 @@ void ADiscGolfTourGameMode::SavePracticeRoundSnapshot()
                 FCommandLine::Get(), TEXT("Session7FullCharacterThrowSmokeTest"))
             != FParse::Param(
                 FCommandLine::Get(), TEXT("Session7FullCharacterVisualCapture")));
+    const bool bSession8CookClosureValidationNoSave = FParse::Param(
+        FCommandLine::Get(), TEXT("Session8ValidationNoSave"))
+        && FParse::Param(
+            FCommandLine::Get(), TEXT("Session8CookClosureSmokeTest"));
     if (bRegressionActive || bSession6OutfitValidationNoSave
-        || bSession7FullCharacterValidationNoSave) return;
+        || bSession7FullCharacterValidationNoSave
+        || bSession8CookClosureValidationNoSave) return;
     UDiscGolfTourGameInstance* GameInstance = Cast<UDiscGolfTourGameInstance>(GetGameInstance());
     UDiscGolfSaveGame* Profile = GameInstance ? GameInstance->GetProfile() : nullptr;
     if (!GameInstance || !Profile) return;

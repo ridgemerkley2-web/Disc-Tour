@@ -2,11 +2,13 @@
 """Fail-closed Session 7 installed-plugin integration audit.
 
 The installed UE 5.8-compatible plugin is the runtime source of truth.  This
-validator compares the working tree (or a later committed Session 7 state)
+validator compares the working tree (or a later committed successor state)
 against the accepted pre-outfit Session 5 checkpoint, so it remains useful
-both before and after the Session 7 commit.  Exactly the three reviewed
-Session 6/7 compatibility adaptations are permitted; the BuildKit copy must
-remain untouched.
+after the Session 7 checkpoint. Exactly the three reviewed Session 6/7
+adaptations plus the two reviewed Session 8 avatar-backend adaptations are
+permitted. A second comparison to the accepted Session 7 checkpoint prevents
+the Session 8 allowance from becoming a broad plugin exemption. The BuildKit
+copy must remain untouched.
 """
 
 from __future__ import annotations
@@ -27,6 +29,7 @@ BUILDKIT_ROOT = (
 )
 REPORT = ROOT / "Saved/CharacterFramework/Session7PluginContractValidation.json"
 SESSION5_CHECKPOINT = "e6e6a57727411a4cc50b890f4d8557bfb803e9e2"
+SESSION7_CHECKPOINT = "2c54be19a119264d42f11db5470399e021d050cd"
 
 OUTFIT_CPP = (
     "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
@@ -40,7 +43,21 @@ CHARACTER_TYPES_H = (
     "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
     "Public/DiscGolfCharacterTypes.h"
 )
-EXPECTED_INTEGRATION_DIFF = {OUTFIT_CPP, CUSTOMIZATION_CPP, CHARACTER_TYPES_H}
+AVATAR_BACKEND_CPP = (
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
+    "Private/DiscGolfAvatarBackendComponent.cpp"
+)
+AVATAR_BACKEND_H = (
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
+    "Public/DiscGolfAvatarBackendComponent.h"
+)
+SESSION6_SESSION7_INTEGRATION_DIFF = {
+    OUTFIT_CPP, CUSTOMIZATION_CPP, CHARACTER_TYPES_H,
+}
+SESSION8_INTEGRATION_DIFF = {AVATAR_BACKEND_CPP, AVATAR_BACKEND_H}
+EXPECTED_INTEGRATION_DIFF = (
+    SESSION6_SESSION7_INTEGRATION_DIFF | SESSION8_INTEGRATION_DIFF
+)
 
 FACE_MORPHS = {
     "head_width": "DG_Face_HeadWidth",
@@ -106,6 +123,14 @@ def main() -> int:
         line.strip().replace("\\", "/")
         for line in diff.stdout.splitlines() if line.strip()
     }
+    session8_diff = _git(
+        "diff", "--name-only", "--diff-filter=ACDMRTUXB",
+        SESSION7_CHECKPOINT, "--", "Plugins/DiscGolfCharacterFramework",
+    )
+    session8_diff_paths = {
+        line.strip().replace("\\", "/")
+        for line in session8_diff.stdout.splitlines() if line.strip()
+    }
     plugin_status = _git(
         "status", "--porcelain=v1", "--untracked-files=all", "--",
         "Plugins/DiscGolfCharacterFramework",
@@ -119,8 +144,15 @@ def main() -> int:
         errors.append(f"git diff failed: {diff.stderr.strip()}")
     if diff_paths != EXPECTED_INTEGRATION_DIFF:
         errors.append(
-            "installed-plugin integration diff is not the exact three-file "
+            "installed-plugin integration diff is not the exact five-file "
             f"allowlist: actual={sorted(diff_paths)}"
+        )
+    if session8_diff.returncode != 0:
+        errors.append(f"Session 8 git diff failed: {session8_diff.stderr.strip()}")
+    if session8_diff_paths != SESSION8_INTEGRATION_DIFF:
+        errors.append(
+            "Session 8 plugin delta is not exactly the two avatar-backend files: "
+            f"actual={sorted(session8_diff_paths)}"
         )
     if untracked_plugin:
         errors.append(f"untracked installed-plugin paths: {untracked_plugin}")
@@ -130,10 +162,13 @@ def main() -> int:
     )
     if whitespace.returncode != 0:
         errors.append("plugin integration diff has whitespace errors")
-    _record(checks, "exact_three_file_integration_diff", errors, {
+    _record(checks, "exact_five_file_layered_integration_diff", errors, {
         "baseline": SESSION5_CHECKPOINT,
+        "session8_baseline": SESSION7_CHECKPOINT,
         "expected": sorted(EXPECTED_INTEGRATION_DIFF),
         "actual": sorted(diff_paths),
+        "session8_expected": sorted(SESSION8_INTEGRATION_DIFF),
+        "session8_actual": sorted(session8_diff_paths),
         "plugin_status": plugin_status.stdout.splitlines(),
         "untracked": untracked_plugin,
         "diff_check_return_code": whitespace.returncode,
@@ -288,6 +323,127 @@ def main() -> int:
         "power_and_spin_are_serialized_but_must_remain_runtime_normalized": True,
     })
 
+    avatar_header = _read(AVATAR_BACKEND_H)
+    avatar_cpp = _read(AVATAR_BACKEND_CPP)
+    avatar_errors: list[str] = []
+    header_tokens = (
+        "bool ApplyCustomizationToVisual(",
+        "bool IsVisualBackendReady() const;",
+        "FDGAvatarBackendState GetAvatarBackendState() const;",
+        "AActor* GetActiveVisualActor() const;",
+        "UDiscGolfAvatarBackendProfile* GetActiveBackendProfile() const;",
+        "USkeletalMeshComponent* GetActiveAnimationSourceMesh() const;",
+        "UFUNCTION(BlueprintNativeEvent, Category=\"Disc Golf|Avatar\")",
+        "bool ConfigureVisualBackend(",
+        "virtual bool ConfigureVisualBackend_Implementation(",
+        "bool ApplyVisualCustomization(",
+        "virtual bool ApplyVisualCustomization_Implementation(",
+        "TObjectPtr<AActor> PendingVisualActor;",
+        "TObjectPtr<UDiscGolfAvatarBackendProfile> ActiveBackendProfile;",
+        "TObjectPtr<USkeletalMeshComponent> ActiveAnimationSourceMesh;",
+        "FDGAvatarBackendState ActiveBackendState;",
+        "bool bBuildInProgress = false;",
+        "bool bApplyInProgress = false;",
+    )
+    cpp_tokens = (
+        "TGuardValue<bool> BuildGuard(bBuildInProgress, true);",
+        "TGuardValue<bool> ApplyGuard(bApplyInProgress, true);",
+        "SpawnActorDeferred<AActor>",
+        "CandidateActor->SetActorHiddenInGame(true);",
+        "CandidateActor->SetActorEnableCollision(false);",
+        "CandidateActor->FinishSpawning(SpawnTransform);",
+        "FAttachmentTransformRules::SnapToTargetNotIncludingScale",
+        "AddSourceTickPrerequisites(CandidateActor, AnimationSourceMesh);",
+        "const bool bConfigured = ConfigureVisualBackend(",
+        "const bool bCandidateReady = bConfigured",
+        "CandidateRoot->IsAttachedTo(AnimationSourceMesh)",
+        "ActiveBackendState.bVisualReady = true;",
+        "const FDGAvatarBackendState ReadyState = GetAvatarBackendState();",
+        "OnAvatarBackendReady.Broadcast(ReadyState);",
+        "return IsVisualBackendReady();",
+        "EnforcePresentationOnly(ActiveActor, bWasHidden);",
+        "Primitive->SetSimulatePhysics(false);",
+        "Primitive->SetCollisionEnabled(ECollisionEnabled::NoCollision);",
+        "Primitive->SetGenerateOverlapEvents(false);",
+        "Component->SetCanEverAffectNavigation(false);",
+        "TargetMesh->AddTickPrerequisiteComponent(AnimationSourceMesh);",
+        "ActiveBackendState = FDGAvatarBackendState();",
+    )
+    missing_header_tokens = [
+        token for token in header_tokens if token not in avatar_header
+    ]
+    missing_cpp_tokens = [token for token in cpp_tokens if token not in avatar_cpp]
+    avatar_errors.extend(
+        f"avatar backend header missing: {token}" for token in missing_header_tokens
+    )
+    avatar_errors.extend(
+        f"avatar backend implementation missing: {token}" for token in missing_cpp_tokens
+    )
+    base_configure_fails_closed = re.search(
+        r"ConfigureVisualBackend_Implementation\([^)]*\)\s*\{\s*return false;\s*\}",
+        avatar_cpp,
+        re.DOTALL,
+    ) is not None
+    base_apply_fails_closed = re.search(
+        r"ApplyVisualCustomization_Implementation\([^)]*\)\s*\{\s*return false;\s*\}",
+        avatar_cpp,
+        re.DOTALL,
+    ) is not None
+    if not base_configure_fails_closed:
+        avatar_errors.append("native ConfigureVisualBackend base no longer fails closed")
+    if not base_apply_fails_closed:
+        avatar_errors.append("native ApplyVisualCustomization base no longer fails closed")
+    if avatar_cpp.count("SpawnActorDeferred<AActor>") != 1:
+        avatar_errors.append("avatar backend must have exactly one deferred spawn site")
+    if "SpawnActor<AActor>" in avatar_cpp:
+        avatar_errors.append("avatar backend regained an immediate actor spawn site")
+    if avatar_cpp.count("OnAvatarBackendReady.Broadcast(") != 1:
+        avatar_errors.append("verified-ready delegate broadcast count is not exactly one")
+    configure_index = avatar_cpp.find("const bool bConfigured = ConfigureVisualBackend(")
+    readiness_index = avatar_cpp.find("const bool bCandidateReady = bConfigured")
+    commit_index = avatar_cpp.find("SpawnedVisualActor = CandidateActor;")
+    broadcast_index = avatar_cpp.find("OnAvatarBackendReady.Broadcast(ReadyState);")
+    if not (0 <= configure_index < readiness_index < commit_index < broadcast_index):
+        avatar_errors.append(
+            "candidate configuration/readiness/commit/broadcast order is not fail closed"
+        )
+    forbidden_avatar_authority = re.compile(
+        r"SpawnActor\s*<\s*ADiscActor|UDiscFlightComponent|UDiscBagComponent|"
+        r"UThrowControllerComponent|ResolveThrowRelease\s*\(|RequestThrow\s*\(|"
+        r"RequestThrowFromGrip\s*\(|AddStroke\s*\(|SetWind",
+        re.IGNORECASE,
+    )
+    avatar_authority_hits = [
+        {"path": path, "line": number, "text": line.strip()}
+        for path, source in (
+            (AVATAR_BACKEND_H, avatar_header),
+            (AVATAR_BACKEND_CPP, avatar_cpp),
+        )
+        for number, line in enumerate(source.splitlines(), 1)
+        if forbidden_avatar_authority.search(line)
+    ]
+    if avatar_authority_hits:
+        avatar_errors.append(
+            "avatar backend delta contains gameplay-authority tokens: "
+            f"{avatar_authority_hits}"
+        )
+    _record(checks, "session8_avatar_backend_verified_ready_transaction", avatar_errors, {
+        "paths": sorted(SESSION8_INTEGRATION_DIFF),
+        "missing_header_tokens": missing_header_tokens,
+        "missing_cpp_tokens": missing_cpp_tokens,
+        "deferred_spawn_count": avatar_cpp.count("SpawnActorDeferred<AActor>"),
+        "immediate_spawn_present": "SpawnActor<AActor>" in avatar_cpp,
+        "ready_broadcast_count": avatar_cpp.count(
+            "OnAvatarBackendReady.Broadcast("),
+        "native_configure_fails_closed": base_configure_fails_closed,
+        "native_apply_fails_closed": base_apply_fails_closed,
+        "configuration_index": configure_index,
+        "readiness_index": readiness_index,
+        "commit_index": commit_index,
+        "broadcast_index": broadcast_index,
+        "authority_hits": avatar_authority_hits,
+    })
+
     all_errors = [
         f"{check['id']}: {error}"
         for check in checks for error in check["errors"]
@@ -299,7 +455,9 @@ def main() -> int:
         "source_of_truth": str(PLUGIN_ROOT),
         "buildkit_copy": str(BUILDKIT_ROOT),
         "integration_baseline": SESSION5_CHECKPOINT,
+        "session8_integration_baseline": SESSION7_CHECKPOINT,
         "allowed_plugin_paths": sorted(EXPECTED_INTEGRATION_DIFF),
+        "session8_allowed_plugin_paths": sorted(SESSION8_INTEGRATION_DIFF),
         "checks": checks,
         "errors": all_errors,
         "ue_launched": False,

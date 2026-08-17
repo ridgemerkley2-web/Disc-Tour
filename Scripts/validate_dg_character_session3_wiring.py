@@ -31,7 +31,8 @@ EXPECTED_ASSETS = (
 )
 
 SESSION5_PLUGIN_BASELINE = "e6e6a57727411a4cc50b890f4d8557bfb803e9e2"
-EXPECTED_ACCEPTED_PLUGIN_CHANGES = (
+SESSION7_PLUGIN_BASELINE = "2c54be19a119264d42f11db5470399e021d050cd"
+SESSION6_SESSION7_PLUGIN_CHANGES = (
     "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
     "Private/DiscGolfCharacterCustomizationComponent.cpp",
     "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
@@ -39,7 +40,18 @@ EXPECTED_ACCEPTED_PLUGIN_CHANGES = (
     "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
     "Public/DiscGolfCharacterTypes.h",
 )
-OUTFIT_COMPONENT_PATH = EXPECTED_ACCEPTED_PLUGIN_CHANGES[1]
+SESSION8_PLUGIN_CHANGES = (
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
+    "Private/DiscGolfAvatarBackendComponent.cpp",
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/"
+    "Public/DiscGolfAvatarBackendComponent.h",
+)
+EXPECTED_ACCEPTED_PLUGIN_CHANGES = (
+    *SESSION6_SESSION7_PLUGIN_CHANGES,
+    *SESSION8_PLUGIN_CHANGES,
+)
+OUTFIT_COMPONENT_PATH = SESSION6_SESSION7_PLUGIN_CHANGES[1]
+AVATAR_BACKEND_CPP, AVATAR_BACKEND_H = SESSION8_PLUGIN_CHANGES
 
 
 def _read(relative: str) -> str:
@@ -58,6 +70,8 @@ def main() -> None:
     game_mode_header = _read("Source/DiscGolfTour/DiscGolfTourGameMode.h")
     smoke = _read("Source/DiscGolfTour/DiscGolfSession3SmokeRunner.cpp")
     outfit_component = _read(OUTFIT_COMPONENT_PATH)
+    avatar_backend_cpp = _read(AVATAR_BACKEND_CPP)
+    avatar_backend_header = _read(AVATAR_BACKEND_H)
     build_rules = _read("Source/DiscGolfTour/DiscGolfTour.Build.cs")
     project = json.loads(_read("DiscGolfTour.uproject"))
 
@@ -168,8 +182,9 @@ def main() -> None:
     # expecting a dirty working tree.  The old gate became stale as soon as
     # the accepted Session 6 outfit repair was committed: `git status` went
     # clean even though the installed plugin still contained the reviewed
-    # adaptation.  This comparison remains exact before and after a Session 7
-    # commit and permits only the three bounded Session 6/7 integration files.
+    # adaptation.  The first comparison remains exact before and after the
+    # successor commits.  The second independently proves that Session 8 adds
+    # only the two reviewed avatar-backend files on top of accepted Session 7.
     plugin_diff_result = subprocess.run(
         ["git", "diff", "--name-only", "--diff-filter=ACDMRTUXB",
          SESSION5_PLUGIN_BASELINE, "--", "Plugins/DiscGolfCharacterFramework"],
@@ -181,6 +196,17 @@ def main() -> None:
     plugin_diff = sorted({line.strip().replace("\\", "/")
                           for line in plugin_diff_result.stdout.splitlines()
                           if line.strip()})
+    session8_plugin_diff_result = subprocess.run(
+        ["git", "diff", "--name-only", "--diff-filter=ACDMRTUXB",
+         SESSION7_PLUGIN_BASELINE, "--", "Plugins/DiscGolfCharacterFramework"],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    session8_plugin_diff = sorted({line.strip().replace("\\", "/")
+                                   for line in session8_plugin_diff_result.stdout.splitlines()
+                                   if line.strip()})
     plugin_status = subprocess.run(
         ["git", "status", "--porcelain=v1", "--untracked-files=all", "--",
          "Plugins/DiscGolfCharacterFramework"],
@@ -194,10 +220,61 @@ def main() -> None:
                                if line.startswith("?? ")})
     _require(checks, "installed_plugin_change_is_exact_accepted_integration_allowlist",
              plugin_diff == sorted(EXPECTED_ACCEPTED_PLUGIN_CHANGES)
+             and session8_plugin_diff == sorted(SESSION8_PLUGIN_CHANGES)
              and not plugin_untracked,
              f"baseline={SESSION5_PLUGIN_BASELINE}; "
              f"allowed={sorted(EXPECTED_ACCEPTED_PLUGIN_CHANGES)}; "
-             f"actual={plugin_diff}; untracked={plugin_untracked}")
+             f"actual={plugin_diff}; session8_baseline={SESSION7_PLUGIN_BASELINE}; "
+             f"session8_allowed={sorted(SESSION8_PLUGIN_CHANGES)}; "
+             f"session8_actual={session8_plugin_diff}; untracked={plugin_untracked}")
+    avatar_header_tokens = (
+        "bool ApplyCustomizationToVisual(",
+        "bool IsVisualBackendReady() const;",
+        "FDGAvatarBackendState GetAvatarBackendState() const;",
+        "AActor* GetActiveVisualActor() const;",
+        "UDiscGolfAvatarBackendProfile* GetActiveBackendProfile() const;",
+        "USkeletalMeshComponent* GetActiveAnimationSourceMesh() const;",
+        "UFUNCTION(BlueprintNativeEvent, Category=\"Disc Golf|Avatar\")",
+        "virtual bool ConfigureVisualBackend_Implementation(",
+        "virtual bool ApplyVisualCustomization_Implementation(",
+        "TObjectPtr<AActor> PendingVisualActor;",
+        "FDGAvatarBackendState ActiveBackendState;",
+    )
+    avatar_cpp_tokens = (
+        "SpawnActorDeferred<AActor>",
+        "CandidateActor->SetActorHiddenInGame(true);",
+        "CandidateActor->SetActorEnableCollision(false);",
+        "CandidateActor->FinishSpawning(SpawnTransform);",
+        "const bool bConfigured = ConfigureVisualBackend(",
+        "const bool bCandidateReady = bConfigured",
+        "CandidateRoot->IsAttachedTo(AnimationSourceMesh)",
+        "ActiveBackendState.bVisualReady = true;",
+        "OnAvatarBackendReady.Broadcast(ReadyState);",
+        "Primitive->SetSimulatePhysics(false);",
+        "Primitive->SetCollisionEnabled(ECollisionEnabled::NoCollision);",
+        "TargetMesh->AddTickPrerequisiteComponent(AnimationSourceMesh);",
+    )
+    base_configure_fails_closed = re.search(
+        r"ConfigureVisualBackend_Implementation\([^)]*\)\s*\{\s*return false;\s*\}",
+        avatar_backend_cpp,
+        re.DOTALL,
+    ) is not None
+    base_apply_fails_closed = re.search(
+        r"ApplyVisualCustomization_Implementation\([^)]*\)\s*\{\s*return false;\s*\}",
+        avatar_backend_cpp,
+        re.DOTALL,
+    ) is not None
+    _require(checks, "session8_plugin_avatar_backend_is_transactional_and_fail_closed",
+             all(token in avatar_backend_header for token in avatar_header_tokens)
+             and all(token in avatar_backend_cpp for token in avatar_cpp_tokens)
+             and avatar_backend_cpp.count("SpawnActorDeferred<AActor>") == 1
+             and avatar_backend_cpp.count("OnAvatarBackendReady.Broadcast(") == 1
+             and avatar_backend_cpp.find("const bool bCandidateReady = bConfigured")
+             < avatar_backend_cpp.find("SpawnedVisualActor = CandidateActor;")
+             and base_configure_fails_closed
+             and base_apply_fails_closed,
+             "Session 8 plugin delta is limited to deferred hidden candidate setup, "
+             "verified-ready commit, presentation safety, and read-only state accessors")
     _require(checks, "session6_plugin_variant_resolution_is_canonical",
              all(token in outfit_component for token in (
                  "const bool bHasVariant = Item->FindVariant(VariantId, Variant);",
@@ -230,7 +307,9 @@ def main() -> None:
         "accepted_successor_plugin_change_allowlist": list(
             EXPECTED_ACCEPTED_PLUGIN_CHANGES
         ),
+        "session8_plugin_change_allowlist": list(SESSION8_PLUGIN_CHANGES),
         "plugin_source_changes": plugin_diff,
+        "session8_plugin_source_changes": session8_plugin_diff,
         "failed_checks": [item["check"] for item in failed],
         "writes": [str(REPORT_PATH)],
     }
@@ -244,8 +323,8 @@ def main() -> None:
     print(
         "SESSION3 WIRING VALIDATION PASS: "
         f"checks={len(checks)} assets={len(EXPECTED_ASSETS)} "
-        "release_fields=GripWorldTransform plugin_changes=3 "
-        "session6_session7_plugin_safety_allowlist=1"
+        "release_fields=GripWorldTransform plugin_changes=5 "
+        "session6_session7_session8_plugin_safety_allowlist=1"
     )
 
 
