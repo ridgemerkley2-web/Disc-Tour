@@ -73,5 +73,45 @@ reproducible from this tree.
 ## Original authoring tree
 
 Session 19 evidence records the authoring project root as `C:\DGTour` and its
-packages as `C:\DGTour_Packages\...`. Neither exists on a machine that only has
-this clone.
+packages as `C:\DGTour_Packages\...`. The sessions ran on a **separate machine**;
+a clone alone never has them, and neither did the machine this documentation was
+written from. Confirmed there on 2026-09-06 by whole-disk search: no `C:\DGTour`,
+no `C:\DGTour_Quarantine`, no `.uplugin` file anywhere on the disk, no Unreal
+Engine installation, and no agent session touching this project before the day
+the repository was published.
+
+The published history is complete for everything git tracks. Three classes of
+material stay on the authoring host:
+
+1. the two quarantined trees — the character framework
+   (`Evidence/Session19/CharacterFrameworkBeforeMove-*.tsv`, 513 files) and the
+   unused Fab content (`Evidence/Session19/QuarantinedFabBeforeMove.tsv`, 533
+   files / 2.34 GB), both moved under the `C:\DGTour_Quarantine` root that
+   `Scripts/quarantine-session19-character-framework.ps1` declares;
+2. `Saved/` and `_BuildKit/`, gitignored, hashed by every frozen gate;
+3. the packaged archives under `C:\DGTour_Packages`.
+
+Run `python Scripts/audit_dg_authoring_host_recovery.py` **on the authoring host**
+to verify all of it against the committed manifests. It is read-only, reports
+exactly which files are intact, drifted, or absent, and also reports whether that
+machine's repository holds commits, stashes, or uncommitted work the published
+history never received.
+
+### What the quarantined plugin is actually worth
+
+The 106,181,459-byte figure is mostly build output. By the manifest: 318 files /
+37.5 MB of `Intermediate/`, 3 files / 68.4 MB of `Binaries/` (a 67.5 MB `.pdb`),
+and **96 files / 209,178 bytes of authored source** — the only part a rebuild
+cannot regenerate. Of those 96, **89 are recoverable from this repository's own
+history**: 82 are byte-identical to commit `48982c0`, and 7 more match after
+applying the Session 9 genericization (`premium_disc_golf` → `dg_generic`,
+`premium_default` → `dg_generic_default`, `premium_bag_default` →
+`dg_generic_bag_default`), verified by digest against the manifest.
+
+Seven files carry later edits that exist nowhere in git: the `.uplugin`,
+`DiscGolfAvatarBackendComponent.cpp` and `.h`, `DiscGolfPlayabilityLibrary.cpp`,
+`DiscGolfPlayabilityMonitorComponent.cpp` and `.h`, and
+`DiscGolfCustomizationTypes.h`. Six of the seven have cleanroom successors under
+`Source/DiscGolfRuntimeFoundation/`, so the behaviour survives even where those
+exact revisions do not. Recovering the revisions themselves needs the authoring
+host.
