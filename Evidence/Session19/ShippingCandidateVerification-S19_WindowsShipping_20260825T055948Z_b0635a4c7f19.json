@@ -1,0 +1,83 @@
+{
+  "schema": "DiscGolfTour.Session19ShippingCandidateVerificationReceipt.v2",
+  "schemaVersion": 2,
+  "session": 19,
+  "runId": "S19_WindowsShipping_20260825T055948Z_b0635a4c7f19",
+  "verifiedUtc": "2026-08-25T06:06:28.4680990Z",
+  "state": "PASS_BUILD_ARCHIVE_VERIFIED_PROVENANCE_AND_ACCEPTANCE_PENDING",
+  "verificationMode": "DIRECT_BUILD_PASS",
+  "buildReceipt": {
+    "state": "BUILD_PASS_PROVENANCE_AND_ACCEPTANCE_PENDING",
+    "uatExitCode": 0,
+    "recoveryApplied": false,
+    "legacyRecoveryRestrictedToCandidate1": true,
+    "path": "Evidence/Session19/ShippingCandidate-S19_WindowsShipping_20260825T055948Z_b0635a4c7f19.json",
+    "bytes": 3752,
+    "sha256": "7284A2AC7599BC0E5841372ACADDD029838CA9CF985636A018F7BDE7B5A2A45C"
+  },
+  "archiveContract": {
+    "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260825T055948Z_b0635a4c7f19/Windows",
+    "hostPathRecorded": false,
+    "requiredFiles": [
+      "DiscGolfTour.exe",
+      "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+      "Manifest_UFSFiles_Win64.txt",
+      "Manifest_NonUFSFiles_Win64.txt",
+      "NOTICES.txt"
+    ],
+    "allRequiredFilesPresent": true,
+    "ufsManifestBytes": 271498,
+    "nonUfsManifestBytes": 1809
+  },
+  "innerShippingExecutable": {
+    "relativePath": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+    "bytes": 170333184,
+    "sha256": "09F4DF0453EF6235EB7549B94467EB2A29F61B8F7C12FF7168E85964D8713F64"
+  },
+  "buildLog": {
+    "path": "Evidence/Session19/ShippingBuildCookRun-S19_WindowsShipping_20260825T055948Z_b0635a4c7f19.log",
+    "bytes": 111841,
+    "sha256": "18EF6CE717616656F16AD6D8A0B7DA0E8F683AB4363EE2CDAEE0D716C3DEBAA8",
+    "requiredMarkersPresent": true,
+    "forbiddenMarkersAbsent": true
+  },
+  "thirdPartyRuntimeNotices": {
+    "path": "Evidence/Session19/ThirdPartyNoticeVerification-S19_WindowsShipping_20260825T055948Z_b0635a4c7f19.json",
+    "bytes": 4816,
+    "sha256": "A6B3ADCB5C720EAE57493C71100EDBF29A2E07DA65CDD762B8BC4AEBBCC9C5D4",
+    "technicalCoveragePass": true,
+    "legalApproval": false,
+    "distributionClearance": false
+  },
+  "shippingPluginCapabilities": {
+    "path": "Evidence/Session19/ShippingPluginCapability-S19_WindowsShipping_20260825T055948Z_b0635a4c7f19.json",
+    "bytes": 224793,
+    "sha256": "A1851652232BB46202123CA6BAE0368D4E27639D3F68548E569F9E9AAFE63CF6",
+    "reviewedEditorDeveloperOnlyDescriptorCount": 44,
+    "reviewedResidualMetadataExclusionCount": 1,
+    "requiredPreservedRuntimeOrContentDescriptorCount": 2,
+    "requiredAbsentShippingDeniedDescriptorCount": 2,
+    "requiredAbsentShippingDeniedSurvivorCount": 0,
+    "finalPayloadDescriptorCount": 134,
+    "stagingManifestDiagnosticDescriptorCount": 176,
+    "stagingManifestAuthoritativeForDistribution": false,
+    "finalPayloadSurvivorCount": 0,
+    "finalArchiveCanonicalManifestSha256": "55016EB30BE3B7D160C2089E0C9E8468CB8B3B612C949E960922199237589D7B",
+    "technicalGatePass": true,
+    "releaseReady": false
+  },
+  "protectedProfile": {
+    "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+    "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14",
+    "preserved": true
+  },
+  "releaseExcludedProjectRootsAbsent": true,
+  "nextRequiredEvidence": [
+    "WHOLE_ARCHIVE_AND_CONTAINER_PROVENANCE",
+    "SHIPPING_BINARY_POLICY",
+    "SHIPPING_FEATURE_AND_FORBIDDEN_CONTENT_ABSENCE",
+    "FRESH_INSTALL_THREE_HOLE_ACCEPTANCE"
+  ],
+  "releaseReady": false,
+  "receiptPath": "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260825T055948Z_b0635a4c7f19.json"
+}

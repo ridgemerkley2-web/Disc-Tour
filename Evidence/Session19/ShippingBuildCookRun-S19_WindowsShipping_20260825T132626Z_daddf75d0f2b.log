@@ -1,0 +1,43 @@
+Running AutomationTool...
+Using bundled DotNet SDK version: 10.0 win-x64
+Starting AutomationTool...
+Parsing command line: BuildCookRun -project=C:\DGTour\DiscGolfTour.uproject -noP4 -platform=Win64 -clientconfig=Shipping -build -cook -stage -pak -iostore -archive -archivedirectory=C:\DGTour_Packages\S19_WindowsShipping_20260825T132626Z_daddf75d0f2b -clean -distribution -nodebuginfo -utf8output
+Initializing script modules...
+Total script module initialization time: 0.21 s.
+Using C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe
+Executing commands...
+Setting up ProjectParams for C:\DGTour\DiscGolfTour.uproject
+********** BUILD COMMAND STARTED **********
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" DiscGolfTourEditor Win64 Development -Project="C:\DGTour\DiscGolfTour.uproject" -Clean -NoHotReload "C:\DGTour\DiscGolfTour.uproject" -NoUBTMakefiles  -log="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development.txt"
+Log file: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development.txt
+Cleaning DiscGolfTourEditor binaries...
+Trace written to file C:\Users\ridge\AppData\Local\UnrealBuildTool\Trace.uba with size 583b
+Took 0.88s to run dotnet.exe, ExitCode=0
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" DiscGolfTour Win64 Shipping -Project="C:\DGTour\DiscGolfTour.uproject" -Clean -NoHotReload "C:\DGTour\DiscGolfTour.uproject" -NoUBTMakefiles  -remoteini="C:\DGTour"  -distribution  -log="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTour-Win64-Shipping.txt"
+Log file: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTour-Win64-Shipping.txt
+Cleaning DiscGolfTour binaries...
+Trace written to file C:\Users\ridge\AppData\Local\UnrealBuildTool\Trace.uba with size 583b
+Took 0.85s to run dotnet.exe, ExitCode=0
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Target="DiscGolfTourEditor Win64 Development -Project=C:\DGTour\DiscGolfTour.uproject" -Target="DiscGolfTour Win64 Shipping -Project=C:\DGTour\DiscGolfTour.uproject  -remoteini=\"C:\DGTour\"  -distribution " -log="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development_2.txt"
+Log file: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development_2.txt
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+Using 'git status' to determine working set for adaptive non-unity build (C:\DGTour).
+Creating makefile for DiscGolfTourEditor (no existing makefile)
+Creating makefile for DiscGolfTour (no existing makefile)
+UbaServer - Listening on 0.0.0.0:1345
+UHT compiled-in object format Default
+Building DiscGolfTour and DiscGolfTourEditor...
+===== Toolchain Information =====
+DiscGolfTour Win64 Shipping:
+  Using ISPC compiler (C:\Program Files\Epic Games\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+    Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+  Using Visual Studio 14.44.35228 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  [Adaptive Build] Excluded from DiscGolfRuntimeFoundation unity file: DiscGolfAnimNotifies.cpp, DiscGolfAppearanceComponent.cpp, DiscGolfAvatarBackendComponent.cpp, DiscGolfCharacterCustomizationComponent.cpp, DiscGolfCosmeticCatalog.cpp, DiscGolfCourseValidatorLibrary.cpp, DiscGolfOutfitCatalog.cpp, DiscGolfOutfitComponent.cpp, DiscGolfOutfitItem.cpp, DiscGolfPlayabilityLibrary.cpp, DiscGolfPlayabilityMonitorComponent.cpp, DiscGolfRuntimeFoundation.cpp, DiscGolfThrowComponent.cpp
+  [Adaptive Build] Excluded from DiscGolfTour unity file: DevCourseBootstrap.cpp, DiscBagComponent.cpp, DiscFlightComponent.cpp, DiscGolfBuiltInEnvironmentProvider.cpp, DiscGolfCameraViewContract.cpp, DiscGolfCharacterCreatorWidget.cpp, DiscGolfCharacterRigUnits.cpp, DiscGolfCourseDefinition.cpp, DiscGolfCoursePresentationDefinition.cpp, DiscGolfCourseRules.cpp, DiscGolfEnvironmentController.cpp, DiscGolferPawn.cpp, DiscGolfFullCharacterRuntime.cpp, DiscGolfHUD.cpp, DiscGolfInputConfig.cpp, DiscGolfMetaHumanAvatarBackendComponent.cpp, DiscGolfMetaHumanOutfitRequiredBonesComponent.cpp, DiscGolfMetaHumanRetargetAnimInstance.cpp, DiscGolfOutfitRuntime.cpp, DiscGolfPlayerExperience.cpp, DiscGolfPresentationAudioRouterComponent.cpp, DiscGolfPresentationMath.cpp, DiscGolfQualityAdapter.cpp, DiscGolfRoundFlowPresentation.cpp, DiscGolfRoundFlowWidget.cpp, DiscGolfRuntimeCookManifest.cpp, DiscGolfSession16CorePlayabilityContract.cpp, DiscGolfTerrainPresentationActor.cpp, DiscGolfTour.cpp, DiscGolfTourGameInstance.cpp, DiscGolfTourGameMode.cpp, DiscGolfTourPlayerController.cpp, DiscReplayActor.cpp, DiscTrajectorySubsystem.cpp, ThrowControllerComponent.cpp, DiscEquipmentSession11Tests.cpp, DiscGolfAvatarBackendRuntimeTests.cpp, DiscGolfBrandLicenseTests.cpp, DiscGolfBuiltInEnvironmentProviderTests.cpp, DiscGolfCharacterProfileRuntimeTests.cpp, DiscGolfCourseDefinitionTests.cpp, DiscGolfCourseRulesTests.cpp, DiscGolfFullCharacterRuntimeTests.cpp, DiscGolfInputTests.cpp, DiscGolfMetaHumanRetargetPolicyTests.cpp, DiscGolfOutfitRuntimeTests.cpp, DiscGolfPresentationTests.cpp, DiscGolfPuttingTests.cpp, DiscGolfQualityAdapterTests.cpp, DiscGolfRuntimeCookManifestTests.cpp, DiscGolfSaveSchemaTests.cpp, DiscGolfSession10EnvironmentContractTests.cpp, DiscGolfSession12AudioRouterTests.cpp, DiscGolfSession12CameraReplayTests.cpp, DiscGolfSession12InputUiTests.cpp, DiscGolfSession12PresentationContractTests.cpp, DiscGolfSession13CourseJsonTests.cpp, DiscGolfSession16CorePlayabilityTests.cpp, DiscGolfSession17RoundFlowUiTests.cpp, DiscGolfSession18ProvenanceTests.cpp
+DiscGolfTourEditor Win64 Development:
+  Using ISPC compiler (C:\Program Files\Epic Games\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+    Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+  Using Visual Studio 14.44.35228 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  [Adaptive Build] Excluded from DiscGolfRuntimeFoundation unity file: DiscGolfAnimNotifies.cpp, DiscGolfAppearanceComponent.cpp, DiscGolfAvatarBackendComponent.cpp, DiscGolfCharacterCustomizationComponent.cpp, DiscGolfCosmeticCatalog.cpp, DiscGolfCourseValidatorLibrary.cpp, DiscGolfOutfitCatalog.cpp, DiscGolfOutfitComponent.cpp, DiscGolfOutfitItem.cpp, DiscGolfPlayabilityLibrary.cpp, DiscGolfPlayabilityMonitorComponent.cpp, DiscGolfRuntimeFoundation.cpp, DiscGolfThrowComponent.cpp
+  [Adaptive Build] Excluded from DiscGolfTourDeveloper unity file: DiscGolfAIPlannerAdapter.cpp, DiscGolfAIShotPlannerComponent.cpp, DiscGolfCareerSubsystem.cpp, DiscGolfCompetitionRuntime.cpp, DiscGolfLevelDesignReviewActor.cpp, DiscGolfScoringLibrary.cpp, DiscGolfSession14AISmokeRunner.cpp, DiscGolfSession15VerticalSliceContract.cpp, DiscGolfSession15VerticalSliceRunner.cpp, DiscGolfSession3SmokeRunner.cpp, DiscGolfSession3VisualCaptureRunner.cpp, DiscGolfSession4VisualCaptureRunner.cpp, DiscGolfSession5MocapSmokeRunner.cpp, DiscGolfSession5MocapVisualCaptureRunner.cpp, DiscGo

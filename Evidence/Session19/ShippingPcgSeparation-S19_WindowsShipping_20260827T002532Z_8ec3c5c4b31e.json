@@ -1,0 +1,75 @@
+{
+  "schema": "DiscGolfTour.Session19ShippingPcgSeparationEvidence.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "candidateId": "S19_WindowsShipping_20260827T002532Z_8ec3c5c4b31e",
+  "state": "PASS_FRESH_SHIPPING_COOK_PCG_ABSENCE_HUMAN_GATES_PENDING",
+  "source": {
+    "runtimePcgModuleDependencyCount": 0,
+    "runtimePcgGenerationSymbolCount": 0,
+    "pcgPluginTargets": [
+      "Editor"
+    ],
+    "forestGraphPropertyEditorOnly": true,
+    "shippingNeverCookGraphDirectory": true,
+    "editorAuthoringControllerPresent": true,
+    "editorCustomNodePresent": true,
+    "authoredTreePayload": {
+      "treeCount": 44,
+      "bytes": 2982,
+      "sha256": "98D9B1F10A683D1C90EC25F766A3224B00AC550F9C379F2051535F9B82638BF6"
+    }
+  },
+  "cook": {
+    "archiveHostPathRecorded": false,
+    "archiveFileCount": 31,
+    "containerIdentity": {
+      "pak": {
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.pak",
+        "bytes": 10475605,
+        "sha256": "44D6270AB6EB0F135999A7B5783BD393ABCA5A667AA27E16ED9EB2B5926ED014"
+      },
+      "utoc": {
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.utoc",
+        "bytes": 483322,
+        "sha256": "EAB9A3E7DAEFE6DD83FE6AA25752A237898AD071D919560549188BE8A3234D62"
+      },
+      "ucas": {
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.ucas",
+        "bytes": 1008746016,
+        "sha256": "B7FA11DBCE2088BCC838F68E53162D9E5182BD27710363DAEE1002DBA32BF074"
+      },
+      "shippingBinary": {
+        "path": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+        "bytes": 162632704,
+        "sha256": "A51BDD17A0C1A38551BDD942F809AC6036F18845CF3C1455840634C91A8655E3"
+      }
+    },
+    "ioStoreChunkCount": 2623,
+    "projectPcgGraphEntryCount": 0,
+    "pcgModuleEntryCount": 0,
+    "archivePcgModuleFileCount": 0,
+    "assetRegistryProjectPcgGraphCount": 0,
+    "extractedProjectCookedFileCount": 678,
+    "serializedProjectPcgMarkerFileCount": 0,
+    "shippingBinaryProjectPcgMarkerFileCount": 0,
+    "freshShippingCookAbsenceProven": true
+  },
+  "claimBoundary": {
+    "sourceConfigSeparationProven": true,
+    "freshShippingCookAbsenceProven": true,
+    "unrealPcgBakeSaveReopenProven": false,
+    "collisionVisualApproval": false,
+    "performanceAcceptance": false,
+    "soakAcceptance": false,
+    "manualGameplayAcceptance": false,
+    "humanPlayFeelApproval": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "session13BlockerClosed": false,
+    "releaseReady": false
+  },
+  "session13BlockerClosed": false,
+  "releaseReady": false
+}

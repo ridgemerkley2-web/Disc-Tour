@@ -28,11 +28,19 @@ public:
     UPROPERTY(BlueprintAssignable) FDiscSettledSignature OnDiscSettled;
     UPROPERTY(BlueprintAssignable) FDiscHoledOutSignature OnDiscHoledOut;
 
-    UFUNCTION(BlueprintCallable) void InitializeDisc(const FResolvedDiscDefinition& InDisc, AWindDirector* InWindDirector);
-    UFUNCTION(BlueprintCallable) void Throw(const FThrowRelease& Release);
+    UFUNCTION(BlueprintCallable) bool InitializeDisc(const FResolvedDiscDefinition& InDisc, AWindDirector* InWindDirector);
+    /**
+     * Exclude only the actor that owns the accepted launch from authoritative
+     * swept movement. Grip-space releases begin inside or immediately beside
+     * that actor's collision, but must retain every course/fixture collision.
+     */
+    bool ConfigureLaunchingActorCollisionExclusion(AActor* LaunchingActor);
+    bool IsLaunchingActorCollisionExcluded(const AActor* LaunchingActor) const;
+    UFUNCTION(BlueprintCallable) bool Throw(const FThrowRelease& Release);
     UFUNCTION(BlueprintCallable) void HoleOut();
     void ResolveBasketContact(const FBasketContactEvaluation& Evaluation, const FVector& CaptureWorldLocationCm);
 
+    UFUNCTION(BlueprintPure) bool IsDiscInitialized() const { return bDiscInitialized; }
     UFUNCTION(BlueprintPure) UDiscFlightComponent* GetFlightComponent() const { return FlightComponent; }
     UFUNCTION(BlueprintPure) FResolvedDiscDefinition GetResolvedDisc() const { return ResolvedDisc; }
 
@@ -42,6 +50,7 @@ private:
     UPROPERTY(VisibleAnywhere) TObjectPtr<USpringArmComponent> ChaseArm;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UCameraComponent> ChaseCamera;
     FResolvedDiscDefinition ResolvedDisc;
+    bool bDiscInitialized = false;
 
     UFUNCTION() void HandleFlightSettled(FDiscFlightTelemetry Telemetry);
     UFUNCTION() void HandleDiscOverlap(

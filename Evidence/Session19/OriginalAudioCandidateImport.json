@@ -1,0 +1,134 @@
+{
+  "schema": "DiscGolfTour.Session19OriginalAudioCandidateImportReceipt.v1",
+  "schemaVersion": 1,
+  "state": "PASS_ORIGINAL_AUDIO_CANDIDATE_IMPORTED_PENDING_BUILD_COOK_AND_HUMAN_REVIEW",
+  "manifest": {
+    "path": "Config/DG_Session19OriginalAudioCandidatePack.json",
+    "bytes": 9875,
+    "sha256": "A21C72AB08E13D99CAA93731E3AFE4BDFDBF9E79A0FD4CE924A33189E7AD6B1A"
+  },
+  "assetCount": 12,
+  "assets": [
+    {
+      "category": "ThrowRelease",
+      "object": "/Game/Presentation/Audio/Generated/SW_ThrowRelease.SW_ThrowRelease",
+      "sourceSha256": "C6F5EBE99803D21A731BDAD8DE4CB2BBD51DE6CE4DA046963BE481105015C61F",
+      "uassetPath": "Content/Presentation/Audio/Generated/SW_ThrowRelease.uasset",
+      "uassetBytes": 41190,
+      "uassetSha256": "3AA44EB00B34ABC181F3C77E2189038AA9DB17FAD7DC81E88D91D9EFFAA7BCD9",
+      "metadataBound": true
+    },
+    {
+      "category": "AirborneFlight",
+      "object": "/Game/Presentation/Audio/Generated/SW_AirborneFlight.SW_AirborneFlight",
+      "sourceSha256": "57044D0427E47D7BFAE2697F7D4872B636B10215C91B0B0280B113C2A62FE148",
+      "uassetPath": "Content/Presentation/Audio/Generated/SW_AirborneFlight.uasset",
+      "uassetBytes": 132756,
+      "uassetSha256": "15236315EF40C0676E695DE79F09FCB47D539C115389ADC75BA719BF5840F228",
+      "metadataBound": true
+    },
+    {
+      "category": "GroundContact",
+      "object": "/Game/Presentation/Audio/Generated/SW_GroundContact.SW_GroundContact",
+      "sourceSha256": "E2F060470CEC816CBA973E82D779C14AC4B7BB76251284DCDDC30A6EBAE78B07",
+      "uassetPath": "Content/Presentation/Audio/Generated/SW_GroundContact.uasset",
+      "uassetBytes": 31674,
+      "uassetSha256": "CF075D4411EC01CE11B3DD115A02E00C6ED7C952E0B5FDB0A9B41B3A6BC97CD5",
+      "metadataBound": true
+    },
+    {
+      "category": "GroundState",
+      "object": "/Game/Presentation/Audio/Generated/SW_GroundState.SW_GroundState",
+      "sourceSha256": "BD5DAB2EA7509A419DC015B381873D591355685F1BB846658AEE412C9881AA56",
+      "uassetPath": "Content/Presentation/Audio/Generated/SW_GroundState.uasset",
+      "uassetBytes": 87395,
+      "uassetSha256": "CA0C354ED6A38385B0B4539D85C84743BBDDFA26317FA70F63413AE72488CF54",
+      "metadataBound": true
+    },
+    {
+      "category": "BasketOutcome",
+      "object": "/Game/Presentation/Audio/Generated/SW_BasketOutcome.SW_BasketOutcome",
+      "sourceSha256": "E1F99AA806D16FA629B529D007FA96CE82D1F8A3406DF7EA324EE4B981BA1850",
+      "uassetPath": "Content/Presentation/Audio/Generated/SW_BasketOutcome.uasset",
+      "uassetBytes": 58305,
+      "uassetSha256": "DB1865313C30F3B1F4F781A69E4EB57E6B175DDEE1407941C2128062D84FD2B9",
+      "metadataBound": true
+    },
+    {
+      "category": "Penalty",
+      "object": "/Game/Presentation/Audio/Generated/SW_Penalty.SW_Penalty",
+      "sourceSha256": "028078BD77B73AE29F8DA731CA5ABDEDCB52BB311D822922431522BD24D1AE35",
+      "uassetPath": "Content/Presentation/Audio/Generated/SW_Penalty.uasset",
+      "uassetBytes": 27602,
+      "uassetSha256": "D50B761D8035B884DB185C8A490878F6C892C3D72B788CB52E974DBACCE64802",
+      "metadataBound": true
+    },
+    {
+      "category": "HoleStart",
+      "object": "/Game/Presentation/Audio/Generated/SW_HoleStart.SW_HoleStart",
+      "sourceSha256": "C911709D3280C100581476549E216FA10BE40DCDDE789C3377322B6427F9EC34",
+      "uassetPath": "Content/Presentation/Audio/Generated/SW_HoleStart.uasset",
+      "uassetBytes": 63613,
+      "uassetSha256": "E5F2EE0FBB74D0CDEC904291F6D4F3221F3E55D05AF24B12CD80A7D93836732A",
+      "metadataBound": true
+    },
+    {
+      "category": "HoleCompletion",
+      "object": "/Game/Presentation/Audio/Generated/SW_HoleCompletion.SW_HoleCompletion",
+      "sourceSha256": "80BD130E97D63E1E35411F2EB3E23FF8350C5140A582519902DA82234C2A62D9",
+      "uassetPath": "Content/Presentation/Audio/Generated/SW_HoleCompletion.uasset",
+      "uassetBytes": 65421,
+      "uassetSha256": "5F131CF142B470F5CCE67A18E4ED1C91606A0F495FBE2F93E56A5879745D8EEA",
+      "metadataBound": true
+    },
+    {
+      "category": "HoleTransition",
+      "object": "/Game/Presentation/Audio/Generated/SW_HoleTransition.SW_HoleTransition",
+      "sourceSha256": "B1F2952121EEC772D8F3AB203D4976FD5B52E3584AAFE16F931153BCE5431080",
+      "uassetPath": "Content/Presentation/Audio/Generated/SW_HoleTransition.uasset",
+      "uassetBytes": 59610,
+      "uassetSha256": "01D73F2C1201D1E577F3F9ADD5401F7324BFFABFDE7A17A32981F211D6ACD030",
+      "metadataBound": true
+    },
+    {
+      "category": "RoundCompletion",
+      "object": "/Game/Presentation/Audio/Generated/SW_RoundCompletion.SW_RoundCompletion",
+      "sourceSha256": "0B44541DE7809ABA10A8210AF044373BE7AFD19A941F820177AC805C83DE35AC",
+      "uassetPath": "Content/Presentation/Audio/Generated/SW_RoundCompletion.uasset",
+      "uassetBytes": 92023,
+      "uassetSha256": "A1D12264E535A2433C64CA6A1BAB6C64994879E8DF0DD1C74E1957CC6C97D8F0",
+      "metadataBound": true
+    },
+    {
+      "category": "Replay",
+      "object": "/Game/Presentation/Audio/Generated/SW_Replay.SW_Replay",
+      "sourceSha256": "04880F32B454CE862E8FBD3EC0B5FEA55175DEF293AD2B7819FAB2ADD73F04AD",
+      "uassetPath": "Content/Presentation/Audio/Generated/SW_Replay.uasset",
+      "uassetBytes": 57609,
+      "uassetSha256": "43EFF820C63C7A1F6A88704AF84712534DB08921570FFCA3818AEE96B2B2BF6F",
+      "metadataBound": true
+    },
+    {
+      "category": "Flyover",
+      "object": "/Game/Presentation/Audio/Generated/SW_Flyover.SW_Flyover",
+      "sourceSha256": "54BF00258BBB98B1F360B92251F555AC7D944B31BD63203283754C63B2428193",
+      "uassetPath": "Content/Presentation/Audio/Generated/SW_Flyover.uasset",
+      "uassetBytes": 118464,
+      "uassetSha256": "25E5FA4802A3498884A592A0D048851E2530E251845849F7C787D46783E89CB4",
+      "metadataBound": true
+    }
+  ],
+  "cookRoot": "/Game/Presentation/Audio/Generated",
+  "claimBoundary": {
+    "sourceAndSerializedAssetIdentityBound": true,
+    "shippingCookProven": false,
+    "audibleRuntimePlaybackProven": false,
+    "humanMixApproved": false,
+    "finalQualityApproved": false,
+    "accessibilityApproved": false,
+    "legalApproved": false,
+    "productOwnerApproved": false,
+    "blockerClosed": false,
+    "releaseReady": false
+  }
+}

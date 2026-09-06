@@ -1,0 +1,130 @@
+{
+  "schema": "DiscGolfTour.Session19TechnicalOriginAttributionPolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "policyId": "candidate_bound_exact_technical_origin_attribution_v1",
+  "state": "IMPLEMENTED_TECHNICAL_ATTRIBUTION_LEGAL_REVIEW_PENDING",
+  "reviewed": false,
+  "shippingApproved": false,
+  "legalReviewed": false,
+  "legalApproved": false,
+  "licenseApproved": false,
+  "distributionApproved": false,
+  "releaseReady": false,
+  "inputs": {
+    "sourceDraftSchema": "DiscGolfTour.Session19StagedProvenanceClassification.v1",
+    "technicalProposalSchema": "DiscGolfTour.Session19TechnicalOriginProposal.v1",
+    "candidateContentSchema": "DiscGolfTour.Session19CandidateContentAuditReceipt.v1",
+    "thirdPartyAuthoritySchema": "DiscGolfTour.Session19RuntimeThirdPartyLicenseAuthority.v1",
+    "buildReceiptTargetName": "DiscGolfTour",
+    "buildReceiptPlatform": "Win64",
+    "buildReceiptConfiguration": "Shipping",
+    "engineMajor": 5,
+    "engineMinor": 8,
+    "expectedAuditedIdentityCount": 7158
+  },
+  "classificationRules": {
+    "anonymousChunkDisposition": "UNRESOLVED_ANONYMOUS_IDENTITY",
+    "resolvedAnonymousChunkDisposition": "AUTHORITATIVELY_ATTRIBUTED_TECHNICAL_ORIGIN_ONLY",
+    "anonymousChunkTechnicalOriginRules": [
+      {
+        "container": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.utoc",
+        "chunkTypes": [
+          "ContainerHeader",
+          "ShaderCode"
+        ],
+        "originCategory": "PROJECT_GENERATED_BUILD_OUTPUT_EXACT_CANDIDATE",
+        "licenseSourceCategory": "MIXED_BUILD_OUTPUT_RIGHTS_REVIEW_PENDING",
+        "originRuleId": "A09_EXACT_CANDIDATE_IOSTORE_GENERATED_CHUNK_IDENTITY"
+      },
+      {
+        "container": "DiscGolfTour/Content/Paks/global.utoc",
+        "chunkTypes": [
+          "ScriptObjects"
+        ],
+        "originCategory": "PROJECT_GENERATED_BUILD_OUTPUT_EXACT_CANDIDATE",
+        "licenseSourceCategory": "MIXED_BUILD_OUTPUT_RIGHTS_REVIEW_PENDING",
+        "originRuleId": "A09_EXACT_CANDIDATE_IOSTORE_GENERATED_CHUNK_IDENTITY"
+      }
+    ],
+    "requireAnonymousChunkExactTypeContainerRule": true,
+    "requireAnonymousChunkOffsetSizeSha1Binding": true,
+    "anonymousChunkAttributionScope": "PACKAGED_CHUNK_TECHNICAL_IDENTITY_ONLY_UNDERLYING_CONTENT_RIGHTS_NOT_CLASSIFIED",
+    "unknownPathDisposition": "UNRESOLVED_NO_AUTHORITATIVE_TECHNICAL_ORIGIN",
+    "authoritativelyAttributedDisposition": "AUTHORITATIVELY_ATTRIBUTED_TECHNICAL_ORIGIN_ONLY",
+    "sourceCompanionExtensions": [
+      ".ubulk",
+      ".uexp",
+      ".uptnl"
+    ],
+    "sourceAssetExtensions": [
+      ".uasset",
+      ".umap"
+    ],
+    "exactGeneratedIdentities": [
+      "DiscGolfTour.exe",
+      "DiscGolfTour/AssetRegistry.bin",
+      "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+      "DiscGolfTour/Plugins/DiscGolfTour.upluginmanifest",
+      "Engine/Config/StagedBuild_DiscGolfTour.ini",
+      "Manifest_NonUFSFiles_Win64.txt",
+      "Manifest_UFSFiles_Win64.txt",
+      "NOTICES.txt"
+    ],
+    "exactGeneratedEngineFontFaces": [
+      "Engine/Content/EngineFonts/Faces/DroidSansFallback.ufont",
+      "Engine/Content/EngineFonts/Faces/RobotoBold.ufont",
+      "Engine/Content/EngineFonts/Faces/RobotoBoldItalic.ufont",
+      "Engine/Content/EngineFonts/Faces/RobotoItalic.ufont",
+      "Engine/Content/EngineFonts/Faces/RobotoLight.ufont",
+      "Engine/Content/EngineFonts/Faces/RobotoRegular.ufont"
+    ],
+    "generatedIdentityPatterns": [
+      "^DiscGolfTour/Content/Paks/(?:DiscGolfTour-Windows|global)\\.(?:pak|ucas|utoc)$",
+      "^DiscGolfTour/Content/ShaderArchive-(?:DiscGolfTour|Global)-PCD3D_SM[56]-PCD3D_SM[56]\\.ushaderbytecode$",
+      "^DiscGolfTour/Content/ShaderTypeInfo-(?:DiscGolfTour|Global)-PCD3D_SM[56]-PCD3D_SM[56]\\.stinfo$",
+      "^Engine/GlobalShaderCache-PCD3D_SM[56]\\.bin$"
+    ],
+    "forbidNamespaceOnlyAttribution": true,
+    "requireExactLocalFileOrExactGeneratedRule": true,
+    "requireLiveContainerReinventory": true,
+    "recordHostPaths": false
+  },
+  "originCategories": [
+    "EPIC_ENGINE_COOKED_COMPANION_EXACT_SOURCE",
+    "EPIC_ENGINE_GENERATED_RUNTIME_OUTPUT",
+    "EPIC_ENGINE_INSTALL_FILE_EXACT",
+    "EPIC_ENGINE_PLUGIN_COOKED_COMPANION_EXACT_SOURCE",
+    "EPIC_ENGINE_PLUGIN_INSTALL_FILE_EXACT",
+    "EPIC_METAHUMAN_COOKED_COMPANION_EXACT_SOURCE",
+    "EPIC_METAHUMAN_PROJECT_FILE_EXACT",
+    "POLY_HAVEN_DERIVED_COOKED_COMPANION_EXACT_RECEIPT",
+    "POLY_HAVEN_DERIVED_FILE_EXACT_RECEIPT",
+    "PROJECT_COOKED_COMPANION_EXACT_SOURCE",
+    "PROJECT_GENERATED_BUILD_OUTPUT_EXACT_CANDIDATE",
+    "PROJECT_RELEASE_METADATA_EXACT_CANDIDATE",
+    "PROJECT_SOURCE_FILE_EXACT",
+    "THIRD_PARTY_RUNTIME_EXACT_LICENSE_AUTHORITY"
+  ],
+  "licenseSourceCategories": [
+    "EPIC_ENGINE_TERMS_REVIEW_PENDING",
+    "EPIC_METAHUMAN_TERMS_REVIEW_PENDING",
+    "MIXED_BUILD_OUTPUT_RIGHTS_REVIEW_PENDING",
+    "POLY_HAVEN_CC0_DERIVED_RECEIPT_REVIEW_PENDING",
+    "PROJECT_RIGHTS_AUTHORITY_REVIEW_PENDING",
+    "THIRD_PARTY_LOCAL_LICENSE_TEXT_LEGAL_REVIEW_PENDING",
+    "THIRD_PARTY_LOCAL_REFERENCE_LEGAL_REVIEW_PENDING",
+    "THIRD_PARTY_SPECIAL_REVIEW_PENDING",
+    "UNRESOLVED_NO_LICENSE_SOURCE"
+  ],
+  "releaseBoundary": {
+    "technicalAttributionIsLegalClassification": false,
+    "independentReviewComplete": false,
+    "legalReviewComplete": false,
+    "distributionClearanceComplete": false,
+    "shippingApprovalGranted": false,
+    "releaseReady": false,
+    "releaseUseAllowed": false,
+    "blockerClosed": false
+  }
+}

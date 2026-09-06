@@ -1,0 +1,912 @@
+{
+  "candidateArchive": {
+    "bytes": 1246018071,
+    "canonicalManifestSha256": "362CA24911629BE4EEC5076F6A0D5C0DCD6F7071C1DD2BAB102D86CF7807A184",
+    "fileCount": 31
+  },
+  "candidateId": "S19_WindowsShipping_20260826T200427Z_9e7536afd2ec",
+  "freshInstallEvidence": {
+    "bindings": [
+      {
+        "bytes": 1612,
+        "path": "launch-record.json",
+        "sha256": "0B0B6A2AA9550C86DDCE6E6D4B07418AD6F2D1935104609B53699874DAE97E97"
+      },
+      {
+        "bytes": 7031,
+        "path": "technical-evidence-manifest.json",
+        "sha256": "B44F91DE99EA595FF51962D65F6064EA3BEC5075591FCB1FF681AE902A2656D9"
+      },
+      {
+        "bytes": 99,
+        "path": "technical-evidence-manifest.sha256",
+        "sha256": "3F596A936BCB087D5131A0915DE2FCDB0D179F92D2E70051809FAAF5ECD39CDD"
+      }
+    ],
+    "dynamicCandidateReceipts": [
+      {
+        "bytes": 800,
+        "path": "Evidence/Session19/ExternalTechnicalEvidence-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+        "role": "EXTERNAL_TECHNICAL_VALIDATION",
+        "sha256": "8EC891C32D839C8DBEAB03223F56866A4B395322764E20669D564D349BB295CC"
+      },
+      {
+        "bytes": 3919,
+        "path": "Evidence/Session19/FreshUserDir-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+        "role": "FRESH_USERDIR_VALIDATION",
+        "sha256": "645F29D92186AAFC8F2EB7C1830568E68FD084410656AF8F5B21FF1612541024"
+      }
+    ],
+    "externalRunToken": "S19_WindowsShipping_20260826T200427Z_9e7536afd2ec_946cdca0-e57b-4006-a49b-04b8cb3b307d",
+    "manifestSha256": "B44F91DE99EA595FF51962D65F6064EA3BEC5075591FCB1FF681AE902A2656D9",
+    "milestones": [
+      {
+        "bytes": 225417,
+        "height": 1128,
+        "path": "Screenshots/001_front_end.png",
+        "semantic": "FRESH_ROUND_ENTRY_HOLE_1_SHOT_1_PRESENTATION",
+        "sha256": "1FB6726B6D9FBD71C8C9E634CC6F5D34E418B7ED53E7BA2C2632E81EBA2A5915",
+        "width": 1922
+      },
+      {
+        "bytes": 2150001,
+        "height": 1128,
+        "path": "Screenshots/002_hole1_tee.png",
+        "semantic": "HOLE_1_TEE_PRESENTATION",
+        "sha256": "0F33E49491AB712642630DAA592974169E0B6455575A08DB1FF5146F29A041DC",
+        "width": 1922
+      },
+      {
+        "bytes": 2286729,
+        "height": 1128,
+        "path": "Screenshots/003_hole1_recovered_lie.png",
+        "semantic": "HOLE_1_RECOVERED_LIE_PRESENTATION",
+        "sha256": "412C3BE3A287BE7CF8F1C00E6FAFE0DB48B5C489A694D779062482C14AA91698",
+        "width": 1922
+      },
+      {
+        "bytes": 1949094,
+        "height": 1128,
+        "path": "Screenshots/004_hole1_complete.png",
+        "semantic": "HOLE_1_COMPLETE_PRESENTATION",
+        "sha256": "983E88504B26A2DC24715B8FBD0EBF92F394034C415FFD415D1CA2CEDB21D3A6",
+        "width": 1922
+      },
+      {
+        "bytes": 3025108,
+        "height": 1128,
+        "path": "Screenshots/005_hole2_tee.png",
+        "semantic": "HOLE_2_TEE_PRESENTATION",
+        "sha256": "958A0833410B1E5DB5F68885383A15333ED7820EFFC789925FD0B916C89376E3",
+        "width": 1922
+      },
+      {
+        "bytes": 2100383,
+        "height": 1128,
+        "path": "Screenshots/006_hole2_recovered_lie.png",
+        "semantic": "HOLE_2_RECOVERED_LIE_PRESENTATION",
+        "sha256": "1695D83BEDD01308379DC94E847FA32670548F4E72E382EC005F9A50C1539A08",
+        "width": 1922
+      },
+      {
+        "bytes": 1940154,
+        "height": 1128,
+        "path": "Screenshots/007_hole2_complete.png",
+        "semantic": "HOLE_2_COMPLETE_PRESENTATION",
+        "sha256": "E1C6BFBF4A3677C1458632209891AB5A8CF3BBE3DF77693F0B2C3D42C8D97422",
+        "width": 1922
+      },
+      {
+        "bytes": 1908679,
+        "height": 1128,
+        "path": "Screenshots/008_hole3_tee.png",
+        "semantic": "HOLE_3_TEE_PRESENTATION",
+        "sha256": "83985A6F8B50EB006DA0C1A80480E1DD0F5630D3F5A3141BE37462E5C1FC9313",
+        "width": 1922
+      },
+      {
+        "bytes": 1818703,
+        "height": 1128,
+        "path": "Screenshots/009_hole3_recovered_lie.png",
+        "semantic": "HOLE_3_RECOVERED_LIE_PRESENTATION",
+        "sha256": "91F20EA34CB71A749B52F919A651A18161F7FDDE1A9AFC4B41DCAE397CB43CFA",
+        "width": 1922
+      },
+      {
+        "bytes": 237375,
+        "height": 1128,
+        "path": "Screenshots/010_final_scorecard.png",
+        "semantic": "FINAL_SCORECARD_PRESENTATION",
+        "sha256": "9C294C3829775C84810265C2B1D3B666248E931FFD99405482641EAC9DE5E555",
+        "width": 1922
+      }
+    ],
+    "process": {
+      "cleanExit": true,
+      "exitCode": 0,
+      "timedOut": false
+    },
+    "runtimeCheckpointJournal": {
+      "archiveManifestSha256": "362CA24911629BE4EEC5076F6A0D5C0DCD6F7071C1DD2BAB102D86CF7807A184",
+      "bytes": 3228,
+      "captureNonce": "4db99437-eb0d-4977-8dbb-8a3b2283394a",
+      "eventCount": 12,
+      "executableSha256": "BA88E76589A25D5EC1E6072EC68CF983A116012BDD7BCE1F75E7CB46CE319754",
+      "firstSequence": 1,
+      "independentValidationState": "PASS_CANDIDATE_BOUND_EXTERNAL_TECHNICAL_EVIDENCE",
+      "lastSequence": 12,
+      "launchRecordSha256": "0B0B6A2AA9550C86DDCE6E6D4B07418AD6F2D1935104609B53699874DAE97E97",
+      "modifiedWithinRunWindow": true,
+      "roundId": "308e311a-438a-4525-afe3-edbd8e12019d",
+      "schema": "DiscGolfTour.Session19ThreeHoleRuntimeJournal.v1",
+      "sha256": "1D11D674E8B3EB0C571AE792B3FBF855F6AB1DFE5C101247D7F14210876CD8F5",
+      "technicalEvidenceManifestSha256": "B44F91DE99EA595FF51962D65F6064EA3BEC5075591FCB1FF681AE902A2656D9",
+      "trustBoundary": {
+        "cryptographicProcessAttestation": false,
+        "evidenceTrustModel": "BOUNDED_OPERATIONAL_PROCESS_EVIDENCE_NOT_CRYPTOGRAPHIC_ATTESTATION",
+        "hostileSameUserForgeryResistance": false,
+        "tamperProofEvidence": false
+      },
+      "userDirRelativePath": "Saved/TechnicalEvidence/three-hole-runtime-journal-v1.jsonl",
+      "validationState": "PASS_GAME_EMITTED_THREE_HOLE_RUNTIME_JOURNAL"
+    },
+    "userDir": {
+      "emptyBeforeLaunch": true,
+      "externalBoundaryValidated": true
+    },
+    "userDirToken": "946cdca0-e57b-4006-a49b-04b8cb3b307d"
+  },
+  "generatedUtc": "2026-08-26T20:47:48.516539Z",
+  "policy": {
+    "bytes": 19911,
+    "path": "Config/DG_Session19Session12PresentationTechnicalPolicy-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+    "sha256": "38DAD5E3501F28DF8FFB236C6C54EFAD989661E2BFCC32DC22B5FBB968602618"
+  },
+  "projectEvidence": {
+    "audioCoverage": {
+      "blockerClosed": false,
+      "categories": [
+        {
+          "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+          "audibleAssetValidated": false,
+          "category": "ThrowRelease",
+          "intentionalSilence": false,
+          "lifecycle": "AUTHORITATIVE_RELEASE_ACCEPTED",
+          "providerType": "ThrowRelease",
+          "resolver": "ResolveThrowRelease",
+          "runtimeHookValidated": true
+        },
+        {
+          "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+          "audibleAssetValidated": false,
+          "category": "AirborneFlight",
+          "intentionalSilence": false,
+          "lifecycle": "AUTHORITATIVE_RELEASE_AIRBORNE_START",
+          "providerType": "DiscFlightLoop",
+          "resolver": "ResolveAirborneFlight",
+          "runtimeHookValidated": true
+        },
+        {
+          "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+          "audibleAssetValidated": false,
+          "category": "GroundContact",
+          "intentionalSilence": false,
+          "lifecycle": "RECORDED_GROUND_TRANSITION_CONTACT",
+          "providerType": "DiscImpact",
+          "resolver": "ResolveCourseSurfaceContact",
+          "runtimeHookValidated": true
+        },
+        {
+          "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+          "audibleAssetValidated": false,
+          "category": "GroundState",
+          "intentionalSilence": false,
+          "lifecycle": "RECORDED_NON_IMPACT_GROUND_STATE_TRANSITION",
+          "providerType": "DiscImpact",
+          "resolver": "ResolveGroundState",
+          "runtimeHookValidated": true
+        },
+        {
+          "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+          "audibleAssetValidated": false,
+          "category": "BasketOutcome",
+          "intentionalSilence": false,
+          "lifecycle": "AUTHORITATIVE_BASKET_RESULT_RECORDED",
+          "providerType": "BasketChainsOrCage",
+          "resolver": "ResolveBasketOutcome",
+          "runtimeHookValidated": true
+        },
+        {
+          "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+          "audibleAssetValidated": false,
+          "category": "Penalty",
+          "intentionalSilence": false,
+          "lifecycle": "AUTHORITATIVE_LIE_PENALTY_RESOLVED",
+          "providerType": "CrowdReaction",
+          "resolver": "ResolvePenalty",
+          "runtimeHookValidated": true
+        },
+        {
+          "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+          "audibleAssetValidated": false,
+          "category": "HoleStart",
+          "intentionalSilence": false,
+          "lifecycle": "HOLE_INTRO_STARTED",
+          "providerType": "EnvironmentAmbience",
+          "resolver": "ResolveHoleStart",
+          "runtimeHookValidated": true
+        },
+        {
+          "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+          "audibleAssetValidated": false,
+          "category": "HoleCompletion",
+          "intentionalSilence": false,
+          "lifecycle": "AUTHORITATIVE_HOLE_OUT_RECORDED",
+          "providerType": "CrowdReaction",
+          "resolver": "ResolveHoleCompletion",
+          "runtimeHookValidated": true
+        },
+        {
+          "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+          "audibleAssetValidated": false,
+          "category": "HoleTransition",
+          "intentionalSilence": false,
+          "lifecycle": "SEAMLESS_AUTHORED_HOLE_ACTIVATION",
+          "providerType": "EnvironmentAmbience",
+          "resolver": "ResolveHoleTransition",
+          "runtimeHookValidated": true
+        },
+        {
+          "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+          "audibleAssetValidated": false,
+          "category": "RoundCompletion",
+          "intentionalSilence": false,
+          "lifecycle": "AUTHORITATIVE_ROUND_COMPLETE_RECORDED",
+          "providerType": "CrowdReaction",
+          "resolver": "ResolveRoundCompletion",
+          "runtimeHookValidated": true
+        },
+        {
+          "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+          "audibleAssetValidated": false,
+          "category": "Replay",
+          "intentionalSilence": false,
+          "lifecycle": "ACTUAL_SAMPLE_REPLAY_START_STOP",
+          "providerType": "EnvironmentAmbience",
+          "resolver": "ResolveReplay",
+          "runtimeHookValidated": true
+        },
+        {
+          "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+          "audibleAssetValidated": false,
+          "category": "Flyover",
+          "intentionalSilence": false,
+          "lifecycle": "AUTHORED_FLYOVER_START_STOP_OR_SKIP",
+          "providerType": "EnvironmentAmbience",
+          "resolver": "ResolveFlyover",
+          "runtimeHookValidated": true
+        }
+      ],
+      "categoryCount": 12,
+      "intentionalSilenceCategoryCount": 0,
+      "productionAssetCoverageComplete": false,
+      "rawProductionAudioFileCount": 0,
+      "releaseReady": false,
+      "runtimeHookCoverageComplete": true,
+      "unboundProductionAssetCategoryCount": 12
+    },
+    "bindings": [
+      {
+        "bytes": 14978,
+        "path": "Config/DG_Session12PresentationContract.json",
+        "role": "SESSION12_CONTRACT",
+        "sha256": "B8385D58B102C06AC19A986B14E2858C1906F7BD79D28D48C9AB555D0EB4AB3F"
+      },
+      {
+        "bytes": 30684,
+        "path": "Scripts/validate_dg_session12_presentation.py",
+        "role": "SESSION12_VALIDATOR",
+        "sha256": "D2FCEE88310BF00B3A7F0EE1803E8F2216D5E42C15161B631E8A473A683B5388"
+      },
+      {
+        "bytes": 9642,
+        "path": "Config/DG_Session12AudioEventCoverage.json",
+        "role": "AUDIO_EVENT_COVERAGE_MANIFEST",
+        "sha256": "91723978D733BF895277EAE2F5369EB559F47D1CA841703A1418D1B37DB39982"
+      },
+      {
+        "bytes": 9875,
+        "path": "Config/DG_Session19OriginalAudioCandidatePack.json",
+        "role": "ORIGINAL_AUDIO_CANDIDATE_PACK",
+        "sha256": "A21C72AB08E13D99CAA93731E3AFE4BDFDBF9E79A0FD4CE924A33189E7AD6B1A"
+      },
+      {
+        "bytes": 6363,
+        "path": "Evidence/Session19/OriginalAudioCandidateImport.json",
+        "role": "ORIGINAL_AUDIO_IMPORT_RECEIPT",
+        "sha256": "3FD33651C3CD0C660800E68548E6634C4A1E2160980778391C23D8FA4CBA55FA"
+      },
+      {
+        "bytes": 2567,
+        "path": "Config/DG_Session19ShippingAudioPolicy.json",
+        "role": "SHIPPING_AUDIO_COOK_POLICY",
+        "sha256": "7FE436903454D1CDCFBF607812061D13202C74B758C069032949CB5FB158A023"
+      },
+      {
+        "bytes": 29815,
+        "path": "Evidence/Session19/ShippingAudioCook-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+        "role": "SHIPPING_AUDIO_COOK_RECEIPT",
+        "sha256": "F6C041DDCE2A3460DF7C283C274B6C063727FCFA51EC43BBF816DFBBDCD3DEF7"
+      },
+      {
+        "bytes": 301715,
+        "path": "Saved/Logs/Session19OriginalAudioCandidateImport.log",
+        "role": "ORIGINAL_AUDIO_IMPORT_LOG",
+        "sha256": "D3F7CC48AD9375EF3B99183C328C064F95EF0595A355864DE053A07BB0D95FBA"
+      },
+      {
+        "bytes": 289311,
+        "path": "Saved/Logs/Session19AudioCandidateAutomation.log",
+        "role": "ORIGINAL_AUDIO_AUTOMATION_LOG",
+        "sha256": "D00B5E4B01FF669B0ACCD118EA67FCC848400E24CD2C05CAA774C2628176ECBD"
+      },
+      {
+        "bytes": 7115,
+        "path": "Saved/Automation/Session12FocusedClosure_db263248-c975-4058-be62-87669bc17d00/index.json",
+        "role": "FOCUSED_AUTOMATION_INDEX",
+        "sha256": "08B086F3EA66596825CC408A5D8772890B7E9AD6A93303E91C1B31A8FFEB8301"
+      },
+      {
+        "bytes": 3144,
+        "path": "Saved/Automation/Session12CameraClosure_f2310155-9c8b-43ff-bd27-236d255a903c/index.json",
+        "role": "CAMERA_AUTOMATION_INDEX",
+        "sha256": "886D93BA381BF1099C6DDEB5524CD73A50C1FD1B95164B21BE512EDF485EACC8"
+      },
+      {
+        "bytes": 311340,
+        "path": "Saved/Logs/Session12FocusedClosure_db263248-c975-4058-be62-87669bc17d00.log",
+        "role": "FOCUSED_AUTOMATION_LOG",
+        "sha256": "F810C4473DF04681DAC0C58B7F8D6FE5D0D31B3B23BA02C5E2D65FB93CC9A001"
+      },
+      {
+        "bytes": 301845,
+        "path": "Saved/Logs/Session12CameraClosure_f2310155-9c8b-43ff-bd27-236d255a903c.log",
+        "role": "CAMERA_AUTOMATION_LOG",
+        "sha256": "14F0EB6BA71748EF1DF16D45E464A88A5D34D54D40F79503EB48DE009D823317"
+      },
+      {
+        "bytes": 288237,
+        "path": "Saved/Logs/Automation_S17_ActionWhitelist_PostRoundFlowPatch.log",
+        "role": "FOCUS_ACTION_WHITELIST_LOG",
+        "sha256": "97D969AE7E963A9BF06327A63E16390B4EA7DB702B6EF4A801082DD8C8CA5CDD"
+      },
+      {
+        "bytes": 288946,
+        "path": "Saved/Logs/Automation_S19_IntroReleaseBarrier_PostRoundFlowPatch.log",
+        "role": "FOCUS_INTRO_RELEASE_LOG",
+        "sha256": "62CE13D057AFA6142E9D6B67D86194B50B19A9C02578C3A189C4ED60FB1D0B88"
+      },
+      {
+        "bytes": 540767,
+        "path": "Saved/Logs/Automation_DiscGolfTour_Full_PostRoundFlowPatch.log",
+        "role": "CURRENT_FULL_AUTOMATION_LOG",
+        "sha256": "B730F07812C5FEBD3238B106FC8DFE9EA566C7DB38E0460BC021A37CF9C7045E"
+      },
+      {
+        "bytes": 6452,
+        "path": "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+        "role": "SHIPPING_CANDIDATE_VERIFICATION",
+        "sha256": "9D7F82CFC86843C6B3C3F6265BFD7EE04DBB05DFC6E89A1F84BDFFC7839431A3"
+      },
+      {
+        "bytes": 26660,
+        "path": "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+        "role": "CANDIDATE_CONTENT",
+        "sha256": "8237F4DAF5FD668BDC6ED2A89106847DEE6C3C5420765EF673DA53AE8C7706A7"
+      },
+      {
+        "bytes": 1346,
+        "path": "Evidence/Session19/ShippingBinary-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+        "role": "SHIPPING_BINARY",
+        "sha256": "38E5A3A305039194213F63F2EF97924692D8468E6AEE14A33941772DE859AA5D"
+      }
+    ],
+    "cameraAutomation": {
+      "deviceScope": "ONE_WINDOWS_EDITOR_DEVICE_ONLY",
+      "failed": 0,
+      "succeeded": 6,
+      "unsupportedDeviceCoverage": false,
+      "warnings": 0
+    },
+    "contractReleaseBlocked": true,
+    "currentFullAutomation": {
+      "discovered": 255,
+      "failed": 0,
+      "succeeded": 255
+    },
+    "focusedAutomation": {
+      "deviceScope": "ONE_WINDOWS_EDITOR_DEVICE_ONLY",
+      "failed": 0,
+      "succeeded": 16,
+      "unsupportedDeviceCoverage": false,
+      "warnings": 0
+    },
+    "originalAudioCandidate": {
+      "audibleRuntimePlaybackProven": false,
+      "blockerClosed": false,
+      "categoryCount": 12,
+      "cookRootConfigured": true,
+      "freshShippingRebuildRequired": false,
+      "records": [
+        {
+          "bytes": 52844,
+          "category": "ThrowRelease",
+          "runtimeSoftBindingValidated": true,
+          "serializedUnrealAssetPresent": true,
+          "sha256": "C6F5EBE99803D21A731BDAD8DE4CB2BBD51DE6CE4DA046963BE481105015C61F",
+          "sourcePath": "OriginalAudio/Session19Generated/DG_ThrowRelease.wav",
+          "uassetBytes": 41190,
+          "uassetPath": "Content/Presentation/Audio/Generated/SW_ThrowRelease.uasset",
+          "uassetSha256": "3AA44EB00B34ABC181F3C77E2189038AA9DB17FAD7DC81E88D91D9EFFAA7BCD9",
+          "unrealObject": "/Game/Presentation/Audio/Generated/SW_ThrowRelease.SW_ThrowRelease"
+        },
+        {
+          "bytes": 153644,
+          "category": "AirborneFlight",
+          "runtimeSoftBindingValidated": true,
+          "serializedUnrealAssetPresent": true,
+          "sha256": "57044D0427E47D7BFAE2697F7D4872B636B10215C91B0B0280B113C2A62FE148",
+          "sourcePath": "OriginalAudio/Session19Generated/DG_AirborneFlight.wav",
+          "uassetBytes": 132756,
+          "uassetPath": "Content/Presentation/Audio/Generated/SW_AirborneFlight.uasset",
+          "uassetSha256": "15236315EF40C0676E695DE79F09FCB47D539C115389ADC75BA719BF5840F228",
+          "unrealObject": "/Game/Presentation/Audio/Generated/SW_AirborneFlight.SW_AirborneFlight"
+        },
+        {
+          "bytes": 62444,
+          "category": "GroundContact",
+          "runtimeSoftBindingValidated": true,
+          "serializedUnrealAssetPresent": true,
+          "sha256": "E2F060470CEC816CBA973E82D779C14AC4B7BB76251284DCDDC30A6EBAE78B07",
+          "sourcePath": "OriginalAudio/Session19Generated/DG_GroundContact.wav",
+          "uassetBytes": 31674,
+          "uassetPath": "Content/Presentation/Audio/Generated/SW_GroundContact.uasset",
+          "uassetSha256": "CF075D4411EC01CE11B3DD115A02E00C6ED7C952E0B5FDB0A9B41B3A6BC97CD5",
+          "unrealObject": "/Game/Presentation/Audio/Generated/SW_GroundContact.SW_GroundContact"
+        },
+        {
+          "bytes": 115244,
+          "category": "GroundState",
+          "runtimeSoftBindingValidated": true,
+          "serializedUnrealAssetPresent": true,
+          "sha256": "BD5DAB2EA7509A419DC015B381873D591355685F1BB846658AEE412C9881AA56",
+          "sourcePath": "OriginalAudio/Session19Generated/DG_GroundState.wav",
+          "uassetBytes": 87395,
+          "uassetPath": "Content/Presentation/Audio/Generated/SW_GroundState.uasset",
+          "uassetSha256": "CA0C354ED6A38385B0B4539D85C84743BBDDFA26317FA70F63413AE72488CF54",
+          "unrealObject": "/Game/Presentation/Audio/Generated/SW_GroundState.SW_GroundState"
+        },
+        {
+          "bytes": 100844,
+          "category": "BasketOutcome",
+          "runtimeSoftBindingValidated": true,
+          "serializedUnrealAssetPresent": true,
+          "sha256": "E1F99AA806D16FA629B529D007FA96CE82D1F8A3406DF7EA324EE4B981BA1850",
+          "sourcePath": "OriginalAudio/Session19Generated/DG_BasketOutcome.wav",
+          "uassetBytes": 58305,
+          "uassetPath": "Content/Presentation/Audio/Generated/SW_BasketOutcome.uasset",
+          "uassetSha256": "DB1865313C30F3B1F4F781A69E4EB57E6B175DDEE1407941C2128062D84FD2B9",
+          "unrealObject": "/Game/Presentation/Audio/Generated/SW_BasketOutcome.SW_BasketOutcome"
+        },
+        {
+          "bytes": 86444,
+          "category": "Penalty",
+          "runtimeSoftBindingValidated": true,
+          "serializedUnrealAssetPresent": true,
+          "sha256": "028078BD77B73AE29F8DA731CA5ABDEDCB52BB311D822922431522BD24D1AE35",
+          "sourcePath": "OriginalAudio/Session19Generated/DG_Penalty.wav",
+          "uassetBytes": 27602,
+          "uassetPath": "Content/Presentation/Audio/Generated/SW_Penalty.uasset",
+          "uassetSha256": "D50B761D8035B884DB185C8A490878F6C892C3D72B788CB52E974DBACCE64802",
+          "unrealObject": "/Game/Presentation/Audio/Generated/SW_Penalty.SW_Penalty"
+        },
+        {
+          "bytes": 110444,
+          "category": "HoleStart",
+          "runtimeSoftBindingValidated": true,
+          "serializedUnrealAssetPresent": true,
+          "sha256": "C911709D3280C100581476549E216FA10BE40DCDDE789C3377322B6427F9EC34",
+          "sourcePath": "OriginalAudio/Session19Generated/DG_HoleStart.wav",
+          "uassetBytes": 63613,
+          "uassetPath": "Content/Presentation/Audio/Generated/SW_HoleStart.uasset",
+          "uassetSha256": "E5F2EE0FBB74D0CDEC904291F6D4F3221F3E55D05AF24B12CD80A7D93836732A",
+          "unrealObject": "/Game/Presentation/Audio/Generated/SW_HoleStart.SW_HoleStart"
+        },
+        {
+          "bytes": 129644,
+          "category": "HoleCompletion",
+          "runtimeSoftBindingValidated": true,
+          "serializedUnrealAssetPresent": true,
+          "sha256": "80BD130E97D63E1E35411F2EB3E23FF8350C5140A582519902DA82234C2A62D9",
+          "sourcePath": "OriginalAudio/Session19Generated/DG_HoleCompletion.wav",
+          "uassetBytes": 65421,
+          "uassetPath": "Content/Presentation/Audio/Generated/SW_HoleCompletion.uasset",
+          "uassetSha256": "5F131CF142B470F5CCE67A18E4ED1C91606A0F495FBE2F93E56A5879745D8EEA",
+          "unrealObject": "/Game/Presentation/Audio/Generated/SW_HoleCompletion.SW_HoleCompletion"
+        },
+        {
+          "bytes": 105644,
+          "category": "HoleTransition",
+          "runtimeSoftBindingValidated": true,
+          "serializedUnrealAssetPresent": true,
+          "sha256": "B1F2952121EEC772D8F3AB203D4976FD5B52E3584AAFE16F931153BCE5431080",
+          "sourcePath": "OriginalAudio/Session19Generated/DG_HoleTransition.wav",
+          "uassetBytes": 59610,
+          "uassetPath": "Content/Presentation/Audio/Generated/SW_HoleTransition.uasset",
+          "uassetSha256": "01D73F2C1201D1E577F3F9ADD5401F7324BFFABFDE7A17A32981F211D6ACD030",
+          "unrealObject": "/Game/Presentation/Audio/Generated/SW_HoleTransition.SW_HoleTransition"
+        },
+        {
+          "bytes": 163244,
+          "category": "RoundCompletion",
+          "runtimeSoftBindingValidated": true,
+          "serializedUnrealAssetPresent": true,
+          "sha256": "0B44541DE7809ABA10A8210AF044373BE7AFD19A941F820177AC805C83DE35AC",
+          "sourcePath": "OriginalAudio/Session19Generated/DG_RoundCompletion.wav",
+          "uassetBytes": 92023,
+          "uassetPath": "Content/Presentation/Audio/Generated/SW_RoundCompletion.uasset",
+          "uassetSha256": "A1D12264E535A2433C64CA6A1BAB6C64994879E8DF0DD1C74E1957CC6C97D8F0",
+          "unrealObject": "/Game/Presentation/Audio/Generated/SW_RoundCompletion.SW_RoundCompletion"
+        },
+        {
+          "bytes": 76844,
+          "category": "Replay",
+          "runtimeSoftBindingValidated": true,
+          "serializedUnrealAssetPresent": true,
+          "sha256": "04880F32B454CE862E8FBD3EC0B5FEA55175DEF293AD2B7819FAB2ADD73F04AD",
+          "sourcePath": "OriginalAudio/Session19Generated/DG_Replay.wav",
+          "uassetBytes": 57609,
+          "uassetPath": "Content/Presentation/Audio/Generated/SW_Replay.uasset",
+          "uassetSha256": "43EFF820C63C7A1F6A88704AF84712534DB08921570FFCA3818AEE96B2B2BF6F",
+          "unrealObject": "/Game/Presentation/Audio/Generated/SW_Replay.SW_Replay"
+        },
+        {
+          "bytes": 172844,
+          "category": "Flyover",
+          "runtimeSoftBindingValidated": true,
+          "serializedUnrealAssetPresent": true,
+          "sha256": "54BF00258BBB98B1F360B92251F555AC7D944B31BD63203283754C63B2428193",
+          "sourcePath": "OriginalAudio/Session19Generated/DG_Flyover.wav",
+          "uassetBytes": 118464,
+          "uassetPath": "Content/Presentation/Audio/Generated/SW_Flyover.uasset",
+          "uassetSha256": "25E5FA4802A3498884A592A0D048851E2530E251845849F7C787D46783E89CB4",
+          "unrealObject": "/Game/Presentation/Audio/Generated/SW_Flyover.SW_Flyover"
+        }
+      ],
+      "releaseReady": false,
+      "runtimeSoftBindingCount": 12,
+      "selectedShippingCandidateContainsAudioCandidate": true,
+      "serializedUnrealAssetCount": 12,
+      "shippingCandidateInvalidatedBySourceDelta": false,
+      "shippingCookProven": true,
+      "sourceMasterCount": 12,
+      "state": "PASS_PROJECT_OWNED_AUDIO_SOURCE_IMPORT_AND_SHIPPING_COOK_BOUND"
+    },
+    "productionAudioAssetsPresent": false,
+    "shippingAudioCook": {
+      "accessibilityApproved": false,
+      "allTwelveCookedObjectsExtractedAndInspected": true,
+      "allTwelveSerializedSoundWavesSourceBound": true,
+      "allTwelveSoundWaveObjectsInPackagedAssetRegistry": true,
+      "allTwelveSoundWavePackagesInIoStore": true,
+      "audibleRuntimePlaybackProven": false,
+      "blockerClosed": false,
+      "categories": [
+        {
+          "audibleRuntimePlaybackProven": false,
+          "category": "ThrowRelease",
+          "extractedCookedObjectInspected": true,
+          "ioStoreExportBundleBytes": 518,
+          "object": "/Game/Presentation/Audio/Generated/SW_ThrowRelease.SW_ThrowRelease",
+          "packagedAssetRegistrySoundWave": true,
+          "shippingCookProven": true
+        },
+        {
+          "audibleRuntimePlaybackProven": false,
+          "category": "AirborneFlight",
+          "extractedCookedObjectInspected": true,
+          "ioStoreExportBundleBytes": 526,
+          "object": "/Game/Presentation/Audio/Generated/SW_AirborneFlight.SW_AirborneFlight",
+          "packagedAssetRegistrySoundWave": true,
+          "shippingCookProven": true
+        },
+        {
+          "audibleRuntimePlaybackProven": false,
+          "category": "GroundContact",
+          "extractedCookedObjectInspected": true,
+          "ioStoreExportBundleBytes": 526,
+          "object": "/Game/Presentation/Audio/Generated/SW_GroundContact.SW_GroundContact",
+          "packagedAssetRegistrySoundWave": true,
+          "shippingCookProven": true
+        },
+        {
+          "audibleRuntimePlaybackProven": false,
+          "category": "GroundState",
+          "extractedCookedObjectInspected": true,
+          "ioStoreExportBundleBytes": 518,
+          "object": "/Game/Presentation/Audio/Generated/SW_GroundState.SW_GroundState",
+          "packagedAssetRegistrySoundWave": true,
+          "shippingCookProven": true
+        },
+        {
+          "audibleRuntimePlaybackProven": false,
+          "category": "BasketOutcome",
+          "extractedCookedObjectInspected": true,
+          "ioStoreExportBundleBytes": 526,
+          "object": "/Game/Presentation/Audio/Generated/SW_BasketOutcome.SW_BasketOutcome",
+          "packagedAssetRegistrySoundWave": true,
+          "shippingCookProven": true
+        },
+        {
+          "audibleRuntimePlaybackProven": false,
+          "category": "Penalty",
+          "extractedCookedObjectInspected": true,
+          "ioStoreExportBundleBytes": 510,
+          "object": "/Game/Presentation/Audio/Generated/SW_Penalty.SW_Penalty",
+          "packagedAssetRegistrySoundWave": true,
+          "shippingCookProven": true
+        },
+        {
+          "audibleRuntimePlaybackProven": false,
+          "category": "HoleStart",
+          "extractedCookedObjectInspected": true,
+          "ioStoreExportBundleBytes": 518,
+          "object": "/Game/Presentation/Audio/Generated/SW_HoleStart.SW_HoleStart",
+          "packagedAssetRegistrySoundWave": true,
+          "shippingCookProven": true
+        },
+        {
+          "audibleRuntimePlaybackProven": false,
+          "category": "HoleCompletion",
+          "extractedCookedObjectInspected": true,
+          "ioStoreExportBundleBytes": 526,
+          "object": "/Game/Presentation/Audio/Generated/SW_HoleCompletion.SW_HoleCompletion",
+          "packagedAssetRegistrySoundWave": true,
+          "shippingCookProven": true
+        },
+        {
+          "audibleRuntimePlaybackProven": false,
+          "category": "HoleTransition",
+          "extractedCookedObjectInspected": true,
+          "ioStoreExportBundleBytes": 526,
+          "object": "/Game/Presentation/Audio/Generated/SW_HoleTransition.SW_HoleTransition",
+          "packagedAssetRegistrySoundWave": true,
+          "shippingCookProven": true
+        },
+        {
+          "audibleRuntimePlaybackProven": false,
+          "category": "RoundCompletion",
+          "extractedCookedObjectInspected": true,
+          "ioStoreExportBundleBytes": 526,
+          "object": "/Game/Presentation/Audio/Generated/SW_RoundCompletion.SW_RoundCompletion",
+          "packagedAssetRegistrySoundWave": true,
+          "shippingCookProven": true
+        },
+        {
+          "audibleRuntimePlaybackProven": false,
+          "category": "Replay",
+          "extractedCookedObjectInspected": true,
+          "ioStoreExportBundleBytes": 510,
+          "object": "/Game/Presentation/Audio/Generated/SW_Replay.SW_Replay",
+          "packagedAssetRegistrySoundWave": true,
+          "shippingCookProven": true
+        },
+        {
+          "audibleRuntimePlaybackProven": false,
+          "category": "Flyover",
+          "extractedCookedObjectInspected": true,
+          "ioStoreExportBundleBytes": 510,
+          "object": "/Game/Presentation/Audio/Generated/SW_Flyover.SW_Flyover",
+          "packagedAssetRegistrySoundWave": true,
+          "shippingCookProven": true
+        }
+      ],
+      "categoryCount": 12,
+      "finalQualityApproved": false,
+      "humanMixApproved": false,
+      "legalApproved": false,
+      "productOwnerApproved": false,
+      "receipt": {
+        "bytes": 29815,
+        "path": "Evidence/Session19/ShippingAudioCook-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+        "sha256": "F6C041DDCE2A3460DF7C283C274B6C063727FCFA51EC43BBF816DFBBDCD3DEF7"
+      },
+      "releaseReady": false,
+      "shippingCookProven": true,
+      "state": "PASS_CANDIDATE_BOUND_ALL_TWELVE_GENERATED_SOUNDWAVES_COOKED_AUDIBLE_PLAYBACK_AND_HUMAN_APPROVALS_PENDING"
+    },
+    "sourceBindings": [
+      {
+        "bytes": 6595,
+        "path": "Source/DiscGolfTour/DiscGolfInputRoutePolicy.h",
+        "reviewedMarkerCount": 3,
+        "sha256": "6E6E9482B5BECBADD221B4A1AAF3F862CFA23F95E8F0ECE0755BDEE26BEA6F3A"
+      },
+      {
+        "bytes": 15076,
+        "path": "Source/DiscGolfTour/DiscGolfInputConfig.cpp",
+        "reviewedMarkerCount": 3,
+        "sha256": "8DF4D2438A25C72A8ADA1DD7286A66F271EDE5561A3C675E314F33F8256C05B8"
+      },
+      {
+        "bytes": 102229,
+        "path": "Source/DiscGolfTour/DiscGolfTourPlayerController.cpp",
+        "reviewedMarkerCount": 4,
+        "sha256": "B691156042969E21C0601E7B3C4B4EFC9D88710099E68534A960FDA05D3791F3"
+      },
+      {
+        "bytes": 60478,
+        "path": "Source/DiscGolfTour/DiscGolfHUD.cpp",
+        "reviewedMarkerCount": 3,
+        "sha256": "4E3DC85EF5BB2E718FE2A65B2795EA4BABDA4068B37CC6775C67037D38434E65"
+      },
+      {
+        "bytes": 3126,
+        "path": "Source/DiscGolfTour/DiscGolfCameraViewContract.cpp",
+        "reviewedMarkerCount": 3,
+        "sha256": "8D3F400F1DE155FBE4593040A966A4CFFC062B0109855EC0D6F1C844DA021F04"
+      },
+      {
+        "bytes": 8609,
+        "path": "Source/DiscGolfTour/DiscReplayActor.cpp",
+        "reviewedMarkerCount": 4,
+        "sha256": "3E02F8EE046ED502808E5AAB49DDB49749CEFCBF447358415640DBD129DD889B"
+      },
+      {
+        "bytes": 4811,
+        "path": "Source/DiscGolfTour/DiscGolfPresentationAudio.h",
+        "reviewedMarkerCount": 12,
+        "sha256": "A95589AD8BA2F2F6BEFA587C066AEBECCF693E16BBD563D361D0CEEC5B9528C6"
+      },
+      {
+        "bytes": 20336,
+        "path": "Source/DiscGolfTour/DiscGolfPresentationAudio.cpp",
+        "reviewedMarkerCount": 7,
+        "sha256": "E244565502C7D401821D1141FAABF2F0EAA41510ED0538683ADC80C7B7BA11AE"
+      },
+      {
+        "bytes": 5992,
+        "path": "Source/DiscGolfTour/DiscGolfPresentationAudioRouterComponent.h",
+        "reviewedMarkerCount": 3,
+        "sha256": "EF5C3331FD71610C2B9208471F5372BEF449EC3EDD1F1B9868BD32BFED056C1E"
+      },
+      {
+        "bytes": 14431,
+        "path": "Source/DiscGolfTour/DiscGolfPresentationAudioRouterComponent.cpp",
+        "reviewedMarkerCount": 5,
+        "sha256": "D3B423F0613B913860EB8110D013FA5054F3A8A4635CEFF740E5F8B05066165E"
+      },
+      {
+        "bytes": 268701,
+        "path": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+        "reviewedMarkerCount": 4,
+        "sha256": "8C1E4B8DE36723E5CEF022E741F6121CF892933449007F863690C1B169B56F8A"
+      },
+      {
+        "bytes": 15797,
+        "path": "Source/DiscGolfTour/Tests/DiscGolfInputTests.cpp",
+        "reviewedMarkerCount": 3,
+        "sha256": "A90B041269361BBDBAC197AF942885B29E92CE1B84AD51B48BC9FC9DA1F41E00"
+      },
+      {
+        "bytes": 10438,
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession12AudioRouterTests.cpp",
+        "reviewedMarkerCount": 2,
+        "sha256": "95685B63681CF1813F15FAEDF8723D6958D27D78B92F64F3D401E4D0D905188C"
+      },
+      {
+        "bytes": 18743,
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession12CameraReplayTests.cpp",
+        "reviewedMarkerCount": 2,
+        "sha256": "F703C72ABEC15541F6BA0C1FFB8672C4FC7AA0CEA14000C64626F7D9F8965807"
+      },
+      {
+        "bytes": 6018,
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession12InputUiTests.cpp",
+        "reviewedMarkerCount": 3,
+        "sha256": "26A2470D3C6F4206692C03A53F9979ADD512C6215A5853B9CEAB6163A038D4EC"
+      },
+      {
+        "bytes": 15432,
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession17RoundFlowUiTests.cpp",
+        "reviewedMarkerCount": 2,
+        "sha256": "936C23019080E57B5E41E63CA7725F6A8FBBCEE8C8C9B0E9BCFB84443B96B50A"
+      },
+      {
+        "bytes": 2235,
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession19AudioCandidateTests.cpp",
+        "reviewedMarkerCount": 2,
+        "sha256": "6D53EFFED73540687A0F9EBFDFD5B28F311D63D2EB6C94ECEA4BE60287A53544"
+      },
+      {
+        "bytes": 9215,
+        "path": "Scripts/generate_dg_session19_audio_candidate_pack.py",
+        "reviewedMarkerCount": 3,
+        "sha256": "4099117A2101B84EA4B3E6BA7382469B3E5988CFB4523F178516CFDD763DBED8"
+      },
+      {
+        "bytes": 5449,
+        "path": "Scripts/author_dg_session19_audio_candidate_pack.py",
+        "reviewedMarkerCount": 3,
+        "sha256": "7ECAD87D4442CEB9B1A3F4A4995B4DE0348EF33E5C6F90E349787AF1FF4D9270"
+      }
+    ]
+  },
+  "releaseState": "BLOCKED_PENDING_DEVICE_AUDIO_HUMAN_PROVENANCE_LEGAL_AND_RELEASE_APPROVALS",
+  "schema": "DiscGolfTour.Session19Session12PresentationTechnicalReceipt.v3",
+  "schemaVersion": 3,
+  "session": 19,
+  "session12ContractValidator": {
+    "exitCode": 0,
+    "status": "PASS_SESSION12_PRESENTATION_CONTRACT_RELEASE_BLOCKED",
+    "stdoutSha256": "642F08233997B70DA9DB5F59111A39EDB2D41111958F2CEF5D44DD86A8ADB047"
+  },
+  "state": "PASS_CANDIDATE_BOUND_SESSION12_PRESENTATION_TECHNICAL_WITH_SHIPPING_AUDIO_COOK",
+  "technicalClaims": {
+    "allTwelveSemanticAudioRuntimeHooksValidated": true,
+    "audioCookRootConfigured": true,
+    "authoredSemanticAudioEventCoverage": true,
+    "cameraAndReplayWiring": true,
+    "candidateAndEvidenceImmutableBinding": true,
+    "freshInstallMilestonePresentationObserved": true,
+    "implementedUiAndInputRouting": true,
+    "originalProjectOwnedAudioSourceMastersBound": true,
+    "presentationFocusBarriers": true,
+    "runtimeCategorySoftBindingsImplemented": true,
+    "serializedUnrealSoundAssetsImported": true,
+    "shippingAudioCookReceiptValidated": true,
+    "unboundAudioAssetDispositionsExplicit": true
+  },
+  "truthBoundary": {
+    "audibleRuntimePlaybackProven": false,
+    "audioEvidenceProvesSemanticEventRouterAndSerializedCandidateCoverageNotAudiblePlaybackOrMix": true,
+    "audioProductionAssetCoverageProven": false,
+    "audioRuntimeHookCategoryCount": 12,
+    "blockerClosed": false,
+    "cameraReplayEvidenceProvesImplementationWiringNotManualPresentationApproval": true,
+    "focusedAutomationDeviceScope": "ONE_WINDOWS_EDITOR_DEVICE_ONLY",
+    "freshShippingRebuildRequired": false,
+    "intentionalSilenceDesignApproved": false,
+    "originalAudioRuntimeSoftBindingCount": 12,
+    "originalProjectOwnedAudioSourceMasterCount": 12,
+    "releaseReady": false,
+    "screenshotsProveMilestonePresenceNotVisualQuality": true,
+    "selectedShippingCandidateContainsAudioCandidate": true,
+    "serializedUnrealSoundAssetCount": 12,
+    "shippingAudioCookProven": true,
+    "shippingCandidateInvalidatedBySourceDelta": false,
+    "technicalArtifactAcceptanceOnly": true
+  },
+  "unsupportedClaims": {
+    "accessibilityApproval": false,
+    "audibleProductionCategoryCoverage": false,
+    "audibleRuntimePlaybackProven": false,
+    "audioLicensingApproved": false,
+    "blockerClosed": false,
+    "distributionClearance": false,
+    "humanPlayFeelApproval": false,
+    "intentionalSilenceDesignApproval": false,
+    "legalApproval": false,
+    "manualAudioMixReview": false,
+    "manualCameraReview": false,
+    "manualGameplayAcceptance": false,
+    "manualReplayReview": false,
+    "productOwnerApproval": false,
+    "productionAudioAssetsPresent": false,
+    "provenanceApproval": false,
+    "releaseApproval": false,
+    "releaseReady": false,
+    "unsupportedDeviceCoverage": false,
+    "visualQualityApproval": false
+  }
+}

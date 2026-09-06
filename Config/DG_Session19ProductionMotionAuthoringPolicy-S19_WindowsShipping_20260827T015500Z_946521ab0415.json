@@ -1,0 +1,433 @@
+{
+  "schema": "DiscGolfTour.Session19ProductionMotionAuthoringPolicy.v2",
+  "schemaVersion": 2,
+  "session": 19,
+  "milestone": "v0.5",
+  "authority": "FAIL_CLOSED_PROJECT_AUTHORED_PROCEDURAL_MOTION_CANDIDATES_NOT_VISUAL_PERFORMANCE_OWNER_OR_RELEASE_APPROVAL",
+  "state": "TECHNICAL_PROCEDURAL_CANDIDATES_AUTHORED_RUNTIME_AND_COOK_BOUND_HUMAN_REVIEW_AND_FRESH_CANDIDATE_PENDING",
+  "bindings": {
+    "motionPipelineDocument": {
+      "path": "Docs/DG_MOCAP_PIPELINE.md",
+      "bytes": 7661,
+      "sha256": "D8277C50135AF939B15459F918E4081E80DC15E2BBC5A0752D8219BA54CC1682"
+    },
+    "frozenMotionRegistry": {
+      "path": "SourceArt/DiscGolf/Mocap/motion_source_registry.json",
+      "bytes": 22940,
+      "sha256": "13301FF11E3E6024E1F64C1154D7AEBC232F71DECC7C143F12F319A929BD979E"
+    },
+    "session3SyntheticAuthoringUtility": {
+      "path": "Source/DiscGolfTourEditor/DiscGolfSession3AssetUtility.cpp",
+      "bytes": 62736,
+      "sha256": "4DA852CB874F7A6F0BDAC74A5F843C30760A535DC47154398E1E47F43C5F6CC7"
+    },
+    "session5SyntheticPipelineUtility": {
+      "path": "Source/DiscGolfTourEditor/DiscGolfSession5MocapUtility.cpp",
+      "bytes": 116962,
+      "sha256": "A14320A2169A3AC7B294F6161791EF6277271D97C77966B8375EE51369BE5300"
+    },
+    "session8BMetaHumanRuntimeAuthor": {
+      "path": "Scripts/author_dg_character_session8b_runtime_assets.py",
+      "bytes": 32902,
+      "sha256": "71F2707939FFB7B18E8BC1BC34E21773E42E77DC1F07256E2E98252A7A45301C"
+    },
+    "golferPawnSource": {
+      "path": "Source/DiscGolfTour/DiscGolferPawn.cpp",
+      "bytes": 70155,
+      "sha256": "33D413963A185036C4D11173B8A4A9DC107A0EE394860FBCE4FBA7C00BA5DEB9"
+    },
+    "golferPawnHeader": {
+      "path": "Source/DiscGolfTour/DiscGolferPawn.h",
+      "bytes": 10013,
+      "sha256": "2B5733A6E086D257C6B82F3BC7689B32EFAF65C1AB085A572DD99F919BE81D79"
+    },
+    "metaHumanRetargetRuntimeSource": {
+      "path": "Source/DiscGolfTour/DiscGolfMetaHumanRetargetAnimInstance.cpp",
+      "bytes": 16713,
+      "sha256": "AE9D7378B6AACE43AE4519AB240EB9D827E4911923A28175DA7ABED045A5E717"
+    },
+    "runtimeCookManifest": {
+      "path": "Config/DG_RuntimeCookManifest.json",
+      "bytes": 12975,
+      "sha256": "C821D7157C9D0C6266ACEFB7920C79AF5E2B0D4792D30C38AB4DACB528F5B7AC"
+    },
+    "packagingSettings": {
+      "path": "Config/DefaultGame.ini",
+      "bytes": 2891,
+      "sha256": "304390E67BF6C8FE0BD8D3BE1D830B303F4FBB0ED26358D8B638F9C1CF6DF296"
+    },
+    "candidateContentAudit": {
+      "path": "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260827T015500Z_946521ab0415.json",
+      "bytes": 26660,
+      "sha256": "156D0F3E3175DA6D90E93672BE8E962F7F4BE64D37F3C801373FAC58420BC4F0"
+    },
+    "dgMasterSkeleton": {
+      "path": "Content/DiscGolf/Characters/Meshes/SKEL_DG_Master.uasset",
+      "bytes": 17681,
+      "sha256": "D40A0C4FE4BFE100A553910E01CCB5C00ACD9D1C927D4C1387F25894541493EA"
+    },
+    "dgMasterControlRig": {
+      "path": "Content/DiscGolf/Rigs/CR_DG_Master.uasset",
+      "bytes": 205044,
+      "sha256": "D9699721E2C9E8297016CC386A03941AD7BB4AC6AB39118E7FBA453EB649A822"
+    },
+    "playerAnimationBlueprint": {
+      "path": "Content/DiscGolf/Animation/ABP_DG_Player.uasset",
+      "bytes": 58347,
+      "sha256": "4006F2FBF0B38FB7033F2944807B0BEE503FA3C730D3D701C9F8EC7D7FBDA995"
+    },
+    "metaHumanRetargeter": {
+      "path": "Content/DiscGolf/Characters/MetaHuman/RTG_DGMaster_To_MetaHuman.uasset",
+      "bytes": 22640,
+      "sha256": "CBD3222614A08BE37979A34C29FDF44F3C438B99358B106ED1A5BBF62E21870C"
+    },
+    "metaHumanRuntimeBlueprint": {
+      "path": "Content/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default.uasset",
+      "bytes": 225443,
+      "sha256": "865D94042B1306EDE1752CEC3D174A0C662BC767F481F5D0576AFF62EF888E30"
+    },
+    "metaHumanAvatarProfile": {
+      "path": "Content/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default.uasset",
+      "bytes": 2608,
+      "sha256": "F8B03386EF8C40307D49C8642EE167F486B88EAC70FDD0556D5605AB0317C8AD"
+    },
+    "productionMotionRuntimePaths": {
+      "path": "Source/DiscGolfTour/DiscGolfProductionMotion.h",
+      "bytes": 2662,
+      "sha256": "E5A628196207A654BE58A056B7DFBD605EAE20EB696B66673C12F31A2F5F7806"
+    },
+    "productionMotionAuthoringUtilityHeader": {
+      "path": "Source/DiscGolfTourEditor/DiscGolfProductionMotionAuthoringUtility.h",
+      "bytes": 1000,
+      "sha256": "A6B6D4C2A343C12273EC5C70C0D9C1F66EF95BCE4C874272386F2252A2AB2115"
+    },
+    "productionMotionAuthoringUtilitySource": {
+      "path": "Source/DiscGolfTourEditor/DiscGolfProductionMotionAuthoringUtility.cpp",
+      "bytes": 55538,
+      "sha256": "31B50ED9D09B1D5A75BA70EE746CBF2887F4F9F40125488387AB1AA5EC05EAE9"
+    },
+    "productionMotionAuthorWrapper": {
+      "path": "Scripts/author_dg_session19_production_motion.py",
+      "bytes": 16718,
+      "sha256": "8FAFC4B49439C58BE5A1E9605AC24EFCDDCD937F901EE502A2E5DA6D54EE2BAE"
+    },
+    "productionMotionAssetValidator": {
+      "path": "Scripts/validate_dg_session19_production_motion_assets.py",
+      "bytes": 6947,
+      "sha256": "934F9A8755CE22648C8791936FD1F8E8EF336435376E6A75F364B1BD5500D89A"
+    },
+    "productionMotionRecipe": {
+      "path": "SourceArt/DiscGolf/Motion/ProductionMotionRecipe_v1.json",
+      "bytes": 20841,
+      "sha256": "D979E98DDBBDFD79E661C402403A9EE0C9C29F8061007CF56C7BDA175993EB58"
+    },
+    "productionMotionCandidateAuthoringEvidence": {
+      "path": "Evidence/Session19/ProductionMotionCandidateAuthoringEvidence.json",
+      "bytes": 11932,
+      "sha256": "EAEEAA4C4BBB3F9E7BED091D145400EF65AFFC8601CDD4B313079EE2AB27B194"
+    }
+  },
+  "protectedSyntheticAssets": [
+    {
+      "objectPath": "/Game/DiscGolf/Animation/Throws/A_DG_RHBH_Prototype.A_DG_RHBH_Prototype",
+      "file": {
+        "path": "Content/DiscGolf/Animation/Throws/A_DG_RHBH_Prototype.uasset",
+        "bytes": 321080,
+        "sha256": "EA53E0460B958FFA7C8BC1DCACB5A4E6F1C6ABBACE9F177C68A1017C6783ECE6"
+      },
+      "classification": "SYNTHETIC_TEST",
+      "usageStatus": "DO_NOT_SHIP",
+      "mayBeDuplicatedOrRelabeledForProduction": false
+    },
+    {
+      "objectPath": "/Game/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype.AM_DG_RHBH_Prototype",
+      "file": {
+        "path": "Content/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype.uasset",
+        "bytes": 20451,
+        "sha256": "6BCD1C3256668D7F041FE6D33B6910052EE77FA4739A1EF4E60E689A787A8AF8"
+      },
+      "classification": "SYNTHETIC_TEST",
+      "usageStatus": "DO_NOT_SHIP",
+      "mayBeDuplicatedOrRelabeledForProduction": false
+    },
+    {
+      "objectPath": "/Game/DiscGolf/Animation/Mocap/Production/A_DG_RHBH_SyntheticPipelineTest_v001.A_DG_RHBH_SyntheticPipelineTest_v001",
+      "file": {
+        "path": "Content/DiscGolf/Animation/Mocap/Production/A_DG_RHBH_SyntheticPipelineTest_v001.uasset",
+        "bytes": 414050,
+        "sha256": "8CFC265B520542970328D4B0A25F4528D0CE480224A3109F0074CECECA62F1F1"
+      },
+      "classification": "SYNTHETIC_TEST_PIPELINE_FIXTURE",
+      "usageStatus": "DO_NOT_SHIP",
+      "mayBeDuplicatedOrRelabeledForProduction": false
+    },
+    {
+      "objectPath": "/Game/DiscGolf/Animation/Mocap/Production/AM_DG_RHBH_SyntheticPipelineTest_v001.AM_DG_RHBH_SyntheticPipelineTest_v001",
+      "file": {
+        "path": "Content/DiscGolf/Animation/Mocap/Production/AM_DG_RHBH_SyntheticPipelineTest_v001.uasset",
+        "bytes": 21131,
+        "sha256": "707463D4ED96C7B9CD70B94E164292BEF6B8301390D3098E146F8BF9D6C2BFDB"
+      },
+      "classification": "SYNTHETIC_TEST_PIPELINE_FIXTURE",
+      "usageStatus": "DO_NOT_SHIP",
+      "mayBeDuplicatedOrRelabeledForProduction": false
+    },
+    {
+      "objectPath": "/Game/DiscGolf/Animation/Mocap/Production/DA_DG_AnimationLibrary.DA_DG_AnimationLibrary",
+      "file": {
+        "path": "Content/DiscGolf/Animation/Mocap/Production/DA_DG_AnimationLibrary.uasset",
+        "bytes": 2915,
+        "sha256": "620098CD89FEBD991422DE012F34AC58F4AFE45420419737CECAB3D93AEE7955"
+      },
+      "classification": "SYNTHETIC_TEST_PIPELINE_LIBRARY",
+      "usageStatus": "DO_NOT_SHIP",
+      "mayBeDuplicatedOrRelabeledForProduction": false
+    }
+  ],
+  "authoredSourcePolicy": {
+    "plannedSourceKind": "PROJECT_AUTHORED_PROCEDURAL",
+    "plannedCreator": "DiscGolfTour project",
+    "performer": "NOT_APPLICABLE_PROCEDURAL_NO_CAPTURE",
+    "motionCaptureClaim": false,
+    "externalPerformanceClaim": false,
+    "plannedRightsStatus": "PROJECT_AUTHORED_SOURCE_PENDING_HUMAN_ART_AND_FINAL_PRODUCT_REVIEW",
+    "plannedUsageStatus": "TECHNICAL_SHIPPING_ELIGIBLE_PENDING_HUMAN_ART_APPROVAL",
+    "derivationFromProtectedSyntheticAssetsAllowed": false,
+    "externalSourceAcquisitionRequired": false,
+    "humanAnimationApprovalRequired": true,
+    "humanDiscContactApprovalRequired": true
+  },
+  "technicalContract": {
+    "targetRoot": "/Game/DiscGolf/Animation/ProductionMotion",
+    "targetSkeleton": "/Game/DiscGolf/Characters/Meshes/SKEL_DG_Master.SKEL_DG_Master",
+    "targetControlRig": "/Game/DiscGolf/Rigs/CR_DG_Master.CR_DG_Master",
+    "metaHumanRetargeter": "/Game/DiscGolf/Characters/MetaHuman/RTG_DGMaster_To_MetaHuman.RTG_DGMaster_To_MetaHuman",
+    "frameRate": 60,
+    "rootMotionEnabled": false,
+    "gameplayPawnOwnsWorldMotion": true,
+    "animationOwnsGameplayRelease": false,
+    "requiredPhaseNotifies": [
+      "Aim",
+      "RunUp",
+      "ReachBack",
+      "Plant",
+      "Acceleration",
+      "FollowThrough",
+      "Recovery"
+    ],
+    "requiredBranchingPointNotifies": [
+      "DG Release Disc",
+      "DG Throw Finished"
+    ],
+    "requiredNotifyCardinality": {
+      "DG Release Disc": 1,
+      "DG Throw Finished": 1
+    },
+    "requiredCurves": [
+      "DG_FootPlant_L",
+      "DG_FootPlant_R",
+      "DG_ReachbackAlpha",
+      "DG_BraceAlpha",
+      "DG_ReleaseApproachAlpha",
+      "DG_FollowThroughAlpha"
+    ],
+    "requiredProfileMatrix": [
+      "ShortCompact",
+      "Baseline",
+      "TallLongArms"
+    ],
+    "requiredValidation": [
+      "FINITE_BONE_TRANSFORMS",
+      "BOUNDED_ROOT_DRIFT",
+      "ROOT_MOTION_DISABLED",
+      "THROWING_HAND_DISC_GRIP_ALIGNMENT",
+      "PLANT_FOOT_TRANSLATION_AND_ROTATION",
+      "BRACE_CONTINUITY",
+      "SHOULDER_ELBOW_KNEE_BEND_PLAUSIBILITY",
+      "FOLLOW_THROUGH_RECOVERY_CONTINUITY",
+      "EXACT_RELEASE_AND_FINISH_NOTIFY_CARDINALITY",
+      "SINGLE_AUTHORITATIVE_GAMEPLAY_DISC",
+      "META_HUMAN_RETARGET_OUTPUT_FINITE_AND_BOUNDED"
+    ]
+  },
+  "motionFamilies": [
+    {
+      "id": "DG_PROCEDURAL_DRIVE_RHBH_V1",
+      "family": "Drive",
+      "throwType": "Backhand",
+      "handedness": "Right",
+      "sequenceObjectPath": "/Game/DiscGolf/Animation/ProductionMotion/Drive/A_DG_RHBH_Drive_Procedural_v001.A_DG_RHBH_Drive_Procedural_v001",
+      "montageObjectPath": "/Game/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v001.AM_DG_RHBH_Drive_Procedural_v001",
+      "durationSecondsMin": 1.8,
+      "durationSecondsMax": 3.5,
+      "recommendedPowerMin": 0.55,
+      "recommendedPowerMax": 1.0,
+      "requiredCoverage": [
+        "SETUP_AIM",
+        "RUN_UP",
+        "REACH_BACK",
+        "FOOT_PLANT",
+        "ACCELERATION",
+        "RELEASE",
+        "FOLLOW_THROUGH",
+        "RECOVERY"
+      ],
+      "assetState": "AUTHORED_PROCEDURAL_CANDIDATE_HUMAN_REVIEW_REQUIRED",
+      "runtimeBindingState": "BOUND_TECHNICAL_CANDIDATE",
+      "sequenceFile": {
+        "path": "Content/DiscGolf/Animation/ProductionMotion/Drive/A_DG_RHBH_Drive_Procedural_v001.uasset",
+        "bytes": 272668,
+        "sha256": "43530C4802599684CA44CA62609C8759E7D06E5CE9C692E657C3120D4985C822"
+      },
+      "montageFile": {
+        "path": "Content/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v001.uasset",
+        "bytes": 21214,
+        "sha256": "ED67CFF772682AB023F522AB4D0CD7FC535A3DDE1501A2CA17108D458604C2CE"
+      }
+    },
+    {
+      "id": "DG_PROCEDURAL_APPROACH_RHBH_V1",
+      "family": "Approach",
+      "throwType": "Backhand",
+      "handedness": "Right",
+      "sequenceObjectPath": "/Game/DiscGolf/Animation/ProductionMotion/Approach/A_DG_RHBH_Approach_Procedural_v001.A_DG_RHBH_Approach_Procedural_v001",
+      "montageObjectPath": "/Game/DiscGolf/Animation/ProductionMotion/Approach/AM_DG_RHBH_Approach_Procedural_v001.AM_DG_RHBH_Approach_Procedural_v001",
+      "durationSecondsMin": 1.2,
+      "durationSecondsMax": 2.6,
+      "recommendedPowerMin": 0.25,
+      "recommendedPowerMax": 0.75,
+      "requiredCoverage": [
+        "SETUP_AIM",
+        "CONTROLLED_STEP",
+        "REACH_BACK",
+        "FOOT_PLANT",
+        "ACCELERATION",
+        "RELEASE",
+        "FOLLOW_THROUGH",
+        "RECOVERY"
+      ],
+      "assetState": "AUTHORED_PROCEDURAL_CANDIDATE_HUMAN_REVIEW_REQUIRED",
+      "runtimeBindingState": "BOUND_TECHNICAL_CANDIDATE",
+      "sequenceFile": {
+        "path": "Content/DiscGolf/Animation/ProductionMotion/Approach/A_DG_RHBH_Approach_Procedural_v001.uasset",
+        "bytes": 183697,
+        "sha256": "FF38F160DA70CD0A12B4E2FD335C128E3043E1F850901930A95AA65C24DEDDB1"
+      },
+      "montageFile": {
+        "path": "Content/DiscGolf/Animation/ProductionMotion/Approach/AM_DG_RHBH_Approach_Procedural_v001.uasset",
+        "bytes": 21244,
+        "sha256": "96D06A1AF3AEE1C764C582B06D0E20CB029CE5E2F0CA511F59EF3B495787163C"
+      }
+    },
+    {
+      "id": "DG_PROCEDURAL_PUTT_RHBH_V1",
+      "family": "Putt",
+      "throwType": "Backhand",
+      "handedness": "Right",
+      "sequenceObjectPath": "/Game/DiscGolf/Animation/ProductionMotion/Putt/A_DG_RHBH_Putt_Procedural_v001.A_DG_RHBH_Putt_Procedural_v001",
+      "montageObjectPath": "/Game/DiscGolf/Animation/ProductionMotion/Putt/AM_DG_RHBH_Putt_Procedural_v001.AM_DG_RHBH_Putt_Procedural_v001",
+      "durationSecondsMin": 0.8,
+      "durationSecondsMax": 2.0,
+      "recommendedPowerMin": 0.05,
+      "recommendedPowerMax": 0.45,
+      "requiredCoverage": [
+        "SETUP_AIM",
+        "WEIGHT_SHIFT",
+        "FOOT_PLANT",
+        "ACCELERATION",
+        "RELEASE",
+        "FOLLOW_THROUGH",
+        "RECOVERY"
+      ],
+      "assetState": "AUTHORED_PROCEDURAL_CANDIDATE_HUMAN_REVIEW_REQUIRED",
+      "runtimeBindingState": "BOUND_TECHNICAL_CANDIDATE",
+      "sequenceFile": {
+        "path": "Content/DiscGolf/Animation/ProductionMotion/Putt/A_DG_RHBH_Putt_Procedural_v001.uasset",
+        "bytes": 131591,
+        "sha256": "E8924448E99D01FA2B0B7361FBC50DB31A76670F6E8A070FAAEB5844A5B83781"
+      },
+      "montageFile": {
+        "path": "Content/DiscGolf/Animation/ProductionMotion/Putt/AM_DG_RHBH_Putt_Procedural_v001.uasset",
+        "bytes": 21204,
+        "sha256": "9148D82E4161790818542107C25C389718E1B4519390255EE6D08367B7F5EC1A"
+      }
+    }
+  ],
+  "productionLibrary": {
+    "objectPath": "/Game/DiscGolf/Animation/ProductionMotion/DA_DG_ProductionMotionLibrary.DA_DG_ProductionMotionLibrary",
+    "assetState": "AUTHORED_PROCEDURAL_CANDIDATE_HUMAN_REVIEW_REQUIRED",
+    "requiredEntryCount": 3,
+    "defaultEntryAllowedBeforeAllValidationAndHumanApproval": false,
+    "file": {
+      "path": "Content/DiscGolf/Animation/ProductionMotion/DA_DG_ProductionMotionLibrary.uasset",
+      "bytes": 4068,
+      "sha256": "AAD0157BC480B5C572FFF3D5022AFBA9E8A4824DB5A2CF5287F0330FCCC23CD9"
+    }
+  },
+  "guardedAuthoringContract": {
+    "requiredNewNativeUtilityFiles": [
+      "Source/DiscGolfTourEditor/DiscGolfProductionMotionAuthoringUtility.h",
+      "Source/DiscGolfTourEditor/DiscGolfProductionMotionAuthoringUtility.cpp"
+    ],
+    "requiredNewCommandletWrapper": "Scripts/author_dg_session19_production_motion.py",
+    "requiredOriginalRecipe": "SourceArt/DiscGolf/Motion/ProductionMotionRecipe_v1.json",
+    "currentRequiredAuthoringFileCount": 4,
+    "currentRequiredAuthoringFilesPresent": 4,
+    "requiredSwitch": "-DGAuthorProductionProceduralMotion",
+    "requiredExternalUserDirRoot": "C:/DGTour_TestRuns/Session19ProductionMotion",
+    "requiresUnattended": true,
+    "requiresNoP4": true,
+    "refuseExistingTargetAssets": true,
+    "rollbackPartialWrites": true,
+    "protectSaveGameSha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14",
+    "copyOrDuplicateProtectedSyntheticAssetAllowed": false,
+    "authoringFeasibleNow": true,
+    "authoringBlockedReason": ""
+  },
+  "runtimeAndCookGate": {
+    "shippingProductionMotionBindingActive": true,
+    "shippingFallback": "SYNCHRONOUS_GAMEPLAY_RELEASE_IF_CANDIDATE_LOAD_OR_PLAY_FAILS",
+    "developmentSyntheticMontageCompiledOutOfShipping": true,
+    "targetRootAlwaysCookConfigured": true,
+    "protectedSyntheticRootsNeverCookConfigured": true,
+    "candidateProductionMotionNamedIdentityCount": 7,
+    "newShippingCandidateRequiredAfterMotionIntegration": true
+  },
+  "summary": {
+    "requiredMotionFamilyCount": 3,
+    "authoredMotionFamilyCount": 3,
+    "requiredAnimationSequenceCount": 3,
+    "authoredAnimationSequenceCount": 3,
+    "requiredMontageCount": 3,
+    "authoredMontageCount": 3,
+    "requiredProductionLibraryCount": 1,
+    "authoredProductionLibraryCount": 1,
+    "requiredSemanticCoverageCount": 8,
+    "sourceControlledTechnicalContractComplete": true,
+    "protectedSyntheticAssetReuseCount": 0,
+    "runtimeBindingComplete": true,
+    "shippingCookBindingComplete": true,
+    "humanAnimationApproval": false,
+    "humanDiscContactApproval": false,
+    "releaseReady": false
+  },
+  "residualBlockers": [
+    "PROFILE_MATRIX_META_HUMAN_RETARGET_AND_SINGLE_RELEASE_LIVE_VALIDATION_PENDING",
+    "HUMAN_ANIMATION_DISC_CONTACT_AND_PRODUCT_ART_APPROVAL_PENDING",
+    "FRESH_SHIPPING_CANDIDATE_WITH_PRODUCTION_MOTION_IDENTITIES_PENDING"
+  ],
+  "claimBoundary": {
+    "technicalAuthoringContractAccepted": true,
+    "protectedSyntheticAssetsRemainDoNotShip": true,
+    "distinctProjectAuthoredMotionAssetsExist": true,
+    "runtimeBindingAccepted": true,
+    "shippingCookPresenceAccepted": false,
+    "motionQualityAccepted": false,
+    "discContactQualityAccepted": false,
+    "performerReleaseAccepted": false,
+    "legalApproval": false,
+    "ownerApproval": false,
+    "releaseApproval": false,
+    "releaseReady": false
+  }
+}

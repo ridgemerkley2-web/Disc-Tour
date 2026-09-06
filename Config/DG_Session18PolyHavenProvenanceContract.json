@@ -1,0 +1,138 @@
+{
+  "schema": "DiscGolfTour.Session18PolyHavenProvenanceContract.v1",
+  "schemaVersion": 1,
+  "session": 18,
+  "status": "TECHNICALLY_COMPLETE_RELEASE_BLOCKED",
+  "historicalReleaseBlockers": [
+    "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+    "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+    "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+    "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+    "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+    "POLY_HAVEN_DERIVED_RUNTIME_PROVENANCE_RECEIPT_INCOMPLETE",
+    "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+    "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED",
+    "SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY",
+    "SESSION11_EQUIPMENT_PHYSICS_AND_PRODUCTION_READINESS_PENDING",
+    "SESSION12_PRESENTATION_INPUT_AUDIO_PRODUCTION_READINESS_PENDING",
+    "SESSION13_COURSE_AUTHORING_PCG_PRODUCTION_READINESS_PENDING",
+    "SESSION14_CAREER_AI_PRODUCTION_READINESS_PENDING",
+    "SESSION15_VERTICAL_SLICE_PRODUCTION_READINESS_PENDING"
+  ],
+  "resolvedReleaseBlockers": [
+    "POLY_HAVEN_DERIVED_RUNTIME_PROVENANCE_RECEIPT_INCOMPLETE"
+  ],
+  "remainingReleaseBlockers": [
+    "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+    "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+    "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+    "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+    "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+    "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+    "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED",
+    "SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY",
+    "SESSION11_EQUIPMENT_PHYSICS_AND_PRODUCTION_READINESS_PENDING",
+    "SESSION12_PRESENTATION_INPUT_AUDIO_PRODUCTION_READINESS_PENDING",
+    "SESSION13_COURSE_AUTHORING_PCG_PRODUCTION_READINESS_PENDING",
+    "SESSION14_CAREER_AI_PRODUCTION_READINESS_PENDING",
+    "SESSION15_VERTICAL_SLICE_PRODUCTION_READINESS_PENDING"
+  ],
+  "closureEvidence": {
+    "sourceId": "poly_haven_pine_ridge_cc0",
+    "receiptPath": "SourceArt/PineRidge/PolyHaven/derived_runtime_receipt.json",
+    "receiptBytes": 88601,
+    "receiptSha256": "13ACC125F5B442BE75DE405DBD76D43AA9381436624E12BDDBA3C7BA4F90D858",
+    "sourceManifestPath": "SourceArt/PineRidge/PolyHaven/asset_manifest.json",
+    "sourceManifestSha256": "880C79DD7F9151DAD0D8344C0E505CBB1E3AC98D06C955E9DACD6E305BCBD250",
+    "importerPath": "Scripts/import-pine-ridge-assets.py",
+    "importerBytes": 108495,
+    "importerSha256": "A0B2A0F39F0921ED0AC2E3E884C793428CA0FAF192635B125A0EF227A929A8D6",
+    "engineVersion": "5.8.1",
+    "engineChangelist": 56057345,
+    "controlledReimportRunId": "1a0b2284-5196-487c-9a65-17b288ed0768",
+    "controlledReimportLog": "Evidence/Session18/PolyHavenReimport.log",
+    "controlledReimportLogBytes": 535486,
+    "controlledReimportLogSha256": "9683A9518A9D034E0C4CCD2F705C54D330F8F312314D203FA9480C964BB40F01",
+    "controlledReimportRawLogBytes": 535552,
+    "controlledReimportRawLogSha256": "082FC4212BCA3FDCD3AF4019C8BEFE03F1BFD55CE375C1D40F2D4C3B04C8433A",
+    "semanticValidatorPath": "Scripts/validate-pine-ridge-provenance-semantics.py",
+    "semanticValidatorBytes": 7825,
+    "semanticValidatorSha256": "D27C900033E2EA37A8429B37EFC044402AE8858B367DF030C2B48DD17B421150",
+    "semanticValidationRunId": "a4e81657-0ebc-42a2-a6e9-06858e10b1d3",
+    "semanticReportPath": "Evidence/Session18/PineRidgeSemanticValidation.json",
+    "semanticReportBytes": 34478,
+    "semanticReportSha256": "1C3D6960E342B58143D55B42D701B18D19E17BFE8D118862BE38A93A15B74035",
+    "expectedCounts": {
+      "sourceFiles": 35,
+      "directTextureImports": 32,
+      "directStaticMeshImports": 5,
+      "dependentDerivatives": 18,
+      "polyHavenDerived": 55,
+      "excludedProjectOriginal": 5,
+      "runtimeRootTotal": 60
+    },
+    "contentRootPartitionComplete": true,
+    "actualStagedPackageProvenanceClosed": false
+  },
+  "packageIdentityEvidence": {
+    "receiptPath": "Evidence/Session18/PolyHavenPackageIdentityReceipt.json",
+    "receiptBytes": 3830,
+    "receiptSha256": "6413B0B72C9E2290FA82B03D1E1A075A182A5FA949D5F9A29E08175F1121CC27",
+    "ufsManifestPath": "Evidence/Session18/Manifest_UFSFiles_Win64.txt",
+    "ufsManifestBytes": 300128,
+    "ufsManifestSha256": "C94C9CE041B3E82813439818204B7A1DE2560120E6FEB845F864110EC612F747",
+    "buildCookRunLogPath": "Evidence/Session18/BuildCookRun.log",
+    "buildCookRunLogBytes": 329045,
+    "buildCookRunLogSha256": "72D74C2B1212EE3720CDBF5B799EE57337A949FB22845E1207421CC084791D27",
+    "buildCookRunRawLogBytes": 329318,
+    "buildCookRunRawLogSha256": "AC9A98A74DA333DEFA31C3C96D075450CB4E0184C26C928924E0D7DCE8516902",
+    "archiveFileManifestPath": "Evidence/Session18/ArchiveFiles.tsv",
+    "archiveFileManifestBytes": 6753,
+    "archiveFileManifestSha256": "0877C04FF8911F0903077F8C68093BF8A783FB6939538D2BFD1E2888D35B1870",
+    "packagedRuntimeSmokeLogPath": "Evidence/Session18/PackagedPineRidgePlaySmoke.log",
+    "packagedRuntimeSmokeLogBytes": 69652,
+    "packagedRuntimeSmokeLogSha256": "5A5D13A776B9BF337B12FF1580E6E474799F6ADAE4AEF3E0B5E01EBB55176251",
+    "packagedRuntimeSmokeRawLogBytes": 69655,
+    "packagedRuntimeSmokeRawLogSha256": "8C7DC2123F7C054E05E57DF43536C6E95EDDD43FA8559E81A016148D3D4C5D15",
+    "ufsManifestPineRidgeIdentityPartitionComplete": true,
+    "sourceUassetHashesBoundToCookedIoStoreBytes": false,
+    "allStagedFilesDependenciesAndAnonymousChunksClassified": false,
+    "actualStagedPackageProvenanceClosed": false
+  },
+  "continuity": {
+    "frozenFiles": [
+      {
+        "path": "Config/DG_Session16CorePlayabilityContract.json",
+        "bytes": 23985,
+        "sha256": "A30DC355EB098D2C9FF5F7CDD1BF3139FCE207EC4E9D79C57548DD961869B692"
+      },
+      {
+        "path": "Scripts/validate_dg_session16_core_playability.py",
+        "bytes": 55677,
+        "sha256": "2364D916BDC5E62B0609F27ACB4BA3E936318B9A7985EC9DF939F4EB33182A9F"
+      },
+      {
+        "path": "Docs/DG_SESSION17_INTERACTIVE_ROUND_FLOW_AUDIT.md",
+        "bytes": 6208,
+        "sha256": "19330DAAB484491CBC265025857CD4C016274076CEDF595F540A000B07FD1670"
+      }
+    ],
+    "protectedProfile": {
+      "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+      "bytes": 5212,
+      "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14"
+    }
+  },
+  "unresolvedBoundaries": {
+    "stagedPackageProvenance": "OPEN_NOT_IMPLEMENTED",
+    "quarantinedFabReceipts": "OPEN",
+    "developmentDoNotShipContent": "OPEN",
+    "characterFrameworkDistributionRights": "OPEN",
+    "legalAndManualReview": "OPEN"
+  },
+  "exitGate": {
+    "derivedRuntimeProvenanceComplete": true,
+    "publicReleaseReady": false,
+    "remainingReleaseBlockerCount": 13
+  }
+}

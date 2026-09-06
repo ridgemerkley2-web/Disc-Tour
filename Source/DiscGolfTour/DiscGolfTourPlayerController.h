@@ -3,12 +3,15 @@
 #include "CoreMinimal.h"
 #include "DiscGolfCharacterTypes.h"
 #include "DiscGolfFullCharacterRuntime.h"
+#include "DiscGolfInputRoutePolicy.h"
 #include "DiscGolfOutfitRuntime.h"
+#include "DiscGolfRoundFlowPresentation.h"
 #include "GameFramework/PlayerController.h"
 #include "DiscGolfTourPlayerController.generated.h"
 
 class UDiscGolfCharacterCreatorWidget;
 class UDiscGolfInputConfig;
+class UDiscGolfRoundFlowWidget;
 class UEnhancedInputLocalPlayerSubsystem;
 class UEnhancedInputUserSettings;
 class UInputAction;
@@ -39,6 +42,7 @@ public:
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
     virtual bool InputKey(const FInputKeyEventArgs& Params) override;
+    virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
 
     /** Returns the assigned content config, or a safe source-built fallback. */
     const UDiscGolfInputConfig* EnsureGameplayInputReady();
@@ -47,10 +51,42 @@ public:
     bool IsWaitingForControlBinding() const { return bWaitingForControlBinding; }
     bool IsSettingsPageOpen() const { return bSettingsPage; }
     int32 GetSelectedControlIndex() const { return SelectedControlIndex; }
+    int32 GetSelectedSettingIndex() const { return SelectedSettingIndex; }
     int32 GetSelectedBindingIndex() const { return SelectedBindingIndex; }
     const FString& GetControlsStatusText() const { return ControlsStatusText; }
     void GetControlBindingRows(TArray<FDiscGolfControlBindingRow>& OutRows) const;
     void GetSettingRows(TArray<FDiscGolfSettingRow>& OutRows) const;
+    FDiscGolfPlayerSettings GetCurrentPlayerSettings() const;
+    EDiscGolfInputRoute GetActiveInputRoute() const;
+    bool IsInputRouteAllowed(EDiscGolfInputRoute ActionRoute) const;
+    /** True until every Space/South intro-dismiss edge has been released. */
+    bool IsPresentationDismissReleasePending() const
+    {
+        return PresentationDismissInputBarrier.IsPending();
+    }
+    /** True until an explicit new protected-key down edge proves fresh intent. */
+    bool IsFreshThrowDownRequiredAfterPresentation() const
+    {
+        return bFreshThrowDownRequiredAfterPresentation;
+    }
+
+    /** Applies the native front-end or gameplay input mode without a UI asset. */
+    void ApplyMainMenuInputMode(bool bMenuVisible);
+
+    /** Reconciles the native round-flow widget with authoritative GameMode state. */
+    void RefreshRoundFlowPresentation();
+
+    /** Executes one validated presentation request through existing GameMode actions. */
+    bool HandleRoundFlowAction(EDGRoundFlowAction Action);
+
+    /** True only when an attached native widget has a usable focus target. */
+    bool HasInteractiveRoundFlowWidget() const;
+
+    /** Development probe for settings -> originating round-flow restoration. */
+    bool RunRoundFlowSettingsRecoveryProbe(FString& OutError);
+
+    /** Development-only live probe used by the Session 16 temporary-state gate. */
+    bool RunPlayabilityPauseResumeProbe(FString& OutError);
 
     /** Opens the event-driven character/outfit editor on the existing possessed pawn. */
     UFUNCTION(BlueprintCallable, Category="Disc Golf|Character Creator")
@@ -108,6 +144,11 @@ public:
         FDGFullCharacterCustomization& OutDraft);
     TArray<FDiscGolfCosmeticOption> GetCharacterCreatorCosmeticOptions(
         EDGCosmeticKind Kind) const;
+    bool SelectCharacterCreatorBackend(
+        FName BackendId,
+        FDGFullCharacterCustomization& OutDraft);
+    bool IsCharacterCreatorMetaHumanBackendAvailable() const;
+    FString GetCharacterCreatorBackendStatusText() const;
 
     UFUNCTION(BlueprintCallable, Category="Disc Golf|Character Creator")
     void CancelCharacterCreator();
@@ -161,15 +202,44 @@ private:
     UPROPERTY(Transient)
     TObjectPtr<UDiscGolfCharacterCreatorWidget> CharacterCreatorWidget;
 
+    UPROPERTY(Transient)
+    TObjectPtr<UDiscGolfRoundFlowWidget> RoundFlowWidget;
+
     bool bGameplayContextAdded = false;
     bool bReportedInputFallback = false;
+    bool bUsingRuntimeInputFallback = false;
+    bool bAppliedSouthpawController = false;
+    float AppliedControllerDeadZone = 0.25f;
     bool bControlsMenuOpen = false;
     bool bWaitingForControlBinding = false;
     bool bSettingsPage = true;
     bool bWasPausedBeforeControlsMenu = false;
+    bool bControlsMenuSuspendedPlayabilityMonitor = false;
     bool bCharacterCreatorOpen = false;
     bool bCharacterCreatorPreviousMouseCursor = false;
+    bool bHasRoundFlowSnapshot = false;
+    bool bRefreshingRoundFlowPresentation = false;
+    bool bHandlingRoundFlowAction = false;
+    bool bRoundFlowSettingsOriginValid = false;
+    bool bRoundFlowWidgetCreationAttempted = false;
+    bool bRecoverPresentationDismissAfterReactivation = false;
+    bool bPresentationDismissAwaitingReactivationNeutral = false;
+    bool bFreshThrowDownRequiredAfterPresentation = false;
+    uint64 PresentationDismissReactivationFrame = 0;
+    FDiscGolfPresentationDismissInputBarrier PresentationDismissInputBarrier;
+    struct FPendingPresentationDismissReleaseCompletion
+    {
+        uint32 Generation = 0;
+        uint64 ReleaseFrame = 0;
+    };
+    TMap<FKey, FPendingPresentationDismissReleaseCompletion>
+        PendingPresentationDismissReleaseCompletions;
+    EDGRoundFlowScreen RoundFlowSettingsOrigin = EDGRoundFlowScreen::Hidden;
+    EDGRoundFlowScreen RoundFlowWidgetAttemptedScreen = EDGRoundFlowScreen::Hidden;
+    FDGRoundFlowSnapshot ActiveRoundFlowSnapshot;
+    FString RoundFlowLastError;
     int32 SelectedControlIndex = 0;
+    int32 SelectedSettingIndex = 0;
     int32 SelectedBindingIndex = 0;
     FString ControlsStatusText;
     FString CharacterCreatorStatusText;
@@ -180,10 +250,27 @@ private:
     FDGOutfitLoadout CharacterCreatorDraftOutfit;
     FDGFullCharacterCustomization CharacterCreatorOpeningCustomization;
     FDGFullCharacterCustomization CharacterCreatorDraftCustomization;
+    mutable bool bMetaHumanBackendAvailabilityChecked = false;
+    mutable bool bMetaHumanBackendAvailable = false;
+    mutable FString MetaHumanBackendAvailabilityStatus;
 
     UEnhancedInputLocalPlayerSubsystem* GetEnhancedInputSubsystem() const;
     UEnhancedInputUserSettings* GetEnhancedInputUserSettings() const;
     void SetGameplayContextEnabled(bool bEnabled);
+    void CompletePresentationDismissRelease(FKey ReleasedKey, uint32 ReleaseGeneration);
+    void RestoreGameplayContextAfterPresentationDismiss();
+    void HandleApplicationWillDeactivate();
+    void HandleApplicationHasReactivated();
+    void GetPresentationTransitionProtectedKeys(TArray<FKey>& OutKeys) const;
+    bool IsPresentationTransitionProtectedKey(const FKey& Key) const;
+    bool IsCurrentThrowInputKey(const FKey& Key) const;
+    void GetPressedPresentationTransitionKeys(TArray<FKey>& OutKeys) const;
+    void ArmPresentationTransitionKey(const FKey& Key);
+    bool BuildRoundFlowState(FDGRoundFlowState& OutState, FString& OutError) const;
+    bool OpenSettingsFromRoundFlow();
+    void ApplyRoundFlowInputMode();
+    void RemoveRoundFlowWidget();
+    void RefreshRuntimeInputFromPlayerSettings();
     void OpenControlsMenu();
     void CloseControlsMenu();
     void MoveControlSelection(int32 Direction);
@@ -196,8 +283,10 @@ private:
     void ToggleMenuPage();
     void MoveSettingsSelection(int32 Direction);
     void AdjustSelectedSetting(int32 Direction);
-    void CloseCharacterCreator(bool bRestoreOpeningProfile);
+    void CommitCharacterCreatorInputMode();
+    bool CloseCharacterCreator(bool bRestoreOpeningProfile);
     void SyncLegacyCreatorDraftsFromFull();
+    void CacheCharacterCreatorMetaHumanAvailability() const;
     bool ResolveCharacterCreatorPreset(
         FName PresetId,
         FDGBodyProfile& OutBody,

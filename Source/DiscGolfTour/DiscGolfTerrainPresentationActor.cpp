@@ -1,6 +1,7 @@
 #include "DiscGolfTerrainPresentationActor.h"
 
 #include "DiscGolfCourseDefinition.h"
+#include "DiscGolfTerrainPresentationMath.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Engine/StaticMesh.h"
@@ -13,7 +14,7 @@ namespace
     constexpr float BasicShapeHalfExtentCm = 50.0f;
     constexpr float CourseMarginCm = 9000.0f;
     constexpr float GridSpacingCm = 400.0f;
-    constexpr float GroundTextureWorldScaleCm = 600.0f;
+    constexpr float GroundTextureWorldScaleCm = 200.0f;
 
     struct FTerrainPath
     {
@@ -75,12 +76,48 @@ namespace
             if (const FDiscGolfShotRouteDefinition* Primary = FindPrimaryRoute(Definition))
             {
                 HolePath.Points = Primary->WaypointsCm;
-                HolePath.HalfWidthCm = FMath::Max(450.0f, Primary->CorridorWidthCm * 0.5f);
+                const float PrimaryHalfWidthCm = Primary->CorridorWidthCm * 0.5f;
+                if (FMath::IsFinite(PrimaryHalfWidthCm)
+                    && PrimaryHalfWidthCm > 0.0f)
+                {
+                    HolePath.HalfWidthCm = FMath::Max(
+                        450.0f, PrimaryHalfWidthCm);
+                }
             }
             if (HolePath.Points.Num() < 2)
             {
                 HolePath.Points = { Definition.TeeLocationCm, Definition.BasketLocationCm };
+                HolePath.HalfWidthCm = 800.0f;
             }
+            // Strategy-route waypoints describe an elevated shot corridor, not
+            // the physical ground. Anchor that corridor back to the authored tee
+            // and basket elevations while preserving the residual interior
+            // elevation profile. Equal endpoint clearance preserves every grade.
+            // Pine Ridge routes are +20 cm at both ends; deriving the clearance
+            // keeps fallback and future non-uniform paths correct as well.
+            TArray<FVector> NormalizedPoints;
+            if (!DiscGolfTerrainPresentationMath::TryNormalizePathToGroundAnchors(
+                    HolePath.Points,
+                    Definition.TeeLocationCm,
+                    Definition.BasketLocationCm,
+                    NormalizedPoints))
+            {
+                // ConfigureCourse is also a native boundary. A malformed route
+                // may fall back to the two trusted anchors, but malformed or
+                // degenerate anchors fail the entire terrain build closed.
+                const TArray<FVector> FallbackPoints = {
+                    Definition.TeeLocationCm, Definition.BasketLocationCm };
+                if (!DiscGolfTerrainPresentationMath::TryNormalizePathToGroundAnchors(
+                        FallbackPoints,
+                        Definition.TeeLocationCm,
+                        Definition.BasketLocationCm,
+                        NormalizedPoints))
+                {
+                    return {};
+                }
+                HolePath.HalfWidthCm = 800.0f;
+            }
+            HolePath.Points = MoveTemp(NormalizedPoints);
             Paths.Add(MoveTemp(HolePath));
         }
 
@@ -102,6 +139,13 @@ namespace
                 FMath::Lerp(Start, End, 0.68f) + Bend * 0.55f,
                 End
             };
+            TArray<FVector> NormalizedPoints;
+            if (!DiscGolfTerrainPresentationMath::TryNormalizePathToGroundAnchors(
+                    Connector.Points, Start, End, NormalizedPoints))
+            {
+                return {};
+            }
+            Connector.Points = MoveTemp(NormalizedPoints);
             Paths.Add(MoveTemp(Connector));
         }
         return Paths;
@@ -179,7 +223,7 @@ namespace
         const float BroadWave = FMath::Sin(Point.X * 0.00031f + Phase)
             + 0.62f * FMath::Sin(Point.Y * 0.00047f - Phase * 0.73f)
             + 0.28f * FMath::Sin((Point.X + Point.Y) * 0.00083f + Phase * 1.9f);
-        float Height = Path.HeightCm - 7.0f + OffRoute * (82.0f + 58.0f * BroadWave);
+        float Height = Path.HeightCm + OffRoute * (82.0f + 58.0f * BroadWave);
         return ApplyLakeBasin(Point, Height, Definitions);
     }
 
@@ -603,6 +647,7 @@ namespace
 ADiscGolfTerrainPresentationActor::ADiscGolfTerrainPresentationActor()
 {
     PrimaryActorTick.bCanEverTick = false;
+    Tags.AddUnique(TEXT("Presentation.CourseTerrain"));
 
     TerrainMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("TerrainMesh"));
     SetRootComponent(TerrainMesh);
@@ -649,6 +694,13 @@ ADiscGolfTerrainPresentationActor::ADiscGolfTerrainPresentationActor()
         Component->SetGenerateOverlapEvents(false);
         Component->SetCanEverAffectNavigation(false);
     }
+    // The continuous base mesh is the visible and physical ground authority.
+    // Its geometry is deterministic across quality tiers; every decorative
+    // section/component remains collision-free.
+    TerrainMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    TerrainMesh->SetCollisionObjectType(ECC_WorldStatic);
+    TerrainMesh->SetCollisionResponseToAllChannels(ECR_Block);
+    TerrainMesh->bUseComplexAsSimpleCollision = true;
     TerrainMesh->SetCastShadow(false);
     GrassMesh->SetCastShadow(false);
     FineGrassInstances->SetCastShadow(false);
@@ -736,6 +788,10 @@ bool ADiscGolfTerrainPresentationActor::ConfigureCourse(
         Component->SetGenerateOverlapEvents(false);
         Component->SetCanEverAffectNavigation(false);
     }
+    TerrainMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    TerrainMesh->SetCollisionObjectType(ECC_WorldStatic);
+    TerrainMesh->SetCollisionResponseToAllChannels(ECR_Block);
+    TerrainMesh->bUseComplexAsSimpleCollision = true;
 
     const TArray<FTerrainPath> Paths = BuildCoursePaths(Definitions);
     if (Paths.IsEmpty()) return false;
@@ -791,7 +847,12 @@ bool ADiscGolfTerrainPresentationActor::ConfigureCourse(
                 FMath::Lerp(Bounds.Min.Y, Bounds.Max.Y, V));
             Vertices.Add(FVector(Point.X, Point.Y,
                 CourseHeightAt(Point, Paths, Definitions, Phase)));
-            UVs.Add(FVector2D(U, V));
+            // Give every course surface one deterministic physical UV authority.
+            // A 2 m repeat remains stable regardless of the full-property bounds
+            // and cannot degrade into a single stretched texture in a cooked build.
+            UVs.Add(FVector2D(
+                Point.X / GroundTextureWorldScaleCm,
+                Point.Y / GroundTextureWorldScaleCm));
             const uint8 Variation = GroundMacroVariation(Point, Phase);
             MinGroundMacroVariation = FMath::Min(MinGroundMacroVariation,
                 static_cast<int32>(Variation));
@@ -834,6 +895,9 @@ bool ADiscGolfTerrainPresentationActor::ConfigureCourse(
         }
     }
 
+    // Defer collision until every decorative section has been installed. Each
+    // CreateMeshSection invalidates ProceduralMesh collision, so enabling the
+    // 10k+ triangle base here would synchronously recook it for every overlay.
     TerrainMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, Colors, Tangents, false);
     TriangleCount = Triangles.Num() / 3;
     if (UMaterialInterface* Material = LoadObject<UMaterialInterface>(nullptr,
@@ -841,10 +905,18 @@ bool ADiscGolfTerrainPresentationActor::ConfigureCourse(
     {
         if (UMaterialInstanceDynamic* Dynamic = UMaterialInstanceDynamic::Create(Material, this))
         {
-            Dynamic->SetScalarParameterValue(TEXT("UTiling"),
-                FMath::Max(1.0f, Span.X / GroundTextureWorldScaleCm));
-            Dynamic->SetScalarParameterValue(TEXT("VTiling"),
-                FMath::Max(1.0f, Span.Y / GroundTextureWorldScaleCm));
+            // UV0 above is the sole terrain sampling authority. Explicitly
+            // disable the material instance's alternate world-position branch
+            // so cook-time instance overrides cannot change the texel scale.
+            Dynamic->SetScalarParameterValue(TEXT("UseWorldUV"), 0.0f);
+            Dynamic->SetScalarParameterValue(TEXT("DetailStrength"), 0.0f);
+            Dynamic->SetScalarParameterValue(TEXT("AlbedoContrastPower"), 0.88f);
+            Dynamic->SetScalarParameterValue(TEXT("MacroVariationRange"), 0.07f);
+            Dynamic->SetScalarParameterValue(TEXT("MacroVariationMinimum"), 0.88f);
+            Dynamic->SetVectorParameterValue(TEXT("BaseColorTint"),
+                FLinearColor(0.24f, 0.30f, 0.20f, 1.0f));
+            Dynamic->SetScalarParameterValue(TEXT("UTiling"), 1.0f);
+            Dynamic->SetScalarParameterValue(TEXT("VTiling"), 1.0f);
             TerrainMesh->SetMaterial(0, Dynamic);
         }
     }
@@ -1165,10 +1237,10 @@ bool ADiscGolfTerrainPresentationActor::ConfigureCourse(
     UHierarchicalInstancedStaticMeshComponent* GrassComponents[] = {
         FineGrassInstances.Get(), SedgeGrassInstances.Get(), FernGrassInstances.Get() };
     const FLinearColor GrassTints[] = {
-        FLinearColor(0.14f, 0.28f, 0.07f),
-        FLinearColor(0.08f, 0.20f, 0.045f),
-        FLinearColor(0.11f, 0.24f, 0.055f) };
-    const float WindStrengths[] = { 8.0f, 5.5f, 4.0f };
+        FLinearColor(0.055f, 0.13f, 0.022f),
+        FLinearColor(0.035f, 0.095f, 0.018f),
+        FLinearColor(0.045f, 0.11f, 0.021f) };
+    const float WindStrengths[] = { 4.5f, 3.5f, 2.5f };
     for (int32 Index = 0; Index < UE_ARRAY_COUNT(GrassComponents); ++Index)
     {
         UHierarchicalInstancedStaticMeshComponent* Component = GrassComponents[Index];
@@ -1183,6 +1255,9 @@ bool ADiscGolfTerrainPresentationActor::ConfigureCourse(
             {
                 Dynamic->SetVectorParameterValue(TEXT("BladeTint"), GrassTints[Index]);
                 Dynamic->SetScalarParameterValue(TEXT("WindStrength"), WindStrengths[Index]);
+                Dynamic->SetScalarParameterValue(TEXT("AmbientColorLift"), 0.015f);
+                Dynamic->SetScalarParameterValue(TEXT("ShadeRange"), 0.18f);
+                Dynamic->SetScalarParameterValue(TEXT("ShadeMinimum"), 0.68f);
             }
         }
     }
@@ -1209,8 +1284,14 @@ bool ADiscGolfTerrainPresentationActor::ConfigureCourse(
         }
     }
 
+    // The current crossed-plane layer is honest synthetic validation art. Keep
+    // it available to development tests, but never expose it as release foliage.
+    const float RuntimeGroundCoverDensityScale = DG_RELEASE_V05_SCOPE != 0
+        ? 0.0f
+        : GrassDensityScale;
     const int32 GrassTarget = FMath::Clamp(
-        FMath::RoundToInt(6500.0f * FMath::Clamp(GrassDensityScale, 0.0f, 1.5f)),
+        FMath::RoundToInt(6500.0f * FMath::Clamp(
+            RuntimeGroundCoverDensityScale, 0.0f, 1.5f)),
         0, 21000);
     if (GrassTarget > 0 && bGroundCoverAssetsReady)
     {
@@ -1239,12 +1320,12 @@ bool ADiscGolfTerrainPresentationActor::ConfigureCourse(
 
             const float SpeciesRoll = Random.FRand();
             const int32 Species = SpeciesRoll < 0.52f ? 0 : SpeciesRoll < 0.84f ? 1 : 2;
-            const float Height = Species == 0 ? Random.FRandRange(18.0f, 38.0f)
-                : Species == 1 ? Random.FRandRange(30.0f, 56.0f)
-                : Random.FRandRange(38.0f, 68.0f);
-            const float Width = Species == 0 ? Random.FRandRange(5.0f, 11.0f)
-                : Species == 1 ? Random.FRandRange(9.0f, 18.0f)
-                : Random.FRandRange(16.0f, 30.0f);
+            const float Height = Species == 0 ? Random.FRandRange(12.0f, 25.0f)
+                : Species == 1 ? Random.FRandRange(19.0f, 36.0f)
+                : Random.FRandRange(25.0f, 44.0f);
+            const float Width = Species == 0 ? Random.FRandRange(3.0f, 7.0f)
+                : Species == 1 ? Random.FRandRange(5.0f, 10.0f)
+                : Random.FRandRange(9.0f, 17.0f);
             const float Yaw = Random.FRandRange(-PI, PI);
             const FVector Base(Candidate.X, Candidate.Y,
                 CourseHeightAt(Candidate, Paths, Definitions, Phase) + 1.4f);
@@ -1270,7 +1351,8 @@ bool ADiscGolfTerrainPresentationActor::ConfigureCourse(
     }
 
     const int32 LitterTarget = FMath::Clamp(
-        FMath::RoundToInt(1800.0f * FMath::Clamp(GrassDensityScale, 0.0f, 1.5f)),
+        FMath::RoundToInt(1800.0f * FMath::Clamp(
+            RuntimeGroundCoverDensityScale, 0.0f, 1.5f)),
         0, 2700);
     if (LitterTarget > 0 && bGroundCoverAssetsReady)
     {
@@ -1323,6 +1405,13 @@ bool ADiscGolfTerrainPresentationActor::ConfigureCourse(
         }
     }
 
+    if (const FProcMeshSection* BaseSection = TerrainMesh->GetProcMeshSection(0))
+    {
+        FProcMeshSection CollisionBaseSection = *BaseSection;
+        CollisionBaseSection.bEnableCollision = true;
+        TerrainMesh->SetProcMeshSection(0, CollisionBaseSection);
+    }
+
     CourseHoleCount = Definitions.Num();
     bReady = TriangleCount > 0
         && (Definitions.Num() < 2 || ConnectorTriangleCount == (Definitions.Num() - 1) * 256)
@@ -1354,8 +1443,38 @@ bool ADiscGolfTerrainPresentationActor::ConfigureCourse(
 
 bool ADiscGolfTerrainPresentationActor::IsCollisionInvariant() const
 {
+    if (!TerrainMesh
+        || !ActorHasTag(TEXT("Presentation.CourseTerrain"))
+        || !TerrainMesh->bUseComplexAsSimpleCollision
+        || TerrainMesh->GetCollisionEnabled() != ECollisionEnabled::QueryAndPhysics
+        || TerrainMesh->GetCollisionObjectType() != ECC_WorldStatic
+        || TerrainMesh->GetCollisionResponseToChannel(ECC_Visibility) != ECR_Block
+        || TerrainMesh->GetCollisionResponseToChannel(ECC_WorldDynamic) != ECR_Block
+        || TerrainMesh->GetGenerateOverlapEvents()
+        || TerrainMesh->CanEverAffectNavigation())
+    {
+        return false;
+    }
+
+    if (bReady)
+    {
+        UProceduralMeshComponent* MutableTerrain =
+            const_cast<UProceduralMeshComponent*>(TerrainMesh.Get());
+        const FProcMeshSection* BaseSection = MutableTerrain->GetProcMeshSection(0);
+        if (!BaseSection || !BaseSection->bEnableCollision
+            || !TerrainMesh->ContainsPhysicsTriMeshData(true))
+        {
+            return false;
+        }
+        for (int32 SectionIndex = 1; SectionIndex <= 4; ++SectionIndex)
+        {
+            const FProcMeshSection* DetailSection =
+                MutableTerrain->GetProcMeshSection(SectionIndex);
+            if (DetailSection && DetailSection->bEnableCollision) return false;
+        }
+    }
+
     for (const UPrimitiveComponent* Component : {
-        static_cast<const UPrimitiveComponent*>(TerrainMesh.Get()),
         static_cast<const UPrimitiveComponent*>(GrassMesh.Get()),
         static_cast<const UPrimitiveComponent*>(FineGrassInstances.Get()),
         static_cast<const UPrimitiveComponent*>(SedgeGrassInstances.Get()),
@@ -1373,4 +1492,12 @@ bool ADiscGolfTerrainPresentationActor::IsCollisionInvariant() const
         }
     }
     return true;
+}
+
+bool ADiscGolfTerrainPresentationActor::IsBaseTerrainCollisionFace(int32 FaceIndex) const
+{
+    if (!TerrainMesh || FaceIndex < 0) return false;
+    int32 SectionIndex = INDEX_NONE;
+    TerrainMesh->GetMaterialFromCollisionFaceIndex(FaceIndex, SectionIndex);
+    return SectionIndex == 0;
 }

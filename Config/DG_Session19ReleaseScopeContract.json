@@ -1,0 +1,1349 @@
+{
+  "schema": "DiscGolfTour.Session19ReleaseScopeContract.v3",
+  "schemaVersion": 3,
+  "session": 19,
+  "contractId": "session19_windows_shipping_v05_scope_authority_v3",
+  "authority": "ADDITIVE_RELEASE_SCOPE_DECISION_NOT_RELEASE_APPROVAL",
+  "normalStatus": "PASS_RELEASE_SCOPE_AUTHORITY_CURRENT_CANDIDATE_TECHNICAL_EVIDENCE_BOUND_RELEASE_BLOCKED",
+  "releaseStatus": "BLOCKED_INDEPENDENT_PROVENANCE_REVIEW_LEGAL_DISTRIBUTION_GAMEPLAY_AND_OWNER_REVIEW",
+  "scopeLocked": true,
+  "evidenceComplete": false,
+  "releaseReady": false,
+  "releaseUseAllowed": false,
+  "publicReleaseApproved": false,
+  "releaseTarget": {
+    "platform": "Windows",
+    "configuration": "Shipping",
+    "milestone": "v0.5",
+    "courseId": "PineRidgeChampionship",
+    "layoutId": "Championship",
+    "holeNumbers": [1, 2, 3],
+    "freshInstallRequired": true,
+    "cleanNonIterativeBuildCookStagePakIoStoreArchiveRequired": true
+  },
+  "featureScope": {
+    "career": "EXCLUDED_FROM_V05_SHIPPING_TECHNICAL_EVIDENCE_PASS_PUBLIC_CLAIM_ACCEPTANCE_PENDING",
+    "aiOpponents": "EXCLUDED_FROM_V05_SHIPPING_TECHNICAL_EVIDENCE_PASS_PUBLIC_CLAIM_ACCEPTANCE_PENDING",
+    "throwLab": "DEVELOPMENT_ONLY_SHIPPING_TECHNICAL_EXCLUSION_PASS_PUBLIC_CLAIM_ACCEPTANCE_PENDING",
+    "pcgShippingAuthority": "DETERMINISTIC_AUTHORED_OUTPUT_CANDIDATE_SELECTION_AND_NO_PROJECT_GENERATION_INVOCATION_PASS_COOKED_RUNTIME_CONSUMER_UNREAL_BAKE_REOPEN_AND_PERFORMANCE_PENDING",
+    "runtimePcgGenerationAllowed": false,
+    "characterFramework": "CLEANROOM_SOURCE_RETAINED_ASSET_MIGRATION_AND_SHIPPING_ABSENCE_TECHNICAL_PASS_RIGHTS_AND_RUNTIME_ACCEPTANCE_PENDING",
+    "unusedFabImports": "EXTERNAL_QUARANTINE_AND_SHIPPING_ABSENCE_TECHNICAL_PASS_PROVENANCE_AND_OWNER_CLOSURE_PENDING"
+  },
+  "unusedFabExternalQuarantine": {
+    "projectRoots": [
+      "Content/PN_interactiveSpruceForest",
+      "Content/Stump_Scanned",
+      "Content/WaterMaterials"
+    ],
+    "mustBeOutsideProjectRoot": true,
+    "shippingCookAllowed": false,
+    "hostPathsRecorded": false,
+    "currentState": "EXTERNAL_QUARANTINE_AND_CURRENT_CANDIDATE_SHIPPING_ABSENCE_TECHNICAL_PASS_PROVENANCE_AND_OWNER_CLOSURE_PENDING",
+    "externalQuarantineEvidenceAccepted": true,
+    "shippingAbsenceEvidenceAccepted": true,
+    "blockerClosed": false,
+    "receipt": {
+      "path": "Evidence/Session19/UnusedFabExternalQuarantineReceipt.json",
+      "bytes": 2152,
+      "sha256": "761D61CFC6B9CA9A19788F5959E42600ED26F6FE119F541CD09198AFF2B18C47"
+    },
+    "beforeMoveManifest": {
+      "path": "Evidence/Session19/QuarantinedFabBeforeMove.tsv",
+      "bytes": 83517,
+      "sha256": "D9F5194FFF35B98C4E32DA39B88E838BA49BC8D86782D6DED371B1871192AF02",
+      "rows": 533
+    }
+  },
+  "shippingContentPolicy": {
+    "path": "Config/DG_Session19ShippingContentPolicy.json",
+    "bytes": 10490,
+    "sha256": "2B807E7A18840B42319BBA55F48C44CB26DA8CBBF528A06B0C08176ACDBDF473",
+    "validatorPath": "Scripts/validate_dg_session19_candidate_content.py",
+    "validatorBytes": 65437,
+    "validatorSha256": "70605633EAEDBBE230F86AC5C4B048501EE7DFEDF257D4E2A97BB17748860A22",
+    "currentState": "CURRENT_CANDIDATE_BOUNDED_STAGED_CONTENT_AND_EXTERNAL_TECHNICAL_PASS_MANUAL_GAMEPLAY_ACCEPTANCE_PENDING",
+    "policyBound": true,
+    "candidateContentReceiptAccepted": true,
+    "freshUserDirTechnicalReceiptAccepted": true,
+    "freshInstallGameplayAcceptanceAccepted": false,
+    "closesReleaseBlocker": false
+  },
+  "shippingPluginCapability": {
+    "policyPath": "Config/DG_Session19ShippingPluginCapabilityPolicy.json",
+    "policyBytes": 8770,
+    "policySha256": "26F140F20D651651DE38C8B17DF55C0BA5B0A068CEEB39552B2FA60F0ACD3D12",
+    "policySchema": "DiscGolfTour.Session19ShippingPluginCapabilityPolicy.v3",
+    "policySchemaVersion": 3,
+    "validatorPath": "Scripts/validate_dg_session19_shipping_plugin_capabilities.py",
+    "validatorBytes": 84859,
+    "validatorSha256": "9630058B1E6EDCE020E0196E667504AC016C5B156DEF75A7BE561716285E2813",
+    "runnerPath": "Scripts/run-session19-shipping-candidate.ps1",
+    "runnerBytes": 30026,
+    "runnerSha256": "BE49A5555D8C236BAFBAF624F8288DBA585DEA5D89EF35EDDB5BFFEBB9F9CDD7",
+    "verifierPath": "Scripts/verify-session19-shipping-candidate.ps1",
+    "verifierBytes": 66780,
+    "verifierSha256": "622305F7A2DE4E832106912D475835D2C0E25FE36100308E38011980D9F371FE",
+    "currentState": "CURRENT_CANDIDATE_TECHNICAL_PLUGIN_DESCRIPTOR_GATE_PASS",
+    "finalPayloadAuthority": "FINAL_WINDOWS_ARCHIVE_PAK_IOSTORE",
+    "reviewedDisabledPluginCount": 31,
+    "reviewedMetadataOnlyDependencyPluginCount": 13,
+    "requiredDependencyClosurePluginCount": 15,
+    "requiredPreservedPluginCount": 2,
+    "requiredAbsentPluginCount": 2,
+    "requiredAbsentSurvivorCount": 0,
+    "reviewedResidualMetadataExclusionCount": 2,
+    "unreviewedEditorDeveloperOnlySurvivorCount": 0,
+    "mandatoryDependencyGapCount": 0,
+    "exactDescriptorExclusionAuthorityAccepted": true,
+    "freshReviewedDependencyClosureReceiptAccepted": true,
+    "releaseReady": false,
+    "blockerClosed": false
+  },
+  "shippingPackageHardening": {
+    "defaultPakFileRules": {
+      "path": "Config/DefaultPakFileRules.ini",
+      "bytes": 3303,
+      "sha256": "F9EBECA5023163592B8B5756925BA272E0D45EBCC0B2B5332B70F4D18FD71CB4"
+    },
+    "defaultGame": {
+      "path": "Config/DefaultGame.ini",
+        "bytes": 2891,
+        "sha256": "304390E67BF6C8FE0BD8D3BE1D830B303F4FBB0ED26358D8B638F9C1CF6DF296"
+    },
+    "projectDescriptor": {
+      "path": "DiscGolfTour.uproject",
+        "bytes": 2975,
+        "sha256": "D88EAF4CC35491DFE9E64EDD000E860996DCA3213690F6F94E491C24DC96BB38"
+    },
+    "shippingGameTarget": {
+      "path": "Source/DiscGolfTour.Target.cs",
+      "bytes": 1026,
+      "sha256": "6930D056321E4ABBEE290A8CA20B9917B2CCAA8E270D039B01B34C2DD1827843"
+    },
+    "requiredNeverCookVirtualRoots": [
+      "/Engine/VREditor",
+      "/Engine/EditorMaterials",
+      "/Engine/EditorMeshes",
+      "/Engine/EditorResources",
+      "/SpeedTreeImporter",
+      "/Landmass"
+    ],
+    "shippingIgnoredPluginDependencies": [
+      "ConcertMain",
+      "ConcertSyncClient",
+      "ConcertSyncCore",
+      "ConcertSharedSlate",
+      "AssetManagerEditor"
+    ],
+    "projectTargetConfigurationShippingDeniedPlugins": [
+      "ChaosVD",
+      "ConcertMain",
+      "ConcertSyncClient",
+      "ConcertSyncCore",
+      "ConcertSharedSlate",
+      "AssetManagerEditor",
+      "ConsoleVariables",
+      "FacialAnimation",
+      "SpeedTreeImporter"
+    ],
+    "projectEditorOnlyPlugins": [],
+    "projectShippingDependencyEnabledPlugins": [
+      "BlueprintMaterialTextureNodes",
+      "EditorScriptingUtilities",
+      "Landmass"
+    ],
+    "residualExactPakExclusions": [
+      ".../Engine/Plugins/ChaosClothAssetEditorCore/Config/DefaultChaosClothAssetEditorCore.ini",
+      ".../Engine/Plugins/Editor/EditorScriptingUtilities/Config/DefaultEditorScriptingUtilities.ini"
+    ],
+    "shippingForbiddenPluginContentRoots": [
+      "/Engine/Plugins/Experimental/Landmass/Binaries/",
+      "/Engine/Plugins/Experimental/Landmass/Config/",
+      "/Engine/Plugins/Experimental/Landmass/Content/",
+      "/Engine/Plugins/Experimental/Landmass/Resources/",
+      "/Engine/Plugins/Experimental/Landmass/Source/"
+    ],
+    "requiredPresentFinalPayloadPluginDescriptors": [
+      "Engine/Plugins/Animation/ControlRigModules/ControlRigModules.uplugin",
+      "Engine/Plugins/BaseMaterial/BaseMaterial.uplugin"
+    ],
+    "requiredAbsentFinalPayloadPluginDescriptors": [
+      "Engine/Plugins/Editor/ConsoleVariablesEditor/ConsoleVariables.uplugin",
+      "Engine/Plugins/Editor/FacialAnimation/FacialAnimation.uplugin"
+    ],
+    "requiredDependencyClosureFinalPayloadDescriptors": [
+      "Engine/Plugins/Editor/BlueprintMaterialTextureNodes/BlueprintMaterialTextureNodes.uplugin",
+      "Engine/Plugins/ChaosClothAssetDataflowNodes/ChaosClothAssetDataflowNodes.uplugin",
+      "Engine/Plugins/ChaosClothAssetEditorCore/ChaosClothAssetEditorCore.uplugin",
+      "Engine/Plugins/Experimental/ChaosSolverPlugin/ChaosSolverPlugin.uplugin",
+      "Engine/Plugins/Editor/ContentBrowser/ContentBrowserAssetDataSource/ContentBrowserAssetDataSource.uplugin",
+      "Engine/Plugins/Editor/DataValidation/DataValidation.uplugin",
+      "Engine/Plugins/Experimental/EditorDataStorageFeatures/EditorDataStorageFeatures.uplugin",
+      "Engine/Plugins/Editor/EditorScriptingUtilities/EditorScriptingUtilities.uplugin",
+      "Engine/Plugins/Editor/EngineAssetDefinitions/EngineAssetDefinitions.uplugin",
+      "Engine/Plugins/Experimental/Landmass/Landmass.uplugin",
+      "Engine/Plugins/MovieScene/LevelSequenceEditor/LevelSequenceEditor.uplugin",
+      "Engine/Plugins/Animation/LiveLinkDevice/LiveLinkDevice.uplugin",
+      "Engine/Plugins/Developer/PluginUtils/PluginUtils.uplugin",
+      "Engine/Plugins/Editor/ProxyLODPlugin/ProxyLODPlugin.uplugin",
+      "Engine/Plugins/Enterprise/VariantManager/VariantManager.uplugin"
+    ],
+    "reviewedMetadataOnlyDependencyDescriptors": [
+      "Engine/Plugins/ChaosClothAssetDataflowNodes/ChaosClothAssetDataflowNodes.uplugin",
+      "Engine/Plugins/ChaosClothAssetEditorCore/ChaosClothAssetEditorCore.uplugin",
+      "Engine/Plugins/Experimental/ChaosSolverPlugin/ChaosSolverPlugin.uplugin",
+      "Engine/Plugins/Editor/ContentBrowser/ContentBrowserAssetDataSource/ContentBrowserAssetDataSource.uplugin",
+      "Engine/Plugins/Editor/DataValidation/DataValidation.uplugin",
+      "Engine/Plugins/Experimental/EditorDataStorageFeatures/EditorDataStorageFeatures.uplugin",
+      "Engine/Plugins/Editor/EditorScriptingUtilities/EditorScriptingUtilities.uplugin",
+      "Engine/Plugins/Editor/EngineAssetDefinitions/EngineAssetDefinitions.uplugin",
+      "Engine/Plugins/MovieScene/LevelSequenceEditor/LevelSequenceEditor.uplugin",
+      "Engine/Plugins/Animation/LiveLinkDevice/LiveLinkDevice.uplugin",
+      "Engine/Plugins/Developer/PluginUtils/PluginUtils.uplugin",
+      "Engine/Plugins/Editor/ProxyLODPlugin/ProxyLODPlugin.uplugin",
+      "Engine/Plugins/Enterprise/VariantManager/VariantManager.uplugin"
+    ],
+    "metadataOnlyDependencyForbiddenSubdirectories": [
+      "Binaries",
+      "Config",
+      "Content",
+      "Resources",
+      "Source"
+    ],
+    "sourceAndConfigHardeningAccepted": true,
+    "freshShippingPackageProofAccepted": true,
+    "releaseReady": false
+  },
+  "stagedProvenancePolicy": {
+    "path": "Config/DG_Session19StagedProvenancePolicy.json",
+    "bytes": 10071,
+    "sha256": "7106CA1BE45D649DE5410B531DB3AE93062C739C4133C5055C8F55E9D8029AC7",
+    "generatorPath": "Scripts/generate_dg_session19_staged_provenance.py",
+    "generatorBytes": 95668,
+    "generatorSha256": "36E3C59B80C271915FB596442EB26A7E3ACF9EC2ED47208EC2F64C7C7FD81734",
+    "currentState": "CURRENT_CANDIDATE_EXACT_PACKAGING_IDENTITY_AND_TECHNICAL_GENERATION_CLASS_7158_OF_7158_PASS_UNDERLYING_LICENSE_CONTENT_RIGHTS_INDEPENDENT_LEGAL_AND_DISTRIBUTION_REVIEW_PENDING",
+    "negativeFixtureOnly": "S18_DEVELOPMENT_REJECTED",
+    "passingReceiptAccepted": false,
+    "blockerClosed": false
+  },
+  "currentShippingCandidateEvidence": {
+    "candidateId": "S19_WindowsShipping_20260826T120643Z_afbe7694ccf5",
+    "currentState": "TECHNICAL_CANDIDATE_EVIDENCE_PASS_PROVENANCE_LEGAL_GAMEPLAY_AND_OWNER_REVIEW_BLOCKED",
+    "archiveRecoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260826T120643Z_afbe7694ccf5/Windows",
+    "archiveCanonicalManifestSha256": "1FBFC3D2AAB6E90F17D104CA9DCED6B4753EC8666E520DDACBF5AB5581CF9822",
+    "buildLog": {
+      "path": "Evidence/Session19/ShippingBuildCookRun-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.log",
+      "bytes": 131652,
+      "sha256": "C1B4281A0EA81D0486CA97CA2766E5C03A6BA957D0B1D59E56D8DEB96AA24CE3"
+    },
+    "buildReceipt": {
+      "path": "Evidence/Session19/ShippingCandidate-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 5090,
+      "sha256": "A0B2BD77C4C57B134282747C3A8D302E5E4F8B16CFE3C77111AAB306ABBE4549",
+      "schema": "DiscGolfTour.Session19ShippingCandidateBuildReceipt.v1",
+      "schemaVersion": 1,
+      "state": "BUILD_PASS_PROVENANCE_AND_ACCEPTANCE_PENDING",
+      "uatExitCode": 0,
+      "releaseReady": false
+    },
+    "verificationReceipt": {
+      "path": "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 6452,
+      "sha256": "6D24E65950CF5E370831CC6849805D902F688D4C6B5C5A4F9A62388609635A50",
+      "schema": "DiscGolfTour.Session19ShippingCandidateVerificationReceipt.v2",
+      "schemaVersion": 2,
+      "state": "PASS_BUILD_ARCHIVE_VERIFIED_PROVENANCE_AND_ACCEPTANCE_PENDING",
+      "releaseReady": false
+    },
+    "pluginCapabilityReceipt": {
+      "path": "Evidence/Session19/ShippingPluginCapability-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 260168,
+      "sha256": "7E9F853630FB96C46D8D757FC045F9419CDBD76167B711BA058B7D267DAE2B46",
+      "schema": "DiscGolfTour.Session19ShippingPluginCapabilityReceipt.v3",
+      "schemaVersion": 3,
+      "state": "PASS_REVIEWED_METADATA_ONLY_AND_DEPENDENCY_CLOSED_PLUGIN_DESCRIPTORS_IN_FINAL_PAYLOAD",
+      "reviewedDisabledPluginCount": 31,
+      "reviewedMetadataOnlyDependencyPluginCount": 13,
+      "requiredDependencyClosurePluginCount": 15,
+      "requiredPreservedPluginCount": 2,
+      "requiredAbsentPluginCount": 2,
+      "reviewedResidualMetadataExclusionCount": 2,
+      "finalPayloadPluginDescriptorCount": 148,
+      "unreviewedEditorDeveloperOnlySurvivorCount": 0,
+      "missingRequiredDependencyClosurePluginCount": 0,
+      "mandatoryDependencyGapCount": 0,
+      "requiredAbsentSurvivorCount": 0,
+      "reviewedResidualMetadataSurvivorCount": 0,
+      "technicalGatePass": true,
+      "releaseReady": false,
+      "blockerClosed": false
+    },
+    "binaryReceipt": {
+      "path": "Evidence/Session19/ShippingBinary-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 1346,
+      "sha256": "6C216138F01D45E33DCAAEEB6F151F02977C40F106BA61D660AB9A34195A23F0",
+      "schema": "DiscGolfTour.Session19ShippingBinaryEvidence.v1",
+      "schemaVersion": 1,
+      "state": "PASS_BINARY_MARKER_POLICY_ONLY",
+      "executableSha256": "29A8E1681AC09749AFD08FA691706E81BED0AB1ABC8AFF7F113A9E59B08B3BF2",
+      "passed": true,
+      "forbiddenMatchCount": 0,
+      "releaseReady": false
+    },
+    "contentReceipt": {
+      "path": "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 27368,
+      "sha256": "566346F30D32DA7C17BFE9BE750C2FCFDE389564B8FA0E753D70C0F2E6D21377",
+      "schema": "DiscGolfTour.Session19CandidateContentAuditReceipt.v1",
+      "schemaVersion": 1,
+      "state": "PASS_BOUNDED_STAGED_CONTENT_AUDIT",
+      "archiveFileCount": 31,
+      "archiveBytes": 1245992471,
+      "auditedIdentityCount": 5616,
+      "authoritativeIdentityCount": 2802,
+      "issueCount": 0,
+      "boundedStagedContentAuditPassed": true,
+      "freshInstallGameplayAcceptancePerformed": false,
+      "provenanceClassificationPerformed": false,
+      "legalOrVisualApprovalPerformed": false,
+      "releaseReady": false,
+      "blockerClosed": false
+    },
+    "thirdPartyNoticeReceipt": {
+      "path": "Evidence/Session19/ThirdPartyNoticeVerification-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 4816,
+      "sha256": "E2D0C8A2A9581D90E3B22AC15E93C33F1FF75DF4297961EAD4FD1BCEBF521172",
+      "schema": "DiscGolfTour.Session19RuntimeThirdPartyNoticeVerification.v1",
+      "schemaVersion": 1,
+      "state": "PASS_TECHNICAL_NOTICE_COVERAGE_LEGAL_APPROVAL_PENDING",
+      "supportedDllIdentityCount": 13,
+      "stagedDllIdentityCount": 13,
+      "mappedStagedDllIdentityCount": 13,
+      "unmappedStagedDllIdentityCount": 0,
+      "technicalCoverageOnly": true,
+      "legalApproval": false,
+      "distributionClearance": false,
+      "releaseReady": false
+    },
+    "provenanceClassificationDraft": {
+      "path": "Evidence/Session19/StagedProvenanceClassificationDraft-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 3161688,
+      "sha256": "686C0B878A5A3CCB3B14BEC22E36B160F7DCD10D6C68DADBE61BBAF740A47B25",
+      "schema": "DiscGolfTour.Session19StagedProvenanceClassification.v1",
+      "schemaVersion": 1,
+      "state": "DRAFT_UNREVIEWED_NOT_SHIPPING_APPROVED",
+      "recordCount": 7158,
+      "reviewed": false,
+      "shippingApproved": false
+    },
+    "provenanceDraftAudit": {
+      "path": "Evidence/Session19/StagedProvenanceDraftAudit-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 3281530,
+      "sha256": "82489811A4DE2C50133FB1ED3729959627CC319D3D122A638F0C7D767655DDCC",
+      "schema": "DiscGolfTour.Session19StagedProvenanceReceipt.v1",
+      "schemaVersion": 1,
+      "status": "FAIL_CLOSED",
+      "discoveredIdentityCount": 7158,
+      "classifiedIdentityCount": 0,
+      "unclassifiedIdentityCount": 7158,
+      "reasonCodes": [
+        "CLASSIFICATION_MANIFEST_MISSING",
+        "UNCLASSIFIED_IDENTITY"
+      ],
+      "evidenceRole": "HISTORICAL_PRE_ATTRIBUTION_FAIL_CLOSED_SNAPSHOT",
+      "technicalOriginSupersededBy": "Evidence/Session19/TechnicalOriginAttributionResolved-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "technicalInventoryComplete": false,
+      "releaseReady": false,
+      "releaseUseAllowed": false,
+      "blockerClosed": false
+    },
+    "freshUserDirValidator": {
+      "path": "Scripts/validate_dg_session19_fresh_userdir.py",
+      "bytes": 20821,
+      "sha256": "D576CB74C8AA6F39E43A16CE4489AE88966B1042A2B47EFC3636C6E5FB9A38BB",
+      "selfTestCaseCount": 18
+    },
+    "freshUserDirReceipt": {
+      "path": "Evidence/Session19/FreshUserDir-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 2799,
+      "sha256": "F7BE478D1EC968AAABB8E50F682EDA15CD197C6C2185973EFC3FC499DB3E3A34",
+      "schema": "DiscGolfTour.Session19FreshUserDirValidation.v1",
+      "schemaVersion": 1,
+      "state": "PASS_FRESH_SHIPPING_USERDIR_ALLOWLIST",
+      "observedFileCount": 4,
+      "approvedFileCount": 4,
+      "unknownFileCount": 0,
+      "forbiddenArtifactCount": 0,
+      "failureCount": 0,
+      "technicalUserDirAcceptanceOnly": true,
+      "gameplayAcceptanceClaimed": false,
+      "releaseReadinessClaimed": false
+    },
+    "technicalPackageEvidenceAccepted": true,
+    "freshUserDirTechnicalAcceptanceAccepted": true,
+    "freshInstallGameplayAcceptanceAccepted": false,
+    "provenanceClassificationAccepted": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "manualOwnerReviewAccepted": false,
+    "releaseReady": false,
+    "releaseUseAllowed": false,
+    "blockerClosed": false
+  },
+  "externalTechnicalEvidence": {
+    "currentState": "PASS_CANDIDATE_BOUND_EXTERNAL_TECHNICAL_EVIDENCE",
+    "policy": {
+      "path": "Scripts/DG_Session19ExternalTechnicalEvidencePolicy.json",
+      "bytes": 2968,
+      "sha256": "8A57FB1BBF99BE2572BC1CC5F65451F047748419CD74335F00CE6A15F6B62054"
+    },
+    "validator": {
+      "path": "Scripts/validate_dg_session19_external_technical_evidence.py",
+      "bytes": 37674,
+      "sha256": "AE9F1F08F905ADBB5D24F892C75CD5CE59FED5F910E333EC84F302A8919D5188"
+    },
+    "runner": {
+      "path": "Scripts/run_dg_session19_external_technical_evidence.py",
+      "bytes": 22743,
+      "sha256": "295F9E3FC9BF5C08AA205FB1246718C4ED81B0B36B413518B65A679C92227D35"
+    },
+    "receipt": {
+      "path": "Evidence/Session19/ExternalTechnicalEvidence-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 800,
+      "sha256": "0C23512F4E9B72DCCE05839AC0FB52016368D9A32B52BED0720B162E425287A8"
+    },
+    "technicalEvidenceAccepted": true,
+    "screenshotCount": 10,
+    "presentMonRowCount": 0,
+    "manualGameplayAcceptance": false,
+    "humanPlayFeelApproval": false,
+    "visualProductApproval": false,
+    "accessibilityApproval": false,
+    "legalApproval": false,
+    "releaseReady": false
+  },
+  "v05FeatureExclusion": {
+    "currentState": "PASS_CANDIDATE_BOUND_V05_CAREER_AI_THROW_LAB_EXCLUSION",
+    "policy": {
+      "path": "Config/DG_Session19V05CareerAiThrowLabShippingExclusionPolicy.json",
+      "bytes": 6262,
+      "sha256": "2B9810CF2B700DF6036EC6A31F3D229BDD198B293C2157D206F298548C6B7F8D"
+    },
+    "validator": {
+      "path": "Scripts/validate_dg_session19_v05_feature_exclusion.py",
+      "bytes": 38384,
+      "sha256": "31911DAF54F41C732A92193D67E2F41D73E0A9F8637D52B07F2667ADC6464ECE"
+    },
+    "receipt": {
+      "path": "Evidence/Session19/V05CareerAiThrowLabExclusion-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 5275,
+      "sha256": "13D40242775FBB037A07D2451FC0D914C4629E7F92141E766B4B5567387207D7"
+    },
+    "technicalExclusionAccepted": true,
+    "publicCareerClaimAllowed": false,
+    "publicAiOpponentClaimAllowed": false,
+    "publicThrowLabClaimAllowed": false,
+    "manualGameplayReviewComplete": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "blockerClosed": false,
+    "releaseReady": false
+  },
+  "v05EquipmentTechnical": {
+    "currentState": "PASS_CANDIDATE_BOUND_V05_EQUIPMENT_TECHNICAL_EVIDENCE",
+    "policy": {
+      "path": "Config/DG_Session19V05EquipmentShippingTechnicalPolicy.json",
+      "bytes": 14801,
+      "sha256": "B4C156119BC4425365FC31166FC05FCD3A1185B52B82D814785642F3D3D64022"
+    },
+    "validator": {
+      "path": "Scripts/validate_dg_session19_v05_equipment_shipping.py",
+      "bytes": 57859,
+      "sha256": "9E59FCCDE2FDFF4094B017515FE18A36E998813CD5E489B6D84A17F3D517A454"
+    },
+    "receipt": {
+      "path": "Evidence/Session19/V05EquipmentShippingTechnical-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 20127,
+      "sha256": "D9211C4EF858216DF6B17916DBE16110B2F6A2D2C96F3A930A05EDA5BF5F4F08"
+    },
+    "technicalEvidenceAccepted": true,
+    "boundedCatalogAssetCount": 8,
+    "calibrationRepeatCount": 5,
+    "equipmentNameClearance": false,
+    "manualPlayFeelApproval": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "blockerClosed": false,
+    "releaseReady": false
+  },
+  "physicsMeasuredReferencePreparation": {
+    "currentState": "PASS_PREDECLARED_CAPTURE_PROTOCOL_AND_EMPTY_TEMPLATE_RELEASE_REQUIRED_FAIL_CLOSED",
+    "policy": {
+      "path": "Config/DG_PhysicsMeasuredReferencePolicy.json",
+      "bytes": 4589,
+      "sha256": "19D7BB42DA929FD86E7C39391D8874F3CB8D84D358B122BE6204034B141DEA08"
+    },
+    "validator": {
+      "path": "Scripts/validate_dg_physics_measured_reference.py",
+      "bytes": 42802,
+      "sha256": "DDE76C11073804CE05C58C2568D46E71A41D40A15F85C7FCBFDDF19C53ECAFBE"
+    },
+    "datasetTemplate": {
+      "path": "Evidence/Session19/PhysicsMeasuredReferenceDataset.template.json",
+      "bytes": 732,
+      "sha256": "CBC678CCACDCF2B6487022466A020AB91ED386F6B5CDC7C8ACCF20AE2B54E018"
+    },
+    "equipmentCategoryCount": 5,
+    "launchConditionCount": 4,
+    "plannedMeasuredThrowCount": 100,
+    "plannedRouteTelemetryAttemptCount": 60,
+    "measuredThrowCount": 0,
+    "acceptedMeasuredReferenceDataset": false,
+    "physicsOwnerApproval": false,
+    "playtestOwnerApproval": false,
+    "productOwnerApproval": false,
+    "blockerClosed": false,
+    "releaseReady": false
+  },
+  "session10EnvironmentTechnical": {
+    "currentState": "PASS_BOUNDED_ENVIRONMENT_16_CATEGORY_CONTRACT_SLOT_PROXY_QUARANTINE_AND_SCREENSHOT_TECHNICAL_EVIDENCE_3_OF_16_BOUND_0_OF_16_READY",
+    "technicalPlan": {
+      "path": "Config/DG_Session10EnvironmentCategoryTechnicalPlan.json",
+      "bytes": 21024,
+      "sha256": "A4DCB8CD0D685A0DE31BFC8518C43AF783C68DCB2FD2A1D42037AD8CA8C12C8D"
+    },
+    "policy": {
+      "path": "Config/DG_Session10EnvironmentShippingTechnicalPolicy.json",
+      "bytes": 11465,
+      "sha256": "293B0EF8327FCBB4AE2C84FBCF8CB84E6EE09F6A428500B1318966305DD30A1F"
+    },
+    "validator": {
+      "path": "Scripts/validate_dg_session10_environment_shipping.py",
+      "bytes": 69906,
+      "sha256": "2B3FB45B571EC5175448DEAD73040E575AF6E3891ECCE644B5B614A16B22D259"
+    },
+    "receipt": {
+      "path": "Evidence/Session10/EnvironmentShippingTechnicalV2-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 12027,
+      "sha256": "2F2564DA8AD8D786581A2E15E3D5636E23EFCF673A41825607BF7E9B442E0DC2"
+    },
+    "technicalEvidenceAccepted": true,
+    "allSixteenCategoryTechnicalContractsAccepted": true,
+    "productionBoundCategoryCount": 3,
+    "productionReadyCategoryCount": 0,
+    "dedicatedProxyCompleteCategoryCount": 0,
+    "windVerifiedCategoryCount": 0,
+    "lodOrNaniteVerifiedCategoryCount": 2,
+    "allSixteenProductionSlotsBound": false,
+    "allThreeHolesLiveCollisionExerciseAccepted": false,
+    "actualRenderedRhiAccepted": false,
+    "visualQualityAccepted": false,
+    "performanceApproval": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "ownerApproval": false,
+    "releaseReady": false
+  },
+  "session12PresentationTechnical": {
+    "currentState": "PASS_CANDIDATE_BOUND_SESSION12_PRESENTATION_TECHNICAL_WITH_SHIPPING_AUDIO_COOK",
+    "audioEventCoverageManifest": {
+      "path": "Config/DG_Session12AudioEventCoverage.json",
+      "bytes": 9642,
+      "sha256": "91723978D733BF895277EAE2F5369EB559F47D1CA841703A1418D1B37DB39982"
+    },
+    "policy": {
+      "path": "Config/DG_Session19Session12PresentationTechnicalPolicy.json",
+      "bytes": 16520,
+      "sha256": "D899B6CFA78BBA82FC7848D6182444EAC9A0E4A82DBBDA49A7A01A27710A6BFA"
+    },
+    "validator": {
+      "path": "Scripts/validate_dg_session19_session12_presentation_technical.py",
+      "bytes": 81166,
+      "sha256": "A83DFACA9DC7EC4017523AC3D5F386E975B082777D17AC93E4EB8E67CC8E73D4"
+    },
+    "receipt": {
+      "path": "Evidence/Session19/Session12PresentationTechnicalAudioCoverage-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 36776,
+      "sha256": "B2AF7B7C6271794D19F4547BB41D4BA23B384D742403B4BAA6F5DB81C78870A0"
+    },
+    "shippingAudioCookReceipt": {
+      "path": "Evidence/Session19/ShippingAudioCook-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 29815,
+      "sha256": "A9272AACB90977D5487C9D8418819973B32D1B47BE44DE2E886929753DFF180D"
+    },
+    "technicalEvidenceAccepted": true,
+    "audioRuntimeHookCategoryCount": 12,
+    "productionAudioAssetCategoryCount": 0,
+    "unboundAudioAssetCategoryCount": 12,
+    "intentionalSilenceApprovedCategoryCount": 0,
+    "productionAudioAssetsPresent": false,
+    "shippingAudioCookProven": true,
+    "audibleRuntimePlaybackProven": false,
+    "unsupportedDeviceCoverage": false,
+    "manualCameraReplayAndMixApproval": false,
+    "visualQualityApproval": false,
+    "accessibilityApproval": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "blockerClosed": false,
+    "releaseReady": false
+  },
+  "technicalOriginAttribution": {
+    "currentState": "PASS_EXACT_TECHNICAL_ATTRIBUTION_LEGAL_REVIEW_PENDING",
+    "policy": {
+      "path": "Config/DG_Session19TechnicalOriginAttributionPolicy.json",
+      "bytes": 5465,
+      "sha256": "78D9212A93D7F87786516A1F20B3C44655D8AD3B09B3FE89162703C3BAC03F68"
+    },
+    "validator": {
+      "path": "Scripts/validate_dg_session19_technical_origin_attribution.py",
+      "bytes": 57127,
+      "sha256": "6FD8A067F4FE0E956ACB0D8E437E16A7FD6ED1EEAD59447A16265E5C763349E7"
+    },
+    "proposalGenerator": {
+      "path": "Scripts/generate_dg_session19_technical_origin_proposal.py",
+      "bytes": 37731,
+      "sha256": "15383355C32F01220D91148F1085CA240EF1812856F222D24EF70E829E43F319"
+    },
+    "proposalValidator": {
+      "path": "Scripts/validate_dg_session19_technical_origin_proposal.py",
+      "bytes": 12253,
+      "sha256": "323750279B14011809FF582E14C2408230591DA2D24D7AD4C245CBBB17A9C45E"
+    },
+    "proposal": {
+      "path": "Evidence/Session19/TechnicalOriginProposal-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 5242737,
+      "sha256": "8F1203FB77EA6FB57BD6F02CCDC8FE74A90454EF6698B90C1E13D5DFC4FFBFA8"
+    },
+    "receipt": {
+      "path": "Evidence/Session19/TechnicalOriginAttributionResolved-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 6703741,
+      "sha256": "FF2DABD455895198DA04D732838AD54250E0BDACC69F9E9A1334D70A6996586C"
+    },
+    "auditedIdentityCount": 7158,
+    "authoritativelyAttributedTechnicalOriginCount": 7158,
+    "unresolvedIdentityCount": 0,
+    "unresolvedAnonymousChunkCount": 0,
+    "unresolvedPathIdentityCount": 0,
+    "independentReviewComplete": false,
+    "legalReviewComplete": false,
+    "distributionClearanceComplete": false,
+    "shippingApprovalGranted": false,
+    "blockerClosed": false,
+    "releaseReady": false
+  },
+  "threeHoleTechnicalAcceptance": {
+    "currentState": "PASS_CANDIDATE_BOUND_FRESH_INSTALL_THREE_HOLE_TECHNICAL_ACCEPTANCE",
+    "policy": {
+      "path": "Config/DG_Session19ThreeHoleTechnicalAcceptancePolicy.json",
+      "bytes": 7441,
+      "sha256": "798F6A229055CD72821D4755C059099211F7A366085129D5A119AEB82E1FC40C"
+    },
+    "validator": {
+      "path": "Scripts/validate_dg_session19_three_hole_technical_acceptance.py",
+      "bytes": 41569,
+      "sha256": "EE90D0EC312F074545E61C2E23DD86215A3EF1B05046FCDC20B58172974B7578"
+    },
+    "receipt": {
+      "path": "Evidence/Session19/ThreeHoleTechnicalAcceptance-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 9354,
+      "sha256": "551069BA4ED7FA5E3FEB7AA254725C91AC5E5FCEC3F9BD209831432E9855CD5B"
+    },
+    "technicalThreeHoleAcceptance": true,
+    "completedHoleCount": 3,
+    "visualQualityApproval": false,
+    "accessibilityApproval": false,
+    "humanPlayFeelApproval": false,
+    "manualGameplayAcceptance": false,
+    "productOwnerApproval": false,
+    "performanceAcceptance": false,
+    "soakAcceptance": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "blockerClosed": false,
+    "releaseReady": false
+  },
+  "bakedPcgSourceAuthority": {
+    "policyPath": "Config/DG_Session19BakedPcgPolicy.json",
+    "policyBytes": 5509,
+    "policySha256": "A40390DF6D0BE32537D5555C5E5238AB1147B1068C2BC70B337A5B5A50CBCE4B",
+    "validatorPath": "Scripts/validate_dg_session19_baked_pcg.py",
+    "validatorBytes": 57232,
+    "validatorSha256": "38C66E12B3818A2A55440F87E3A05B036A69E63BC507A932DEECA834A17ADC62",
+    "receiptPath": "Evidence/Session19/BakedPcgSourceAuthorityReceipt.json",
+    "receiptBytes": 2931,
+    "receiptSha256": "4C7189B03C723A5906F284D5ECF7C7AEFB7EE5368F7E16B837CACF145C879B47",
+    "sourceClosurePreBuildReceiptPath": "Evidence/Session19/BakedPcgSourceClosurePreBuild-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "sourceClosurePreBuildReceiptBytes": 47676,
+    "sourceClosurePreBuildReceiptSha256": "C8B5A948F1257ED544F300B035445B11367C52955E715FC0E2470B5328124B4D",
+    "candidateReceiptPath": "Evidence/Session19/BakedPcgCandidateVerification-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "candidateReceiptBytes": 4053,
+    "candidateReceiptSha256": "F525135FD745C06B63FF67E49FA64F6076E5FD005157F68FE9FD56DF8E0BB1FB",
+    "currentState": "PASS_CANDIDATE_BOUND_AUTHORED_DATA_RUNTIME_AND_BAKED_OUTPUT_ACCEPTANCE_PENDING",
+    "sourceAuthorityAccepted": true,
+    "shippingPackageEvidenceAccepted": false,
+    "blockerClosed": false
+  },
+  "bakedPcgRuntimeClosure": {
+    "currentState": "PASS_RETIRED_LEGACY_RUNTIME_CLOSURE_AND_FRESH_SHIPPING_PCG_ABSENCE_HUMAN_GATES_PENDING",
+    "policy": {
+      "path": "Config/DG_Session19BakedPcgRuntimeClosurePolicy.json",
+      "bytes": 4594,
+      "sha256": "C46B1611CDC62559046D6C93657E8893C8E70F8E52F22FAF95B4706D11D2BCD7"
+    },
+    "validator": {
+      "path": "Scripts/validate_dg_session19_baked_pcg_runtime_closure.py",
+      "bytes": 15769,
+      "sha256": "DEB6FBD8F9976BD5F7FF36DCC87B2BB5E4B6405F94FB3847721711118013EACB"
+    },
+    "shippingSeparationPolicy": {
+      "path": "Config/DG_Session19ShippingPcgSeparationPolicy.json",
+      "bytes": 3975,
+      "sha256": "F57EEA493F93546E53AA7D74DF9D5743C1D9AFF20DBCCED318B768E9635C33E3"
+    },
+    "shippingSeparationValidator": {
+      "path": "Scripts/validate_dg_session19_shipping_pcg_separation.py",
+      "bytes": 31880,
+      "sha256": "35BEB62EF0571DDBF190FD03A02F10C0B81266A420BC5F3641ED6CD80F8F2B92"
+    },
+    "shippingPcgSeparationReceipt": {
+      "path": "Evidence/Session19/ShippingPcgSeparation-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 2616,
+      "sha256": "86273D5AA9AE2C0BB03BCF4C80147864E3E5AC4BD3870A07D19E89CDE365FB1C"
+    },
+    "legacyCandidateRuntimeClosureRetired": true,
+    "sourceConfigSeparationProven": true,
+    "freshShippingCookAbsenceProven": true,
+    "unrealPcgBakeSaveReopen": false,
+    "visualQualityApproval": false,
+    "collisionVisualApproval": false,
+    "performanceAcceptance": false,
+    "soakAcceptance": false,
+    "manualGameplayAcceptance": false,
+    "humanPlayFeelApproval": false,
+    "accessibilityApproval": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "releaseApproval": false,
+    "session13BlockerClosed": false,
+    "releaseReady": false
+  },
+  "productionMotionPreparation": {
+    "currentState": "PASS_PRODUCTION_MOTION_RUNTIME_BINDING_AND_SHIPPING_COOK_TECHNICAL_HUMAN_GATES_PENDING",
+    "policy": {
+      "path": "Config/DG_Session19ProductionMotionAuthoringPolicy.json",
+      "bytes": 18135,
+      "sha256": "85BE2A3C5FE352491D6BF753F0B8FD8E08C3F4B8B1A2CA5A6782DA454F15614D"
+    },
+    "validator": {
+      "path": "Scripts/validate_dg_session19_production_motion.py",
+      "bytes": 35429,
+      "sha256": "31E11AF20A212D3A8B6D0171799393C4AD54162E196FFAC6DA1386ABAA7A0F15"
+    },
+    "evidence": {
+      "path": "Evidence/Session19/ProductionMotionTechnicalCandidateEvidence-ThrowPhysicsAudit-R2.json",
+      "bytes": 7224,
+      "sha256": "DC5D784D0ACEC48D48F0F3CE6700A825BE5037039F7D0FEEC21691816925CB98"
+    },
+    "shippingCookPresenceReceipt": {
+      "path": "Evidence/Session19/ProductionMotionCookPresence-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+      "bytes": 7794,
+      "sha256": "E514F3A4AFB7CB2A47F8A543A3DF4967FBF7120768A65C8EA1D9D4395BEE42E9"
+    },
+    "motionFamilyContractCount": 3,
+    "semanticPhaseCount": 8,
+    "targetAssetCount": 7,
+    "targetAssetPresentCount": 7,
+    "protectedSyntheticAssetCount": 5,
+    "protectedSyntheticAssetReuseCount": 0,
+    "authoringPrerequisiteFileCount": 4,
+    "authoringPrerequisiteFilesPresent": 4,
+    "shippingRuntimeBindingActive": true,
+    "shippingCookPresenceAccepted": true,
+    "motionQualityAccepted": false,
+    "discContactQualityAccepted": false,
+    "performerReleaseAccepted": false,
+    "legalApproval": false,
+    "ownerApproval": false,
+    "blockerClosed": false,
+    "releaseReady": false
+  },
+  "serializedAssetMigration": {
+    "policyPath": "Config/DG_Session19SerializedAssetMigrationPolicy.json",
+    "policyBytes": 5365,
+    "policySha256": "EA2B8D4232F787606BEDEDB84CFAB20E6EE7C3B91542BBBDE5E5D8A083A79139",
+    "validatorPath": "Scripts/validate_dg_session19_serialized_asset_migration.py",
+    "validatorBytes": 69335,
+    "validatorSha256": "6F29C50261002EBF7374F9C81E5A6B9843ACC55C392883CF71DA07D2CF614AF0",
+    "receiptPath": "Evidence/Session19/SerializedAssetMigrationReceipt.json",
+    "receiptBytes": 5435,
+    "receiptSha256": "AC1CB2B61D07850E60A40C0701D878F4D7AAFF95CF04B18C280DB418DC91B9A4",
+    "inventoryPath": "Evidence/Session19/SerializedAssetMigrationInventory.tsv",
+    "inventoryBytes": 10279,
+    "inventorySha256": "1B7B853153ADD65924B9D090B91B219A225F8E327DD95617505B5DE95CDC953B",
+    "migrationScriptPath": "Scripts/migrate_dg_session19_serialized_assets.py",
+    "migrationScriptBytes": 15439,
+    "migrationScriptSha256": "426CC6451F6535E4ACDD0DC0D804CF0D1FAA8B8CBB311A40BF2ABA3BD8A3450B",
+    "candidateReceiptPath": "Evidence/Session19/SerializedAssetMigrationShipping-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "candidateReceiptBytes": 6498,
+    "candidateReceiptSha256": "6D382AD94BB4584494C6737F70A8AA9855C3798B71192F6A787DFAF6D35C98D5",
+    "currentState": "PASS_CANDIDATE_BOUND_TECHNICAL_MIGRATION_SHIPPING_NON_DISTRIBUTION",
+    "sourceAndRetainedAssetMigrationAccepted": true,
+    "shippingPackageEvidenceAccepted": true,
+    "legacySourceTreeRetainedPendingVerifiedQuarantine": true,
+    "blockerClosed": false
+  },
+  "characterFrameworkExternalQuarantine": {
+    "runId": "S19_Framework_20260825T031617Z_c68ee2e4e6be",
+    "projectRoots": [
+      "Plugins/DiscGolfCharacterFramework",
+      "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Plugins/DiscGolfCharacterFramework"
+    ],
+    "mustBeOutsideProjectRoot": true,
+    "hostPathsRecorded": false,
+    "currentState": "EXTERNAL_QUARANTINE_AND_CURRENT_CANDIDATE_SHIPPING_ABSENCE_TECHNICAL_PASS_RUNTIME_AND_RIGHTS_ACCEPTANCE_PENDING",
+    "projectSourceRemovalAccepted": true,
+    "shippingPackageAbsenceAccepted": true,
+    "replacementRuntimeAcceptanceAccepted": false,
+    "blockerClosed": false,
+    "receipt": {
+      "path": "Evidence/Session19/CharacterFrameworkExternalQuarantine-S19_Framework_20260825T031617Z_c68ee2e4e6be.json",
+      "bytes": 2254,
+      "sha256": "7E01A86BCE40A53A4019F03FD8A5F041C57CC6343B6C1A057A470B2787551952"
+    },
+    "beforeMoveManifest": {
+      "path": "Evidence/Session19/CharacterFrameworkBeforeMove-S19_Framework_20260825T031617Z_c68ee2e4e6be.tsv",
+      "bytes": 96660,
+      "sha256": "EEF548159719E2DCF5A0966621DF1F6A1313EB1A2A62B526C952AE8A29E766D5",
+      "rows": 513
+    }
+  },
+  "manualReleaseReview": {
+    "currentState": "PENDING_NAMED_HUMAN_DECISIONS_AND_MISSING_PRODUCTION_ARTIFACTS",
+    "validatorStatus": "PASS_REVIEW_PACKET_VALID_HUMAN_APPROVALS_PENDING",
+    "packetValid": true,
+    "humanApprovalGateCount": 8,
+    "humanApprovedGateCount": 0,
+    "humanBlockedGateCount": 8,
+    "humanApprovalAccepted": false,
+    "blanketAuthorizationAcceptedAsApproval": false,
+    "releaseReady": false,
+    "artifacts": [
+      {"path": "Config/DG_Session19ManualReleaseReviewPolicy.json", "bytes": 11742, "sha256": "B2E21CD147E4D23BAEB800CA1F635B6F8A365AC93805038C0698708261217FAC"},
+      {"path": "Scripts/validate_dg_session19_manual_release_review.py", "bytes": 33359, "sha256": "7DCDDD769ADB953A739B7847E0772FF58D4910167B6A6919397422F4692D78B5"},
+      {"path": "Docs/DG_SESSION19_MANUAL_RELEASE_REVIEW.md", "bytes": 11243, "sha256": "E3B2A85CE6CE4F5E56E6BA0B8AB1C437E9ADD1C28711802C1D414D97E40B49DC"},
+      {"path": "Evidence/Session19/ManualReleaseReviewInventory.json", "bytes": 13286, "sha256": "0DBE2CFF60279E8EEE20AB7E69F759F45DFEB93037B04B7CD156BB4FCC9A7B73"},
+      {"path": "Evidence/Session19/ManualReleaseDecisionRecord.template.json", "bytes": 1606, "sha256": "39D51D1E768D7E3E9764FB8217B7A1EF02D27A3507CABEF4574E7890A5DC870A"}
+    ]
+  },
+  "closureStrategies": [
+    {
+      "blockerId": "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+      "resolutionMode": "MANUAL_APPROVAL_AND_CLEARANCE",
+      "approvedStrategy": "LOCK_AND_CLEAR_OR_REPLACE_THE_PUBLIC_TITLE",
+      "initialState": "PENDING_EVIDENCE",
+      "closed": false,
+      "evidenceRequirements": [
+        "OWNER_APPROVED_PUBLIC_TITLE_RECORD",
+        "LEGAL_CLEARANCE_RECORD",
+        "SHIPPING_PACKAGE_AND_UI_TITLE_INVENTORY"
+      ]
+    },
+    {
+      "blockerId": "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+      "resolutionMode": "MANUAL_APPROVAL_AND_CLEARANCE",
+      "approvedStrategy": "CLEAR_OR_REPLACE_EVERY_SHIPPING_EQUIPMENT_AND_COURSE_DISPLAY_NAME",
+      "initialState": "PENDING_EVIDENCE",
+      "closed": false,
+      "evidenceRequirements": [
+        "APPROVED_SHIPPING_DISPLAY_NAME_INVENTORY",
+        "LEGAL_CLEARANCE_OR_REPLACEMENT_RECORD",
+        "SHIPPING_RUNTIME_AND_ASSET_SCAN"
+      ]
+    },
+    {
+      "blockerId": "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+      "resolutionMode": "REPLACE_OR_REMOVE_AND_PROVE_ABSENT",
+      "approvedStrategy": "REPLACE_OR_REMOVE_THE_CHARACTER_FRAMEWORK_BEFORE_THE_SHIPPING_BUILD",
+      "initialState": "PENDING_EVIDENCE",
+      "closed": false,
+      "evidenceRequirements": [
+        "PROJECT_SOURCE_AND_BUILD_RULE_DEPENDENCY_SCAN",
+        "SHIPPING_BINARY_MODULE_AND_SYMBOL_SCAN",
+        "SHIPPING_UFS_AND_NONUFS_ABSENCE",
+        "REPLACEMENT_CHARACTER_RUNTIME_ACCEPTANCE"
+      ]
+    },
+    {
+      "blockerId": "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+      "resolutionMode": "REMOVE_OR_EXCLUDE_AND_PROVE_ABSENT",
+      "approvedStrategy": "CLASSIFY_AND_REMOVE_OR_EXCLUDE_EVERY_DEVELOPMENT_ONLY_RUNTIME_ITEM",
+      "initialState": "PENDING_EVIDENCE",
+      "closed": false,
+      "evidenceRequirements": [
+        "SHIPPING_CONTENT_CLASSIFICATION_MANIFEST",
+        "SHIPPING_UFS_NONUFS_AND_IOSTORE_ABSENCE",
+        "FRESH_INSTALL_NO_DEVELOPMENT_ENTRYPOINT_ACCEPTANCE"
+      ]
+    },
+    {
+      "blockerId": "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+      "resolutionMode": "EXTERNAL_QUARANTINE_AND_PROVE_ABSENT",
+      "approvedStrategy": "MOVE_UNUSED_FAB_IMPORT_ROOTS_OUTSIDE_THE_PROJECT_AND_KEEP_THEM_OUT_OF_SHIPPING",
+      "initialState": "PENDING_EVIDENCE",
+      "closed": false,
+      "evidenceRequirements": [
+        "EXTERNAL_QUARANTINE_INVENTORY_WITHOUT_HOST_PATH_SECRETS",
+        "PROJECT_ROOT_ABSENCE_SCAN",
+        "SHIPPING_UFS_NONUFS_AND_IOSTORE_ABSENCE"
+      ]
+    },
+    {
+      "blockerId": "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+      "resolutionMode": "IMPLEMENT_COMPLETE_STAGED_PAYLOAD_PROVENANCE",
+      "approvedStrategy": "CLASSIFY_AND_BIND_EVERY_SHIPPING_FILE_DEPENDENCY_CONTAINER_AND_CHUNK",
+      "initialState": "PENDING_EVIDENCE",
+      "closed": false,
+      "evidenceRequirements": [
+        "CANONICAL_SHIPPING_ARCHIVE_FILE_MANIFEST",
+        "PAK_AND_IOSTORE_FILE_PACKAGE_AND_CHUNK_INVENTORY",
+        "DEPENDENCY_PROVENANCE_AND_LICENSE_CLASSIFICATION",
+        "INDEPENDENT_CLOSURE_VALIDATION"
+      ]
+    },
+    {
+      "blockerId": "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED",
+      "resolutionMode": "MANUAL_REVIEW_AND_APPROVAL",
+      "approvedStrategy": "COMPLETE_DOCUMENTED_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_ON_FINAL_SHIPPING_CAPTURES",
+      "initialState": "PENDING_EVIDENCE",
+      "closed": false,
+      "evidenceRequirements": [
+        "FINAL_SHIPPING_VISUAL_CAPTURE_INVENTORY",
+        "OWNER_VISUAL_REVIEW_RECORD",
+        "LEGAL_TRADE_DRESS_AND_LOGO_REVIEW_RECORD"
+      ]
+    },
+    {
+      "blockerId": "SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY",
+      "resolutionMode": "IMPLEMENT_AND_ACCEPT",
+      "approvedStrategy": "APPROVE_ALL_ENVIRONMENT_BINDINGS_PROXIES_WIND_LODS_VISUALS_AND_FINAL_CONTENT_PROVENANCE",
+      "initialState": "PENDING_EVIDENCE",
+      "closed": false,
+      "evidenceRequirements": [
+        "ALL_REQUIRED_ENVIRONMENT_SLOTS_READY_REPORT",
+        "COLLISION_AND_INTERACTION_PROXY_ACCEPTANCE",
+        "REAL_RHI_VISUAL_AND_PERFORMANCE_APPROVAL",
+        "SHIPPING_ENVIRONMENT_PACKAGE_PROVENANCE"
+      ]
+    },
+    {
+      "blockerId": "SESSION11_EQUIPMENT_PHYSICS_AND_PRODUCTION_READINESS_PENDING",
+      "resolutionMode": "IMPLEMENT_AND_ACCEPT_WITH_BOUNDED_SHIPPING_CATALOG",
+      "approvedStrategy": "LOCK_A_BOUNDED_SHIPPING_CATALOG_CALIBRATE_EXPOSED_PHYSICS_AND_KEEP_THROW_LAB_DEVELOPMENT_ONLY",
+      "initialState": "PENDING_EVIDENCE",
+      "closed": false,
+      "evidenceRequirements": [
+        "APPROVED_SHIPPING_EQUIPMENT_CATALOG",
+        "REPEATED_TOLERANCED_PHYSICS_CALIBRATION",
+        "SAVE_MIGRATION_AND_ATOMIC_FALLBACK_ACCEPTANCE",
+        "SHIPPING_THROW_LAB_ABSENCE_AND_BAG_SELECTION_ACCEPTANCE"
+      ]
+    },
+    {
+      "blockerId": "SESSION12_PRESENTATION_INPUT_AUDIO_PRODUCTION_READINESS_PENDING",
+      "resolutionMode": "IMPLEMENT_AND_ACCEPT",
+      "approvedStrategy": "SHIP_APPROVED_UI_ACCESSIBILITY_INPUT_CAMERA_REPLAY_AND_AUTHORED_AUDIO_COVERAGE",
+      "initialState": "PENDING_EVIDENCE",
+      "closed": false,
+      "evidenceRequirements": [
+        "SHIPPING_UI_AND_ACCESSIBILITY_MATRIX",
+        "SUPPORTED_INPUT_DEVICE_ACCEPTANCE",
+        "AUTHORED_AUDIO_LICENSE_AND_EVENT_COVERAGE_MANIFEST",
+        "MANUAL_CAMERA_REPLAY_AND_MIX_APPROVAL"
+      ]
+    },
+    {
+      "blockerId": "SESSION13_COURSE_AUTHORING_PCG_PRODUCTION_READINESS_PENDING",
+      "resolutionMode": "IMPLEMENT_AND_ACCEPT_BAKED_OUTPUT",
+      "approvedStrategy": "DETERMINISTICALLY_BAKE_VALIDATE_HASH_AND_COOK_PCG_OUTPUT_WITHOUT_RUNTIME_GENERATION",
+      "initialState": "PENDING_EVIDENCE",
+      "closed": false,
+      "evidenceRequirements": [
+        "AUTHOR_VALIDATE_BAKE_REOPEN_ROUNDTRIP",
+        "DETERMINISTIC_BAKED_OUTPUT_MANIFEST",
+        "COOKED_COURSE_AND_BAKED_OUTPUT_HASH_BINDING",
+        "THREE_HOLE_STREAM_COLLISION_VISUAL_AND_PERFORMANCE_ACCEPTANCE"
+      ]
+    },
+    {
+      "blockerId": "SESSION14_CAREER_AI_PRODUCTION_READINESS_PENDING",
+      "resolutionMode": "EXCLUDE_FROM_RELEASE_SCOPE_AND_PROVE_ABSENT",
+      "approvedStrategy": "EXCLUDE_CAREER_AND_AI_FROM_V05_SHIPPING_WITH_NO_ENTRYPOINT_SAVE_SPAWN_OR_PRODUCT_CLAIM",
+      "initialState": "PENDING_EVIDENCE",
+      "closed": false,
+      "evidenceRequirements": [
+        "SHIPPING_FEATURE_AND_ENTRYPOINT_INVENTORY",
+        "FRESH_INSTALL_NO_CAREER_SAVE_OR_AI_SPAWN_ACCEPTANCE",
+        "SHIPPING_PACKAGE_EXCLUSION_EVIDENCE",
+        "PUBLIC_FEATURE_CLAIM_REVIEW"
+      ]
+    },
+    {
+      "blockerId": "SESSION15_VERTICAL_SLICE_PRODUCTION_READINESS_PENDING",
+      "resolutionMode": "IMPLEMENT_AND_ACCEPT_THREE_HOLE_V05",
+      "approvedStrategy": "COMPLETE_THE_FINAL_CONTENT_THREE_HOLE_NEW_PLAYER_SHIPPING_ACCEPTANCE_WITH_NO_TECHNICAL_SUBSTITUTIONS",
+      "initialState": "PENDING_EVIDENCE",
+      "closed": false,
+      "evidenceRequirements": [
+        "APPROVED_CHARACTER_MOTION_ENVIRONMENT_EQUIPMENT_UI_AND_AUDIO_INVENTORY",
+        "FRESH_INSTALL_NEW_PLAYER_THREE_HOLE_ACCEPTANCE",
+        "FINAL_CONTENT_SHIPPING_PERFORMANCE_AND_SOAK",
+        "MULTI_RESOLUTION_VISUAL_ACCESSIBILITY_AND_PRODUCT_OWNER_APPROVAL"
+      ]
+    }
+  ],
+  "evidenceGates": [
+    {
+      "gateId": "WINDOWS_SHIPPING_PACKAGE",
+      "state": "PARTIAL_PASS_CURRENT_CANDIDATE_BUILD_ARCHIVE_BINARY_CONTENT_PLUGIN_THIRDPARTY_EXTERNAL_AND_FRESH_USERDIR_TECHNICAL_PROVENANCE_LEGAL_GAMEPLAY_AND_OWNER_REVIEW_PENDING",
+      "accepted": false,
+      "artifactPaths": [
+        "Evidence/Session19/ShippingBuildCookRun-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.log",
+        "Evidence/Session19/ShippingCandidate-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ShippingPluginCapability-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ShippingBinary-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ThirdPartyNoticeVerification-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/FreshUserDir-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ExternalTechnicalEvidence-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json"
+      ]
+    },
+    {
+      "gateId": "CAREER_AI_SHIPPING_EXCLUSION",
+      "state": "PARTIAL_PASS_CURRENT_CANDIDATE_TECHNICAL_EXCLUSION_PUBLIC_CLAIM_AND_MANUAL_ACCEPTANCE_PENDING",
+      "accepted": false,
+      "artifactPaths": [
+        "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ShippingBinary-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/FreshUserDir-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/V05CareerAiThrowLabExclusion-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json"
+      ]
+    },
+    {
+      "gateId": "THROW_LAB_SHIPPING_EXCLUSION",
+      "state": "PARTIAL_PASS_CURRENT_CANDIDATE_TECHNICAL_EXCLUSION_PUBLIC_CLAIM_AND_MANUAL_ACCEPTANCE_PENDING",
+      "accepted": false,
+      "artifactPaths": [
+        "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ShippingBinary-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/FreshUserDir-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/V05CareerAiThrowLabExclusion-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json"
+      ]
+    },
+    {
+      "gateId": "SESSION10_ENVIRONMENT_TECHNICAL",
+      "state": "PARTIAL_PASS_CURRENT_CANDIDATE_ENVIRONMENT_TECHNICAL_RHI_VISUAL_PERFORMANCE_PROVENANCE_LEGAL_AND_OWNER_ACCEPTANCE_PENDING",
+      "accepted": false,
+      "artifactPaths": [
+        "Config/DG_Session10EnvironmentCategoryTechnicalPlan.json",
+        "Config/DG_Session10EnvironmentShippingTechnicalPolicy.json",
+        "Scripts/validate_dg_session10_environment_shipping.py",
+        "Evidence/Session10/EnvironmentShippingTechnicalV2-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ExternalTechnicalEvidence-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json"
+      ]
+    },
+    {
+      "gateId": "SESSION11_EQUIPMENT_TECHNICAL",
+      "state": "PARTIAL_PASS_CURRENT_CANDIDATE_EQUIPMENT_CATALOG_DETERMINISTIC_CALIBRATION_SAVE_THROW_LAB_EXCLUSION_AND_MEASURED_REFERENCE_CAPTURE_PROTOCOL_TECHNICAL_MEASURED_DATA_NAME_PLAY_FEEL_PROVENANCE_LEGAL_AND_OWNER_ACCEPTANCE_PENDING",
+      "accepted": false,
+      "artifactPaths": [
+        "Config/DG_Session19V05EquipmentShippingTechnicalPolicy.json",
+        "Scripts/validate_dg_session19_v05_equipment_shipping.py",
+        "Evidence/Session19/V05EquipmentShippingTechnical-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Config/DG_PhysicsMeasuredReferencePolicy.json",
+        "Scripts/validate_dg_physics_measured_reference.py",
+        "Evidence/Session19/PhysicsMeasuredReferenceDataset.template.json",
+        "Evidence/Session19/V05CareerAiThrowLabExclusion-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json"
+      ]
+    },
+    {
+      "gateId": "SESSION12_PRESENTATION_TECHNICAL",
+      "state": "PARTIAL_PASS_CURRENT_CANDIDATE_PRESENTATION_INPUT_AUDIO_TECHNICAL_DEVICE_AUDIO_VISUAL_ACCESSIBILITY_PROVENANCE_LEGAL_AND_OWNER_ACCEPTANCE_PENDING",
+      "accepted": false,
+      "artifactPaths": [
+        "Config/DG_Session12AudioEventCoverage.json",
+        "Config/DG_Session19Session12PresentationTechnicalPolicy.json",
+        "Scripts/validate_dg_session19_session12_presentation_technical.py",
+        "Evidence/Session19/Session12PresentationTechnicalAudioCoverage-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ShippingAudioCook-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ExternalTechnicalEvidence-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json"
+      ]
+    },
+    {
+      "gateId": "BAKED_PCG_SHIPPING_AUTHORITY",
+      "state": "PARTIAL_PASS_CURRENT_CANDIDATE_AUTHORED_DATA_SOURCE_CLOSURE_RUNTIME_SELECTION_AND_NO_PROJECT_AUTHORED_GENERATION_INVOCATION_PROVEN_FRESH_SHIPPING_PCG_ABSENCE_UNREAL_BAKE_REOPEN_COLLISION_VISUAL_PERFORMANCE_AND_SOAK_PENDING",
+      "accepted": false,
+      "artifactPaths": [
+        "Config/DG_Session19BakedPcgPolicy.json",
+        "Scripts/validate_dg_session19_baked_pcg.py",
+        "Evidence/Session19/BakedPcgSourceAuthorityReceipt.json",
+        "Evidence/Session19/BakedPcgSourceClosurePreBuild-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/BakedPcgCandidateVerification-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Config/DG_Session19BakedPcgRuntimeClosurePolicy.json",
+        "Scripts/validate_dg_session19_baked_pcg_runtime_closure.py",
+        "Config/DG_Session19ShippingPcgSeparationPolicy.json",
+        "Scripts/validate_dg_session19_shipping_pcg_separation.py",
+        "Evidence/Session19/ShippingPcgSeparation-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ThreeHoleTechnicalAcceptance-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json"
+      ]
+    },
+    {
+      "gateId": "CHARACTER_FRAMEWORK_REPLACEMENT_OR_REMOVAL",
+      "state": "PARTIAL_PASS_SOURCE_EXTERNAL_QUARANTINE_RETAINED_ASSET_MIGRATION_CURRENT_CANDIDATE_PACKAGE_ABSENCE_AND_FAIL_CLOSED_PRODUCTION_MOTION_AUTHORING_PLAN_RUNTIME_ASSETS_RIGHTS_QUALITY_AND_OWNER_ACCEPTANCE_PENDING",
+      "accepted": false,
+      "artifactPaths": [
+        "Config/DG_Session19ProductionMotionAuthoringPolicy.json",
+        "Scripts/validate_dg_session19_production_motion.py",
+        "Evidence/Session19/ProductionMotionTechnicalCandidateEvidence-ThrowPhysicsAudit-R2.json",
+        "Evidence/Session19/ProductionMotionCookPresence-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Config/DG_Session19SerializedAssetMigrationPolicy.json",
+        "Scripts/migrate_dg_session19_serialized_assets.py",
+        "Scripts/validate_dg_session19_serialized_asset_migration.py",
+        "Evidence/Session19/SerializedAssetMigrationInventory.tsv",
+        "Evidence/Session19/SerializedAssetMigrationReceipt.json",
+        "Evidence/Session19/SerializedAssetMigrationShipping-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/CharacterFrameworkBeforeMove-S19_Framework_20260825T031617Z_c68ee2e4e6be.tsv",
+        "Evidence/Session19/CharacterFrameworkExternalQuarantine-S19_Framework_20260825T031617Z_c68ee2e4e6be.json",
+        "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ShippingBinary-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json"
+      ]
+    },
+    {
+      "gateId": "UNUSED_FAB_EXTERNAL_QUARANTINE",
+      "state": "PARTIAL_PASS_EXTERNAL_QUARANTINE_AND_CURRENT_CANDIDATE_SHIPPING_ABSENCE_PROVENANCE_AND_OWNER_CLOSURE_PENDING",
+      "accepted": false,
+      "artifactPaths": [
+        "Evidence/Session19/UnusedFabExternalQuarantineReceipt.json",
+        "Evidence/Session19/QuarantinedFabBeforeMove.tsv",
+        "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/V05CareerAiThrowLabExclusion-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json"
+      ]
+    },
+    {
+      "gateId": "ACTUAL_STAGED_PACKAGE_PROVENANCE",
+      "state": "PARTIAL_PASS_EXACT_PACKAGING_IDENTITY_AND_TECHNICAL_GENERATION_CLASS_7158_OF_7158_UNDERLYING_LICENSE_CONTENT_RIGHTS_LEGAL_AND_DISTRIBUTION_REVIEW_PENDING",
+      "accepted": false,
+      "artifactPaths": [
+        "Config/DG_Session19StagedProvenancePolicy.json",
+        "Scripts/generate_dg_session19_staged_provenance.py",
+        "Evidence/Session19/StagedProvenanceClassificationDraft-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/StagedProvenanceDraftAudit-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/TechnicalOriginProposal-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/TechnicalOriginAttributionResolved-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json"
+      ]
+    },
+    {
+      "gateId": "MANUAL_HUMAN_RELEASE_REVIEW",
+      "state": "PENDING",
+      "accepted": false,
+      "artifactPaths": [
+        "Config/DG_Session19ManualReleaseReviewPolicy.json",
+        "Scripts/validate_dg_session19_manual_release_review.py",
+        "Docs/DG_SESSION19_MANUAL_RELEASE_REVIEW.md",
+        "Evidence/Session19/ManualReleaseReviewInventory.json",
+        "Evidence/Session19/ManualReleaseDecisionRecord.template.json"
+      ]
+    },
+    {
+      "gateId": "THREE_HOLE_V05_PRODUCTION_ACCEPTANCE",
+      "state": "PARTIAL_PASS_CURRENT_CANDIDATE_FRESH_INSTALL_THREE_HOLE_TECHNICAL_VISUAL_PERFORMANCE_SOAK_ACCESSIBILITY_PROVENANCE_LEGAL_AND_OWNER_ACCEPTANCE_PENDING",
+      "accepted": false,
+      "artifactPaths": [
+        "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/FreshUserDir-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ExternalTechnicalEvidence-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+        "Evidence/Session19/ThreeHoleTechnicalAcceptance-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json"
+      ]
+    }
+  ],
+  "continuity": {
+    "policy": "SESSIONS_9_THROUGH_18_ARE_IMMUTABLE_HISTORICAL_EVIDENCE",
+    "sourceAuthority": "Config/DG_Session18PolyHavenProvenanceContract.json",
+    "frozenFiles": [
+      {"path": "Config/DG_BrandLicenseContract.json", "bytes": 9267, "sha256": "3EF3CBAD7E66D89D41CFB8C8FF59516484D8258995CAFAF28F8D58C4D8EB2001"},
+      {"path": "Scripts/validate_dg_session9_brand_license.py", "bytes": 74292, "sha256": "69867A9CE89D8F7720E2A124BEEB09CE4FFDC02D6F95BED8A11D281EF0EB7550"},
+      {"path": "Docs/DG_BRAND_ASSET_AUDIT.md", "bytes": 7579, "sha256": "4FDA6D610555E2D159C32BAB4D92AB7E599937BA4E5510B9901013EFAD13737E"},
+      {"path": "Config/DG_Session10EnvironmentContract.json", "bytes": 19976, "sha256": "05931329CE877E80D4D36691D9091BBD6DDACE8F3F40612C5BE11B47744CDDC5"},
+      {"path": "Scripts/validate_dg_session10_environment.py", "bytes": 76608, "sha256": "13F3AECBB569466B6E3E8C49E0B3FA599EF57B13CE23604602CDC3158809112A"},
+      {"path": "Docs/DG_SESSION10_ENVIRONMENT_AUDIT.md", "bytes": 14074, "sha256": "4FF60C5413672A3D72A8AFE76B0E94B6852EB3F950C835E315F3F9C8446449EC"},
+      {"path": "Config/DG_Session11EquipmentThrowLabContract.json", "bytes": 20213, "sha256": "5306B7C1354775A896332474711B5E6E92C44B44F7EFDE0D9353EB4E9DBCA79D"},
+      {"path": "Scripts/validate_dg_session11_equipment_throw_lab.py", "bytes": 36254, "sha256": "E9D262E61122176EB4515D4AA2A4854D6354EADA2871B3A01299B17B13179D8A"},
+      {"path": "Docs/DG_SESSION11_EQUIPMENT_THROW_LAB_AUDIT.md", "bytes": 8507, "sha256": "04F0F1FF988B274069F93385F5AAF3E6B67B2ADD1EC9EECDEE8C8969312FC8EC"},
+      {"path": "Config/DG_Session12PresentationContract.json", "bytes": 14978, "sha256": "B8385D58B102C06AC19A986B14E2858C1906F7BD79D28D48C9AB555D0EB4AB3F"},
+      {"path": "Scripts/validate_dg_session12_presentation.py", "bytes": 30684, "sha256": "D2FCEE88310BF00B3A7F0EE1803E8F2216D5E42C15161B631E8A473A683B5388"},
+      {"path": "Docs/DG_SESSION12_PRESENTATION_AUDIT.md", "bytes": 12898, "sha256": "2A560B5374422C5E4962654C8A9A5056D4827ED0C75CD462A88ED6826E51FB70"},
+      {"path": "Config/DG_Session13CourseAuthoringPcgContract.json", "bytes": 17700, "sha256": "64554C71530F09CE4AC6F779A65A720C195112617DDEA7D08E574F4258A044F0"},
+      {"path": "Scripts/validate_dg_session13_course_authoring_pcg.py", "bytes": 51940, "sha256": "ABD65FA427ACB7099E603CC045C5333D3E3BD26C8C8E5EF6A07C3406B3A03E2F"},
+      {"path": "Docs/DG_SESSION13_COURSE_AUTHORING_PCG_AUDIT.md", "bytes": 7257, "sha256": "810610B96E1DCD2F700C908B48E48F9B9E5080B6F3A32FA461D7F60BDAE443F8"},
+      {"path": "Config/DG_Session14CareerAiTestingContract.json", "bytes": 16762, "sha256": "5ADBA78E08C508C62C5BA71E7145C8939398F2819EF5B357F42D1E01EEF6C48D"},
+      {"path": "Scripts/validate_dg_session14_career_ai.py", "bytes": 34967, "sha256": "9A7E15D9D0F0F7BF36CD1960FFA0D8ED924376975CD84DC6208B4A1E288EF691"},
+      {"path": "Docs/DG_SESSION14_CAREER_AI_TESTING_AUDIT.md", "bytes": 8323, "sha256": "8A1867CDF159D2C41863A2C3A7E0B847C746152E62E9269F4078A062D3A771DA"},
+      {"path": "Config/DG_Session15VerticalSliceContract.json", "bytes": 17917, "sha256": "DDE8DF325D5E6765D814C9B2656FBA0D544F79F8EE549BCA63FD8F4D64EA9142"},
+      {"path": "Scripts/validate_dg_session15_vertical_slice.py", "bytes": 46943, "sha256": "457BC09E5D223E4B5B91250073894A56F68E8157254776DEF798F305F7B44EC2"},
+      {"path": "Docs/DG_SESSION15_VERTICAL_SLICE_AUDIT.md", "bytes": 9164, "sha256": "EF7F6F83461D88CA1F536C7B082118FB909EAB62A2F8F0747436DA31C6DDC51D"},
+      {"path": "Config/DG_Session16CorePlayabilityContract.json", "bytes": 23985, "sha256": "A30DC355EB098D2C9FF5F7CDD1BF3139FCE207EC4E9D79C57548DD961869B692"},
+      {"path": "Scripts/validate_dg_session16_core_playability.py", "bytes": 55677, "sha256": "2364D916BDC5E62B0609F27ACB4BA3E936318B9A7985EC9DF939F4EB33182A9F"},
+      {"path": "Docs/DG_SESSION16_CORE_PLAYABILITY_AUDIT.md", "bytes": 9880, "sha256": "B4F1F3DB2376071290BF243AABC7C958B5CFF6429CD7C181A53979DCA9AC8BDC"},
+      {"path": "Docs/DG_SESSION17_INTERACTIVE_ROUND_FLOW_AUDIT.md", "bytes": 6208, "sha256": "19330DAAB484491CBC265025857CD4C016274076CEDF595F540A000B07FD1670"},
+      {"path": "Config/DG_Session18PolyHavenProvenanceContract.json", "bytes": 6766, "sha256": "93412BAE4021EB03B8F41FC54CE681A3F06953C896687AF041451237CA410D1D"},
+      {"path": "Scripts/validate_dg_session18_poly_haven_provenance.py", "bytes": 73507, "sha256": "F48F5D3C3FA29A4234556DA99B17993255B9F0C9CF7114B0A6F3C7EC2587AD59"},
+      {"path": "Docs/DG_SESSION18_POLY_HAVEN_PROVENANCE_AUDIT.md", "bytes": 6778, "sha256": "BB6595E1127A8819D4BC063AF9A4F6CDD29D9D084F68FC11AC2002C9B815BA88"}
+    ]
+  },
+  "inheritedReleaseBlockers": [
+    "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+    "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+    "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+    "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+    "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+    "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+    "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED",
+    "SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY",
+    "SESSION11_EQUIPMENT_PHYSICS_AND_PRODUCTION_READINESS_PENDING",
+    "SESSION12_PRESENTATION_INPUT_AUDIO_PRODUCTION_READINESS_PENDING",
+    "SESSION13_COURSE_AUTHORING_PCG_PRODUCTION_READINESS_PENDING",
+    "SESSION14_CAREER_AI_PRODUCTION_READINESS_PENDING",
+    "SESSION15_VERTICAL_SLICE_PRODUCTION_READINESS_PENDING"
+  ],
+  "resolvedBySession19": [],
+  "remainingReleaseBlockers": [
+    "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+    "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+    "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+    "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+    "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+    "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+    "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED",
+    "SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY",
+    "SESSION11_EQUIPMENT_PHYSICS_AND_PRODUCTION_READINESS_PENDING",
+    "SESSION12_PRESENTATION_INPUT_AUDIO_PRODUCTION_READINESS_PENDING",
+    "SESSION13_COURSE_AUTHORING_PCG_PRODUCTION_READINESS_PENDING",
+    "SESSION14_CAREER_AI_PRODUCTION_READINESS_PENDING",
+    "SESSION15_VERTICAL_SLICE_PRODUCTION_READINESS_PENDING"
+  ],
+  "closureSummary": {
+    "inheritedBlockerCount": 13,
+    "resolvedBySession19Count": 0,
+    "remainingBlockerCount": 13,
+    "allStrategiesApproved": true,
+    "acceptedEvidenceGateCount": 0,
+    "partiallySatisfiedEvidenceGateCount": 11,
+    "failClosedEvidenceGateCount": 0,
+    "releaseReady": false
+  },
+  "requiredFiles": [
+    "Config/DG_Session19ReleaseScopeContract.json",
+    "Scripts/validate_dg_session19_release_scope.py",
+    "Config/DG_Session19ShippingContentPolicy.json",
+    "Scripts/validate_dg_session19_candidate_content.py",
+    "Config/DefaultPakFileRules.ini",
+    "Config/DefaultGame.ini",
+    "DiscGolfTour.uproject",
+    "Source/DiscGolfTour.Target.cs",
+    "Config/DG_Session19ShippingPluginCapabilityPolicy.json",
+    "Scripts/validate_dg_session19_shipping_plugin_capabilities.py",
+    "Scripts/run-session19-shipping-candidate.ps1",
+    "Scripts/verify-session19-shipping-candidate.ps1",
+    "Source/DiscGolfTour/DiscGolfTour.Build.cs",
+    "Config/DG_Session19StagedProvenancePolicy.json",
+    "Scripts/generate_dg_session19_staged_provenance.py",
+    "Evidence/Session19/ShippingBuildCookRun-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.log",
+    "Evidence/Session19/ShippingCandidate-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Evidence/Session19/ShippingPluginCapability-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Evidence/Session19/ShippingBinary-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Evidence/Session19/ThirdPartyNoticeVerification-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Evidence/Session19/StagedProvenanceClassificationDraft-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Evidence/Session19/StagedProvenanceDraftAudit-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Scripts/validate_dg_session19_fresh_userdir.py",
+    "Evidence/Session19/FreshUserDir-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Scripts/DG_Session19ExternalTechnicalEvidencePolicy.json",
+    "Scripts/validate_dg_session19_external_technical_evidence.py",
+    "Scripts/run_dg_session19_external_technical_evidence.py",
+    "Evidence/Session19/ExternalTechnicalEvidence-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Config/DG_Session19V05CareerAiThrowLabShippingExclusionPolicy.json",
+    "Scripts/validate_dg_session19_v05_feature_exclusion.py",
+    "Evidence/Session19/V05CareerAiThrowLabExclusion-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Config/DG_Session19V05EquipmentShippingTechnicalPolicy.json",
+    "Scripts/validate_dg_session19_v05_equipment_shipping.py",
+    "Evidence/Session19/V05EquipmentShippingTechnical-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Config/DG_PhysicsMeasuredReferencePolicy.json",
+    "Scripts/validate_dg_physics_measured_reference.py",
+    "Evidence/Session19/PhysicsMeasuredReferenceDataset.template.json",
+    "Config/DG_Session10EnvironmentCategoryTechnicalPlan.json",
+    "Config/DG_Session10EnvironmentShippingTechnicalPolicy.json",
+    "Scripts/validate_dg_session10_environment_shipping.py",
+    "Evidence/Session10/EnvironmentShippingTechnicalV2-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Config/DG_Session12AudioEventCoverage.json",
+    "Config/DG_Session19Session12PresentationTechnicalPolicy.json",
+    "Scripts/validate_dg_session19_session12_presentation_technical.py",
+    "Evidence/Session19/Session12PresentationTechnicalAudioCoverage-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Evidence/Session19/ShippingAudioCook-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Config/DG_Session19TechnicalOriginAttributionPolicy.json",
+    "Scripts/validate_dg_session19_technical_origin_attribution.py",
+    "Scripts/generate_dg_session19_technical_origin_proposal.py",
+    "Scripts/validate_dg_session19_technical_origin_proposal.py",
+    "Evidence/Session19/TechnicalOriginProposal-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Evidence/Session19/TechnicalOriginAttributionResolved-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Config/DG_Session19ThreeHoleTechnicalAcceptancePolicy.json",
+    "Scripts/validate_dg_session19_three_hole_technical_acceptance.py",
+    "Evidence/Session19/ThreeHoleTechnicalAcceptance-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Config/DG_Session19BakedPcgPolicy.json",
+    "Scripts/validate_dg_session19_baked_pcg.py",
+    "Evidence/Session19/BakedPcgSourceAuthorityReceipt.json",
+    "Evidence/Session19/BakedPcgSourceClosurePreBuild-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Evidence/Session19/BakedPcgCandidateVerification-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Config/DG_Session19BakedPcgRuntimeClosurePolicy.json",
+    "Scripts/validate_dg_session19_baked_pcg_runtime_closure.py",
+    "Config/DG_Session19ShippingPcgSeparationPolicy.json",
+    "Scripts/validate_dg_session19_shipping_pcg_separation.py",
+    "Evidence/Session19/ShippingPcgSeparation-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Config/DG_Session19ProductionMotionAuthoringPolicy.json",
+    "Scripts/validate_dg_session19_production_motion.py",
+    "Evidence/Session19/ProductionMotionTechnicalCandidateEvidence-ThrowPhysicsAudit-R2.json",
+    "Evidence/Session19/ProductionMotionCookPresence-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Config/DG_Session19ShippingAudioPolicy.json",
+    "Config/DG_Session19SerializedAssetMigrationPolicy.json",
+    "Scripts/migrate_dg_session19_serialized_assets.py",
+    "Scripts/validate_dg_session19_serialized_asset_migration.py",
+    "Evidence/Session19/SerializedAssetMigrationInventory.tsv",
+    "Evidence/Session19/SerializedAssetMigrationReceipt.json",
+    "Evidence/Session19/SerializedAssetMigrationShipping-S19_WindowsShipping_20260826T120643Z_afbe7694ccf5.json",
+    "Evidence/Session19/CharacterFrameworkBeforeMove-S19_Framework_20260825T031617Z_c68ee2e4e6be.tsv",
+    "Evidence/Session19/CharacterFrameworkExternalQuarantine-S19_Framework_20260825T031617Z_c68ee2e4e6be.json",
+    "Evidence/Session19/UnusedFabExternalQuarantineReceipt.json",
+    "Evidence/Session19/QuarantinedFabBeforeMove.tsv",
+    "Config/DG_Session19ManualReleaseReviewPolicy.json",
+    "Scripts/validate_dg_session19_manual_release_review.py",
+    "Docs/DG_SESSION19_MANUAL_RELEASE_REVIEW.md",
+    "Evidence/Session19/ManualReleaseReviewInventory.json",
+    "Evidence/Session19/ManualReleaseDecisionRecord.template.json"
+  ],
+  "validation": {
+    "validatorPath": "Scripts/validate_dg_session19_release_scope.py",
+    "normalExpectedExitCode": 0,
+    "releaseRequiredExpectedExitCode": 2,
+    "selfTestMinimumMutationCount": 200,
+    "normalModeMustRemainReleaseBlocked": true,
+    "writesReports": false
+  }
+}

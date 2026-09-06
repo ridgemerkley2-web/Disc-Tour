@@ -1,0 +1,335 @@
+{
+  "schema": "DiscGolfTour.Session16CorePlayabilityContract.v1",
+  "schema_version": 1,
+  "scope": "SOURCE_SIDE_CORE_PLAYABILITY_PREPARATION_TECHNICAL_ONLY",
+  "normal_status": "PASS_CORE_PLAYABILITY_TECHNICAL_CLOSURE_RELEASE_BLOCKED",
+  "closure_status": "COMPLETE_RUNTIME_AND_PACKAGE_EVIDENCE",
+  "release_status": "BLOCKED_PENDING_INHERITED_SESSION9_TO_SESSION15_PRODUCTION_CLOSURE",
+  "policy": {
+    "technical_only": true,
+    "legal_advice": false,
+    "production_art_approval": false,
+    "public_release_approval": false,
+    "prepared_check_count": 44,
+    "all_checks_blocking": true,
+    "smoke_or_core_failure_blocks_polish": true,
+    "parallel_gameplay_authority_allowed": false,
+    "historical_contract_rewrite_allowed": false,
+    "closure_evidence_required": true,
+    "closure_evidence_complete": true,
+    "technical_closure_accepted": true,
+    "release_ready": false
+  },
+  "buildkit_sources": [
+    {
+      "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Config/DG_CorePlayabilityGate.json",
+      "bytes": 2587,
+      "sha256": "86BEE84E959E94C369052BD6EFF18BC9611EC9600605FE25C959259DBDE33E5C"
+    },
+    {
+      "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Docs/51_CORE_PLAYABILITY_GATE.md",
+      "bytes": 1588,
+      "sha256": "836A3AD2DCDDD2F1C782BCA21B93EA7AC224407F353A1EBA81DF841BD7367135"
+    },
+    {
+      "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Docs/56_PLAYABILITY_RELEASE_CHECKLIST.md",
+      "bytes": 1221,
+      "sha256": "A4CDDFB0B9999DE638A43AA72D087B417E04D68CDC347E918C946423FD786554"
+    }
+  ],
+  "gate_contract": {
+    "source_schema_version": 1,
+    "source_policy": "BLOCK_POLISH_IF_CORE_PLAYABILITY_FAILS",
+    "gate_order": ["Smoke", "CoreLoop", "Round", "Persistence"],
+    "gate_check_counts": {
+      "Smoke": 11,
+      "CoreLoop": 16,
+      "Round": 7,
+      "Persistence": 10
+    },
+    "timeouts_seconds": {
+      "boot_game": 30,
+      "course_load": 30,
+      "disc_launches": 5,
+      "disc_settles_or_holes_out": 30,
+      "hole_completes": 180,
+      "round_completes": 1800
+    },
+    "blocking_failure_examples": [
+      "disc never settles",
+      "input remains in replay mode",
+      "camera cannot return to gameplay",
+      "basket completion never advances state",
+      "score fails to update",
+      "player cannot take the next throw",
+      "save load produces an unusable player"
+    ],
+    "polish_rule": "Do not spend integration time on visual polish while Smoke or CoreLoop has blocking failures."
+  },
+  "authority_catalog": [
+    {
+      "authority_id": "runtime_boot",
+      "authority": "ADiscGolfTourGameMode and ADiscGolfTourPlayerController startup",
+      "paths": [
+        "Source/DiscGolfTour/DiscGolfTourGameMode.h",
+        "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+        "Source/DiscGolfTour/DiscGolfTourPlayerController.h",
+        "Source/DiscGolfTour/DiscGolfTourPlayerController.cpp"
+      ]
+    },
+    {
+      "authority_id": "player_profile",
+      "authority": "UDiscGolfTourGameInstance schema-10 profile",
+      "paths": [
+        "Source/DiscGolfTour/DiscGolfTourGameInstance.h",
+        "Source/DiscGolfTour/DiscGolfTourGameInstance.cpp",
+        "Source/DiscGolfTour/DiscGolfSaveGame.h"
+      ]
+    },
+    {
+      "authority_id": "course_bootstrap",
+      "authority": "ADevCourseBootstrap and authored Pine Ridge course definitions",
+      "paths": [
+        "Source/DiscGolfTour/DevCourseBootstrap.h",
+        "Source/DiscGolfTour/DevCourseBootstrap.cpp",
+        "Source/DiscGolfTour/DiscGolfCourseDefinition.h",
+        "Source/DiscGolfTour/DiscGolfCourseDefinition.cpp"
+      ]
+    },
+    {
+      "authority_id": "bag_equipment",
+      "authority": "UDiscBagComponent project-owned equipment inventory and selection",
+      "paths": [
+        "Source/DiscGolfTour/DiscBagComponent.h",
+        "Source/DiscGolfTour/DiscBagComponent.cpp"
+      ]
+    },
+    {
+      "authority_id": "throw_input",
+      "authority": "ADiscGolferPawn input and UThrowControllerComponent command capture",
+      "paths": [
+        "Source/DiscGolfTour/DiscGolferPawn.h",
+        "Source/DiscGolfTour/DiscGolferPawn.cpp",
+        "Source/DiscGolfTour/ThrowControllerComponent.h",
+        "Source/DiscGolfTour/ThrowControllerComponent.cpp"
+      ]
+    },
+    {
+      "authority_id": "release_authority",
+      "authority": "ADiscGolfTourGameMode::RequestThrow through the accepted animated release adapter",
+      "paths": [
+        "Source/DiscGolfTour/DiscGolfTourGameMode.h",
+        "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+        "Source/DiscGolfTour/DiscGolferPawn.h",
+        "Source/DiscGolfTour/DiscGolferPawn.cpp"
+      ]
+    },
+    {
+      "authority_id": "flight_authority",
+      "authority": "UDiscFlightComponent fixed-step 240 Hz solver",
+      "paths": [
+        "Source/DiscGolfTour/DiscFlightComponent.h",
+        "Source/DiscGolfTour/DiscFlightComponent.cpp"
+      ]
+    },
+    {
+      "authority_id": "lie_rules",
+      "authority": "DiscGolfCourseRules and authoritative FDiscGolfLieState",
+      "paths": [
+        "Source/DiscGolfTour/DiscGolfCourseRules.h",
+        "Source/DiscGolfTour/DiscGolfCourseRules.cpp",
+        "Source/DiscGolfTour/DiscGolfTypes.h"
+      ]
+    },
+    {
+      "authority_id": "basket_score",
+      "authority": "ADiscGolfTourGameMode basket outcome, stroke, and hole completion path",
+      "paths": [
+        "Source/DiscGolfTour/DiscGolfTourGameMode.h",
+        "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+        "Source/DiscGolfTour/DiscGolfMath.h"
+      ]
+    },
+    {
+      "authority_id": "round_state",
+      "authority": "FDiscGolfRoundState and DiscGolfRound progression",
+      "paths": [
+        "Source/DiscGolfTour/DiscGolfRoundState.h",
+        "Source/DiscGolfTour/DiscGolfRoundState.cpp"
+      ]
+    },
+    {
+      "authority_id": "temporary_state_recovery",
+      "authority": "Project replay, camera-view token, and input-route policies",
+      "paths": [
+        "Source/DiscGolfTour/DiscReplayActor.h",
+        "Source/DiscGolfTour/DiscReplayActor.cpp",
+        "Source/DiscGolfTour/DiscGolfCameraViewContract.h",
+        "Source/DiscGolfTour/DiscGolfCameraViewContract.cpp",
+        "Source/DiscGolfTour/DiscGolfInputRoutePolicy.h"
+      ]
+    },
+    {
+      "authority_id": "lifecycle_guard",
+      "authority": "ADiscGolfTourGameMode single-player/single-disc lifecycle gate",
+      "paths": [
+        "Source/DiscGolfTour/DiscGolfTourGameMode.h",
+        "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+        "Source/DiscGolfTour/DiscGolfGameplayGate.h"
+      ]
+    },
+    {
+      "authority_id": "presentation_results",
+      "authority": "ADiscGolfHUD scorecard and round-complete presentation",
+      "paths": [
+        "Source/DiscGolfTour/DiscGolfHUD.h",
+        "Source/DiscGolfTour/DiscGolfHUD.cpp"
+      ]
+    },
+    {
+      "authority_id": "career_persistence",
+      "authority": "UDiscGolfCareerSubsystem isolated schema-v1 career domain",
+      "paths": [
+        "Source/DiscGolfTour/DiscGolfCareerSubsystem.h",
+        "Source/DiscGolfTour/DiscGolfCareerSubsystem.cpp",
+        "Source/DiscGolfTour/DiscGolfCareerProgressSaveGame.h"
+      ]
+    },
+    {
+      "authority_id": "missing_content_recovery",
+      "authority": "DiscGolfFullCharacter normalization and optional-backend fallback",
+      "paths": [
+        "Source/DiscGolfTour/DiscGolfFullCharacterRuntime.h",
+        "Source/DiscGolfTour/DiscGolfFullCharacterRuntime.cpp",
+        "Source/DiscGolfTour/DiscGolfMetaHumanAvatarBackendComponent.h",
+        "Source/DiscGolfTour/DiscGolfMetaHumanAvatarBackendComponent.cpp"
+      ]
+    }
+  ],
+  "prepared_checks": [
+    {"gate": "Smoke", "check_id": "boot_game", "failure_code": "BootFailed", "authority_ids": ["runtime_boot"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Smoke", "check_id": "main_menu_available", "failure_code": "MainMenuUnavailable", "authority_ids": ["runtime_boot", "temporary_state_recovery"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Smoke", "check_id": "player_profile_available", "failure_code": "PlayerProfileUnavailable", "authority_ids": ["player_profile"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Smoke", "check_id": "course_load", "failure_code": "CourseLoadFailed", "authority_ids": ["course_bootstrap"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Smoke", "check_id": "spawn_at_tee", "failure_code": "HoleSpawnFailed", "authority_ids": ["course_bootstrap", "runtime_boot"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Smoke", "check_id": "bag_available", "failure_code": "BagUnavailable", "authority_ids": ["bag_equipment"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Smoke", "check_id": "select_disc", "failure_code": "DiscSelectionFailed", "authority_ids": ["bag_equipment"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Smoke", "check_id": "enter_aim", "failure_code": "AimStateUnavailable", "authority_ids": ["throw_input", "temporary_state_recovery"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Smoke", "check_id": "start_throw", "failure_code": "ThrowCouldNotStart", "authority_ids": ["throw_input", "lifecycle_guard"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Smoke", "check_id": "release_notify_fires", "failure_code": "ReleaseNotifyMissing", "authority_ids": ["release_authority"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Smoke", "check_id": "disc_launches", "failure_code": "DiscLaunchFailed", "authority_ids": ["release_authority", "flight_authority"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "physics_advances", "failure_code": "PhysicsDidNotAdvance", "authority_ids": ["flight_authority"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "disc_settles_or_holes_out", "failure_code": "DiscNeverSettled", "authority_ids": ["flight_authority", "basket_score"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "lie_updates", "failure_code": "LieNotUpdated", "authority_ids": ["lie_rules", "basket_score"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "next_throw_available", "failure_code": "PlayerCouldNotContinue", "authority_ids": ["lifecycle_guard", "lie_rules"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "ob_penalty_if_triggered", "failure_code": "OutOfBoundsRuleFailed", "authority_ids": ["lie_rules", "basket_score"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "water_penalty_if_triggered", "failure_code": "WaterRuleFailed", "authority_ids": ["lie_rules", "basket_score"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "basket_detects_completion", "failure_code": "BasketDetectionFailed", "authority_ids": ["basket_score", "flight_authority"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "score_updates", "failure_code": "ScoreUpdateFailed", "authority_ids": ["basket_score", "round_state"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "hole_completes", "failure_code": "HoleCompletionFailed", "authority_ids": ["basket_score", "round_state"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "pause_resume", "failure_code": "ResumeFailed", "authority_ids": ["runtime_boot", "temporary_state_recovery"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "camera_recovers", "failure_code": "CameraStateStuck", "authority_ids": ["temporary_state_recovery"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "input_context_recovers", "failure_code": "InputContextStuck", "authority_ids": ["temporary_state_recovery"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "replay_exits_cleanly", "failure_code": "ReplayStateStuck", "authority_ids": ["temporary_state_recovery", "lifecycle_guard"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "no_duplicate_player", "failure_code": "DuplicatePlayerDetected", "authority_ids": ["lifecycle_guard", "runtime_boot"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "no_duplicate_disc", "failure_code": "DuplicateDiscDetected", "authority_ids": ["lifecycle_guard", "release_authority"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "CoreLoop", "check_id": "no_soft_lock", "failure_code": "SoftLockDetected", "authority_ids": ["lifecycle_guard", "temporary_state_recovery"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Round", "check_id": "advance_to_next_hole", "failure_code": "NextHoleFailed", "authority_ids": ["round_state", "course_bootstrap"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Round", "check_id": "spawn_next_hole", "failure_code": "HoleSpawnFailed", "authority_ids": ["course_bootstrap", "round_state"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Round", "check_id": "scorecard_persists_between_holes", "failure_code": "ScoreUpdateFailed", "authority_ids": ["round_state", "presentation_results"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Round", "check_id": "multiple_holes_complete", "failure_code": "HoleCompletionFailed", "authority_ids": ["round_state", "basket_score"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Round", "check_id": "round_completes", "failure_code": "RoundCompletionFailed", "authority_ids": ["round_state"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Round", "check_id": "results_screen_available", "failure_code": "ResultsScreenFailed", "authority_ids": ["presentation_results", "round_state"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Round", "check_id": "return_to_menu_or_continue", "failure_code": "PlayerCouldNotContinue", "authority_ids": ["runtime_boot", "temporary_state_recovery", "round_state"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Persistence", "check_id": "save_player", "failure_code": "SaveFailed", "authority_ids": ["player_profile"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Persistence", "check_id": "save_bag", "failure_code": "SaveFailed", "authority_ids": ["bag_equipment"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Persistence", "check_id": "save_settings", "failure_code": "SaveFailed", "authority_ids": ["player_profile", "temporary_state_recovery"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Persistence", "check_id": "save_round_or_career", "failure_code": "SaveFailed", "authority_ids": ["player_profile", "round_state", "career_persistence"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Persistence", "check_id": "load_save", "failure_code": "LoadFailed", "authority_ids": ["player_profile", "bag_equipment", "career_persistence"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Persistence", "check_id": "loaded_character_matches", "failure_code": "SaveMismatch", "authority_ids": ["player_profile", "missing_content_recovery"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Persistence", "check_id": "loaded_bag_matches", "failure_code": "SaveMismatch", "authority_ids": ["bag_equipment"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Persistence", "check_id": "loaded_settings_match", "failure_code": "SaveMismatch", "authority_ids": ["player_profile", "temporary_state_recovery"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Persistence", "check_id": "missing_cosmetic_falls_back", "failure_code": "InvalidCosmeticRecoveryFailed", "authority_ids": ["missing_content_recovery", "player_profile"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"},
+    {"gate": "Persistence", "check_id": "missing_optional_asset_does_not_block_play", "failure_code": "MissingAssetRecoveryFailed", "authority_ids": ["missing_content_recovery", "runtime_boot"], "prepared_status": "PREPARED_SOURCE_ASSERTION", "closure_status": "PASS"}
+  ],
+  "focused_automation": {
+    "prefix": "DiscGolfTour.Session16.",
+    "expected_test_count": 9,
+    "expected_tests": [
+      "DiscGolfTour.Session16.Catalog.ExactRequiredChecks",
+      "DiscGolfTour.Session16.Gates.SmokePass",
+      "DiscGolfTour.Session16.Gates.CoreLoopPass",
+      "DiscGolfTour.Session16.Gates.RoundPass",
+      "DiscGolfTour.Session16.Gates.PersistencePass",
+      "DiscGolfTour.Session16.Gates.RejectIncompleteEvidence",
+      "DiscGolfTour.Session16.Contract.FailureAndReportSemantics",
+      "DiscGolfTour.Session16.Watchdog.ExplicitLifecycle",
+      "DiscGolfTour.Session16.Persistence.OptionalAssetFallback"
+    ],
+    "status": "PASS",
+    "evidence_path": "Saved/Automation/Session16Focused_PostPackage_5eeeebc6-969b-4d99-a342-e62aeff522f6/index.json",
+    "passed": 9,
+    "failed": 0,
+    "not_run": 0
+  },
+  "closure_evidence": {
+    "editor_development_build": {"status": "PASS", "path": "Binaries/Win64/UnrealEditor-DiscGolfTour.dll", "bytes": 5738496, "sha256": "1639670CB1C9B40B80DE154BA20319078D0DA4DB1C1C11BB7899F2E40754BDD8"},
+    "game_development_build": {"status": "PASS", "path": "Binaries/Win64/DiscGolfTour.exe", "bytes": 341307904, "sha256": "FC459A2CF47AC5C4270363186692A378A5D78ACC82987BBAA69666DF7879D55D"},
+    "focused_automation": {"status": "PASS", "path": "Saved/Automation/Session16Focused_PostPackage_5eeeebc6-969b-4d99-a342-e62aeff522f6/index.json", "bytes": 4225, "sha256": "2703FB605C565C68A00403E49F883F236749B39003B51C491CEACEB7C53D4272"},
+    "full_automation": {"status": "PASS", "path": "Saved/Automation/FullRegression_Session16_PostPackage_d38a9e79-59d3-4852-bb95-81bd8f3097a6/index.json", "bytes": 96644, "sha256": "1D3B3E2F21C944F02BCF469B11FDB2FC5525C327D550C807226645F3F0A4F570"},
+    "editor_live_acceptance": {"status": "PASS", "path": "Saved/Session16Reports/Acceptance_editor_d64ee8c4-e1a6-4b49-9d73-d9bb76c834e2/PlayabilityReport.json", "bytes": 42321, "sha256": "303EE590BBDD8F3B3A3222782D4AE83B987528258440654D12E89FEB292CC4A4"},
+    "fresh_package": {"status": "PASS", "path": "Saved/Session16Reports/Acceptance_packaged_07bb2b2a-be53-4686-bf67-088158e3da5c/RuntimeEvidence/PackageManifest.json", "bytes": 10251, "sha256": "5E02E82DA476744DE8779407A4C746E0AE7F9562E2EE0E1FD02012587A611BE9"},
+    "packaged_live_acceptance": {"status": "PASS", "path": "Saved/Session16Reports/Acceptance_packaged_07bb2b2a-be53-4686-bf67-088158e3da5c/PlayabilityReport.json", "bytes": 42317, "sha256": "F438431E54349CB3B07B35C2F1744AB0083DA510EFAB6E8FA1B11CF0E835A1F1"},
+    "protected_profile_after_all_runs": {"status": "PASS", "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav", "bytes": 5212, "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14"}
+  },
+  "continuity": {
+    "frozen_files": [
+      {"path": "Config/DG_BrandLicenseContract.json", "bytes": 9267, "sha256": "3EF3CBAD7E66D89D41CFB8C8FF59516484D8258995CAFAF28F8D58C4D8EB2001"},
+      {"path": "Scripts/validate_dg_session9_brand_license.py", "bytes": 74292, "sha256": "69867A9CE89D8F7720E2A124BEEB09CE4FFDC02D6F95BED8A11D281EF0EB7550"},
+      {"path": "Config/DG_Session10EnvironmentContract.json", "bytes": 19976, "sha256": "05931329CE877E80D4D36691D9091BBD6DDACE8F3F40612C5BE11B47744CDDC5"},
+      {"path": "Scripts/validate_dg_session10_environment.py", "bytes": 76608, "sha256": "13F3AECBB569466B6E3E8C49E0B3FA599EF57B13CE23604602CDC3158809112A"},
+      {"path": "Config/DG_Session11EquipmentThrowLabContract.json", "bytes": 20213, "sha256": "5306B7C1354775A896332474711B5E6E92C44B44F7EFDE0D9353EB4E9DBCA79D"},
+      {"path": "Scripts/validate_dg_session11_equipment_throw_lab.py", "bytes": 36254, "sha256": "E9D262E61122176EB4515D4AA2A4854D6354EADA2871B3A01299B17B13179D8A"},
+      {"path": "Config/DG_Session12PresentationContract.json", "bytes": 14978, "sha256": "B8385D58B102C06AC19A986B14E2858C1906F7BD79D28D48C9AB555D0EB4AB3F"},
+      {"path": "Scripts/validate_dg_session12_presentation.py", "bytes": 30684, "sha256": "D2FCEE88310BF00B3A7F0EE1803E8F2216D5E42C15161B631E8A473A683B5388"},
+      {"path": "Config/DG_Session13CourseAuthoringPcgContract.json", "bytes": 17700, "sha256": "64554C71530F09CE4AC6F779A65A720C195112617DDEA7D08E574F4258A044F0"},
+      {"path": "Scripts/validate_dg_session13_course_authoring_pcg.py", "bytes": 51940, "sha256": "ABD65FA427ACB7099E603CC045C5333D3E3BD26C8C8E5EF6A07C3406B3A03E2F"},
+      {"path": "Config/DG_Session14CareerAiTestingContract.json", "bytes": 16762, "sha256": "5ADBA78E08C508C62C5BA71E7145C8939398F2819EF5B357F42D1E01EEF6C48D"},
+      {"path": "Scripts/validate_dg_session14_career_ai.py", "bytes": 34967, "sha256": "9A7E15D9D0F0F7BF36CD1960FFA0D8ED924376975CD84DC6208B4A1E288EF691"},
+      {"path": "Config/DG_Session15VerticalSliceContract.json", "bytes": 17917, "sha256": "DDE8DF325D5E6765D814C9B2656FBA0D544F79F8EE549BCA63FD8F4D64EA9142"},
+      {"path": "Scripts/validate_dg_session15_vertical_slice.py", "bytes": 46943, "sha256": "457BC09E5D223E4B5B91250073894A56F68E8157254776DEF798F305F7B44EC2"}
+    ],
+    "protected_profile": {
+      "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+      "bytes": 5212,
+      "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14",
+      "writes_allowed": false,
+      "must_remain_only_project_savegame_file": true
+    }
+  },
+  "session16_development_gate_blocker": null,
+  "release_blockers": [
+    "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+    "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+    "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+    "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+    "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+    "POLY_HAVEN_DERIVED_RUNTIME_PROVENANCE_RECEIPT_INCOMPLETE",
+    "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+    "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED",
+    "SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY",
+    "SESSION11_EQUIPMENT_PHYSICS_AND_PRODUCTION_READINESS_PENDING",
+    "SESSION12_PRESENTATION_INPUT_AUDIO_PRODUCTION_READINESS_PENDING",
+    "SESSION13_COURSE_AUTHORING_PCG_PRODUCTION_READINESS_PENDING",
+    "SESSION14_CAREER_AI_PRODUCTION_READINESS_PENDING",
+    "SESSION15_VERTICAL_SLICE_PRODUCTION_READINESS_PENDING"
+  ],
+  "exit_gate": {
+    "status": "TECHNICAL_CLOSURE_ACCEPTED_RELEASE_BLOCKED",
+    "prepared_source_contract_complete": true,
+    "runtime_closure_complete": true,
+    "packaged_closure_complete": true,
+    "production_readiness_approved": false,
+    "release_ready": false
+  }
+}

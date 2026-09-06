@@ -1,0 +1,1755 @@
+{
+  "schema": "DiscGolfTour.PineRidgeDerivedAssetReceipt.v1",
+  "schemaVersion": 1,
+  "sourceId": "poly_haven_pine_ridge_cc0",
+  "status": "COMPLETE_DURABLE_SOURCE_TO_UASSET_RECEIPT",
+  "completedUtc": "2026-08-25T00:33:30.869533Z",
+  "license": {
+    "spdxExpression": "CC0-1.0",
+    "url": "https://polyhaven.com/license",
+    "attributionRequired": false
+  },
+  "sourceManifest": {
+    "relativePath": "SourceArt/PineRidge/PolyHaven/asset_manifest.json",
+    "byteSize": 22875,
+    "sha256": "880C79DD7F9151DAD0D8344C0E505CBB1E3AC98D06C955E9DACD6E305BCBD250",
+    "fileCount": 35
+  },
+  "importExecution": {
+    "engineVersion": "5.8.1",
+    "engineChangelist": 56057345,
+    "engineCompatibleChangelist": 55116800,
+    "engineBranch": "++UE5+Release-5.8",
+    "engineBuildFileSha256": "D35D3D5F4DE0636FBB62386B63DEE8056889FB2BAF199D012DC32EE77F7A2997",
+    "importerRelativePath": "Scripts/import-pine-ridge-assets.py",
+    "importerByteSize": 108495,
+    "importerSha256": "A0B2A0F39F0921ED0AC2E3E884C793428CA0FAF192635B125A0EF227A929A8D6",
+    "contentRoot": "/Game/Presentation/Course/PineRidge",
+    "hostPathsRecorded": false,
+    "secretsRecorded": false,
+    "pinnedImportOptions": {
+      "assetTask": {
+        "automated": true,
+        "replaceExisting": true,
+        "replaceExistingSettings": true,
+        "save": true
+      },
+      "polyTextures": {
+        "color": {
+          "compression": "TC_DEFAULT",
+          "srgb": true
+        },
+        "normal": {
+          "compression": "TC_NORMALMAP",
+          "srgb": false
+        },
+        "data": {
+          "compression": "TC_MASKS",
+          "srgb": false
+        }
+      },
+      "generatedMasks": {
+        "compression": "TC_MASKS",
+        "srgb": false,
+        "filter": "TF_NEAREST",
+        "mipGenSettings": "TMGS_NO_MIPMAPS"
+      },
+      "staticMeshes": {
+        "importAsSkeletal": false,
+        "importMesh": true,
+        "importMaterials": false,
+        "importTextures": false,
+        "generateLightmapUVs": true,
+        "autoGenerateCollision": false,
+        "convertScene": true,
+        "convertSceneUnit": true,
+        "firCombineMeshes": false,
+        "fixtureCombineMeshes": true,
+        "firLods": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.2,
+            0.22
+          ],
+          [
+            0.05,
+            0.085
+          ],
+          [
+            0.0125,
+            0.03
+          ]
+        ],
+        "boulderLods": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.18,
+            0.16
+          ],
+          [
+            0.035,
+            0.045
+          ]
+        ],
+        "shrubLodCount": 1
+      },
+      "materials": {
+        "replaceExpressions": true,
+        "saveAfterCompile": true
+      }
+    }
+  },
+  "sourceFiles": [
+    {
+      "assetId": "boulder_01",
+      "role": "StaticMeshFBX1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/Boulder01/boulder_01_1k.fbx",
+      "byteSize": 6482860,
+      "md5": "e6079d3ddb9a71716d88274808e2d92c",
+      "sha256": "AA0613A9DF686E9252DF1E9D34C356D25C4AB135D9754AF66B4794438957D94F"
+    },
+    {
+      "assetId": "boulder_01",
+      "role": "AmbientOcclusion1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_ao_1k.jpg",
+      "byteSize": 491469,
+      "md5": "79a7205661a3fa38187c95d6fb658d37",
+      "sha256": "1071F2DB5CE5FA88EF12D6E8D62AD0043003978C5FF8D010153A0497B439A342"
+    },
+    {
+      "assetId": "boulder_01",
+      "role": "Diffuse1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_diffuse_1k.jpg",
+      "byteSize": 987467,
+      "md5": "25f8a843f13369d56d37f49db05ea8c3",
+      "sha256": "C38F0E918F6DC16B8D386BA3CDD89805C78320C119A1CEEC85856F82B09A65B8"
+    },
+    {
+      "assetId": "boulder_01",
+      "role": "NormalDX1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_nor_dx_1k.png",
+      "byteSize": 5734156,
+      "md5": "c0799b7a5bf05ec58b012b4df0821e5b",
+      "sha256": "7E38F912B718B3C002B45AD3FDEA8E9FD45F48E14DA2E556577E85CD480155D8"
+    },
+    {
+      "assetId": "boulder_01",
+      "role": "Roughness1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_rough_1k.jpg",
+      "byteSize": 492815,
+      "md5": "43956cc527fdf25bf0e5757521606604",
+      "sha256": "56163A3D947B03C94651D8DFAD0D926961AB56F2CDBDC5BEF6BE52DFBCBD5BBF"
+    },
+    {
+      "assetId": "fir_sapling",
+      "role": "StaticMeshFBX1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/FirSapling/fir_sapling_1k.fbx",
+      "byteSize": 19037468,
+      "md5": "e89019c6c0e26796f36370603a34a4f1",
+      "sha256": "5EAFD5FD2914639960238A6BEEF97C4D64BE9FB0A5B690FD03D13B2291F71DB1"
+    },
+    {
+      "assetId": "fir_sapling",
+      "role": "BranchesDiffuse1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_diff_1k.jpg",
+      "byteSize": 776633,
+      "md5": "84f1d40b80a015d65c0ded042a10765b",
+      "sha256": "46D216526B6203DBD5DC3CFCE5E49D7A4CC1770DA2420FAAB45ADF33671C7DE4"
+    },
+    {
+      "assetId": "fir_sapling",
+      "role": "BranchesNormalDX1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_nor_dx_1k.png",
+      "byteSize": 5778902,
+      "md5": "9dd4099b8789142780bd2d73d79d7ca8",
+      "sha256": "6FD57E27E9010CFC4AD0CDBFF4142CFA116EE2B33F402EC196EF544C824F6AE8"
+    },
+    {
+      "assetId": "fir_sapling",
+      "role": "BranchesRoughness1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_rough_1k.jpg",
+      "byteSize": 506894,
+      "md5": "ec4899350530d538814243ca3de34710",
+      "sha256": "2617DEF388CCC934C2D02A919A5CD968F6320DE978AAF54C5F2A4EC73B7D2F1C"
+    },
+    {
+      "assetId": "fir_sapling",
+      "role": "TwigsOpacity1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_alpha_1k.png",
+      "byteSize": 107682,
+      "md5": "177123c2b5eaeee068be559ff78e54d0",
+      "sha256": "91E8A6114E2F180DE3D2FA60D397D69FEE0D3C745A15E012DA705C86CD4DE976"
+    },
+    {
+      "assetId": "fir_sapling",
+      "role": "TwigsDiffuse1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_diff_1k.jpg",
+      "byteSize": 252678,
+      "md5": "cd218269e0b34bd1bdb48a8daf21be67",
+      "sha256": "A9900FAFAD850DEEB5F79B928FD7590BCA9E8EC8734D2368D4C64BBA8B0C5B22"
+    },
+    {
+      "assetId": "fir_sapling",
+      "role": "TwigsNormalDX1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_nor_dx_1k.png",
+      "byteSize": 1549276,
+      "md5": "c450a1f9e65fb04b51706899eb7d3472",
+      "sha256": "080CDCCD8A202459FC9F2FAFCA0528C2315B23434A5C48D50F4DB7E479F4F3E4"
+    },
+    {
+      "assetId": "fir_sapling",
+      "role": "TwigsRoughness1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_rough_1k.jpg",
+      "byteSize": 247349,
+      "md5": "4f4411fffcdebb58c9ea6ca95b03b087",
+      "sha256": "9115F28D73C60518D4AFE6A081926469D010351E71DD56915E3F02EA2625C00F"
+    },
+    {
+      "assetId": "shrub_04",
+      "role": "StaticMeshFBX1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/Shrub04/shrub_04_1k.fbx",
+      "byteSize": 852540,
+      "md5": "3b313098938fa2c6bbef69761685da05",
+      "sha256": "EBFAF1B728E8C9B8AE62F90DF3A6F1837C233FD736665342391C2F3029F3AD37"
+    },
+    {
+      "assetId": "shrub_04",
+      "role": "Opacity1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_alpha_1k.png",
+      "byteSize": 42906,
+      "md5": "c899653f9884941bdb2ada187809f4c8",
+      "sha256": "6DDD60DCDBDCF55D7258AE747866F68F5ACC9D88A7735C9EB05B02D6DEC527E3"
+    },
+    {
+      "assetId": "shrub_04",
+      "role": "AmbientOcclusion1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_ao_1k.jpg",
+      "byteSize": 171793,
+      "md5": "f5fd90d98077e3f9941d9b5e268076a2",
+      "sha256": "C2D70DA833D4D06A46D6025705A4D36059E7F90FB600339B3C01EA3B9342EE4F"
+    },
+    {
+      "assetId": "shrub_04",
+      "role": "Diffuse1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_diffuse_1k.jpg",
+      "byteSize": 373350,
+      "md5": "b2b4682a82f44be10b8d4b4d481a4fe8",
+      "sha256": "0B0FA0A474753D13F3093858CEA79D0DE05DA1E6A0C5D6E181CD351080980B6C"
+    },
+    {
+      "assetId": "shrub_04",
+      "role": "NormalDX1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_nor_dx_1k.png",
+      "byteSize": 1613982,
+      "md5": "3a2a89661798b1d7d538fc6d4644071f",
+      "sha256": "5F13FF70CDFC3ABEDA98629AB9C6AD15BDE60E29C2879861B2B7671B12D2A9F6"
+    },
+    {
+      "assetId": "shrub_04",
+      "role": "Roughness1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_rough_1k.jpg",
+      "byteSize": 220160,
+      "md5": "e37f1f9e3c96dd7e50a367c8a3bce383",
+      "sha256": "0AAD421DBC486E7325943CB7C9385BE837FCB70A6B93D402A7109D9D5B5F3AB9"
+    },
+    {
+      "assetId": "forrest_ground_01",
+      "role": "AmbientOcclusion2K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_ao_2k.jpg",
+      "byteSize": 2493578,
+      "md5": "be730523a039ab1171da81d43f1681c3",
+      "sha256": "3DA52F2F2182F2CF0A7B417E10764EE1FF446DF0BC9FB12D49C4E3570EA3EFFE"
+    },
+    {
+      "assetId": "forrest_ground_01",
+      "role": "Diffuse2K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_diff_2k.jpg",
+      "byteSize": 3077552,
+      "md5": "18fa30c294be21805159ca6e73a5e5fa",
+      "sha256": "E4D557FF61A0B42712A58E8A2E91C6010738977D4E172B7AF47ABD7D406AE735"
+    },
+    {
+      "assetId": "forrest_ground_01",
+      "role": "NormalDX2K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_nor_dx_2k.jpg",
+      "byteSize": 5664401,
+      "md5": "e1b78b45dde854401d82cfc7d4dcf6e5",
+      "sha256": "FCC8900B8F1D67D3FF242AD3111B91D2A72D8183C850F1D8AE21EAF9C67A5BA4"
+    },
+    {
+      "assetId": "forrest_ground_01",
+      "role": "Roughness2K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_rough_2k.jpg",
+      "byteSize": 920422,
+      "md5": "a4c7ecc9cef47f5d097d4553e421ed6a",
+      "sha256": "E09258C7F055156A7607F1B21DCCF38C7EFD847E7D030271D5FFCC4A722DF37D"
+    },
+    {
+      "assetId": "grass_path_2",
+      "role": "AmbientOcclusion2K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_ao_2k.jpg",
+      "byteSize": 1364400,
+      "md5": "c2bddc129eced825d3a4f865cf5ee2cf",
+      "sha256": "CBBAFAB428DE4D73C02B7A45DA52EF12EDE624FEB1EB9610726F1EB3DBBA9B7E"
+    },
+    {
+      "assetId": "grass_path_2",
+      "role": "Diffuse2K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_diff_2k.jpg",
+      "byteSize": 2788295,
+      "md5": "e03c3884e3a1f13dc838a4eee9af4dab",
+      "sha256": "E6B353085D0FC0062832E70CFDF1B77F8B886A1FBB303541479E4F99A3B3EE79"
+    },
+    {
+      "assetId": "grass_path_2",
+      "role": "NormalDX2K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_nor_dx_2k.jpg",
+      "byteSize": 2411501,
+      "md5": "3dc47a0b7c7cc036d6267fedbf7affb0",
+      "sha256": "99ACD4E9E6E42A5C15A6753C9D07C5E3380461EFCD44934D3ADAB7830D4A7CFE"
+    },
+    {
+      "assetId": "grass_path_2",
+      "role": "Roughness2K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_rough_2k.jpg",
+      "byteSize": 1329811,
+      "md5": "22fa874bdfd9a18f8c541342486493b0",
+      "sha256": "96BC66D10E0F29CA5D1A9EFDA7734FD0522B5E0C01BA4A828415176D754667B5"
+    },
+    {
+      "assetId": "leafy_grass",
+      "role": "AmbientOcclusion2K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_ao_2k.jpg",
+      "byteSize": 4175463,
+      "md5": "f25065162a26693b29a10587582df688",
+      "sha256": "BCCE4368F6A1AFFE11B4A643E14CFED7DFB46ABF6BB9E6A28A3B87C2DE2DDB11"
+    },
+    {
+      "assetId": "leafy_grass",
+      "role": "Diffuse2K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_diff_2k.jpg",
+      "byteSize": 4766204,
+      "md5": "8014f4dace676a62ed71b3dd76119dae",
+      "sha256": "8E1C6D21365D4B89BC5A35AB664DA98A78DBC3AB9BA6100474881C8619A5B113"
+    },
+    {
+      "assetId": "leafy_grass",
+      "role": "NormalDX2K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_nor_dx_2k.jpg",
+      "byteSize": 6049495,
+      "md5": "82936efe4dd20543414cb55d47a9f53c",
+      "sha256": "6AD4B29842CB68DD4CCADEAA14F76CC52E7717EDED3BAC41E537A166BE07356B"
+    },
+    {
+      "assetId": "leafy_grass",
+      "role": "Roughness2K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_rough_2k.jpg",
+      "byteSize": 2274652,
+      "md5": "b5c551ed91162aab5afbfb03b73ae3f5",
+      "sha256": "34E1733BF4064B6950A575FF57E78C8B7FF71B63749EB48A49221BD65DE6FB4F"
+    },
+    {
+      "assetId": "weathered_planks",
+      "role": "AmbientOcclusion1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_ao_1k.jpg",
+      "byteSize": 594177,
+      "md5": "2ac460c35891d9bade2baadd3251b4e9",
+      "sha256": "A4FF0DF66640229E315F75637A135622504094CF4D6D57C6CCA4DACF619B1A5B"
+    },
+    {
+      "assetId": "weathered_planks",
+      "role": "Diffuse1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_diffuse_1k.jpg",
+      "byteSize": 599581,
+      "md5": "5d7c9e7088bfa54490ba03ba15b660d8",
+      "sha256": "01C9A372CFD7A7BF471B59C2458ED3CCECC93448AEBF7BA0CC5B3B5B6ED24349"
+    },
+    {
+      "assetId": "weathered_planks",
+      "role": "NormalDX1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_nor_dx_1k.png",
+      "byteSize": 5414749,
+      "md5": "0828afe42221c456592c0d5d31034655",
+      "sha256": "C73365366717D7F81FA994C111442E3FD36549522899593016EBBBD900D690A2"
+    },
+    {
+      "assetId": "weathered_planks",
+      "role": "Roughness1K",
+      "relativePath": "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_rough_1k.jpg",
+      "byteSize": 218802,
+      "md5": "4ca50b076e1fc58f6862a5b039a7d5c9",
+      "sha256": "A017728183597417A350D1846A5A46DB9702EE6D472A21C5DA2F23015D606AA3"
+    }
+  ],
+  "projectInputs": [
+    {
+      "relativePath": "Scripts/import-pine-ridge-assets.py",
+      "byteSize": 108495,
+      "sha256": "A0B2A0F39F0921ED0AC2E3E884C793428CA0FAF192635B125A0EF227A929A8D6"
+    },
+    {
+      "relativePath": "SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png",
+      "byteSize": 391,
+      "sha256": "EE46C76F561B21E994152D22FCDE087A48F31FA0E80346A43CAB9708845ACF7B"
+    },
+    {
+      "relativePath": "SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png.base64",
+      "byteSize": 525,
+      "sha256": "133459E6E4AC101170836DBCCEFC3D74BBC8C3AE5F9D450C4874CA07632BD1AD"
+    },
+    {
+      "relativePath": "SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png",
+      "byteSize": 684,
+      "sha256": "5332FB98AA651DCD332996829D6F369CD936D0C08FA932CFAE78F0E1942A4A3E"
+    },
+    {
+      "relativePath": "SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png.base64",
+      "byteSize": 913,
+      "sha256": "FEF0AFBB0D872888C1A3C4478DFE776044F40908C6126D402A9F84212CC9677E"
+    }
+  ],
+  "derivedRuntimeArtifacts": [
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Fixtures/PolyHaven/Boulder01/boulder_01_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Fixtures/PolyHaven/Boulder01/boulder_01_1k.boulder_01_1k",
+      "assetClass": "StaticMesh",
+      "provenanceKind": "DIRECT_STATIC_MESH_IMPORT",
+      "byteSize": 6319322,
+      "sha256": "5794A88BA6D5B14AAD9AB53B499F7776E16C925698D3657DEB5EC9C9F048D5C9",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/boulder_01_1k.fbx"
+      ],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/MI_Boulder01.uasset"
+      ],
+      "semanticSettings": {
+        "lodCount": 3
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_ao_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_diffuse_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_rough_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/boulder_01_1k.fbx"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Fixtures/PolyHaven/Shrub04/shrub_04_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Fixtures/PolyHaven/Shrub04/shrub_04_1k.shrub_04_1k",
+      "assetClass": "StaticMesh",
+      "provenanceKind": "DIRECT_STATIC_MESH_IMPORT",
+      "byteSize": 841764,
+      "sha256": "455B439411099F01A5A0D78D303F9825E30C59D99ABED4C6793BBD2AB4165E26",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/shrub_04_1k.fbx"
+      ],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/MI_Shrub04.uasset"
+      ],
+      "semanticSettings": {
+        "lodCount": 1
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_alpha_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_ao_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_diffuse_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_rough_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/shrub_04_1k.fbx"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Foliage/PolyHaven/FirSapling/fir_sapling_a.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Foliage/PolyHaven/FirSapling/fir_sapling_a.fir_sapling_a",
+      "assetClass": "StaticMesh",
+      "provenanceKind": "DIRECT_STATIC_MESH_IMPORT",
+      "byteSize": 6283226,
+      "sha256": "2072504EE720E3D203DB60DC11E944D2F0CA2A3878A2AA0E08D05B9BBE33B0DA",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/fir_sapling_1k.fbx"
+      ],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/MI_FirSaplingBranches.uasset",
+        "Content/Presentation/Course/PineRidge/Materials/MI_FirSaplingTwigs.uasset"
+      ],
+      "semanticSettings": {
+        "lodCount": 4
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_diff_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_rough_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_alpha_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_diff_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_rough_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/fir_sapling_1k.fbx"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Foliage/PolyHaven/FirSapling/fir_sapling_b.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Foliage/PolyHaven/FirSapling/fir_sapling_b.fir_sapling_b",
+      "assetClass": "StaticMesh",
+      "provenanceKind": "DIRECT_STATIC_MESH_IMPORT",
+      "byteSize": 5939442,
+      "sha256": "F27CABC89BDF5558A1D380EA287DBD56FAEC1580B3654A15A97B7B94A03D459B",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/fir_sapling_1k.fbx"
+      ],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/MI_FirSaplingBranches.uasset",
+        "Content/Presentation/Course/PineRidge/Materials/MI_FirSaplingTwigs.uasset"
+      ],
+      "semanticSettings": {
+        "lodCount": 4
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_diff_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_rough_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_alpha_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_diff_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_rough_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/fir_sapling_1k.fbx"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Foliage/PolyHaven/FirSapling/fir_sapling_c.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Foliage/PolyHaven/FirSapling/fir_sapling_c.fir_sapling_c",
+      "assetClass": "StaticMesh",
+      "provenanceKind": "DIRECT_STATIC_MESH_IMPORT",
+      "byteSize": 4871192,
+      "sha256": "0E4B0B5931645E381328C29B986E4368D671B438223D02B306748CACBB3957CA",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/fir_sapling_1k.fbx"
+      ],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/MI_FirSaplingBranches.uasset",
+        "Content/Presentation/Course/PineRidge/Materials/MI_FirSaplingTwigs.uasset"
+      ],
+      "semanticSettings": {
+        "lodCount": 4
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_diff_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_rough_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_alpha_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_diff_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_rough_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/fir_sapling_1k.fbx"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeBark.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/M_PineRidgeBark.M_PineRidgeBark",
+      "assetClass": "Material",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 10753,
+      "sha256": "C1EF1820A5C44EC9000DC5258DAB551C7125E53F00932EEA95105700816C3DF9",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_branches_diff_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_branches_nor_dx_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_branches_rough_1k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_diff_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeBrush.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/M_PineRidgeBrush.M_PineRidgeBrush",
+      "assetClass": "Material",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 13453,
+      "sha256": "BBCD26A1117DEB6A3509A48F8918D7D6E45627DC6D2AC60625260CB6D95A107D",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_alpha_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_ao_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_diffuse_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_nor_dx_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_rough_1k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_alpha_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_ao_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_diffuse_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeFairwayBlend.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/M_PineRidgeFairwayBlend.M_PineRidgeFairwayBlend",
+      "assetClass": "Material",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 29119,
+      "sha256": "C5729913EB7B0A5BFBD982CB385FBCEA609CA71ED734D733A07D9D6B1A4A80BF",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_ao_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_diff_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_nor_dx_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_rough_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_ao_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_diff_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_nor_dx_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_rough_2k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_rough_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_rough_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeNeedles.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/M_PineRidgeNeedles.M_PineRidgeNeedles",
+      "assetClass": "Material",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 12206,
+      "sha256": "31BC645155088555A6E9383DD194CDD95C14BCD0DDDCBF79ADB3F5959EC6BF19",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_alpha_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_diff_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_nor_dx_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_rough_1k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_alpha_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_diff_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeRock.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/M_PineRidgeRock.M_PineRidgeRock",
+      "assetClass": "Material",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 11898,
+      "sha256": "AE2C207ECB040D189A6B6AF9C893BDFEDD44964665F6F3E1E3D8187B5C114B0F",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_ao_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_diffuse_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_nor_dx_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_rough_1k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_ao_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_diffuse_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeSignWood.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/M_PineRidgeSignWood.M_PineRidgeSignWood",
+      "assetClass": "Material",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 11994,
+      "sha256": "9BFF631F8C1DFB9784FD1A53D4EBBBCDCA67AE6951A6597E8A5A727F01A19C8C",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_ao_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_diffuse_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_nor_dx_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_rough_1k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_ao_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_diffuse_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeTerrain.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/M_PineRidgeTerrain.M_PineRidgeTerrain",
+      "assetClass": "Material",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 35729,
+      "sha256": "EFA4B9A8F72475916DBD5FA34A9B7EEFDB626CBB56DB820DF775A42D56428A80",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_ao_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_diff_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_nor_dx_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_rough_2k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_rough_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeTrailBlend.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/M_PineRidgeTrailBlend.M_PineRidgeTrailBlend",
+      "assetClass": "Material",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 29111,
+      "sha256": "DE5B3BB641CF9B4499B6BD57ABE0ECFE750E886AC05A88125FE53DA8C94EDF64",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_ao_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_diff_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_nor_dx_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_rough_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_ao_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_diff_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_nor_dx_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_rough_2k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_rough_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_rough_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/MI_Boulder01.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/MI_Boulder01.MI_Boulder01",
+      "assetClass": "MaterialInstanceConstant",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 5504,
+      "sha256": "DFB89641D4945F8011AA58E9D7E00D0026926AEB1BF2063EE4E7286B8B1AB91A",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeRock.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_ao_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_diffuse_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_nor_dx_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_rough_1k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_ao_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_diffuse_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/MI_FirSaplingBranches.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/MI_FirSaplingBranches.MI_FirSaplingBranches",
+      "assetClass": "MaterialInstanceConstant",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 5120,
+      "sha256": "52F4E8778987CA923360182F36F92C68EF424E5E86E18AC3A86ADAAB958311B0",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeBark.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_branches_diff_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_branches_nor_dx_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_branches_rough_1k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_diff_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/MI_FirSaplingTwigs.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/MI_FirSaplingTwigs.MI_FirSaplingTwigs",
+      "assetClass": "MaterialInstanceConstant",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 5781,
+      "sha256": "DC8FD9901FDDB10C2F77DA9D0302509AA820B16618AE75CC6565058ABF892018",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeNeedles.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_alpha_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_diff_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_nor_dx_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_rough_1k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_alpha_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_diff_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/MI_PineRidgeFairway.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/MI_PineRidgeFairway.MI_PineRidgeFairway",
+      "assetClass": "MaterialInstanceConstant",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 10165,
+      "sha256": "3E35ACE5B5572C9176FE28B1ABFCBB04C7D75B9315839BF46604BAD190374BDB",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeTerrain.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_ao_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_diff_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_nor_dx_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_rough_2k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_rough_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_rough_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/MI_PineRidgeForestFloor.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/MI_PineRidgeForestFloor.MI_PineRidgeForestFloor",
+      "assetClass": "MaterialInstanceConstant",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 10245,
+      "sha256": "78594A03D286ECC33F957E05813F28D02510C621E7DC3553AC9DD97664930D7C",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeTerrain.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_ao_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_diff_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_nor_dx_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_rough_2k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_rough_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/MI_PineRidgePath.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/MI_PineRidgePath.MI_PineRidgePath",
+      "assetClass": "MaterialInstanceConstant",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 10151,
+      "sha256": "B3D34B89343DA92A47A41D36D452369284AF9D7FAD111C351991B9DD54B3042B",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeTerrain.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_ao_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_diff_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_nor_dx_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_rough_2k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_rough_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_rough_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/MI_PineRidgeShoreReeds.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/MI_PineRidgeShoreReeds.MI_PineRidgeShoreReeds",
+      "assetClass": "MaterialInstanceConstant",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 9185,
+      "sha256": "B3D76F9C5708A49CA0038911747F00BE80751BB8F0E1701CC3FCF92B16ACD549",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeTerrain.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_ao_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_diff_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_nor_dx_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_rough_2k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_rough_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_rough_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/MI_PineRidgeSignWood.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/MI_PineRidgeSignWood.MI_PineRidgeSignWood",
+      "assetClass": "MaterialInstanceConstant",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 5640,
+      "sha256": "A8CC0AC1A15183F8A117DD3B227D8545FD3A5D71C4C12797E16B3E41B4E63963",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeSignWood.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_ao_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_diffuse_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_nor_dx_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_rough_1k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_ao_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_diffuse_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/MI_PineRidgeTrailWear.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/MI_PineRidgeTrailWear.MI_PineRidgeTrailWear",
+      "assetClass": "MaterialInstanceConstant",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 7201,
+      "sha256": "C68B29C5516DD074410B144F1C8A29C4CA5D2F2B6EA76145A0F779664D915DC9",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeTerrain.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_ao_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_diff_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_nor_dx_2k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_rough_2k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_rough_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_ao_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_diff_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_nor_dx_2k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_rough_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/MI_Shrub04.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/MI_Shrub04.MI_Shrub04",
+      "assetClass": "MaterialInstanceConstant",
+      "provenanceKind": "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY",
+      "byteSize": 6136,
+      "sha256": "AEB2778417A0D48E79C4CCDA430F20F898A8FB795DAD73A61A6EB10F828C4396",
+      "directSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeBrush.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_alpha_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_ao_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_diffuse_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_nor_dx_1k.uasset",
+        "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_rough_1k.uasset"
+      ],
+      "semanticSettings": {},
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_alpha_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_ao_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_diffuse_1k.jpg",
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_nor_dx_1k.png",
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_ao_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_ao_1k.boulder_01_ao_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 502508,
+      "sha256": "73B7D73DC43F53E46244E35F0EAC7D48305E7647A93C77CAF8CF44F02B3AAAAC",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_ao_1k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_ao_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_diffuse_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_diffuse_1k.boulder_01_diffuse_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 998448,
+      "sha256": "63AD0C05CF7F5298E1D6651FCAF313F477AE83BF077AE7F44C3931E8D03DECC1",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_diffuse_1k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_DEFAULT: 0>",
+        "srgb": true
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_diffuse_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_nor_dx_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_nor_dx_1k.boulder_01_nor_dx_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 6001647,
+      "sha256": "2AA20095CE682FAF5A7820A5BD204609D89E4D53406B0729AAF056C47E428795",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_nor_dx_1k.png"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_NORMALMAP: 1>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_nor_dx_1k.png"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_rough_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/Boulder01/boulder_01_rough_1k.boulder_01_rough_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 503920,
+      "sha256": "AEDE3B31B529DB0AB647C9488CBF5320811B3C2BD39190B4BFBEC9042E8CFBE2",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_rough_1k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_branches_diff_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_branches_diff_1k.fir_sapling_branches_diff_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 787782,
+      "sha256": "6B9885693A892DEB6262FEA1D330729C04A40265D7060160BB9EE266FBBA30AE",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_diff_1k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_DEFAULT: 0>",
+        "srgb": true
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_diff_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_branches_nor_dx_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_branches_nor_dx_1k.fir_sapling_branches_nor_dx_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 6134977,
+      "sha256": "D5CCF032D69740D521910FC6E0B455720B5A2992C4DD7FCE414DF7AC3C024830",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_nor_dx_1k.png"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_NORMALMAP: 1>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_nor_dx_1k.png"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_branches_rough_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_branches_rough_1k.fir_sapling_branches_rough_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 518233,
+      "sha256": "AC6161576786CC38840F6B9A75D3A5361988AD50593FB99A769A7789BB51293C",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_rough_1k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_alpha_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_alpha_1k.fir_sapling_twigs_alpha_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 103110,
+      "sha256": "B7CB094D337379AE41A1CC84E67E00682D0A3DB7592F930F1226999977CF44EA",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_alpha_1k.png"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_alpha_1k.png"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_diff_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_diff_1k.fir_sapling_twigs_diff_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 263761,
+      "sha256": "52EAD78AAD6F4ED6480D6F95E54BC41941F818772A0C89883D66A7EFB2B3E157",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_diff_1k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_DEFAULT: 0>",
+        "srgb": true
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_diff_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_nor_dx_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_nor_dx_1k.fir_sapling_twigs_nor_dx_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 1384037,
+      "sha256": "68B7DC88FA04F59A3EA98053EFB5DD2B2D87C5C7BB4C6C9AB850A6354A636FCD",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_nor_dx_1k.png"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_NORMALMAP: 1>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_nor_dx_1k.png"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_rough_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/FirSapling/fir_sapling_twigs_rough_1k.fir_sapling_twigs_rough_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 258622,
+      "sha256": "43986A423343007FFC25A725E5259883224A495FD7520C0B488A72332654C89A",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_rough_1k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_ao_2k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_ao_2k.forrest_ground_01_ao_2k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 2504768,
+      "sha256": "C4A367C0EC10C6208E7A6622CE232E6E24A9C546A396CA1D392602F74B743436",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_ao_2k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_ao_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_diff_2k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_diff_2k.forrest_ground_01_diff_2k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 3088616,
+      "sha256": "3B7FC193D8F6CF07FBEC1FD032CC0BDDA2DA56EDF3C3F9BB8220609E0A0DE06A",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_diff_2k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_DEFAULT: 0>",
+        "srgb": true
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_diff_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_nor_dx_2k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_nor_dx_2k.forrest_ground_01_nor_dx_2k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 5675832,
+      "sha256": "06C740A24DA946A0573AC62868F0F23F5FB7BA424843F4377753F43C50A081D5",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_nor_dx_2k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_NORMALMAP: 1>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_nor_dx_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_rough_2k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/ForestGround/forrest_ground_01_rough_2k.forrest_ground_01_rough_2k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 931677,
+      "sha256": "ACE1DED665AB44F46113D2A7940A99A6CB6A55C90ED7AEF21B21E456779F369F",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_rough_2k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_rough_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_ao_2k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_ao_2k.grass_path_2_ao_2k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 1375429,
+      "sha256": "E792772538A242AF96B4C0FC888BD4F812469EA3106DEFF684DB4BE8C375786E",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_ao_2k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_ao_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_diff_2k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_diff_2k.grass_path_2_diff_2k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 2799200,
+      "sha256": "CA5604FDFC95617FF5E93C2DE24B36AD47F47814052D66997E439434B75F3585",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_diff_2k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_DEFAULT: 0>",
+        "srgb": true
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_diff_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_nor_dx_2k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_nor_dx_2k.grass_path_2_nor_dx_2k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 2422772,
+      "sha256": "DA6B71B36BE069A622C95FABF3CDA15B49C2E99CC4C8663110349186B8DF20AC",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_nor_dx_2k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_NORMALMAP: 1>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_nor_dx_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_rough_2k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/GrassPath/grass_path_2_rough_2k.grass_path_2_rough_2k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 1340906,
+      "sha256": "089D2ECEA90471230D5D86D87B4BC8D32569A490157A1032686DB9B6CF9E029B",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_rough_2k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_rough_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_ao_2k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_ao_2k.leafy_grass_ao_2k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 4186475,
+      "sha256": "7B9F601E90B6845D3799A0E497214108274DD6DE21DBAA1A6A8E75ADFF0C71D0",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_ao_2k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_ao_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_diff_2k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_diff_2k.leafy_grass_diff_2k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 4777092,
+      "sha256": "6405BD4FBDE7309C55D2FB5BB8109A1CB8841C538ADBE60D01AF3D5BF25CF00B",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_diff_2k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_DEFAULT: 0>",
+        "srgb": true
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_diff_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_nor_dx_2k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_nor_dx_2k.leafy_grass_nor_dx_2k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 6060749,
+      "sha256": "16A42881E61BAAC10E66D5B8C0005F55978F3DD59390DE93F91403491BB30F8B",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_nor_dx_2k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_NORMALMAP: 1>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_nor_dx_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_rough_2k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/LeafyGrass/leafy_grass_rough_2k.leafy_grass_rough_2k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 2285736,
+      "sha256": "394F7C25BB05FE3F9F72D2C6C20090768B2E1360EFF4DA4A0484ADA82EC43F48",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_rough_2k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_rough_2k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_alpha_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_alpha_1k.shrub_04_alpha_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 47921,
+      "sha256": "D4E90ED4A954A76476184B3C960DCAE6BCBFB214678B87AE6B1F9D23F4BD196D",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_alpha_1k.png"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_alpha_1k.png"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_ao_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_ao_1k.shrub_04_ao_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 182760,
+      "sha256": "987B06184A4518F1B03A82001473B1D1F833E342C6C5773FFC11B2B1A1F796DE",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_ao_1k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_ao_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_diffuse_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_diffuse_1k.shrub_04_diffuse_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 384259,
+      "sha256": "9047C79FC9BDE6ED1B03795575D57FA289323AF21331DBA7EA546860697201DB",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_diffuse_1k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_DEFAULT: 0>",
+        "srgb": true
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_diffuse_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_nor_dx_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_nor_dx_1k.shrub_04_nor_dx_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 1807689,
+      "sha256": "042ACA5A30814C31B280128D6EEC26D7A157761DDF0F650AC711AFCB98B3A5D1",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_nor_dx_1k.png"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_NORMALMAP: 1>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_nor_dx_1k.png"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_rough_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/Shrub04/shrub_04_rough_1k.shrub_04_rough_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 231193,
+      "sha256": "EF629BE0DB5B8CBEEFF9FC4C02C668482B6377812FFA8C8DFE571770F0C1C2F6",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_rough_1k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_rough_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_ao_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_ao_1k.weathered_planks_ao_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 605370,
+      "sha256": "E935A44E474F4793731387BF3E9F14B0CF18DBBFDD0E406E70C7E4FB32B4E8DD",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_ao_1k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_ao_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_diffuse_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_diffuse_1k.weathered_planks_diffuse_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 610715,
+      "sha256": "DEAFC956B9FB102E747AC06B431261CC047680C5F74FFA3CFBBDE4B585C067DA",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_diffuse_1k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_DEFAULT: 0>",
+        "srgb": true
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_diffuse_1k.jpg"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_nor_dx_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_nor_dx_1k.weathered_planks_nor_dx_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 5600039,
+      "sha256": "2BA2DD8959D05FD5D23DA1E3B221B3087AC7BC27037468F3ADB7BCA9FF04DE98",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_nor_dx_1k.png"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_NORMALMAP: 1>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_nor_dx_1k.png"
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_rough_1k.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/WeatheredPlanks/weathered_planks_rough_1k.weathered_planks_rough_1k",
+      "assetClass": "Texture2D",
+      "provenanceKind": "DIRECT_TEXTURE_IMPORT",
+      "byteSize": 230066,
+      "sha256": "6B7CB5AA880140199C27763DD6873C3D3C20535AAFC595C801DC068BC10839D1",
+      "directSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_rough_1k.jpg"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false
+      },
+      "transitiveSourceRelativePaths": [
+        "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_rough_1k.jpg"
+      ]
+    }
+  ],
+  "excludedProjectOriginalRuntimeArtifacts": [
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/M_GalleryLakeWater.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/M_GalleryLakeWater.M_GalleryLakeWater",
+      "assetClass": "Material",
+      "provenanceKind": "PROJECT_ORIGINAL_PROCEDURAL_MATERIAL",
+      "byteSize": 22305,
+      "sha256": "C86BA648634A9C1020B39E0C30BFDAC9B510C4E9C0D0AB319E6B69201C9D01F7",
+      "directProjectSourceRelativePaths": [],
+      "runtimeDependencies": [],
+      "semanticSettings": {},
+      "projectInputs": [
+        {
+          "relativePath": "Scripts/import-pine-ridge-assets.py",
+          "byteSize": 108495,
+          "sha256": "A0B2A0F39F0921ED0AC2E3E884C793428CA0FAF192635B125A0EF227A929A8D6"
+        }
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeGrassBlade.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/M_PineRidgeGrassBlade.M_PineRidgeGrassBlade",
+      "assetClass": "Material",
+      "provenanceKind": "PROJECT_ORIGINAL_GENERATED_MASK_MATERIAL",
+      "byteSize": 36764,
+      "sha256": "CB41BE6D366518A1426B5EFA0933EF6BABE458297E601B10C98AD1FEF3FA5EF6",
+      "directProjectSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Textures/Generated/pine_ridge_grass_card_alpha.uasset"
+      ],
+      "semanticSettings": {},
+      "projectInputs": [
+        {
+          "relativePath": "Scripts/import-pine-ridge-assets.py",
+          "byteSize": 108495,
+          "sha256": "A0B2A0F39F0921ED0AC2E3E884C793428CA0FAF192635B125A0EF227A929A8D6"
+        },
+        {
+          "relativePath": "SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png",
+          "byteSize": 391,
+          "sha256": "EE46C76F561B21E994152D22FCDE087A48F31FA0E80346A43CAB9708845ACF7B"
+        },
+        {
+          "relativePath": "SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png.base64",
+          "byteSize": 525,
+          "sha256": "133459E6E4AC101170836DBCCEFC3D74BBC8C3AE5F9D450C4874CA07632BD1AD"
+        }
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeLeafLitter.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Materials/M_PineRidgeLeafLitter.M_PineRidgeLeafLitter",
+      "assetClass": "Material",
+      "provenanceKind": "PROJECT_ORIGINAL_GENERATED_MASK_MATERIAL",
+      "byteSize": 25188,
+      "sha256": "8AACC2AF457A9789E04FEC88E276BE715799049EF73737A93125C9E176AFD1C6",
+      "directProjectSourceRelativePaths": [],
+      "runtimeDependencies": [
+        "Content/Presentation/Course/PineRidge/Textures/Generated/pine_ridge_litter_card_alpha.uasset"
+      ],
+      "semanticSettings": {},
+      "projectInputs": [
+        {
+          "relativePath": "Scripts/import-pine-ridge-assets.py",
+          "byteSize": 108495,
+          "sha256": "A0B2A0F39F0921ED0AC2E3E884C793428CA0FAF192635B125A0EF227A929A8D6"
+        },
+        {
+          "relativePath": "SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png",
+          "byteSize": 684,
+          "sha256": "5332FB98AA651DCD332996829D6F369CD936D0C08FA932CFAE78F0E1942A4A3E"
+        },
+        {
+          "relativePath": "SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png.base64",
+          "byteSize": 913,
+          "sha256": "FEF0AFBB0D872888C1A3C4478DFE776044F40908C6126D402A9F84212CC9677E"
+        }
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/Generated/pine_ridge_grass_card_alpha.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/Generated/pine_ridge_grass_card_alpha.pine_ridge_grass_card_alpha",
+      "assetClass": "Texture2D",
+      "provenanceKind": "PROJECT_ORIGINAL_GENERATED_TEXTURE",
+      "byteSize": 11570,
+      "sha256": "EF21B9DD203FF88CFADA94181175ACE8ADDC641D56D0E6BED27B47739EB0039C",
+      "directProjectSourceRelativePaths": [
+        "SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false,
+        "filter": "<TextureFilter.TF_NEAREST: 0>",
+        "mipGenSettings": "<TextureMipGenSettings.TMGS_NO_MIPMAPS: 13>"
+      },
+      "projectInputs": [
+        {
+          "relativePath": "SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png",
+          "byteSize": 391,
+          "sha256": "EE46C76F561B21E994152D22FCDE087A48F31FA0E80346A43CAB9708845ACF7B"
+        },
+        {
+          "relativePath": "SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png.base64",
+          "byteSize": 525,
+          "sha256": "133459E6E4AC101170836DBCCEFC3D74BBC8C3AE5F9D450C4874CA07632BD1AD"
+        }
+      ]
+    },
+    {
+      "relativePath": "Content/Presentation/Course/PineRidge/Textures/Generated/pine_ridge_litter_card_alpha.uasset",
+      "objectPath": "/Game/Presentation/Course/PineRidge/Textures/Generated/pine_ridge_litter_card_alpha.pine_ridge_litter_card_alpha",
+      "assetClass": "Texture2D",
+      "provenanceKind": "PROJECT_ORIGINAL_GENERATED_TEXTURE",
+      "byteSize": 11662,
+      "sha256": "6ECFCC1588525E5E849A9539D9DEC72948445A3F1CB4E5545B8F83DE74AA56AF",
+      "directProjectSourceRelativePaths": [
+        "SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png"
+      ],
+      "runtimeDependencies": [],
+      "semanticSettings": {
+        "compression": "<TextureCompressionSettings.TC_MASKS: 2>",
+        "srgb": false,
+        "filter": "<TextureFilter.TF_NEAREST: 0>",
+        "mipGenSettings": "<TextureMipGenSettings.TMGS_NO_MIPMAPS: 13>"
+      },
+      "projectInputs": [
+        {
+          "relativePath": "SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png",
+          "byteSize": 684,
+          "sha256": "5332FB98AA651DCD332996829D6F369CD936D0C08FA932CFAE78F0E1942A4A3E"
+        },
+        {
+          "relativePath": "SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png.base64",
+          "byteSize": 913,
+          "sha256": "FEF0AFBB0D872888C1A3C4478DFE776044F40908C6126D402A9F84212CC9677E"
+        }
+      ]
+    }
+  ],
+  "expectedCounts": {
+    "sourceFiles": 35,
+    "directTextureImports": 32,
+    "directStaticMeshImports": 5,
+    "dependentDerivatives": 18,
+    "polyHavenDerived": 55,
+    "excludedProjectOriginal": 5,
+    "runtimeRootTotal": 60
+  },
+  "closureAssertions": {
+    "allSourceFilesHashVerified": true,
+    "allSourceFilesMapped": true,
+    "allDerivedRuntimeArtifactsHashBound": true,
+    "runtimeRootPartitionComplete": true,
+    "technicalSourceToRuntimeClosureComplete": true,
+    "actualStagedPackageProvenanceClosed": false
+  }
+}

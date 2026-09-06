@@ -17,7 +17,8 @@ enum class EDiscGolfEnvironmentBindingStatus : uint8
     NeedsLodReview,
     NeedsWindBinding,
     ScaleWarning,
-    Ambiguous
+    Ambiguous,
+    BlockedByProvenance
 };
 
 USTRUCT(BlueprintType)
@@ -56,6 +57,8 @@ struct FDiscGolfEnvironmentBindingScan
 {
     GENERATED_BODY()
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) bool bProvenanceAccepted = false;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString PolicyError;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FString> VendorContentRoots;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TArray<FDiscGolfEnvironmentBindingProposal> Proposals;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString ReportPath;
@@ -73,7 +76,7 @@ struct FDiscGolfEnvironmentValidationResult
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) FString ReportPath;
 };
 
-/** Editor-only, approval-gated bridge between imported Fab content and the runtime asset set. */
+/** Editor-only, provenance- and approval-gated bridge into the runtime asset set. */
 UCLASS()
 class DISCGOLFTOUREDITOR_API UDiscGolfEnvironmentAssetBinder : public UBlueprintFunctionLibrary
 {
@@ -119,6 +122,16 @@ public:
         UDiscGolfEnvironmentAssetSet* AssetSet,
         EDiscGolfEnvironmentAssetCategory Category,
         const TArray<FSoftObjectPath>& ApprovedVisualMeshes,
+        FString& OutError);
+
+    /** Fail-closed runtime-content policy shared by proposal, readiness, and apply gates. */
+    static bool ValidateApprovedRuntimeAssetPath(
+        const FSoftObjectPath& AssetPath,
+        FString& OutError);
+
+    /** Validates every requested scan root before the asset registry is queried. */
+    static bool ValidateApprovedScanRoots(
+        const TArray<FString>& VendorContentRoots,
         FString& OutError);
 
     static TArray<EDiscGolfEnvironmentBindingStatus> ValidateMeshForCategory(

@@ -132,7 +132,10 @@ CONTENT_ASSETS: tuple[tuple[str, str], ...] = (
 RUNTIME_ASSET_REFERENCES = (
     "/Game/DiscGolf/Characters/Meshes/SK_DG_Master",
     "/Game/DiscGolf/Animation/ABP_DG_Player",
-    "/Game/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype",
+    "/Game/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v003",
+    "/Game/DiscGolf/Animation/ProductionMotion/Approach/AM_DG_RHBH_Approach_Procedural_v003",
+    "/Game/DiscGolf/Animation/ProductionMotion/Putt/AM_DG_RHBH_Putt_Procedural_v003",
+    "/Game/DiscGolf/Animation/ProductionMotion/DA_DG_ProductionMotionLibrary_v003",
     "/Game/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter",
     "/Game/DiscGolf/Tests/Profiles/DA_DG_Test_ShortCompact",
     "/Game/DiscGolf/Tests/Profiles/DA_DG_Test_TallLongArms",
@@ -608,7 +611,7 @@ def _validate_authority(validator: Validator) -> None:
         (
             "bool ADiscGolfTourGameMode::RequestThrowFromGrip(",
             "DiscGolfMath::ResolveThrowRelease(AuthoredCommand)",
-            "ActiveDisc->Throw(LastRelease);",
+            "ActiveDisc->Throw(CandidateRelease)",
         ),
         "Release adapter reaches the existing authoritative release solver and disc launch",
     )
@@ -619,10 +622,18 @@ def _validate_authority(validator: Validator) -> None:
         "Pawn forwards the cached command and grip transform without recomputation",
     )
     validator.add(
-        "authority.montage_rate_neutral",
+        "authority.montage_rate_presentation_only",
         "authority",
-        "Montage_Play(RHBHThrowMontage, 1.0f)" in pawn,
-        "Throw-style presentation does not alter authoritative montage notify timing",
+        all(
+            token in pawn
+            for token in (
+                "ComputeThrowMontagePlayRate(AuthoritativeCommand)",
+                "MinimumThrowMontagePlayRate = 0.90f",
+                "MaximumThrowMontagePlayRate = 1.10f",
+                "It never feeds back into release speed, spin, angle, or direction.",
+            )
+        ),
+        "Bounded montage cadence remains presentation-only and cannot rewrite the command",
     )
 
     physics_files = (
@@ -691,7 +702,7 @@ def _validate_left_boundary(validator: Validator) -> None:
     pawn = validator.text("Source/DiscGolfTour/DiscGolferPawn.cpp")
     widget = validator.text("Source/DiscGolfTour/DiscGolfCharacterCreatorWidget.cpp")
     throw_start = pawn.find("bool ADiscGolferPawn::TryStartAnimatedRHBHThrow")
-    montage_play = pawn.find("Montage_Play(RHBHThrowMontage, 1.0f)", throw_start)
+    montage_play = pawn.find("AnimInstance->Montage_Play(", throw_start)
     right_gate = pawn.find("Handedness != EDGHandedness::Right", throw_start)
     validator.add(
         "left.rhb_hard_boundary",
@@ -865,13 +876,20 @@ def _validate_rig_seams(validator: Validator) -> None:
         and "RIGVM_METHOD()" in rig_h,
         "Project-owned mutable DG Apply Character Profile rig unit is registered",
     )
-    rig_inputs = ("BodyProfile", "ThrowStyle", "Handedness", "ThrowPhase", "bThrowActive")
+    rig_inputs = (
+        "BodyProfile",
+        "ThrowStyle",
+        "Handedness",
+        "ThrowPhase",
+        "bThrowActive",
+        "ThrowIntent",
+    )
     missing_inputs = [name for name in rig_inputs if name not in rig_h]
     validator.add(
-        "rig.five_inputs",
+        "rig.six_inputs",
         "rig",
-        not missing_inputs and rig_h.count("UPROPERTY(meta=(Input))") == 5,
-        "Rig unit exposes exactly the five expected ABP/Control Rig inputs",
+        not missing_inputs and rig_h.count("UPROPERTY(meta=(Input))") == 6,
+        "Rig unit exposes exactly the six expected ABP/Control Rig inputs",
         {"missing_inputs": missing_inputs, "input_property_count": rig_h.count("UPROPERTY(meta=(Input))")},
     )
     rig_ranges = (
@@ -951,6 +969,7 @@ def _validate_rig_seams(validator: Validator) -> None:
         "Handedness",
         "ThrowPhase",
         "bThrowActive",
+        "ThrowIntent",
         "DGApplyCharacterProfile",
         "DGFullBodyIK",
     )
@@ -1014,6 +1033,7 @@ def _validate_assets_and_paths(validator: Validator) -> None:
 
     source_paths = (
         "Source/DiscGolfTour/DiscGolferPawn.cpp",
+        "Source/DiscGolfTour/DiscGolfProductionMotion.h",
         "Source/DiscGolfTour/DiscGolfTourPlayerController.cpp",
         "Source/DiscGolfTourEditor/DiscGolfSession4AssetUtility.cpp",
         "Scripts/create_dg_character_session4_assets.py",

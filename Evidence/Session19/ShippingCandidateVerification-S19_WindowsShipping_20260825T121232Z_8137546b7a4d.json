@@ -1,0 +1,92 @@
+{
+  "schema": "DiscGolfTour.Session19ShippingCandidateVerificationReceipt.v2",
+  "schemaVersion": 2,
+  "session": 19,
+  "runId": "S19_WindowsShipping_20260825T121232Z_8137546b7a4d",
+  "verifiedUtc": "2026-08-25T12:19:48.8429736Z",
+  "state": "PASS_BUILD_ARCHIVE_VERIFIED_PROVENANCE_AND_ACCEPTANCE_PENDING",
+  "verificationMode": "DIRECT_BUILD_PASS",
+  "buildReceipt": {
+    "state": "BUILD_PASS_PROVENANCE_AND_ACCEPTANCE_PENDING",
+    "uatExitCode": 0,
+    "recoveryApplied": false,
+    "legacyRecoveryRestrictedToCandidate1": true,
+    "path": "Evidence/Session19/ShippingCandidate-S19_WindowsShipping_20260825T121232Z_8137546b7a4d.json",
+    "bytes": 3752,
+    "sha256": "E7392900CCC0386C3B126F05B59CB6296FB153075B948F492FBC42616B69746B"
+  },
+  "archiveContract": {
+    "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260825T121232Z_8137546b7a4d/Windows",
+    "hostPathRecorded": false,
+    "requiredFiles": [
+      "DiscGolfTour.exe",
+      "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+      "Manifest_UFSFiles_Win64.txt",
+      "Manifest_NonUFSFiles_Win64.txt",
+      "NOTICES.txt"
+    ],
+    "allRequiredFilesPresent": true,
+    "ufsManifestBytes": 271916,
+    "nonUfsManifestBytes": 1809
+  },
+  "innerShippingExecutable": {
+    "relativePath": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+    "bytes": 170334208,
+    "sha256": "5A0ADF1DACFF61833C9137C84B7DAC1C65CBA478D14E06C20765DABB82130CF3"
+  },
+  "buildLog": {
+    "path": "Evidence/Session19/ShippingBuildCookRun-S19_WindowsShipping_20260825T121232Z_8137546b7a4d.log",
+    "bytes": 109030,
+    "sha256": "CC7EEA32630F6DC2B5D9E314883434D46201E452AC995BB9C442401158FE10D8",
+    "requiredMarkersPresent": true,
+    "forbiddenMarkersAbsent": true
+  },
+  "thirdPartyRuntimeNotices": {
+    "path": "Evidence/Session19/ThirdPartyNoticeVerification-S19_WindowsShipping_20260825T121232Z_8137546b7a4d.json",
+    "bytes": 4816,
+    "sha256": "488964CAF7CFE412E4C9296210D2B5AB2BF894D62D7E4E48C629D66FEAD7CA6D",
+    "technicalCoveragePass": true,
+    "legalApproval": false,
+    "distributionClearance": false
+  },
+  "shippingPluginCapabilities": {
+    "path": "Evidence/Session19/ShippingPluginCapability-S19_WindowsShipping_20260825T121232Z_8137546b7a4d.json",
+    "bytes": 261308,
+    "sha256": "667C441D3E2589ACBDF8E568AA4FD45B7A58C91B97B0A6C877B2D4728FC919A1",
+    "reviewedDisabledPluginDescriptorCount": 31,
+    "reviewedMetadataOnlyDependencyPluginDescriptorCount": 13,
+    "reviewedMetadataOnlyDependencySurvivorCount": 13,
+    "unreviewedEditorDeveloperOnlySurvivorCount": 0,
+    "reviewedResidualMetadataExclusionCount": 2,
+    "requiredDependencyClosurePluginDescriptorCount": 15,
+    "missingRequiredDependencyClosurePluginDescriptorCount": 0,
+    "requiredDependencyClosurePayloadBindingCount": 15,
+    "requiredDependencyClosurePayloadMismatchCount": 0,
+    "mandatoryDependencyEdgeCount": 179,
+    "mandatoryDependencyGapCount": 0,
+    "dependencyClosureComplete": true,
+    "requiredPreservedRuntimeOrContentDescriptorCount": 2,
+    "requiredAbsentShippingDeniedDescriptorCount": 2,
+    "requiredAbsentShippingDeniedSurvivorCount": 0,
+    "finalPayloadDescriptorCount": 149,
+    "stagingManifestDiagnosticDescriptorCount": 179,
+    "stagingManifestAuthoritativeForDistribution": false,
+    "finalArchiveCanonicalManifestSha256": "C20CFB8C47ADE1811E5D6C86DF10BF8AB1C499FAA9C140CA0F0A3DCD2CA99D51",
+    "technicalGatePass": true,
+    "releaseReady": false
+  },
+  "protectedProfile": {
+    "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+    "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14",
+    "preserved": true
+  },
+  "releaseExcludedProjectRootsAbsent": true,
+  "nextRequiredEvidence": [
+    "WHOLE_ARCHIVE_AND_CONTAINER_PROVENANCE",
+    "SHIPPING_BINARY_POLICY",
+    "SHIPPING_FEATURE_AND_FORBIDDEN_CONTENT_ABSENCE",
+    "FRESH_INSTALL_THREE_HOLE_ACCEPTANCE"
+  ],
+  "releaseReady": false,
+  "receiptPath": "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260825T121232Z_8137546b7a4d.json"
+}

@@ -1,0 +1,25 @@
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Engine/DataAsset.h"
+#include "DiscGolfCustomizationTypes.h"
+#include "DiscGolfCosmeticItem.generated.h"
+
+class USkeletalMesh;
+class UStaticMesh;
+
+UCLASS(BlueprintType)
+class DISCGOLFRUNTIMEFOUNDATION_API UDiscGolfCosmeticItem : public UPrimaryDataAsset
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName ItemId = NAME_None;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FText DisplayName;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) EDGCosmeticKind Kind = EDGCosmeticKind::Hair;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float MinHeightCm = 150.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float MaxHeightCm = 210.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TSoftObjectPtr<USkeletalMesh> SkeletalMesh;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TSoftObjectPtr<UStaticMesh> StaticMesh;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName MaterialVariantId = NAME_None;
+};

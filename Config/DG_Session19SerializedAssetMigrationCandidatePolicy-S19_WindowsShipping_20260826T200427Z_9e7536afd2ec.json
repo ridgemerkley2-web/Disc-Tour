@@ -1,0 +1,93 @@
+{
+  "schema": "DiscGolfTour.Session19SerializedAssetMigrationCandidatePolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "candidateId": "S19_WindowsShipping_20260826T200427Z_9e7536afd2ec",
+  "policyId": "session19_serialized_asset_migration_candidate_S19_WindowsShipping_20260826T200427Z_9e7536afd2ec",
+  "authority": "CANDIDATE_SCOPED_TECHNICAL_VALIDATION_NOT_RELEASE_OR_LEGAL_APPROVAL",
+  "state": "CANDIDATE_INPUTS_BOUND_SUPPLEMENT_RECEIPT_REQUIRED",
+  "releaseReady": false,
+  "shippingEvidenceId": "session19_retained_serialized_asset_migration_shipping_non_distribution_S19_WindowsShipping_20260826T200427Z_9e7536afd2ec",
+  "shippingReceiptPath": "Evidence/Session19/SerializedAssetMigrationShipping-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+  "bindings": {
+    "sourceMigrationReceipt": "Evidence/Session19/SerializedAssetMigrationReceipt.json",
+    "retainedProfileRepairReceipt": "Evidence/Session19/RetainedAvatarProfileRepairReceipt.json",
+    "candidateVerification": "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+    "candidateContentAudit": "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+    "shippingBinaryAudit": "Evidence/Session19/ShippingBinary-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+    "externalTechnicalValidation": "Evidence/Session19/ExternalTechnicalEvidence-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+    "freshUserDirValidation": "Evidence/Session19/FreshUserDir-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json"
+  },
+  "archive": {
+    "hostPathRecorded": false,
+    "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260826T200427Z_9e7536afd2ec/Windows",
+    "fileCount": 31,
+    "bytes": 1246018071,
+    "canonicalManifestSha256": "362CA24911629BE4EEC5076F6A0D5C0DCD6F7071C1DD2BAB102D86CF7807A184"
+  },
+  "executable": {
+    "relativePath": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+    "bytes": 162624000,
+    "sha256": "BA88E76589A25D5EC1E6072EC68CF983A116012BDD7BCE1F75E7CB46CE319754"
+  },
+  "externalEvidence": {
+    "userDirToken": "946cdca0-e57b-4006-a49b-04b8cb3b307d",
+    "runDirectoryLeaf": "S19_WindowsShipping_20260826T200427Z_9e7536afd2ec_946cdca0-e57b-4006-a49b-04b8cb3b307d",
+    "manifestSha256": "B44F91DE99EA595FF51962D65F6064EA3BEC5075591FCB1FF681AE902A2656D9",
+    "manifestSchema": "DiscGolfTour.Session19ExternalTechnicalEvidenceManifest.v2",
+    "manifestSchemaVersion": 2,
+    "candidateEvidenceBindingSha256": "F96A0CAAAB1BE18C724CCD92E09AF9F8F0191F2BB774B26DADAE958D956401E4",
+    "runtimeCheckpointJournal": {
+      "bytes": 3228,
+      "captureNonce": "4db99437-eb0d-4977-8dbb-8a3b2283394a",
+      "eventCount": 12,
+      "firstSequence": 1,
+      "lastSequence": 12,
+      "modifiedUtc": "2026-08-26T20:41:53.242Z",
+      "modifiedWithinRunWindow": true,
+      "roundId": "308e311a-438a-4525-afe3-edbd8e12019d",
+      "schema": "DiscGolfTour.Session19ThreeHoleRuntimeJournal.v1",
+      "sha256": "1D11D674E8B3EB0C571AE792B3FBF855F6AB1DFE5C101247D7F14210876CD8F5",
+      "userDirRelativePath": "Saved/TechnicalEvidence/three-hole-runtime-journal-v1.jsonl",
+      "validationFailures": [],
+      "validationState": "PASS_GAME_EMITTED_THREE_HOLE_RUNTIME_JOURNAL"
+    },
+    "externalTechnicalValidationState": "PASS_CANDIDATE_BOUND_EXTERNAL_TECHNICAL_EVIDENCE",
+    "freshUserDirValidationState": "PASS_FRESH_SHIPPING_USERDIR_ALLOWLIST"
+  },
+  "runtimeScreenshots": [
+    {
+      "milestone": "HOLE_2_COMPLETE_CHARACTER_RENDERED",
+      "path": "Screenshots/007_hole2_complete.png",
+      "bytes": 1940154,
+      "sha256": "E1C6BFBF4A3677C1458632209891AB5A8CF3BBE3DF77693F0B2C3D42C8D97422",
+      "width": 1922,
+      "height": 1128,
+      "technicalOnly": true,
+      "freshInstallEvidence": false,
+      "humanReviewed": false
+    },
+    {
+      "milestone": "HOLE_3_TEE_CHARACTER_RENDERED",
+      "path": "Screenshots/008_hole3_tee.png",
+      "bytes": 1908679,
+      "sha256": "83985A6F8B50EB006DA0C1A80480E1DD0F5630D3F5A3141BE37462E5C1FC9313",
+      "width": 1922,
+      "height": 1128,
+      "technicalOnly": true,
+      "freshInstallEvidence": false,
+      "humanReviewed": false
+    },
+    {
+      "milestone": "HOLE_3_RECOVERED_LIE_CHARACTER_RENDERED",
+      "path": "Screenshots/009_hole3_recovered_lie.png",
+      "bytes": 1818703,
+      "sha256": "91F20EA34CB71A749B52F919A651A18161F7FDDE1A9AFC4B41DCAE397CB43CFA",
+      "width": 1922,
+      "height": 1128,
+      "technicalOnly": true,
+      "freshInstallEvidence": false,
+      "humanReviewed": false
+    }
+  ]
+}

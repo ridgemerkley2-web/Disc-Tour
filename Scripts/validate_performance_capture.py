@@ -10,6 +10,24 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CAPTURE = ROOT / "Saved" / "PerformanceCaptures" / "LatestPerformance.json"
+PERFORMANCE_BUDGET_CONTRACT = {
+    "target_frame_ms": 16.67,
+    "warning_p95_frame_ms": 22.0,
+    "fail_p95_frame_ms": 33.34,
+    "hitch_frame_ms": 50.0,
+    "max_hitch_rate_percent": 1.0,
+    "warning_used_physical_bytes": 3758096384.0,
+    "max_used_physical_bytes": 4294967296.0,
+    "minimum_sample_count": 120.0,
+    "window_sample_count": 600.0,
+}
+PERFORMANCE_BUDGET_FLOAT_TOLERANCES = {
+    "target_frame_ms": 1e-5,
+    "warning_p95_frame_ms": 1e-5,
+    "fail_p95_frame_ms": 1e-5,
+    "hitch_frame_ms": 1e-5,
+    "max_hitch_rate_percent": 1e-5,
+}
 
 
 def require(condition: bool, message: str) -> None:
@@ -18,8 +36,25 @@ def require(condition: bool, message: str) -> None:
 
 
 def number(value: object, name: str) -> float:
-    require(isinstance(value, (int, float)) and math.isfinite(float(value)), f"{name} is not finite")
+    require(type(value) in (int, float) and math.isfinite(float(value)),
+            f"{name} is not finite")
     return float(value)
+
+
+def matches_performance_budget_contract(value: object) -> bool:
+    if not isinstance(value, dict) or set(value) != set(PERFORMANCE_BUDGET_CONTRACT):
+        return False
+    for field, expected in PERFORMANCE_BUDGET_CONTRACT.items():
+        actual = value[field]
+        if type(actual) not in (int, float) or not math.isfinite(float(actual)):
+            return False
+        tolerance = PERFORMANCE_BUDGET_FLOAT_TOLERANCES.get(field)
+        if tolerance is None:
+            if float(actual) != expected:
+                return False
+        elif not math.isclose(float(actual), expected, rel_tol=0.0, abs_tol=tolerance):
+            return False
+    return True
 
 
 def expected_result(summary: dict, budget: dict) -> str:
@@ -48,7 +83,8 @@ def validate(path: Path) -> None:
     require(data.get("version") == 2, "unsupported performance schema version")
     require(data.get("result") in {"WARMING", "PASS", "WARN", "FAIL"}, "invalid result")
     require(isinstance(data.get("course_id"), str) and data["course_id"], "missing course identity")
-    require(isinstance(data.get("hole_number"), int) and data["hole_number"] >= 0, "invalid hole number")
+    require(type(data.get("hole_number")) is int and data["hole_number"] >= 0,
+            "invalid hole number")
     require(data.get("capture_profile") == "OmenGameplay1080pHighFoliageV1",
             "capture did not use the Omen gameplay profile")
     require(data.get("camera_route") == "authored_flyover_continuous",
@@ -96,6 +132,9 @@ def validate(path: Path) -> None:
         budget[field] = number(budget.get(field), f"budget.{field}")
     for field in summary_fields:
         summary[field] = number(summary.get(field), f"summary.{field}")
+
+    require(matches_performance_budget_contract(budget),
+            "performance budget differs from the source-controlled contract")
 
     require(0 < budget["target_frame_ms"] <= budget["warning_p95_frame_ms"]
             <= budget["fail_p95_frame_ms"] <= budget["hitch_frame_ms"],

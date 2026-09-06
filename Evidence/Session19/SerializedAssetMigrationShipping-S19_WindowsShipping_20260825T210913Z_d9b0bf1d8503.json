@@ -1,0 +1,155 @@
+{
+  "schema": "DiscGolfTour.Session19SerializedAssetMigrationShippingEvidence.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "candidateId": "S19_WindowsShipping_20260825T210913Z_d9b0bf1d8503",
+  "evidenceId": "session19_retained_serialized_asset_migration_shipping_non_distribution_20260825",
+  "authority": "ADDITIVE_ENGINEERING_EVIDENCE_NOT_RELEASE_OR_LEGAL_APPROVAL",
+  "state": "PASS_CANDIDATE_BOUND_TECHNICAL_MIGRATION_SHIPPING_NON_DISTRIBUTION",
+  "bindings": {
+    "sourceMigrationReceipt": {
+      "path": "Evidence/Session19/SerializedAssetMigrationReceipt.json",
+      "bytes": 5435,
+      "sha256": "AC1CB2B61D07850E60A40C0701D878F4D7AAFF95CF04B18C280DB418DC91B9A4"
+    },
+    "retainedProfileRepairReceipt": {
+      "path": "Evidence/Session19/RetainedAvatarProfileRepairReceipt.json",
+      "bytes": 2571,
+      "sha256": "CA4EA8E63F504BCB994C283E48635C3CB0266E14793752D40A5808C5490CABD3"
+    },
+    "candidateVerification": {
+      "path": "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260825T210913Z_d9b0bf1d8503.json",
+      "bytes": 6452,
+      "sha256": "D4A5EECBC8C5B6C4B8522856F5B4FDA95C584EC742FB55B95E940C4F6E604199"
+    },
+    "candidateContentAudit": {
+      "path": "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260825T210913Z_d9b0bf1d8503.json",
+      "bytes": 27368,
+      "sha256": "150F031E08A74156349E95781D748422A6C50024D09711C5558472A86109B041"
+    },
+    "shippingBinaryAudit": {
+      "path": "Evidence/Session19/ShippingBinary-S19_WindowsShipping_20260825T210913Z_d9b0bf1d8503.json",
+      "bytes": 1346,
+      "sha256": "DB2951D90AEAA6DB9ADF9E308EBEAD8599B797003F559C09A2A232945E07D5E7"
+    },
+    "externalTechnicalValidation": {
+      "path": "Evidence/Session19/ExternalTechnicalEvidence-S19_WindowsShipping_20260825T210913Z_d9b0bf1d8503.json",
+      "bytes": 800,
+      "sha256": "F5E67D3FB53578D57A45FFA3C07C1CC891E2E8A1ADC900613E8F4D5A6225FD3C"
+    },
+    "freshUserDirValidation": {
+      "path": "Evidence/Session19/FreshUserDir-S19_WindowsShipping_20260825T210913Z_d9b0bf1d8503.json",
+      "bytes": 2721,
+      "sha256": "8182EF1058B66937C54F8EC7C0ECF50B33B9F01AEE267F53A324F10ABBDF96B8"
+    }
+  },
+  "archive": {
+    "hostPathRecorded": false,
+    "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260825T210913Z_d9b0bf1d8503/Windows",
+    "fileCount": 31,
+    "bytes": 1245915879,
+    "canonicalManifestSha256": "2E7408F114E7B47011A2758789A74934CFC23ED9959843575A7C500335428AB6"
+  },
+  "retainedRuntimeAssets": [
+    {
+      "package": "/Game/DiscGolf/Animation/ABP_DG_Player",
+      "stagedIdentity": "DiscGolfTour/Content/DiscGolf/Animation/ABP_DG_Player.uasset",
+      "presentInUfsManifest": true,
+      "presentInContainerInventory": true
+    },
+    {
+      "package": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster",
+      "stagedIdentity": "DiscGolfTour/Content/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster.uasset",
+      "presentInUfsManifest": true,
+      "presentInContainerInventory": true
+    },
+    {
+      "package": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default",
+      "stagedIdentity": "DiscGolfTour/Content/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default.uasset",
+      "presentInUfsManifest": true,
+      "presentInContainerInventory": true
+    },
+    {
+      "package": "/Game/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default",
+      "stagedIdentity": "DiscGolfTour/Content/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default.uasset",
+      "presentInUfsManifest": true,
+      "presentInContainerInventory": true
+    },
+    {
+      "package": "/Game/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter",
+      "stagedIdentity": "DiscGolfTour/Content/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter.uasset",
+      "presentInUfsManifest": true,
+      "presentInContainerInventory": true
+    },
+    {
+      "package": "/Game/DiscGolf/Rigs/CR_DG_Master",
+      "stagedIdentity": "DiscGolfTour/Content/DiscGolf/Rigs/CR_DG_Master.uasset",
+      "presentInUfsManifest": true,
+      "presentInContainerInventory": true
+    }
+  ],
+  "runtimeScreenshots": [
+    {
+      "milestone": "HOLE_2_COMPLETE_CHARACTER_RENDERED",
+      "path": "Screenshots/007_hole2_complete.png",
+      "bytes": 6538326,
+      "sha256": "248DE8C52D982AF55231133D31518FEA2D6738F53CEE6B63F452B3A804D078A7",
+      "width": 2560,
+      "height": 1600,
+      "technicalOnly": true,
+      "freshInstallEvidence": false,
+      "humanReviewed": false
+    },
+    {
+      "milestone": "HOLE_3_TEE_CHARACTER_RENDERED",
+      "path": "Screenshots/008_hole3_tee.png",
+      "bytes": 5421896,
+      "sha256": "EDF4F21467015F51BE6442BD3195DA7BE8289FA916607B707A3E7E2C2FB3704B",
+      "width": 2560,
+      "height": 1600,
+      "technicalOnly": true,
+      "freshInstallEvidence": false,
+      "humanReviewed": false
+    },
+    {
+      "milestone": "HOLE_3_RECOVERED_LIE_CHARACTER_RENDERED",
+      "path": "Screenshots/009_hole3_recovered_lie.png",
+      "bytes": 5559435,
+      "sha256": "8E81B712ED2BF2621C6F213907E0E35D3301C2B5A7CBF75B0241941B815224A9",
+      "width": 2560,
+      "height": 1600,
+      "technicalOnly": true,
+      "freshInstallEvidence": false,
+      "humanReviewed": false
+    }
+  ],
+  "nonDistributionBoundary": {
+    "legacyScriptPackage": "/Script/DiscGolfCharacterFramework",
+    "replacementScriptPackage": "/Script/DiscGolfRuntimeFoundation",
+    "candidateContentCategory": "LEGACY_CHARACTER_FRAMEWORK",
+    "archiveAuthoritativeMatchCount": 0,
+    "archiveManifestDiagnosticMatchCount": 0,
+    "shippingExecutableForbiddenMatchCount": 0,
+    "shippingExecutableReplacementMarkerFound": true,
+    "legacyFrameworkNonDistributionVerified": true,
+    "technicalMigrationShippingBoundaryClosed": true
+  },
+  "claimBoundary": {
+    "sourceAndRetainedAssetMigrationAccepted": true,
+    "cleanShippingBuildReceiptAccepted": true,
+    "freshShippingPackageEvidenceAccepted": true,
+    "candidateBoundTechnicalEvidenceAccepted": true,
+    "freshInstallGameplayAcceptance": false,
+    "manualGameplayAcceptance": false,
+    "humanPlayFeelApproval": false,
+    "visualProductApproval": false,
+    "accessibilityApproval": false,
+    "sourceDistributionRightsResolved": false,
+    "distributionClearance": false,
+    "legalApproval": false,
+    "blockerId": "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+    "blockerClosed": false,
+    "releaseApproval": false,
+    "releaseReady": false
+  }
+}

@@ -8,9 +8,12 @@ namespace
     FThrowCommand MakeSession3Command()
     {
         FThrowCommand Command;
+        Command.DiscInstanceId = FGuid(
+            0xD6153001, 0x53455353, 0x494F4E33, 0x00000001);
         Command.MoldId = TEXT("Session3AuthorityFixture");
         Command.Plastic = EDiscPlastic::Crystal;
         Command.ThrowStyle = EThrowStyle::Backhand;
+        Command.Handedness = EDGHandedness::Right;
         Command.ShotContext = EDiscShotContext::Drive;
         Command.Direction = FVector(0.8125f, -0.4375f, 0.125f);
         Command.Power01 = 0.73125f;
@@ -26,9 +29,12 @@ namespace
         const FThrowCommand& Actual,
         const FThrowCommand& Expected)
     {
+        Test.TestEqual(TEXT("Disc instance id passes through exactly"),
+            Actual.DiscInstanceId, Expected.DiscInstanceId);
         Test.TestEqual(TEXT("Mold id passes through exactly"), Actual.MoldId, Expected.MoldId);
         Test.TestEqual(TEXT("Plastic passes through exactly"), Actual.Plastic, Expected.Plastic);
         Test.TestEqual(TEXT("Throw style passes through exactly"), Actual.ThrowStyle, Expected.ThrowStyle);
+        Test.TestEqual(TEXT("Handedness passes through exactly"), Actual.Handedness, Expected.Handedness);
         Test.TestEqual(TEXT("Shot context passes through exactly"), Actual.ShotContext, Expected.ShotContext);
         Test.TestTrue(TEXT("Direction passes through without normalization or remapping"), Actual.Direction == Expected.Direction);
         Test.TestEqual(TEXT("Power passes through exactly"), Actual.Power01, Expected.Power01);

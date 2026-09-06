@@ -104,11 +104,11 @@ FDiscGolfCoursePresentationDefinition DiscGolfCoursePresentation::PineRidgeFallb
     AddQualityTier(Definition, TEXT("Low"), 0.50f, 0.35f, 0.75f);
     AddQualityTier(Definition, TEXT("Medium"), 0.85f, 0.75f, 1.00f);
     AddQualityTier(Definition, TEXT("High"), 1.15f, 1.10f, 1.25f);
-    AddHolePlan(Definition, 1, TEXT("OpeningPines"), TEXT("BrewsterRidgeTreeLine"),
+    AddHolePlan(Definition, 1, TEXT("OpeningPines"), TEXT("OpeningBroadTreeLine"),
         1101, 1.15f, 4200.0f, 610.0f, 1067.0f, 1067.0f);
-    AddHolePlan(Definition, 2, TEXT("NeedleCorridor"), TEXT("NorthwoodBlackCompression"),
+    AddHolePlan(Definition, 2, TEXT("NeedleCorridor"), TEXT("NeedleCanopyCompression"),
         2202, 1.40f, 4800.0f, 300.0f, 1100.0f, 1500.0f);
-    AddHolePlan(Definition, 3, TEXT("GalleryLake"), TEXT("IdlewildLakeFrame"),
+    AddHolePlan(Definition, 3, TEXT("GalleryLake"), TEXT("GalleryLakeFrame"),
         3303, 1.25f, 4500.0f, 650.0f, 1500.0f, 2200.0f);
     return Definition;
 }

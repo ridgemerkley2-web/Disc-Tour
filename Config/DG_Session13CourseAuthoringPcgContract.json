@@ -1,0 +1,430 @@
+{
+  "schema": "dg.session13.course_authoring_pcg.contract",
+  "schema_version": 1,
+  "contract_id": "DG_SESSION13_COURSE_AUTHORING_VALIDATION_PCG_V1",
+  "audit_scope": "PROJECT_OWNED_EDITOR_ONLY_PCG_AUTHORING_AND_AUTHORED_JSON_SHIPPING_TECHNICAL_CLOSURE",
+  "normal_status": "PASS_TECHNICAL_COURSE_AUTHORING_PCG_CONTRACT_RELEASE_BLOCKED",
+  "implementation_status": "TECHNICAL_AUTHORING_VALIDATION_PCG_IMPLEMENTATION_ACCEPTED_PRODUCTION_READINESS_PENDING",
+  "release_status": "BLOCKED_PENDING_SESSION9_TO_SESSION13_PRODUCTION_CLOSURE",
+  "bounded_technical_feature_complete": true,
+  "full_production_pcg_workflow_complete": false,
+  "releaseBlocked": true,
+  "release_ready": false,
+  "release_use_allowed": false,
+  "authority": {
+    "runtime_course": "FDiscGolfHoleBlockoutDefinition_AUTHORED_JSON_SHIPPING_WITH_DEVELOPMENT_CPP_FALLBACK",
+    "supplementary_editor_dto": "UDiscGolfCourseDefinition",
+    "plugin_dto_is_runtime_authority": false,
+    "gameplay_zones_drive_pcg": true,
+    "pcg_defines_gameplay": false,
+    "disc_flight": "UDiscFlightComponent_FIXED_STEP_240_HZ_SI",
+    "collision": "PROJECT_OWNED_AUTHORED_FIXTURES_AND_PROXIES",
+    "rules_scoring_lies_penalties": "EXISTING_PROJECT_OWNED_AUTHORITIES"
+  },
+  "authoring_contract": {
+    "module": "DiscGolfTourEditor",
+    "editor_only": true,
+    "tick_enabled": false,
+    "designer_world_coordinate_entry_required": false,
+    "visible_types": [
+      "ADiscGolfHoleAuthoringActor",
+      "ADiscGolfTeeAuthoringActor",
+      "ADiscGolfBasketAuthoringActor",
+      "ADiscGolfDropZoneAuthoringActor",
+      "ADiscGolfMandoGateAuthoringActor",
+      "ADiscGolfGameplayZoneAuthoringActor"
+    ],
+    "course_origin_relative_output": true,
+    "stable_id_sorting": true,
+    "invalid_update_mutates_target": false,
+    "successful_update_marks_package_dirty": true,
+    "automatic_asset_save": false,
+    "plugin_asset_role": "SUPPLEMENTARY_DESIGNER_FACING_DATA_ASSET"
+  },
+  "validation_contract": {
+    "portable_plugin_validator_required": true,
+    "project_strict_validator_required": true,
+    "silent_repair_allowed": false,
+    "errors_block_update": true,
+    "warnings_remain_visible": true,
+    "hard_bounds": {
+      "course_holes": 36,
+      "zones_per_hole": 128,
+      "drop_zones_per_hole": 32,
+      "mandos_per_hole": 32,
+      "polygon_points": 256
+    },
+    "strict_checks": [
+      "FINITE_TRANSFORMS_AND_POINTS",
+      "POLYGON_DEGENERACY_AND_SELF_INTERSECTION",
+      "TEE_AND_BASKET_CLEARANCE",
+      "FORBIDDEN_ZONE_CONFLICTS",
+      "OB_AND_MANDO_DROP_ZONE_REFERENCES",
+      "DETERMINISTIC_FAIRWAY_OBSTRUCTION_SAMPLING",
+      "SPECTATOR_SAFETY_WARNINGS",
+      "PERFORMANCE_WARNINGS"
+    ]
+  },
+  "runtime_json_contract": {
+    "authority_unchanged": true,
+    "unknown_enum_policy": "REJECT",
+    "duplicate_key_policy": "REJECT",
+    "unknown_field_policy": "REJECT",
+    "boolean_as_integer_policy": "REJECT",
+    "non_finite_number_policy": "REJECT",
+    "canonical_pine_ridge_semantics_unchanged": true,
+    "development_nonufs_plaintext_status": "ACCEPTED_FOR_DEVELOPMENT_ONLY_PENDING_COOKED_HASH_VERIFIED_SHIPPING_AUTHORITY"
+  },
+  "pcg_contract": {
+    "plugin_enabled": true,
+    "plugin_target_allow_list": ["Editor"],
+    "editor_authoring_controller": "Source/DiscGolfTourEditor/DiscGolfPcgAuthoringController.cpp",
+    "runtime_module_rules": "Source/DiscGolfTour/DiscGolfTour.Build.cs",
+    "editor_module_rules": "Source/DiscGolfTourEditor/DiscGolfTourEditor.Build.cs",
+    "generation_trigger": "GenerateOnDemand",
+    "generate_on_actor_drop": false,
+    "expected_runtime_generate_forest_callsite_count": 0,
+    "expected_generated_instance_count": 0,
+    "runtime_pcg_module_dependency_allowed": false,
+    "runtime_pcg_component_or_generation_api_allowed": false,
+    "editor_pcg_module_dependency_required": true,
+    "shipping_never_cook_directory": "/Game/Environment/Forest/PCG",
+    "shipping_runtime_authority": "ORDERED_EXPLICIT_TREES_ARRAYS_IN_AUTHORED_HOLE_JSON",
+    "shipping_tree_count": 44,
+    "shipping_tree_payload_bytes": 2982,
+    "shipping_tree_payload_sha256": "98D9B1F10A683D1C90EC25F766A3224B00AC550F9C379F2051535F9B82638BF6",
+    "shipping_source_fallback_allowed": false,
+    "runtime_random_placement_allowed": false,
+    "shipping_graph_cooked": false,
+    "fresh_shipping_cook_absence_proven": false,
+    "hard_exclusions_quality_invariant": true,
+    "visual_foliage_collision_enabled": false,
+    "competitive_collision_owner": "PROJECT_OWNED_PROXIES",
+    "environment_to_flight_wind_automatic": false,
+    "zone_plan_output_only": true,
+    "authoring_plan_runtime_consumer_implemented": false,
+    "generated_content_profiled_and_visually_approved": false,
+    "collision_visual_approved": false,
+    "performance_accepted": false,
+    "soak_accepted": false,
+    "manual_gameplay_accepted": false,
+    "all_ten_course_zone_types_mapped": true,
+    "production_ready": false,
+    "binding_slots": 16,
+    "populated_binding_slots": 3,
+    "missing_binding_slots": 13,
+    "ready_binding_slots": 0
+  },
+  "validated_test_hole": {
+    "runtime_authority": "Data/PineRidgeHole1.json",
+    "supplementary_authoring_fixture": "PINE_RIDGE_IDENTITY_BOUND_TRANSIENT_AUTOMATION_DATA_ASSET",
+    "integration_test": "DiscGolfTour.Session13.CourseAuthoring.ValidatedOneHoleWorkflow",
+    "hole_number": 1,
+    "par": 3,
+    "exact_distance_feet": 361.85507202148438,
+    "surface_count": 11,
+    "strategic_tree_count": 12,
+    "collision_fixture_count": 3,
+    "landing_zone_count": 2,
+    "shot_route_count": 3,
+    "camera_anchor_count": 3,
+    "spectator_boundary_count": 3,
+    "wind_zone_count": 2,
+    "flyover_point_count": 6,
+    "environment_zone_count": 6,
+    "representative_routes_passed": 4,
+    "representative_routes_total": 4,
+    "actual_playable_disc_collision": true,
+    "environment_visual_acceptance": "PENDING_FINAL_APPROVED_ENVIRONMENT_BINDINGS_AND_VISUAL_REVIEW"
+  },
+  "optional_integrations": {
+    "brushify": {
+      "status": "NOT_ACQUIRED_NOT_INTEGRATED",
+      "runtime_required": false,
+      "release_use_allowed": false
+    },
+    "ultra_dynamic_sky": {
+      "status": "NOT_ACQUIRED_NOT_INTEGRATED",
+      "runtime_required": false,
+      "release_use_allowed": false
+    }
+  },
+  "continuity": {
+    "frozen_files": [
+      {
+        "path": "Config/DG_BrandLicenseContract.json",
+        "bytes": 9267,
+        "sha256": "3EF3CBAD7E66D89D41CFB8C8FF59516484D8258995CAFAF28F8D58C4D8EB2001"
+      },
+      {
+        "path": "Scripts/validate_dg_session9_brand_license.py",
+        "bytes": 74292,
+        "sha256": "69867A9CE89D8F7720E2A124BEEB09CE4FFDC02D6F95BED8A11D281EF0EB7550"
+      },
+      {
+        "path": "Config/DG_Session10EnvironmentContract.json",
+      "bytes": 19976,
+      "sha256": "05931329CE877E80D4D36691D9091BBD6DDACE8F3F40612C5BE11B47744CDDC5"
+      },
+      {
+        "path": "Scripts/validate_dg_session10_environment.py",
+      "bytes": 76608,
+      "sha256": "13F3AECBB569466B6E3E8C49E0B3FA599EF57B13CE23604602CDC3158809112A"
+      },
+      {
+        "path": "Config/DG_Session11EquipmentThrowLabContract.json",
+        "bytes": 20213,
+        "sha256": "5306B7C1354775A896332474711B5E6E92C44B44F7EFDE0D9353EB4E9DBCA79D"
+      },
+      {
+        "path": "Scripts/validate_dg_session11_equipment_throw_lab.py",
+        "bytes": 36254,
+        "sha256": "E9D262E61122176EB4515D4AA2A4854D6354EADA2871B3A01299B17B13179D8A"
+      },
+      {
+        "path": "Config/DG_Session12PresentationContract.json",
+        "bytes": 14978,
+        "sha256": "B8385D58B102C06AC19A986B14E2858C1906F7BD79D28D48C9AB555D0EB4AB3F"
+      },
+      {
+        "path": "Scripts/validate_dg_session12_presentation.py",
+        "bytes": 30684,
+        "sha256": "D2FCEE88310BF00B3A7F0EE1803E8F2216D5E42C15161B631E8A473A683B5388"
+      }
+    ],
+    "protected_profile": {
+      "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+      "bytes": 5212,
+      "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14",
+      "writes_allowed": false
+    }
+  },
+  "donor_reference": {
+    "policy": "READ_ONLY_REFERENCE_NEVER_RUNTIME_AUTHORITY",
+    "bindings": [
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/CODEX/13_COURSE_AUTHORING_VALIDATOR_PCG.md",
+        "bytes": 1567,
+        "sha256": "56875611007AD4DA0A4867529A9B2568FCAC0D9EE6C4EAA63FEFAD9F03168065"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Docs/40_COURSE_AUTHORING_PCG_VALIDATION.md",
+        "bytes": 1581,
+        "sha256": "DFD8DAF20AD17526A5DAA05B9C39E5D78B85C0CA61511D73AA77616F62181157"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Docs/30_BRUSHIFY_FOREST_ADAPTER.md",
+        "bytes": 1114,
+        "sha256": "863BBDACEC5E258167259A098E6D5A583C4F359587DDAB270351FEBDC9A4F552"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Docs/47_OPTIONAL_ENGINE_FEATURE_SAFETY.md",
+        "bytes": 946,
+        "sha256": "FE0597A50FCBBC5C12CADD2E83EE28E37806E7B1CA479C745C8D9AC466B5D076"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Config/DG_CourseAuthoringSchema.json",
+        "bytes": 628,
+        "sha256": "14C9F98AE8285723C4A90DD72DFF84BA093F324626E89243A8085C7A585E43C7"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/CourseAuthoring/hole_template.csv",
+        "bytes": 163,
+        "sha256": "0EA8ACD98036487A5636E627FAFC11854E1D5206C82635908AE696E89DBDD6E4"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/CourseAuthoring/zone_template.csv",
+        "bytes": 138,
+        "sha256": "C2ACDC4E19D76F8F0CCE5746DD09A588EA015C7B4FD00260DCC4D4D9E7D95B55"
+      }
+    ]
+  },
+  "required_files": [
+    "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringActors.h",
+    "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringActors.cpp",
+    "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringValidation.h",
+    "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringValidation.cpp",
+    "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringExporter.h",
+    "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringExporter.cpp",
+    "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringPcgAdapter.h",
+    "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringPcgAdapter.cpp",
+    "Source/DiscGolfTourEditor/DiscGolfPcgAuthoringController.h",
+    "Source/DiscGolfTourEditor/DiscGolfPcgAuthoringController.cpp",
+    "Source/DiscGolfTourEditor/Tests/DiscGolfCourseAuthoringActorsTests.cpp",
+    "Source/DiscGolfTourEditor/Tests/DiscGolfCourseAuthoringValidationTests.cpp",
+    "Source/DiscGolfTourEditor/Tests/DiscGolfCourseAuthoringExporterTests.cpp",
+    "Source/DiscGolfTourEditor/Tests/DiscGolfCourseAuthoringPcgAdapterTests.cpp",
+    "Source/DiscGolfTourEditor/Tests/DiscGolfSession13CourseAuthoringFixtureTests.cpp",
+    "Source/DiscGolfTourEditor/Tests/DiscGolfPcgShippingSeparationTests.cpp",
+    "Source/DiscGolfTour/DiscGolfTour.Build.cs",
+    "Source/DiscGolfTourEditor/DiscGolfTourEditor.Build.cs",
+    "DiscGolfTour.uproject",
+    "Config/DefaultGame.ini",
+    "Source/DiscGolfTour/DiscGolfCourseDefinition.h",
+    "Source/DiscGolfTour/DiscGolfCourseDefinition.cpp",
+    "Source/DiscGolfTour/Tests/DiscGolfCourseDefinitionTests.cpp",
+    "Source/DiscGolfTour/Tests/DiscGolfSession13CourseJsonTests.cpp",
+    "Data/PineRidgeCourse.json",
+    "Data/PineRidgeHole1.json",
+    "Saved/CourseReports/PineRidgeHole1Validation.json",
+    "Saved/EnvironmentReports/PineRidgeHole1FlightRoutes.json",
+    "Saved/EnvironmentReports/PineRidgeHole1EnvironmentStatistics.json",
+    "Saved/Developer/EnvironmentAssetBindingReport.json",
+    "Config/DG_Session13CourseAuthoringPcgContract.json",
+    "Scripts/validate_dg_session13_course_authoring_pcg.py",
+    "Docs/DG_SESSION13_COURSE_AUTHORING_PCG_AUDIT.md"
+  ],
+  "implementation_capabilities": [
+    {
+      "id": "visible_editor_authoring_actors",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "id": "deterministic_course_dto_conversion",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "id": "plugin_and_project_strict_validation",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "id": "fail_closed_atomic_asset_update",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "id": "authored_zone_to_pcg_plan_seam",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "id": "strict_runtime_course_json_ingest",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "id": "validated_playable_pine_ridge_hole1",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "id": "build_automation_and_package_regression",
+      "status": "TECHNICAL_PASS"
+    }
+  ],
+  "test_contract": {
+    "focused_session13_filter": "DiscGolfTour.Session13.*",
+    "focused_course_authoring_filter": "DiscGolfTour.CourseAuthoring.*",
+    "full_filter": "DiscGolfTour.*",
+    "expected_session13_succeeded": 19,
+    "expected_course_authoring_succeeded": 9,
+    "expected_full_succeeded": 206,
+    "editor_and_game_development_builds_required": true,
+    "reference_flight_required": true,
+    "fresh_non_iterative_package_required": true,
+    "packaged_pine_ridge_smoke_required": true,
+    "protected_profile_hash_required_after_all_runs": true
+  },
+  "closure_evidence": {
+    "editor_development_build": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session13EditorBuildFinal_efea4d04-1756-4e4d-8883-0a0c3325ed0a.log",
+      "bytes": 1061,
+      "sha256": "A6600F25A4A5BF032DA023167B8237131C23318443B6D6DF970714DCA4EB7D00"
+    },
+    "game_development_build": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session13GameBuildFinal_efea4d04-1756-4e4d-8883-0a0c3325ed0a.log",
+      "bytes": 1023,
+      "sha256": "87DF9EC1AF78B3ADA56E6EA06EFCFBA8396952C9A11BE60A3BAAD33CF548D339"
+    },
+    "focused_session13_automation": {
+      "status": "PASS",
+      "path": "Saved/Automation/Session13FocusedClosure_409048fb-28f1-4350-83ed-9c2b3f64f5c6/index.json",
+      "bytes": 8520,
+      "sha256": "435C9D1E62B12F0A5DAFF96DD3477BB1D49B76194F74E3EE0B0E41077A085780",
+      "succeeded": 19,
+      "failed": 0,
+      "not_run": 0
+    },
+    "focused_course_authoring_automation": {
+      "status": "PASS",
+      "path": "Saved/Automation/Session13CourseAuthoringClosure_409048fb-28f1-4350-83ed-9c2b3f64f5c6/index.json",
+      "bytes": 4341,
+      "sha256": "ADB5D9E07B074A265E1D1E3231A7B8DFAA5A15F99737AA5997BBD1756D7AB784",
+      "succeeded": 9,
+      "failed": 0,
+      "not_run": 0
+    },
+    "full_automation": {
+      "status": "PASS",
+      "path": "Saved/Automation/Session13FullClosure_ab5ef328-2be8-4892-9cc7-2be70577fbb3/index.json",
+      "bytes": 82803,
+      "sha256": "B8EF0F38E2AC65926577B7AE2D5B152632C8D88D6381D9963B0FA6FF482AB282",
+      "succeeded": 206,
+      "failed": 0,
+      "not_run": 0
+    },
+    "project_validation": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session13ProjectValidation_1b136806-c238-4a18-84bb-15299a3b7de5.log",
+      "bytes": 170,
+      "sha256": "31CE2B89F8E1F423F881EF97D5C96546098F80E5746489DED1E1791184492A94"
+    },
+    "reference_flight": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session13ReferenceFlight_1b136806-c238-4a18-84bb-15299a3b7de5.log",
+      "bytes": 311,
+      "sha256": "7DF69DCF638C4350E7D7C5345B1C38D961B9ED05E29C0CB967723F0E5CD98F29",
+      "carry_m": 84.5
+    },
+    "fresh_package": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session13Package_a8ee742d-01ef-4602-81ac-b6445a784d2a.log",
+      "bytes": 318694,
+      "sha256": "C66FE2AF61AE83A2B55AD35F8680944643C18628541B814A14426B2B1712D594",
+      "archive_path": "C:\\DGTour_Packages\\S13_CourseAuthoring_a8ee742d-01ef-4602-81ac-b6445a784d2a",
+      "cooked_packages": 985,
+      "incrementally_skipped": 0,
+      "skipped_by_platform": 7,
+      "total_packages": 992,
+      "archive_file_count": 54,
+      "archive_manifest": {
+        "path": "Saved/CourseReports/Session13PackageManifest_a8ee742d-01ef-4602-81ac-b6445a784d2a.json",
+        "bytes": 11123,
+        "sha256": "6D04C093BFEE8809B3736607BAB7DB81505194488375D739ACAA4A35659E47AD"
+      }
+    },
+    "packaged_live": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session13Packaged_9ec40384-a1c1-4ef0-ada0-7a93d5808b0b.log",
+      "bytes": 76701,
+      "sha256": "90EABED91C5F1C360626AAC090675D0515A7A134BC76BA39E05C4E060F8F8362",
+      "pine_ridge_smoke_pass": true,
+      "authored_json_holes": 3,
+      "requested_exit_status": 0
+    },
+    "protected_profile_after_all_runs": {
+      "status": "PASS",
+      "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+      "bytes": 5212,
+      "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14"
+    }
+  },
+  "exit_gate": {
+    "status": "TECHNICAL_EXIT_ACCEPTED_PRODUCTION_READINESS_PENDING",
+    "all_capabilities_technical_pass": true,
+    "production_readiness_approved": false
+  },
+  "session13_release_blocker": "SESSION13_COURSE_AUTHORING_PCG_PRODUCTION_READINESS_PENDING",
+  "release_blockers": [
+    "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+    "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+    "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+    "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+    "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+    "POLY_HAVEN_DERIVED_RUNTIME_PROVENANCE_RECEIPT_INCOMPLETE",
+    "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+    "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED",
+    "SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY",
+    "SESSION11_EQUIPMENT_PHYSICS_AND_PRODUCTION_READINESS_PENDING",
+    "SESSION12_PRESENTATION_INPUT_AUDIO_PRODUCTION_READINESS_PENDING",
+    "SESSION13_COURSE_AUTHORING_PCG_PRODUCTION_READINESS_PENDING"
+  ]
+}

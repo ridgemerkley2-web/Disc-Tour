@@ -5,6 +5,35 @@
 #include "../DiscGolfCoursePresentationDefinition.h"
 #include "../DiscGolfFoliagePresentationActor.h"
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfPineRidgeAuthoredDataLoadPolicyTest,
+    "DiscGolfTour.CourseDefinition.AuthoredDataLoadPolicy",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDiscGolfPineRidgeAuthoredDataLoadPolicyTest::RunTest(const FString& Parameters)
+{
+    using namespace DiscGolfCourseDefinition;
+
+    TestEqual(TEXT("Development uses valid authored course data"),
+        ResolveAuthoredCourseLoadAction(EDiscGolfAuthoredCourseDataState::Valid, false),
+        EDiscGolfAuthoredCourseLoadAction::UseAuthoredData);
+    TestEqual(TEXT("Development remains compatible with a missing authored-data fallback"),
+        ResolveAuthoredCourseLoadAction(EDiscGolfAuthoredCourseDataState::Missing, false),
+        EDiscGolfAuthoredCourseLoadAction::UseSourceFallback);
+    TestEqual(TEXT("Development remains compatible with an invalid authored-data fallback"),
+        ResolveAuthoredCourseLoadAction(EDiscGolfAuthoredCourseDataState::Invalid, false),
+        EDiscGolfAuthoredCourseLoadAction::UseSourceFallback);
+    TestEqual(TEXT("Shipping uses valid authored course data"),
+        ResolveAuthoredCourseLoadAction(EDiscGolfAuthoredCourseDataState::Valid, true),
+        EDiscGolfAuthoredCourseLoadAction::UseAuthoredData);
+    TestEqual(TEXT("Shipping fails closed when authored course data is missing"),
+        ResolveAuthoredCourseLoadAction(EDiscGolfAuthoredCourseDataState::Missing, true),
+        EDiscGolfAuthoredCourseLoadAction::FailClosed);
+    TestEqual(TEXT("Shipping fails closed when authored course data is invalid"),
+        ResolveAuthoredCourseLoadAction(EDiscGolfAuthoredCourseDataState::Invalid, true),
+        EDiscGolfAuthoredCourseLoadAction::FailClosed);
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfPineRidgeManifestTest,
     "DiscGolfTour.CourseDefinition.CourseManifest",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -201,6 +230,42 @@ bool FDiscGolfCourseDuplicateIdentityValidationTest::RunTest(const FString& Para
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfCourseGlobalWindZoneIdentityTest,
+    "DiscGolfTour.CourseDefinition.CourseGlobalWindZoneIdentity",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDiscGolfCourseGlobalWindZoneIdentityTest::RunTest(const FString& Parameters)
+{
+    (void)Parameters;
+    TArray<FDiscGolfHoleBlockoutDefinition> Definitions = {
+        DiscGolfCourseDefinition::PineRidgeHole1Fallback(),
+        DiscGolfCourseDefinition::PineRidgeHole2Fallback(),
+        DiscGolfCourseDefinition::PineRidgeHole3Fallback()
+    };
+    FString Error;
+    TestTrue(TEXT("Valid Pine Ridge wind-zone identities are course-global unique"),
+        DiscGolfCourseDefinition::ValidateCourseWindZoneIdentities(
+            Definitions, Error));
+
+    const FName DuplicatedZoneId = Definitions[0].WindZones[0].ZoneId;
+    Definitions[1].WindZones[0].ZoneId = DuplicatedZoneId;
+    TestFalse(TEXT("A wind-zone identity reused by another hole is rejected"),
+        DiscGolfCourseDefinition::ValidateCourseWindZoneIdentities(
+            Definitions, Error));
+    TestTrue(TEXT("Cross-hole rejection identifies the duplicated wind zone and owners"),
+        Error.Contains(DuplicatedZoneId.ToString())
+        && Error.Contains(TEXT("holes 1 and 2")));
+
+    // Missing IDs remain the per-hole validator's responsibility; the global
+    // pass must not misclassify two missing IDs as one shared actor identity.
+    Definitions[0].WindZones[0].ZoneId = NAME_None;
+    Definitions[1].WindZones[0].ZoneId = NAME_None;
+    TestTrue(TEXT("Course-global identity validation only compares non-None IDs"),
+        DiscGolfCourseDefinition::ValidateCourseWindZoneIdentities(
+            Definitions, Error));
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfCourseCameraCoverageValidationTest,
     "DiscGolfTour.CourseDefinition.RequiresCameraCoverage",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -232,15 +297,15 @@ bool FDiscGolfCoursePresentationContractTest::RunTest(const FString& Parameters)
     TestEqual(TEXT("Active collision revision names the fixture pass"), Presentation.CollisionProfileId,
         FName(TEXT("PineRidgeCompetitiveV2_Fixtures")));
     TestFalse(TEXT("Contract honestly reports that production assets are pending"), Presentation.bAssetsReady);
-    TestEqual(TEXT("Opening uses the Brewster-style tree-line reference"),
-        Presentation.Holes[0].ForestReferenceId, FName(TEXT("BrewsterRidgeTreeLine")));
+    TestEqual(TEXT("Opening uses the project-original broad tree-line reference"),
+        Presentation.Holes[0].ForestReferenceId, FName(TEXT("OpeningBroadTreeLine")));
     TestTrue(TEXT("Opening tee and green clear approximately 35 feet"),
         FMath::IsNearlyEqual(Presentation.Holes[0].TeeClearingRadiusCm, 1067.0f, 1.0f)
         && FMath::IsNearlyEqual(Presentation.Holes[0].GreenClearingRadiusCm, 1067.0f, 1.0f));
-    TestEqual(TEXT("Needle Gate uses the Northwood-style compression reference"),
-        Presentation.Holes[1].ForestReferenceId, FName(TEXT("NorthwoodBlackCompression")));
-    TestEqual(TEXT("Gallery Lake uses the Idlewild-style lake-frame reference"),
-        Presentation.Holes[2].ForestReferenceId, FName(TEXT("IdlewildLakeFrame")));
+    TestEqual(TEXT("Needle Gate uses the project-original canopy-compression reference"),
+        Presentation.Holes[1].ForestReferenceId, FName(TEXT("NeedleCanopyCompression")));
+    TestEqual(TEXT("Gallery Lake uses the project-original lake-frame reference"),
+        Presentation.Holes[2].ForestReferenceId, FName(TEXT("GalleryLakeFrame")));
     TestEqual(TEXT("Normal-tier Opening has a dense decorative target"),
         DiscGolfFoliagePresentation::ResolveDecorativeInstanceTarget(Presentation.Holes[0], 0.85f), 352);
     TestEqual(TEXT("Normal-tier Needle Gate is the densest forest"),

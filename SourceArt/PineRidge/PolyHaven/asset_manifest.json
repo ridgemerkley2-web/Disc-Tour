@@ -1,0 +1,369 @@
+﻿{
+    "schema":  "disc_golf_third_party_source_manifest",
+    "schemaVersion":  1,
+    "generatedUtc":  "2026-08-13T03:19:58.7443907Z",
+    "source":  "Poly Haven",
+    "license":  "CC0-1.0",
+    "licenseUrl":  "https://polyhaven.com/license",
+    "selection":  {
+                      "terrainResolution":  "2K",
+                      "foliageTextureResolution":  "1K",
+                      "fixtureTextureResolution":  "1K",
+                      "terrainFormat":  "JPG",
+                      "normalConvention":  "DirectX",
+                      "foliageGeometry":  "FBX",
+                      "fixtureGeometry":  "FBX"
+                  },
+    "files":  [
+                  {
+                      "assetId":  "forrest_ground_01",
+                      "role":  "Diffuse2K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_diff_2k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forrest_ground_01/forrest_ground_01_diff_2k.jpg",
+                      "byteSize":  3077552,
+                      "md5":  "18fa30c294be21805159ca6e73a5e5fa",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/forrest_ground_01"
+                  },
+                  {
+                      "assetId":  "forrest_ground_01",
+                      "role":  "NormalDX2K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_nor_dx_2k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forrest_ground_01/forrest_ground_01_nor_dx_2k.jpg",
+                      "byteSize":  5664401,
+                      "md5":  "e1b78b45dde854401d82cfc7d4dcf6e5",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/forrest_ground_01"
+                  },
+                  {
+                      "assetId":  "forrest_ground_01",
+                      "role":  "Roughness2K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_rough_2k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forrest_ground_01/forrest_ground_01_rough_2k.jpg",
+                      "byteSize":  920422,
+                      "md5":  "a4c7ecc9cef47f5d097d4553e421ed6a",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/forrest_ground_01"
+                  },
+                  {
+                      "assetId":  "forrest_ground_01",
+                      "role":  "AmbientOcclusion2K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/ForestGround01/forrest_ground_01_ao_2k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forrest_ground_01/forrest_ground_01_ao_2k.jpg",
+                      "byteSize":  2493578,
+                      "md5":  "be730523a039ab1171da81d43f1681c3",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/forrest_ground_01"
+                  },
+                  {
+                      "assetId":  "leafy_grass",
+                      "role":  "Diffuse2K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_diff_2k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/leafy_grass/leafy_grass_diff_2k.jpg",
+                      "byteSize":  4766204,
+                      "md5":  "8014f4dace676a62ed71b3dd76119dae",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/leafy_grass"
+                  },
+                  {
+                      "assetId":  "leafy_grass",
+                      "role":  "NormalDX2K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_nor_dx_2k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/leafy_grass/leafy_grass_nor_dx_2k.jpg",
+                      "byteSize":  6049495,
+                      "md5":  "82936efe4dd20543414cb55d47a9f53c",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/leafy_grass"
+                  },
+                  {
+                      "assetId":  "leafy_grass",
+                      "role":  "Roughness2K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_rough_2k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/leafy_grass/leafy_grass_rough_2k.jpg",
+                      "byteSize":  2274652,
+                      "md5":  "b5c551ed91162aab5afbfb03b73ae3f5",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/leafy_grass"
+                  },
+                  {
+                      "assetId":  "leafy_grass",
+                      "role":  "AmbientOcclusion2K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/LeafyGrass/leafy_grass_ao_2k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/leafy_grass/leafy_grass_ao_2k.jpg",
+                      "byteSize":  4175463,
+                      "md5":  "f25065162a26693b29a10587582df688",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/leafy_grass"
+                  },
+                  {
+                      "assetId":  "grass_path_2",
+                      "role":  "Diffuse2K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_diff_2k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/grass_path_2/grass_path_2_diff_2k.jpg",
+                      "byteSize":  2788295,
+                      "md5":  "e03c3884e3a1f13dc838a4eee9af4dab",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/grass_path_2"
+                  },
+                  {
+                      "assetId":  "grass_path_2",
+                      "role":  "NormalDX2K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_nor_dx_2k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/grass_path_2/grass_path_2_nor_dx_2k.jpg",
+                      "byteSize":  2411501,
+                      "md5":  "3dc47a0b7c7cc036d6267fedbf7affb0",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/grass_path_2"
+                  },
+                  {
+                      "assetId":  "grass_path_2",
+                      "role":  "Roughness2K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_rough_2k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/grass_path_2/grass_path_2_rough_2k.jpg",
+                      "byteSize":  1329811,
+                      "md5":  "22fa874bdfd9a18f8c541342486493b0",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/grass_path_2"
+                  },
+                  {
+                      "assetId":  "grass_path_2",
+                      "role":  "AmbientOcclusion2K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/GrassPath2/grass_path_2_ao_2k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/grass_path_2/grass_path_2_ao_2k.jpg",
+                      "byteSize":  1364400,
+                      "md5":  "c2bddc129eced825d3a4f865cf5ee2cf",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/grass_path_2"
+                  },
+                  {
+                      "assetId":  "fir_sapling",
+                      "role":  "StaticMeshFBX1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/FirSapling/fir_sapling_1k.fbx",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/fbx/1k/fir_sapling/fir_sapling_1k.fbx",
+                      "byteSize":  19037468,
+                      "md5":  "e89019c6c0e26796f36370603a34a4f1",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/fir_sapling"
+                  },
+                  {
+                      "assetId":  "fir_sapling",
+                      "role":  "BranchesDiffuse1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_diff_1k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fir_sapling/fir_sapling_branches_diff_1k.jpg",
+                      "byteSize":  776633,
+                      "md5":  "84f1d40b80a015d65c0ded042a10765b",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/fir_sapling"
+                  },
+                  {
+                      "assetId":  "fir_sapling",
+                      "role":  "BranchesNormalDX1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_nor_dx_1k.png",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/fir_sapling/fir_sapling_branches_nor_dx_1k.png",
+                      "byteSize":  5778902,
+                      "md5":  "9dd4099b8789142780bd2d73d79d7ca8",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/fir_sapling"
+                  },
+                  {
+                      "assetId":  "fir_sapling",
+                      "role":  "BranchesRoughness1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_branches_rough_1k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fir_sapling/fir_sapling_branches_rough_1k.jpg",
+                      "byteSize":  506894,
+                      "md5":  "ec4899350530d538814243ca3de34710",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/fir_sapling"
+                  },
+                  {
+                      "assetId":  "fir_sapling",
+                      "role":  "TwigsDiffuse1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_diff_1k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fir_sapling/fir_sapling_twigs_diff_1k.jpg",
+                      "byteSize":  252678,
+                      "md5":  "cd218269e0b34bd1bdb48a8daf21be67",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/fir_sapling"
+                  },
+                  {
+                      "assetId":  "fir_sapling",
+                      "role":  "TwigsNormalDX1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_nor_dx_1k.png",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/fir_sapling/fir_sapling_twigs_nor_dx_1k.png",
+                      "byteSize":  1549276,
+                      "md5":  "c450a1f9e65fb04b51706899eb7d3472",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/fir_sapling"
+                  },
+                  {
+                      "assetId":  "fir_sapling",
+                      "role":  "TwigsRoughness1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_rough_1k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/fir_sapling/fir_sapling_twigs_rough_1k.jpg",
+                      "byteSize":  247349,
+                      "md5":  "4f4411fffcdebb58c9ea6ca95b03b087",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/fir_sapling"
+                  },
+                  {
+                      "assetId":  "fir_sapling",
+                      "role":  "TwigsOpacity1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/FirSapling/Textures/fir_sapling_twigs_alpha_1k.png",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/fir_sapling/fir_sapling_twigs_alpha_1k.png",
+                      "byteSize":  107682,
+                      "md5":  "177123c2b5eaeee068be559ff78e54d0",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/fir_sapling"
+                  },
+                  {
+                      "assetId":  "boulder_01",
+                      "role":  "StaticMeshFBX1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/Boulder01/boulder_01_1k.fbx",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/fbx/1k/boulder_01/boulder_01_1k.fbx",
+                      "byteSize":  6482860,
+                      "md5":  "e6079d3ddb9a71716d88274808e2d92c",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/boulder_01"
+                  },
+                  {
+                      "assetId":  "boulder_01",
+                      "role":  "Diffuse1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_diffuse_1k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/boulder_01/boulder_01_diff_1k.jpg",
+                      "byteSize":  987467,
+                      "md5":  "25f8a843f13369d56d37f49db05ea8c3",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/boulder_01"
+                  },
+                  {
+                      "assetId":  "boulder_01",
+                      "role":  "NormalDX1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_nor_dx_1k.png",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/boulder_01/boulder_01_nor_dx_1k.png",
+                      "byteSize":  5734156,
+                      "md5":  "c0799b7a5bf05ec58b012b4df0821e5b",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/boulder_01"
+                  },
+                  {
+                      "assetId":  "boulder_01",
+                      "role":  "Roughness1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_rough_1k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/boulder_01/boulder_01_rough_1k.jpg",
+                      "byteSize":  492815,
+                      "md5":  "43956cc527fdf25bf0e5757521606604",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/boulder_01"
+                  },
+                  {
+                      "assetId":  "boulder_01",
+                      "role":  "AmbientOcclusion1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/Boulder01/Textures/boulder_01_ao_1k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/boulder_01/boulder_01_ao_1k.jpg",
+                      "byteSize":  491469,
+                      "md5":  "79a7205661a3fa38187c95d6fb658d37",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/boulder_01"
+                  },
+                  {
+                      "assetId":  "shrub_04",
+                      "role":  "StaticMeshFBX1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/Shrub04/shrub_04_1k.fbx",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/fbx/1k/shrub_04/shrub_04_1k.fbx",
+                      "byteSize":  852540,
+                      "md5":  "3b313098938fa2c6bbef69761685da05",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/shrub_04"
+                  },
+                  {
+                      "assetId":  "shrub_04",
+                      "role":  "Diffuse1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_diffuse_1k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/shrub_04/shrub_04_diff_1k.jpg",
+                      "byteSize":  373350,
+                      "md5":  "b2b4682a82f44be10b8d4b4d481a4fe8",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/shrub_04"
+                  },
+                  {
+                      "assetId":  "shrub_04",
+                      "role":  "NormalDX1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_nor_dx_1k.png",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/shrub_04/shrub_04_nor_dx_1k.png",
+                      "byteSize":  1613982,
+                      "md5":  "3a2a89661798b1d7d538fc6d4644071f",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/shrub_04"
+                  },
+                  {
+                      "assetId":  "shrub_04",
+                      "role":  "Roughness1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_rough_1k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/shrub_04/shrub_04_rough_1k.jpg",
+                      "byteSize":  220160,
+                      "md5":  "e37f1f9e3c96dd7e50a367c8a3bce383",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/shrub_04"
+                  },
+                  {
+                      "assetId":  "shrub_04",
+                      "role":  "AmbientOcclusion1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_ao_1k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/shrub_04/shrub_04_ao_1k.jpg",
+                      "byteSize":  171793,
+                      "md5":  "f5fd90d98077e3f9941d9b5e268076a2",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/shrub_04"
+                  },
+                  {
+                      "assetId":  "shrub_04",
+                      "role":  "Opacity1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Models/Shrub04/Textures/shrub_04_alpha_1k.png",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/shrub_04/shrub_04_alpha_1k.png",
+                      "byteSize":  42906,
+                      "md5":  "c899653f9884941bdb2ada187809f4c8",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/shrub_04"
+                  },
+                  {
+                      "assetId":  "weathered_planks",
+                      "role":  "Diffuse1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_diffuse_1k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/weathered_planks/weathered_planks_diff_1k.jpg",
+                      "byteSize":  599581,
+                      "md5":  "5d7c9e7088bfa54490ba03ba15b660d8",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/weathered_planks"
+                  },
+                  {
+                      "assetId":  "weathered_planks",
+                      "role":  "NormalDX1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_nor_dx_1k.png",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/weathered_planks/weathered_planks_nor_dx_1k.png",
+                      "byteSize":  5414749,
+                      "md5":  "0828afe42221c456592c0d5d31034655",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/weathered_planks"
+                  },
+                  {
+                      "assetId":  "weathered_planks",
+                      "role":  "Roughness1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_rough_1k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/weathered_planks/weathered_planks_rough_1k.jpg",
+                      "byteSize":  218802,
+                      "md5":  "4ca50b076e1fc58f6862a5b039a7d5c9",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/weathered_planks"
+                  },
+                  {
+                      "assetId":  "weathered_planks",
+                      "role":  "AmbientOcclusion1K",
+                      "relativePath":  "SourceArt/PineRidge/PolyHaven/Textures/WeatheredPlanks/weathered_planks_ao_1k.jpg",
+                      "sourceUrl":  "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/weathered_planks/weathered_planks_ao_1k.jpg",
+                      "byteSize":  594177,
+                      "md5":  "2ac460c35891d9bade2baadd3251b4e9",
+                      "license":  "CC0-1.0",
+                      "sourcePage":  "https://polyhaven.com/a/weathered_planks"
+                  }
+              ]
+}

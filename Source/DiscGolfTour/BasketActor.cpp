@@ -70,15 +70,42 @@ void ABasketActor::OnCatchVolumeBeginOverlap(UPrimitiveComponent* OverlappedComp
     ADiscActor* Disc = Cast<ADiscActor>(OtherActor);
     if (!Disc || !Disc->GetFlightComponent()) return;
 
+    if (!Disc->GetFlightComponent()->IsFlying())
+    {
+        // Spawn-inside overlaps can arrive before LaunchThrow applies velocity.
+        // GameMode rechecks that exact overlap immediately after its launch
+        // transaction commits; a render-tick retry would be frame dependent.
+        return;
+    }
+
+    EvaluateDiscContact(Disc);
+}
+
+bool ABasketActor::EvaluateOverlappingDiscContact(ADiscActor* Disc)
+{
+    return Disc
+        && CatchVolume
+        && CatchVolume->IsOverlappingActor(Disc)
+        && EvaluateDiscContact(Disc);
+}
+
+bool ABasketActor::EvaluateDiscContact(ADiscActor* Disc)
+{
+    if (!Disc || !Disc->GetFlightComponent() || !Disc->GetFlightComponent()->IsFlying())
+    {
+        return false;
+    }
+
     const FVector BasketBase = GetActorLocation();
     const FVector RelativeLocation = Disc->GetActorLocation() - BasketBase;
     const FBasketContactEvaluation Evaluation = DiscGolfMath::EvaluateBasketContact(
         RelativeLocation, Disc->GetFlightComponent()->GetVelocityMps());
-    if (Evaluation.Result == EBasketContactResult::None) return;
+    if (Evaluation.Result == EBasketContactResult::None) return false;
 
     UE_LOG(LogDiscGolfTour, Display,
         TEXT("Basket contact result %d: speed %.2f m/s, predicted radius %.1f cm, height %.1f cm."),
         static_cast<int32>(Evaluation.Result), Evaluation.IncomingSpeedMps,
         Evaluation.PredictedRadialCm, Evaluation.PredictedHeightCm);
     Disc->ResolveBasketContact(Evaluation, BasketBase + FVector(0.0f, 0.0f, 101.0f));
+    return true;
 }

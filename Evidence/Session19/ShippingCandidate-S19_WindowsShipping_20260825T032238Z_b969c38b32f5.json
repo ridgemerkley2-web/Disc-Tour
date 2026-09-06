@@ -1,0 +1,63 @@
+{
+  "schema": "DiscGolfTour.Session19ShippingCandidateBuildReceipt.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "runId": "S19_WindowsShipping_20260825T032238Z_b969c38b32f5",
+  "target": {
+    "platform": "Win64",
+    "configuration": "Shipping",
+    "milestone": "v0.5",
+    "holes": [
+      1,
+      2,
+      3
+    ]
+  },
+  "invocation": {
+    "clean": true,
+    "iterativeCook": false,
+    "build": true,
+    "cook": true,
+    "stage": true,
+    "pak": true,
+    "ioStore": true,
+    "archive": true,
+    "distribution": true,
+    "debugInfo": false
+  },
+  "startedUtc": "2026-08-25T03:22:51.0474524Z",
+  "finishedUtc": "2026-08-25T03:33:02.0446335Z",
+  "uatExitCode": 0,
+  "exception": "",
+  "state": "BUILD_FAILED",
+  "archive": {
+    "hostPathRecorded": false,
+    "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260825T032238Z_b969c38b32f5",
+    "windowsArchivePresent": true,
+    "requiredFilesPresent": false,
+    "missingRequiredFiles": [
+      "DiscGolfTour\\Binaries\\Win64\\DiscGolfTour.exe"
+    ]
+  },
+  "buildLog": {
+    "path": "Evidence/Session19/ShippingBuildCookRun-S19_WindowsShipping_20260825T032238Z_b969c38b32f5.log",
+    "present": true,
+    "bytes": 111937,
+    "sha256": "879FE70EDC25C1AC866394A63157A202B5DD56F27E41412E76C23080B4563944"
+  },
+  "protectedProfile": {
+    "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+    "presentBefore": true,
+    "presentAfter": true,
+    "beforeSha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14",
+    "afterSha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14",
+    "preserved": true
+  },
+  "nextRequiredEvidence": [
+    "WHOLE_ARCHIVE_AND_CONTAINER_PROVENANCE",
+    "SHIPPING_FEATURE_AND_FORBIDDEN_CONTENT_ABSENCE",
+    "FRESH_INSTALL_THREE_HOLE_ACCEPTANCE"
+  ],
+  "releaseReady": false,
+  "receiptPath": "Evidence/Session19/ShippingCandidate-S19_WindowsShipping_20260825T032238Z_b969c38b32f5.json"
+}

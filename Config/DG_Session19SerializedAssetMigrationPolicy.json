@@ -1,0 +1,98 @@
+{
+  "schema": "DiscGolfTour.Session19SerializedAssetMigrationPolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "policyId": "retained_v05_cleanroom_serialized_asset_migration_v1",
+  "authority": "ADDITIVE_ENGINEERING_EVIDENCE_NOT_RELEASE_OR_LEGAL_APPROVAL",
+  "state": "SOURCE_AND_RETAINED_ASSET_MIGRATION_VERIFIED_FRESH_SHIPPING_PACKAGE_PROOF_PENDING",
+  "releaseReady": false,
+  "legacyScriptPackage": "/Script/DiscGolfCharacterFramework",
+  "replacementScriptPackage": "/Script/DiscGolfRuntimeFoundation",
+  "migrationBoundary": {
+    "inventoryPath": "Evidence/Session19/SerializedAssetMigrationInventory.tsv",
+    "inventoryBytes": 10279,
+    "inventorySha256": "1B7B853153ADD65924B9D090B91B219A225F8E327DD95617505B5DE95CDC953B",
+    "inventoryAssetCount": 45,
+    "retainedAssetCount": 6,
+    "excludedAssetCount": 39,
+    "retainedRule": "ONLY_ASSETS_OUTSIDE_SESSION19_NEVERCOOK_ROOTS_MAY_BE_RESAVED",
+    "excludedRule": "EXCLUDED_ASSETS_RETAIN_THEIR_PRE_MIGRATION_BYTES_AND_REMAIN_OUT_OF_SHIPPING",
+    "sidecarExtensionsProtected": [".uexp", ".ubulk", ".uptnl"]
+  },
+  "retainedPackages": [
+    "/Game/DiscGolf/Animation/ABP_DG_Player",
+    "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster",
+    "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default",
+    "/Game/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default",
+    "/Game/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter",
+    "/Game/DiscGolf/Rigs/CR_DG_Master"
+  ],
+  "excludedNeverCookRoots": [
+    {"root": "/Game/DiscGolf/Animation/Mocap", "assetCount": 2},
+    {"root": "/Game/DiscGolf/Animation/Throws", "assetCount": 1},
+    {"root": "/Game/DiscGolf/Characters/Customization", "assetCount": 18},
+    {"root": "/Game/DiscGolf/Outfits", "assetCount": 16},
+    {"root": "/Game/DiscGolf/Tests", "assetCount": 2}
+  ],
+  "coreRedirect": {
+    "configPath": "Config/DefaultEngine.ini",
+    "section": "CoreRedirects",
+    "exactEntries": [
+      "+PackageRedirects=(OldName=\"/Script/DiscGolfCharacterFramework\",NewName=\"/Script/DiscGolfRuntimeFoundation\")",
+      "+StructRedirects=(OldName=\"/Script/DiscGolfCharacterFramework.DGBodyProfile\",NewName=\"/Script/DiscGolfRuntimeFoundation.DGBodyProfile\")",
+      "+StructRedirects=(OldName=\"/Script/DiscGolfCharacterFramework.DGThrowStyle\",NewName=\"/Script/DiscGolfRuntimeFoundation.DGThrowStyle\")",
+      "+EnumRedirects=(OldName=\"/Script/DiscGolfCharacterFramework.EDGHandedness\",NewName=\"/Script/DiscGolfRuntimeFoundation.EDGHandedness\")",
+      "+EnumRedirects=(OldName=\"/Script/DiscGolfCharacterFramework.EDGThrowPhase\",NewName=\"/Script/DiscGolfRuntimeFoundation.EDGThrowPhase\")"
+    ],
+    "scope": "CONTROLLED_LOAD_AND_RESAVE_COMPATIBILITY_FOR_RETAINED_PROJECT_ASSETS"
+  },
+  "moduleBoundary": {
+    "projectDescriptor": "DiscGolfTour.uproject",
+    "replacementModule": "DiscGolfRuntimeFoundation",
+    "replacementEnabledForEditorDevelopmentAndShipping": true,
+    "legacyPluginMayBeEnabled": false,
+    "legacyPluginDescriptorEntryRemovedAfterSuccessfulResave": true,
+    "legacyPluginEnabledByDefaultWhileSourceTreeRetained": false,
+    "legacySourceTreeRemovalAuthorizedByThisPolicy": false
+  },
+  "requiredReplacementClasses": [
+    "/Script/DiscGolfRuntimeFoundation.DiscGolfAnimInstance",
+    "/Script/DiscGolfRuntimeFoundation.DiscGolfAvatarBackendProfile",
+    "/Script/DiscGolfRuntimeFoundation.DiscGolfCharacterProfile"
+  ],
+  "liveBindingFiles": [
+    "Config/DefaultGame.ini",
+    "Config/DG_RuntimeCookManifest.json",
+    "Source/DiscGolfTourEditor/DiscGolfSession3AssetUtility.cpp",
+    "Source/DiscGolfTourEditor/DiscGolfSession4AssetUtility.cpp",
+    "Source/DiscGolfTourEditor/DiscGolfSession5MocapUtility.cpp"
+  ],
+  "workflow": {
+    "scriptPath": "Scripts/migrate_dg_session19_serialized_assets.py",
+    "controlRigFoundationScript": "Scripts/create_dg_character_rig_session2.py",
+    "controlRigProfileAuthoringUtility": "DiscGolfSession4AssetUtility.AuthorSession4Assets",
+    "engine": "Unreal Engine 5.8",
+    "runner": "UnrealEditor-Cmd.exe",
+    "saveOnlyRetainedPackages": true,
+    "compileBlueprints": true,
+    "recreateLegacyControlRigFromProjectOwnedAuthoring": true,
+    "protectedContentSnapshotRequired": true,
+    "interruptedRunRecovery": "RETAINED_PACKAGES_WITH_REPLACEMENT_IMPORTS_MAY_BE_RESAVED_AGAIN; EXCLUDED_IDENTITIES_REMAIN_STRICT",
+    "outputReport": "Saved/Session19/SerializedAssetMigrationRun.json"
+  },
+  "sourceAndRetainedAssetMigrationAccepted": true,
+  "acceptance": [
+    "UE58_EDITOR_TARGET_BUILD_SUCCEEDS_WITH_REPLACEMENT_MODULE_AND_LEGACY_PLUGIN_DISABLED",
+    "ALL_SIX_RETAINED_PACKAGES_LOAD_COMPILE_WHERE_APPLICABLE_AND_SAVE",
+    "ZERO_LEGACY_SCRIPT_PACKAGE_BYTES_IN_EVERY_RETAINED_UASSET",
+    "REPLACEMENT_SCRIPT_PACKAGE_BYTES_PRESENT_IN_EVERY_RETAINED_UASSET",
+    "ALL_THIRTY_NINE_EXCLUDED_ASSET_BYTES_MATCH_PRE_MIGRATION_INVENTORY",
+    "NO_CONTENT_PACKAGE_OUTSIDE_THE_SIX_RETAINED_PACKAGES_CHANGES_DURING_WORKFLOW",
+    "LIVE_CONFIG_AND_EDITOR_UTILITY_BINDINGS_USE_REPLACEMENT_SCRIPT_PACKAGE",
+    "LEGACY_PLUGIN_DESCRIPTOR_ENTRY_REMOVED_AFTER_SUCCESSFUL_RESAVE",
+    "FRESH_SHIPPING_COOK_PACKAGE_AND_RUNTIME_LOAD_EVIDENCE_RECORDED_BEFORE_BLOCKER_CLOSURE"
+  ],
+  "blockerId": "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+  "blockerClosed": false,
+  "shippingPackageEvidenceAccepted": false
+}

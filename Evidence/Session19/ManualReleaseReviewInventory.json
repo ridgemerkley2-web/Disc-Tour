@@ -1,0 +1,328 @@
+{
+  "schema": "DiscGolfTour.Session19ManualReleaseReviewInventory.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "authority": "OBJECTIVE_REPOSITORY_SNAPSHOT_NOT_LEGAL_OR_HUMAN_APPROVAL",
+  "policyArtifact": {
+    "path": "Config/DG_Session19ManualReleaseReviewPolicy.json",
+    "sha256": "B2E21CD147E4D23BAEB800CA1F635B6F8A365AC93805038C0698708261217FAC"
+  },
+  "releaseReady": false,
+  "humanApprovalGateCount": 8,
+  "humanApprovedGateCount": 0,
+  "humanBlockedGateIds": [
+    "PUBLIC_TITLE_CLEARANCE",
+    "PUBLIC_DISPLAY_NAME_CLEARANCE",
+    "LOGO_AND_TRADE_DRESS_REVIEW",
+    "FINAL_VISUAL_PRODUCT_APPROVAL",
+    "AUTHORED_AUDIO_LICENSE_COVERAGE_AND_MIX",
+    "PRODUCTION_CHARACTER_MOTION_AND_VISUAL_APPROVAL",
+    "PRODUCTION_ENVIRONMENT_ACCEPTANCE",
+    "PHYSICS_CALIBRATION_AND_PLAY_FEEL_APPROVAL"
+  ],
+  "publicTitleAndSurfaces": {
+    "finalPublicTitle": null,
+    "workingNames": [
+      "DGTour",
+      "DiscGolfTour",
+      "Disc Golf Tour"
+    ],
+    "defaultGameProjectName": "Disc Golf Tour",
+    "defaultGameProjectVersion": "0.5.0",
+    "uprojectDescription": "Three-hole disc golf simulation with broadcast-style tour presentation.",
+    "sourceArtifacts": [
+      {
+        "path": "Config/DefaultGame.ini",
+        "sha256": "304390E67BF6C8FE0BD8D3BE1D830B303F4FBB0ED26358D8B638F9C1CF6DF296"
+      },
+      {
+        "path": "DiscGolfTour.uproject",
+        "sha256": "D88EAF4CC35491DFE9E64EDD000E860996DCA3213690F6F94E491C24DC96BB38"
+      }
+    ],
+    "objectiveStatus": "INVENTORIED_FINAL_TITLE_NULL_OWNER_AND_LEGAL_DECISIONS_REQUIRED"
+  },
+  "publicDisplayNames": {
+    "equipment": [
+      {
+        "kind": "mold",
+        "stableId": "Apex",
+        "candidateDisplayName": "Apex",
+        "sourcePath": "Content/Data/Discs/Molds/DA_Mold_Apex.uasset"
+      },
+      {
+        "kind": "mold",
+        "stableId": "Vector",
+        "candidateDisplayName": "Vector",
+        "sourcePath": "Content/Data/Discs/Molds/DA_Mold_Vector.uasset"
+      },
+      {
+        "kind": "mold",
+        "stableId": "Line",
+        "candidateDisplayName": "Line",
+        "sourcePath": "Content/Data/Discs/Molds/DA_Mold_Line.uasset"
+      },
+      {
+        "kind": "mold",
+        "stableId": "Compass",
+        "candidateDisplayName": "Compass",
+        "sourcePath": "Content/Data/Discs/Molds/DA_Mold_Compass.uasset"
+      },
+      {
+        "kind": "mold",
+        "stableId": "Touch",
+        "candidateDisplayName": "Touch",
+        "sourcePath": "Content/Data/Discs/Molds/DA_Mold_Touch.uasset"
+      },
+      {
+        "kind": "plastic",
+        "stableId": "Base",
+        "candidateDisplayName": "Base",
+        "sourcePath": "Content/Data/Discs/Plastics/DA_Plastic_Base.uasset"
+      },
+      {
+        "kind": "plastic",
+        "stableId": "Tour",
+        "candidateDisplayName": "Tour",
+        "sourcePath": "Content/Data/Discs/Plastics/DA_Plastic_Tour.uasset"
+      },
+      {
+        "kind": "plastic",
+        "stableId": "Crystal",
+        "candidateDisplayName": "Crystal",
+        "sourcePath": "Content/Data/Discs/Plastics/DA_Plastic_Crystal.uasset"
+      }
+    ],
+    "courseAndHoles": [
+      {
+        "kind": "course",
+        "stableId": "PineRidgeChampionship",
+        "candidateDisplayName": "Pine Ridge Championship",
+        "sourcePath": "Data/PineRidgeCourse.json"
+      },
+      {
+        "kind": "hole",
+        "stableId": "PineRidgeChampionship.Hole1",
+        "candidateDisplayName": "Pine Ridge Opening",
+        "sourcePath": "Data/PineRidgeHole1.json"
+      },
+      {
+        "kind": "hole",
+        "stableId": "PineRidgeChampionship.Hole2",
+        "candidateDisplayName": "Needle Gate",
+        "sourcePath": "Data/PineRidgeHole2.json"
+      },
+      {
+        "kind": "hole",
+        "stableId": "PineRidgeChampionship.Hole3",
+        "candidateDisplayName": "Gallery Lake",
+        "sourcePath": "Data/PineRidgeHole3.json"
+      }
+    ],
+    "equipmentNameCount": 8,
+    "courseAndHoleNameCount": 4,
+    "objectiveStatus": "TWELVE_ROWS_INVENTORIED_ROW_LEVEL_CLEARANCE_OR_REPLACEMENT_REQUIRED"
+  },
+  "brandAndTradeDress": {
+    "activeBrandId": "dg_generic",
+    "activeBrandStatus": "GENERIC_UNBRANDED_APPROVED",
+    "authorizedLogoCount": 0,
+    "manualVisualBrandReviewRequired": true,
+    "acceptedBoundReviewArtifact": null,
+    "objectiveStatus": "GENERIC_DECLARATION_AND_STRING_POLICY_EXIST_VISUAL_ORIGINALITY_REQUIRES_HUMAN_REVIEW"
+  },
+  "finalVisualApproval": {
+    "acceptedShippingCaptureManifest": null,
+    "requiredViewCount": 18,
+    "requiredResolutionCount": 2,
+    "session19SourceControlledImageEvidence": {
+      "root": "Evidence/Session19",
+      "fileCount": 6,
+      "totalBytes": 9559418,
+      "countsByTopGrouping": {
+        "Evidence/Session19/Diagnostics": 6
+      }
+    },
+    "unboundDevelopmentOrSavedImageCandidates": {
+      "root": "Saved",
+      "fileCount": 333,
+      "totalBytes": 593263535,
+      "countsByTopGrouping": {
+        "Saved": 7,
+        "Saved/CharacterFramework/E35": 9,
+        "Saved/CharacterFramework/E36": 9,
+        "Saved/CharacterFramework/E37": 9,
+        "Saved/CharacterFramework/E38": 9,
+        "Saved/CharacterFramework/E39": 9,
+        "Saved/CharacterFramework/E40": 9,
+        "Saved/CharacterFramework/E41": 9,
+        "Saved/CharacterFramework/P32": 9,
+        "Saved/CharacterFramework/P33": 12,
+        "Saved/CharacterFramework/P34": 9,
+        "Saved/CharacterFramework/S8BPkg": 49,
+        "Saved/CharacterFramework/Screenshots": 75,
+        "Saved/CharacterFramework/Session8BPackaged": 5,
+        "Saved/PackagedV05Foundation/Windows": 2,
+        "Saved/Screenshots/PineRidgeFlyoverVisualQA.png": 1,
+        "Saved/Screenshots/PineRidgeFlyoverVisualQA2.png": 1,
+        "Saved/Screenshots/PineRidgeVisualQA.png": 1,
+        "Saved/Screenshots/ReleaseQualityCleanHUD.png": 1,
+        "Saved/Screenshots/ReleaseQualityCleanStart.png": 1,
+        "Saved/Screenshots/ReleaseQualityGameplay.png": 1,
+        "Saved/Screenshots/ReleaseQualityInitial.png": 1,
+        "Saved/Screenshots/ReleaseQualityMeter.png": 1,
+        "Saved/Screenshots/ReleaseQualityMeterBands.png": 1,
+        "Saved/Screenshots/ReleaseQualityMissCard.png": 1,
+        "Saved/Screenshots/ReleaseQualityPerfectCard.png": 1,
+        "Saved/Screenshots/WindowsEditor": 87,
+        "Saved/Session15Reports/Acceptance_editor_cf218615-ed96-46b9-8f55-f0976780eecf": 2,
+        "Saved/Session15Reports/Acceptance_packaged_6875a60a-5875-4de0-8988-9d8d0ffe2613": 2
+      }
+    },
+    "objectiveStatus": "NO_BOUND_SESSION19_SHIPPING_CAPTURE_MANIFEST_DEVELOPMENT_CAPTURES_NOT_ACCEPTED"
+  },
+  "authoredAudio": {
+    "semanticCategoryCount": 12,
+    "semanticCategories": [
+      "ThrowRelease",
+      "AirborneFlight",
+      "GroundContact",
+      "GroundState",
+      "BasketOutcome",
+      "Penalty",
+      "HoleStart",
+      "HoleCompletion",
+      "HoleTransition",
+      "RoundCompletion",
+      "Replay",
+      "Flyover"
+    ],
+    "authoredMediaFileCount": 0,
+    "authoredMediaFiles": [],
+    "audioNamedUassetCandidateCount": 14,
+    "audioNamedUassetCandidates": [
+      "Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Voice_Alt.uasset",
+      "Content/DiscGolf/Characters/Customization/Data/Items/DA_DG_Cosmetic_Voice_Default.uasset",
+      "Content/Presentation/Audio/Generated/SW_AirborneFlight.uasset",
+      "Content/Presentation/Audio/Generated/SW_BasketOutcome.uasset",
+      "Content/Presentation/Audio/Generated/SW_Flyover.uasset",
+      "Content/Presentation/Audio/Generated/SW_GroundContact.uasset",
+      "Content/Presentation/Audio/Generated/SW_GroundState.uasset",
+      "Content/Presentation/Audio/Generated/SW_HoleCompletion.uasset",
+      "Content/Presentation/Audio/Generated/SW_HoleStart.uasset",
+      "Content/Presentation/Audio/Generated/SW_HoleTransition.uasset",
+      "Content/Presentation/Audio/Generated/SW_Penalty.uasset",
+      "Content/Presentation/Audio/Generated/SW_Replay.uasset",
+      "Content/Presentation/Audio/Generated/SW_RoundCompletion.uasset",
+      "Content/Presentation/Audio/Generated/SW_ThrowRelease.uasset"
+    ],
+    "silentFallbackPresent": true,
+    "acceptedAuthoredAudioManifest": null,
+    "acceptedMixReview": null,
+    "objectiveStatus": "SEMANTIC_ROUTING_IMPLEMENTED_AUTHORED_MEDIA_LICENSE_COVERAGE_AND_MIX_NOT_PRESENT"
+  },
+  "productionCharacterMotionAndVisual": {
+    "animationAssetCount": 20,
+    "motionSequenceIdentityCount": 8,
+    "productionMotionSequenceIdentityCountOutsideExcludedRoots": 3,
+    "excludedMotionSequenceIdentities": [
+      "Content/DiscGolf/Animation/Mocap/Cleaned/A_DG_RHBH_Synthetic_CLN.uasset",
+      "Content/DiscGolf/Animation/Mocap/Production/A_DG_RHBH_SyntheticPipelineTest_v001.uasset",
+      "Content/DiscGolf/Animation/Mocap/Retargeted/A_DG_RHBH_Synthetic_RTG.uasset",
+      "Content/DiscGolf/Animation/Mocap/Source/A_DG_RHBH_SyntheticSource_RAW.uasset",
+      "Content/DiscGolf/Animation/Throws/A_DG_RHBH_Prototype.uasset"
+    ],
+    "retainedCharacterPackageCount": 6,
+    "retainedCharacterPackages": [
+      {
+        "package": "/Game/DiscGolf/Animation/ABP_DG_Player",
+        "path": "Content/DiscGolf/Animation/ABP_DG_Player.uasset",
+        "bytes": 58347,
+        "sha256": "4006F2FBF0B38FB7033F2944807B0BEE503FA3C730D3D701C9F8EC7D7FBDA995"
+      },
+      {
+        "package": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster",
+        "path": "Content/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster.uasset",
+        "bytes": 2101,
+        "sha256": "A2F9E5D40DCF0EA00F127B1B0046A6B85090B5148F06D0EB96D7DEE5AACDBDCF"
+      },
+      {
+        "package": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default",
+        "path": "Content/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default.uasset",
+        "bytes": 2608,
+        "sha256": "F8B03386EF8C40307D49C8642EE167F486B88EAC70FDD0556D5605AB0317C8AD"
+      },
+      {
+        "package": "/Game/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default",
+        "path": "Content/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default.uasset",
+        "bytes": 225443,
+        "sha256": "865D94042B1306EDE1752CEC3D174A0C662BC767F481F5D0576AFF62EF888E30"
+      },
+      {
+        "package": "/Game/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter",
+        "path": "Content/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter.uasset",
+        "bytes": 1455,
+        "sha256": "A1CF50EFC926B31D3AB330A94EEAC536950B2964F7BE6819C93577930F7784B8"
+      },
+      {
+        "package": "/Game/DiscGolf/Rigs/CR_DG_Master",
+        "path": "Content/DiscGolf/Rigs/CR_DG_Master.uasset",
+        "bytes": 205044,
+        "sha256": "D9699721E2C9E8297016CC386A03941AD7BB4AC6AB39118E7FBA453EB649A822"
+      }
+    ],
+    "acceptedProductionMotionManifest": null,
+    "acceptedCharacterVisualReview": null,
+    "objectiveStatus": "TECHNICAL_CHARACTER_PACKAGES_EXIST_ZERO_PRODUCTION_MOTION_SEQUENCES_OUTSIDE_EXCLUDED_ROOTS"
+  },
+  "productionEnvironment": {
+    "contentRoots": [
+      {
+        "root": "Content/Environment/Forest",
+        "fileCount": 4,
+        "totalBytes": 721304,
+        "canonicalRelativePathSizeHashSha256": "B37E5B22F389B479CE72C0DB6D0EE93063EF1CFB71C2D18499DFD3C1EF48D912"
+      },
+      {
+        "root": "Content/Presentation/Course/PineRidge",
+        "fileCount": 60,
+        "totalBytes": 89198135,
+        "canonicalRelativePathSizeHashSha256": "2C61297B8B31D5CCA7155ABC3A3D0C47BF47D4F20DA76AB62EB1E25E06AC0A69"
+      }
+    ],
+    "polyHavenDerivedRuntimeReceipt": "Evidence/Session18/PolyHavenPackageIdentityReceipt.json",
+    "bakedPcgSourceAuthorityReceipt": "Evidence/Session19/BakedPcgSourceAuthorityReceipt.json",
+    "acceptedBoundShippingEnvironmentCaptureManifest": null,
+    "acceptedBoundShippingPerformanceReport": null,
+    "acceptedEnvironmentReview": null,
+    "objectiveStatus": "IMPLEMENTATION_AND_PROVENANCE_EVIDENCE_NARROW_SCOPE_FINAL_SHIPPING_VISUAL_PERFORMANCE_AND_OWNER_ACCEPTANCE_MISSING"
+  },
+  "physicsCalibrationAndPlayFeel": {
+    "developmentRegressionArtifact": "Saved/PhysicsRegressionReports/LatestPhysicsRegression.json",
+    "developmentRegressionSha256": "E98D963229F588E426505F60C628342C23C414713FDD498AEB178DC6068EDBAF",
+    "developmentRegressionPassed": true,
+    "developmentRegressionCompletedUtc": "2026-08-25T23:32:51.108Z",
+    "developmentRegressionScenarioCount": 6,
+    "developmentRegressionPresetIds": [
+      "ApexCalm30",
+      "ApexCalm60",
+      "ApexCalm120",
+      "ApexForehandCalm60",
+      "TouchCircle1Center",
+      "TouchCircle2Center"
+    ],
+    "routeTelemetryArtifact": "Saved/RouteTelemetryReports/LatestRouteTelemetry.json",
+    "routeTelemetrySha256": "1142FBFA98B7C1A7A8CCBFD05CA2848B522BA59822D397B884FEEBC0E02CBE9F",
+    "routeTelemetryComplete": false,
+    "routeTelemetryAttemptCount": 0,
+    "acceptedMeasuredReferenceDatasetPath": null,
+    "engineeringRegressionIsRealWorldCalibration": false
+  },
+  "decisionRecord": {
+    "templatePath": "Evidence/Session19/ManualReleaseDecisionRecord.template.json",
+    "templateSha256": "39D51D1E768D7E3E9764FB8217B7A1EF02D27A3507CABEF4574E7890A5DC870A",
+    "acceptedDecisionRecordPath": null,
+    "blanketAuthorizationAccepted": false,
+    "objectiveStatus": "TEMPLATE_ONLY_ALL_EIGHT_GATES_PENDING"
+  }
+}

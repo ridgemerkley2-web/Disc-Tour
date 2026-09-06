@@ -4,7 +4,7 @@ This repository is the production starting point for a realistic disc-golf game 
 
 ## Current status
 
-The v0.5 production-presentation foundation, persistent Pine Ridge course property, continuous shared ground, feathered PBR ground biomes, graded Gallery Lake shoreline, slope-aware wind-reactive HISM grass/litter, dense forest layout, environment/fixture/water slices, strategy routes, resumable Needle Gate playtest telemetry, typed world-fixture collision, and 24-scenario live fixture QA matrix are implemented and verified on Unreal Engine 5.8.1 for Windows. Active source uses `PineRidgeCompetitiveV2_Fixtures`; the packaged v0.5 foundation remains the sealed pre-fixture comparison build.
+The v0.5 production-presentation foundation, persistent Pine Ridge course property, continuous shared ground, feathered PBR ground biomes, graded Gallery Lake shoreline, slope-aware wind-reactive HISM grass/litter, dense forest layout, environment/fixture/water slices, strategy routes, resumable Needle Gate playtest telemetry, typed world-fixture collision, and 24-scenario live fixture QA matrix are implemented on Unreal Engine 5.8.1 for Windows. The current throw-form physics pass also hardens stable equipment provenance, launch-before-score transactions, numerical/runtime envelopes, exact wind snapshots, callback-safe overlap movement, and synchronous tap-in contact. Active source uses `PineRidgeCompetitiveV2_Fixtures`; release remains blocked on measured, manual, provenance, legal, packaged-gameplay, and product acceptance.
 
 - Play Pine Ridge Opening (par 3), Needle Gate (par 4), and Gallery Lake (par 4) as one ordered round inside one persistent course world.
 - Load the schema-v1 course manifest, including stable shared-world placement, and three independent schema-v1 hole definitions with exact deterministic C++ fallbacks.
@@ -12,7 +12,7 @@ The v0.5 production-presentation foundation, persistent Pine Ridge course proper
 - Toggle the authored course and the permanent primitive physics/rules regression course.
 - Preview each authored hole through a course flyover and use authored launch/fairway/finish broadcast cameras.
 - Review explicit Primary, Risk/reward, and Bailout corridors and their landing-zone/scoring intent without changing flight or collision.
-- Record 20 intentional Needle Gate attempts per route into resumable, independently validated telemetry without aim assistance or route steering.
+- Record 20 intentional Needle Gate attempts on each exact route ID—`NeedlePlacement`, `LateCrosswindAttack`, and `LeftPitchOut`—into resumable, independently validated telemetry without aim assistance or route steering.
 - Pick one of five fictional molds and three plastics from cooked Primary Data Assets with a validated source fallback.
 - Aim, set power, hyzer/anhyzer, nose angle, and backhand/forehand through remappable Enhanced Input.
 - Use a two-press timing release with Perfect/Great/Good/Poor grading.
@@ -30,10 +30,10 @@ The v0.5 production-presentation foundation, persistent Pine Ridge course proper
 - Fit a scanned CC0 boulder, masked shrub clusters, and an original PBR wood sign over authoritative collision proxies without letting visual quality affect contact dynamics.
 - Render Gallery Lake with an original animated 2,944-triangle water material while retaining the hidden authored hazard as the sole collision, lie, and penalty authority.
 - Emit contextual, bounded presentation events for release, flight, physical/course-surface contact, basket result, penalty, hole flow, round completion, replay, and flyover without changing gameplay authority.
-- Export every completed throw as schema-v3 JSON/CSV and run six deterministic 30/60/120 FPS physics scenarios.
-- Save and restore schema-v5 practice state including layout, current hole, round scores, lie, penalties, and selected equipment.
+- In non-Shipping Development/Test builds, export completed throws as schema-v5 JSON/CSV with explicit handedness and deterministic wind-phase provenance, and run the schema-v3 six-scenario 30/60/120 FPS regression report. Shipping excludes the diagnostic presets, launcher, reports, and file export.
+- Save and restore schema-v10 player-profile/practice state including layout, current hole, round scores, lie, penalties, and selected equipment.
 
-The latest packaged comparison build is the sealed pre-fixture v0.5 archive at `Saved/PackagedV05Foundation/Windows/DiscGolfTour.exe`; the active fixture revision is currently editor-verified but not repackaged. The sealed v0.4 build remains at `Saved/PackagedThreeHoleMilestone/Windows/DiscGolfTour.exe`.
+Fresh candidate `S19_WindowsShipping_ThrowPhysicsAudit_20260826T040100Z` completed clean Shipping build/cook/stage/Pak/IoStore/archive and candidate verification as `PASS_BUILD_ARCHIVE_VERIFIED_PROVENANCE_AND_ACCEPTANCE_PENDING`. It is not promoted or release-ready: normal three-hole acceptance, candidate-bound supplemental receipts/scope rebinding, whole-archive provenance, and legal/distribution/product approvals remain pending. The sealed v0.5 and v0.4 comparison builds remain preserved at their documented paths.
 
 ## Engine target
 
@@ -80,7 +80,7 @@ For the Needle Gate playtest, launch with `-NeedleGateRouteTelemetry`. The lates
 | L | Start authored course flyover |
 | T | Toggle live/retained tracer |
 | V | Start/cancel last-shot replay |
-| C / G / H | Select preset / run preset / run full regression suite |
+| C / G / H | Development/non-Shipping only: select preset / run preset / run full regression suite |
 | Escape | Open controls and remapping screen |
 
 Controller equivalents include sticks for shot setup, bottom face button for timing/release, Menu for reset, Right Trigger for next hole, Left Trigger for scorecard, shoulders for tracer/replay, and stick clicks for course/flyover. The complete source fallback contains 47 mappings across 22 remappable actions.
@@ -107,15 +107,15 @@ Controller equivalents include sticks for shot setup, bottom face button for tim
 - `Source/DiscGolfTour/DiscGolferPresentationComponent.*` - presentation-only drive/approach/putt animation family and phase state.
 - `Source/DiscGolfTour/DiscBroadcastCameraDirector.*` - presentation-only live-shot camera.
 - `Source/DiscGolfTour/DiscReplayActor.*` and `DiscGolfPresentationMath.h` - immutable-sample replay and tracer support.
-- `Source/DiscGolfTour/DiscTrajectorySubsystem.*` - trajectory export, presets, and regression reports.
+- `Source/DiscGolfTour/DiscTrajectorySubsystem.*` - non-Shipping trajectory file export, preset diagnostics, schema-v3 regression reports, and Shipping-safe in-memory summaries.
 - `Source/DiscGolfTour/DiscGolfHUD.*` - asset-free development HUD, scorecard, round-complete, and controls surfaces.
 - `Source/DiscGolfTour/DiscGolfPresentationAudio.*` - pure semantic presentation-event vocabulary, context, validation, deduplication, and bounded trace support.
 - `Docs/FOREST_BROADCAST_STYLE.md` - original production presentation art direction and interaction contract.
 - `Docs/PINE_RIDGE_LEVEL_DESIGN.md` - route intent, scoring tradeoffs, review workflow, and geometry-change evidence gate.
 - `Source/DiscGolfTour/DiscGolfGameplayGate.h` - pure throw-lifecycle gate shared by runtime and automation.
-- `Source/DiscGolfTour/DiscGolfTourGameInstance.*` - schema-v5 save/profile foundation and migration.
+- `Source/DiscGolfTour/DiscGolfTourGameInstance.*` - schema-v10 save/profile foundation and migration.
 - `Content/Data/Discs/` - five cooked mold assets and three cooked plastic assets.
-- `Data/` - course manifest, three hole definitions, presentation contract, and physics regression presets.
+- `Data/` - course manifest, three hole definitions, presentation contract, and source physics-regression presets; Shipping staging explicitly excludes the diagnostic preset file.
 - `Data/PineRidgePresentation.json` - staged biome/art plan, partially populated asset paths, and collision-invariant quality tiers.
 - `SourceArt/PineRidge/` - licensed source provenance, 35-file checksum manifest, and reproducible Poly Haven download/import pipeline.
 - `Docs/PINE_RIDGE_ENVIRONMENT_ASSETS.md` - selected CC0 environment sources, import policy, and runtime ownership boundary.
@@ -136,6 +136,6 @@ Unreal world coordinates are centimeters. Aerodynamics and ground response use S
 
 ## What this is not yet
 
-The three-hole round is not yet a visually finished commercial slice. Pine Ridge is now one persistent property with a continuous course-scale ground, feathered green-to-forest biomes, worn green-to-next-tee trails, a graded and dressed soil shoreline, slope-aware wind/cull HISM grass/litter, dense multi-LOD forest composition, fitted rock/brush/sign presentation, animated Gallery Lake water, and a passing packaged 1920x1080 Omen gate. It still needs authored multi-blade/species ground-cover atlases or meshes, broader microsurface/erosion breakup, mature-conifer replacement art, connector navigation reconciliation, golfer/basket art, animation, authored sound, event dressing, and Common UI. The new audio layer emits silent semantic intent only. Basket chains are a deterministic gameplay approximation and disc coefficients are calibration seeds rather than measured laboratory data.
+The three-hole round is not yet a visually finished commercial slice. Pine Ridge is now one persistent property with a continuous course-scale ground, feathered green-to-forest biomes, worn green-to-next-tee trails, a graded and dressed soil shoreline, slope-aware wind/cull HISM grass/litter, dense multi-LOD forest composition, fitted rock/brush/sign presentation, animated Gallery Lake water, and a passing historical packaged 1920x1080 Omen gate. Technical MetaHuman/motion assets and the RHBH gameplay binding exist, but manual animation/contact approval remains 0/8 and authored LH/forehand/putt coverage is not accepted. It still needs broader environment/art/audio/UI production work and normal fresh-Shipping gameplay acceptance. Basket chains are a deterministic gameplay approximation and disc coefficients are calibration seeds rather than measured laboratory data.
 
 The exact next milestone is documented in `PROJECT_STATUS.md` and `ROADMAP.md`.

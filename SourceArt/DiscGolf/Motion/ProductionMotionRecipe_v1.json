@@ -1,0 +1,350 @@
+{
+  "schema": "DiscGolfTour.ProjectAuthoredProceduralMotionRecipe.v1",
+  "schema_version": 1,
+  "recipe_id": "DG_PRODUCTION_PROCEDURAL_MOTION_V1",
+  "creator": "DiscGolfTour project",
+  "source_kind": "PROJECT_AUTHORED_PROCEDURAL",
+  "performer": "NOT_APPLICABLE_PROCEDURAL_NO_CAPTURE",
+  "external_source_used": false,
+  "derived_from_synthetic_fixture": false,
+  "motion_capture_claim": false,
+  "usage_status": "PRODUCTION_CANDIDATE_HUMAN_REVIEW_REQUIRED",
+  "human_animation_approval": false,
+  "human_disc_contact_approval": false,
+  "target_skeleton": "/Game/DiscGolf/Characters/Meshes/SKEL_DG_Master.SKEL_DG_Master",
+  "frame_rate": 60,
+  "root_motion_enabled": false,
+  "animated_bones": [
+    "root",
+    "pelvis",
+    "spine_01",
+    "spine_02",
+    "spine_03",
+    "spine_04",
+    "clavicle_l",
+    "upperarm_l",
+    "lowerarm_l",
+    "hand_l",
+    "clavicle_r",
+    "upperarm_r",
+    "lowerarm_r",
+    "hand_r",
+    "thigh_l",
+    "calf_l",
+    "foot_l",
+    "thigh_r",
+    "calf_r",
+    "foot_r"
+  ],
+  "families": [
+    {
+      "motion_id": "DG_PROCEDURAL_DRIVE_RHBH_V1",
+      "family": "Drive",
+      "sequence_object_path": "/Game/DiscGolf/Animation/ProductionMotion/Drive/A_DG_RHBH_Drive_Procedural_v001.A_DG_RHBH_Drive_Procedural_v001",
+      "montage_object_path": "/Game/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v001.AM_DG_RHBH_Drive_Procedural_v001",
+      "style_id": "DG_Drive_Procedural_Candidate",
+      "frame_count": 144,
+      "duration_seconds": 2.4,
+      "release_frame": 84,
+      "finish_frame": 138,
+      "recommended_power_min": 0.55,
+      "recommended_power_max": 1.0,
+      "authored_coverage": [
+        "SETUP_AIM",
+        "RUN_UP",
+        "REACH_BACK",
+        "FOOT_PLANT",
+        "ACCELERATION",
+        "RELEASE",
+        "FOLLOW_THROUGH",
+        "RECOVERY"
+      ],
+      "phases": [
+        { "name": "Aim", "frame": 0 },
+        { "name": "RunUp", "frame": 18 },
+        { "name": "ReachBack", "frame": 44 },
+        { "name": "Plant", "frame": 64 },
+        { "name": "Acceleration", "frame": 76 },
+        { "name": "FollowThrough", "frame": 94 },
+        { "name": "Recovery", "frame": 118 }
+      ],
+      "pose_keys": [
+        {
+          "frame": 0,
+          "translation_cm": { "root": [0.0, 0.0, 0.0] },
+          "rotation_degrees": {
+            "pelvis": [-4.0, 10.0, 0.0],
+            "spine_02": [2.0, -4.0, 2.0],
+            "spine_04": [4.0, -8.0, 3.0],
+            "upperarm_r": [-12.0, -18.0, -10.0],
+            "lowerarm_r": [4.0, 34.0, -22.0],
+            "hand_r": [4.0, 2.0, -6.0],
+            "upperarm_l": [-8.0, 14.0, 8.0],
+            "lowerarm_l": [2.0, -22.0, 12.0],
+            "thigh_l": [-4.0, 0.0, 3.0],
+            "thigh_r": [6.0, 0.0, -3.0],
+            "calf_l": [10.0, 0.0, 0.0],
+            "calf_r": [8.0, 0.0, 0.0]
+          }
+        },
+        {
+          "frame": 18,
+          "translation_cm": { "root": [0.0, 1.0, 0.4] },
+          "rotation_degrees": {
+            "pelvis": [-6.0, 2.0, 2.0],
+            "spine_02": [4.0, -10.0, 3.0],
+            "spine_04": [5.0, -15.0, 4.0],
+            "upperarm_r": [-10.0, -28.0, -14.0],
+            "lowerarm_r": [3.0, 40.0, -24.0],
+            "upperarm_l": [-6.0, 20.0, 9.0],
+            "lowerarm_l": [2.0, -26.0, 14.0],
+            "thigh_l": [14.0, -5.0, 7.0],
+            "thigh_r": [-12.0, 6.0, -7.0],
+            "calf_l": [7.0, 0.0, 0.0],
+            "calf_r": [24.0, 0.0, 0.0]
+          }
+        },
+        {
+          "frame": 44,
+          "translation_cm": { "root": [-1.0, 1.8, 0.2] },
+          "rotation_degrees": {
+            "pelvis": [-7.0, 31.0, -3.0],
+            "spine_01": [2.0, 8.0, 0.0],
+            "spine_02": [4.0, 24.0, -3.0],
+            "spine_03": [4.0, 34.0, -4.0],
+            "spine_04": [5.0, 44.0, -5.0],
+            "clavicle_r": [-2.0, 12.0, -6.0],
+            "upperarm_r": [-7.0, 68.0, -17.0],
+            "lowerarm_r": [2.0, 8.0, -12.0],
+            "hand_r": [3.0, 8.0, -7.0],
+            "upperarm_l": [-5.0, -38.0, 14.0],
+            "lowerarm_l": [2.0, -25.0, 18.0],
+            "thigh_l": [-11.0, -4.0, 6.0],
+            "thigh_r": [13.0, 5.0, -6.0],
+            "calf_l": [20.0, 0.0, 0.0],
+            "calf_r": [14.0, 0.0, 0.0]
+          }
+        },
+        {
+          "frame": 64,
+          "translation_cm": { "root": [-1.5, 2.0, -1.4] },
+          "rotation_degrees": {
+            "pelvis": [-10.0, 22.0, -5.0],
+            "spine_02": [6.0, 20.0, -5.0],
+            "spine_04": [7.0, 32.0, -7.0],
+            "upperarm_r": [-5.0, 60.0, -18.0],
+            "lowerarm_r": [2.0, 22.0, -22.0],
+            "upperarm_l": [-4.0, -34.0, 17.0],
+            "lowerarm_l": [2.0, -28.0, 22.0],
+            "thigh_l": [-5.0, -3.0, 9.0],
+            "thigh_r": [8.0, 4.0, -7.0],
+            "calf_l": [27.0, 0.0, 0.0],
+            "calf_r": [17.0, 0.0, 0.0],
+            "foot_l": [-8.0, 0.0, 2.0]
+          }
+        },
+        {
+          "frame": 76,
+          "translation_cm": { "root": [-1.2, 2.0, -1.0] },
+          "rotation_degrees": {
+            "pelvis": [-7.0, -7.0, -4.0],
+            "spine_02": [6.0, 1.0, -4.0],
+            "spine_04": [7.0, 8.0, -6.0],
+            "upperarm_r": [-4.0, 24.0, -24.0],
+            "lowerarm_r": [2.0, 54.0, -38.0],
+            "hand_r": [2.0, -8.0, -13.0],
+            "upperarm_l": [-2.0, -18.0, 20.0],
+            "lowerarm_l": [2.0, -31.0, 24.0],
+            "thigh_l": [-4.0, -2.0, 9.0],
+            "thigh_r": [7.0, 3.0, -6.0],
+            "calf_l": [26.0, 0.0, 0.0],
+            "calf_r": [15.0, 0.0, 0.0]
+          }
+        },
+        {
+          "frame": 84,
+          "translation_cm": { "root": [-0.8, 2.0, -0.5] },
+          "rotation_degrees": {
+            "pelvis": [-4.0, -32.0, -2.0],
+            "spine_01": [2.0, -7.0, 0.0],
+            "spine_02": [4.0, -22.0, -2.0],
+            "spine_03": [3.0, -31.0, -3.0],
+            "spine_04": [4.0, -39.0, -4.0],
+            "clavicle_r": [-1.0, -8.0, -8.0],
+            "upperarm_r": [-3.0, -42.0, -19.0],
+            "lowerarm_r": [1.0, 7.0, -9.0],
+            "hand_r": [1.0, -12.0, -7.0],
+            "upperarm_l": [-2.0, 24.0, 13.0],
+            "lowerarm_l": [1.0, -18.0, 19.0],
+            "thigh_l": [-3.0, -1.0, 8.0],
+            "thigh_r": [6.0, 2.0, -5.0],
+            "calf_l": [24.0, 0.0, 0.0],
+            "calf_r": [14.0, 0.0, 0.0]
+          }
+        },
+        {
+          "frame": 100,
+          "translation_cm": { "root": [0.0, 1.4, 0.2] },
+          "rotation_degrees": {
+            "pelvis": [-2.0, -51.0, 2.0],
+            "spine_02": [2.0, -38.0, 2.0],
+            "spine_04": [3.0, -48.0, 4.0],
+            "upperarm_r": [-8.0, -62.0, -12.0],
+            "lowerarm_r": [2.0, -22.0, 12.0],
+            "hand_r": [3.0, -18.0, 8.0],
+            "upperarm_l": [-4.0, 38.0, 8.0],
+            "lowerarm_l": [2.0, -10.0, 12.0],
+            "thigh_l": [5.0, 4.0, 4.0],
+            "thigh_r": [-6.0, -4.0, -4.0],
+            "calf_l": [17.0, 0.0, 0.0],
+            "calf_r": [22.0, 0.0, 0.0],
+            "foot_r": [8.0, 0.0, -2.0]
+          }
+        },
+        {
+          "frame": 122,
+          "translation_cm": { "root": [0.4, 0.6, 0.4] },
+          "rotation_degrees": {
+            "pelvis": [-1.0, -18.0, 1.0],
+            "spine_02": [1.0, -15.0, 1.0],
+            "spine_04": [2.0, -20.0, 2.0],
+            "upperarm_r": [-9.0, -34.0, -7.0],
+            "lowerarm_r": [2.0, -12.0, 8.0],
+            "upperarm_l": [-6.0, 24.0, 6.0],
+            "lowerarm_l": [2.0, -9.0, 9.0],
+            "thigh_l": [3.0, 2.0, 2.0],
+            "thigh_r": [-3.0, -2.0, -2.0],
+            "calf_l": [11.0, 0.0, 0.0],
+            "calf_r": [13.0, 0.0, 0.0]
+          }
+        },
+        {
+          "frame": 144,
+          "translation_cm": { "root": [0.0, 0.0, 0.0] },
+          "rotation_degrees": {
+            "pelvis": [-3.0, 5.0, 0.0],
+            "spine_02": [2.0, -2.0, 1.0],
+            "spine_04": [3.0, -5.0, 2.0],
+            "upperarm_r": [-10.0, -15.0, -8.0],
+            "lowerarm_r": [3.0, 28.0, -18.0],
+            "upperarm_l": [-7.0, 12.0, 7.0],
+            "lowerarm_l": [2.0, -19.0, 11.0],
+            "thigh_l": [-3.0, 0.0, 2.0],
+            "thigh_r": [4.0, 0.0, -2.0],
+            "calf_l": [9.0, 0.0, 0.0],
+            "calf_r": [8.0, 0.0, 0.0]
+          }
+        }
+      ],
+      "curves": {
+        "DG_FootPlant_L": [[0, 0.0], [52, 0.0], [64, 1.0], [92, 1.0], [112, 0.0], [144, 0.0]],
+        "DG_FootPlant_R": [[0, 1.0], [18, 0.0], [44, 0.2], [100, 0.0], [122, 1.0], [144, 1.0]],
+        "DG_ReachbackAlpha": [[0, 0.0], [18, 0.15], [44, 1.0], [64, 0.85], [76, 0.35], [84, 0.0], [144, 0.0]],
+        "DG_BraceAlpha": [[0, 0.0], [44, 0.15], [64, 1.0], [84, 1.0], [100, 0.45], [122, 0.0], [144, 0.0]],
+        "DG_ReleaseApproachAlpha": [[0, 0.0], [64, 0.0], [76, 0.55], [84, 1.0], [94, 0.0], [144, 0.0]],
+        "DG_FollowThroughAlpha": [[0, 0.0], [84, 0.0], [100, 1.0], [122, 0.45], [144, 0.0]]
+      }
+    },
+    {
+      "motion_id": "DG_PROCEDURAL_APPROACH_RHBH_V1",
+      "family": "Approach",
+      "sequence_object_path": "/Game/DiscGolf/Animation/ProductionMotion/Approach/A_DG_RHBH_Approach_Procedural_v001.A_DG_RHBH_Approach_Procedural_v001",
+      "montage_object_path": "/Game/DiscGolf/Animation/ProductionMotion/Approach/AM_DG_RHBH_Approach_Procedural_v001.AM_DG_RHBH_Approach_Procedural_v001",
+      "style_id": "DG_Approach_Procedural_Candidate",
+      "frame_count": 108,
+      "duration_seconds": 1.8,
+      "release_frame": 62,
+      "finish_frame": 104,
+      "recommended_power_min": 0.25,
+      "recommended_power_max": 0.75,
+      "authored_coverage": [
+        "SETUP_AIM",
+        "CONTROLLED_STEP",
+        "REACH_BACK",
+        "FOOT_PLANT",
+        "ACCELERATION",
+        "RELEASE",
+        "FOLLOW_THROUGH",
+        "RECOVERY"
+      ],
+      "phases": [
+        { "name": "Aim", "frame": 0 },
+        { "name": "RunUp", "frame": 14 },
+        { "name": "ReachBack", "frame": 32 },
+        { "name": "Plant", "frame": 48 },
+        { "name": "Acceleration", "frame": 56 },
+        { "name": "FollowThrough", "frame": 70 },
+        { "name": "Recovery", "frame": 88 }
+      ],
+      "pose_keys": [
+        { "frame": 0, "translation_cm": { "root": [0.0, 0.0, 0.0] }, "rotation_degrees": { "pelvis": [-3.0, 7.0, 0.0], "spine_02": [2.0, -3.0, 1.0], "spine_04": [3.0, -6.0, 2.0], "upperarm_r": [-10.0, -16.0, -9.0], "lowerarm_r": [3.0, 30.0, -19.0], "upperarm_l": [-7.0, 13.0, 7.0], "lowerarm_l": [2.0, -20.0, 11.0], "thigh_l": [-3.0, 0.0, 2.0], "thigh_r": [4.0, 0.0, -2.0], "calf_l": [9.0, 0.0, 0.0], "calf_r": [8.0, 0.0, 0.0] } },
+        { "frame": 14, "translation_cm": { "root": [0.0, 0.7, 0.2] }, "rotation_degrees": { "pelvis": [-5.0, 2.0, 1.0], "spine_02": [3.0, -7.0, 2.0], "spine_04": [4.0, -11.0, 3.0], "upperarm_r": [-9.0, -22.0, -12.0], "lowerarm_r": [3.0, 36.0, -22.0], "upperarm_l": [-6.0, 18.0, 8.0], "lowerarm_l": [2.0, -23.0, 13.0], "thigh_l": [8.0, -3.0, 5.0], "thigh_r": [-7.0, 3.0, -5.0], "calf_l": [8.0, 0.0, 0.0], "calf_r": [18.0, 0.0, 0.0] } },
+        { "frame": 32, "translation_cm": { "root": [-0.6, 1.0, 0.0] }, "rotation_degrees": { "pelvis": [-6.0, 24.0, -2.0], "spine_02": [4.0, 18.0, -2.0], "spine_04": [5.0, 33.0, -4.0], "clavicle_r": [-1.0, 9.0, -5.0], "upperarm_r": [-6.0, 54.0, -15.0], "lowerarm_r": [2.0, 13.0, -14.0], "hand_r": [2.0, 6.0, -6.0], "upperarm_l": [-4.0, -29.0, 12.0], "lowerarm_l": [2.0, -22.0, 16.0], "thigh_l": [-7.0, -3.0, 5.0], "thigh_r": [8.0, 3.0, -5.0], "calf_l": [17.0, 0.0, 0.0], "calf_r": [13.0, 0.0, 0.0] } },
+        { "frame": 48, "translation_cm": { "root": [-0.8, 1.1, -0.9] }, "rotation_degrees": { "pelvis": [-8.0, 16.0, -4.0], "spine_02": [5.0, 15.0, -4.0], "spine_04": [6.0, 25.0, -5.0], "upperarm_r": [-5.0, 47.0, -17.0], "lowerarm_r": [2.0, 24.0, -23.0], "upperarm_l": [-3.0, -27.0, 15.0], "lowerarm_l": [2.0, -25.0, 19.0], "thigh_l": [-4.0, -2.0, 8.0], "thigh_r": [6.0, 3.0, -6.0], "calf_l": [23.0, 0.0, 0.0], "calf_r": [15.0, 0.0, 0.0], "foot_l": [-6.0, 0.0, 1.0] } },
+        { "frame": 56, "translation_cm": { "root": [-0.7, 1.1, -0.7] }, "rotation_degrees": { "pelvis": [-6.0, -5.0, -3.0], "spine_02": [5.0, 1.0, -3.0], "spine_04": [6.0, 7.0, -5.0], "upperarm_r": [-4.0, 19.0, -21.0], "lowerarm_r": [2.0, 49.0, -34.0], "hand_r": [2.0, -7.0, -11.0], "upperarm_l": [-2.0, -15.0, 18.0], "lowerarm_l": [2.0, -28.0, 21.0], "thigh_l": [-3.0, -1.0, 8.0], "thigh_r": [5.0, 2.0, -5.0], "calf_l": [22.0, 0.0, 0.0], "calf_r": [14.0, 0.0, 0.0] } },
+        { "frame": 62, "translation_cm": { "root": [-0.4, 1.1, -0.3] }, "rotation_degrees": { "pelvis": [-3.0, -25.0, -2.0], "spine_02": [3.0, -17.0, -2.0], "spine_04": [4.0, -31.0, -3.0], "upperarm_r": [-3.0, -35.0, -17.0], "lowerarm_r": [1.0, 8.0, -8.0], "hand_r": [1.0, -10.0, -6.0], "upperarm_l": [-2.0, 20.0, 12.0], "lowerarm_l": [1.0, -16.0, 17.0], "thigh_l": [-2.0, -1.0, 7.0], "thigh_r": [5.0, 2.0, -5.0], "calf_l": [21.0, 0.0, 0.0], "calf_r": [13.0, 0.0, 0.0] } },
+        { "frame": 74, "translation_cm": { "root": [0.0, 0.8, 0.2] }, "rotation_degrees": { "pelvis": [-1.0, -38.0, 1.0], "spine_02": [2.0, -29.0, 1.0], "spine_04": [3.0, -37.0, 3.0], "upperarm_r": [-7.0, -49.0, -11.0], "lowerarm_r": [2.0, -17.0, 10.0], "upperarm_l": [-3.0, 30.0, 8.0], "lowerarm_l": [2.0, -10.0, 12.0], "thigh_l": [3.0, 2.0, 4.0], "thigh_r": [-4.0, -2.0, -4.0], "calf_l": [15.0, 0.0, 0.0], "calf_r": [19.0, 0.0, 0.0] } },
+        { "frame": 90, "translation_cm": { "root": [0.2, 0.3, 0.2] }, "rotation_degrees": { "pelvis": [-1.0, -13.0, 1.0], "spine_02": [1.0, -11.0, 1.0], "spine_04": [2.0, -15.0, 2.0], "upperarm_r": [-8.0, -28.0, -8.0], "lowerarm_r": [2.0, -8.0, 7.0], "upperarm_l": [-5.0, 20.0, 6.0], "lowerarm_l": [2.0, -8.0, 9.0], "thigh_l": [2.0, 1.0, 2.0], "thigh_r": [-2.0, -1.0, -2.0], "calf_l": [11.0, 0.0, 0.0], "calf_r": [12.0, 0.0, 0.0] } },
+        { "frame": 108, "translation_cm": { "root": [0.0, 0.0, 0.0] }, "rotation_degrees": { "pelvis": [-3.0, 4.0, 0.0], "spine_02": [2.0, -2.0, 1.0], "spine_04": [3.0, -5.0, 2.0], "upperarm_r": [-9.0, -14.0, -8.0], "lowerarm_r": [3.0, 27.0, -17.0], "upperarm_l": [-7.0, 12.0, 7.0], "lowerarm_l": [2.0, -18.0, 10.0], "thigh_l": [-3.0, 0.0, 2.0], "thigh_r": [4.0, 0.0, -2.0], "calf_l": [9.0, 0.0, 0.0], "calf_r": [8.0, 0.0, 0.0] } }
+      ],
+      "curves": {
+        "DG_FootPlant_L": [[0, 0.0], [38, 0.0], [48, 1.0], [72, 1.0], [90, 0.0], [108, 0.0]],
+        "DG_FootPlant_R": [[0, 1.0], [14, 0.0], [32, 0.2], [74, 0.0], [90, 1.0], [108, 1.0]],
+        "DG_ReachbackAlpha": [[0, 0.0], [14, 0.2], [32, 1.0], [48, 0.8], [56, 0.3], [62, 0.0], [108, 0.0]],
+        "DG_BraceAlpha": [[0, 0.0], [32, 0.15], [48, 1.0], [62, 1.0], [74, 0.4], [90, 0.0], [108, 0.0]],
+        "DG_ReleaseApproachAlpha": [[0, 0.0], [48, 0.0], [56, 0.6], [62, 1.0], [70, 0.0], [108, 0.0]],
+        "DG_FollowThroughAlpha": [[0, 0.0], [62, 0.0], [74, 1.0], [90, 0.4], [108, 0.0]]
+      }
+    },
+    {
+      "motion_id": "DG_PROCEDURAL_PUTT_RHBH_V1",
+      "family": "Putt",
+      "sequence_object_path": "/Game/DiscGolf/Animation/ProductionMotion/Putt/A_DG_RHBH_Putt_Procedural_v001.A_DG_RHBH_Putt_Procedural_v001",
+      "montage_object_path": "/Game/DiscGolf/Animation/ProductionMotion/Putt/AM_DG_RHBH_Putt_Procedural_v001.AM_DG_RHBH_Putt_Procedural_v001",
+      "style_id": "DG_Putt_Procedural_Candidate",
+      "frame_count": 72,
+      "duration_seconds": 1.2,
+      "release_frame": 38,
+      "finish_frame": 68,
+      "recommended_power_min": 0.05,
+      "recommended_power_max": 0.45,
+      "authored_coverage": [
+        "SETUP_AIM",
+        "WEIGHT_SHIFT",
+        "FOOT_PLANT",
+        "ACCELERATION",
+        "RELEASE",
+        "FOLLOW_THROUGH",
+        "RECOVERY"
+      ],
+      "phases": [
+        { "name": "Aim", "frame": 0 },
+        { "name": "RunUp", "frame": 10 },
+        { "name": "ReachBack", "frame": 20 },
+        { "name": "Plant", "frame": 28 },
+        { "name": "Acceleration", "frame": 32 },
+        { "name": "FollowThrough", "frame": 46 },
+        { "name": "Recovery", "frame": 58 }
+      ],
+      "pose_keys": [
+        { "frame": 0, "translation_cm": { "root": [0.0, 0.0, 0.0] }, "rotation_degrees": { "pelvis": [-5.0, 1.0, 0.0], "spine_02": [5.0, 0.0, 1.0], "spine_04": [7.0, -2.0, 2.0], "upperarm_r": [-18.0, -8.0, -8.0], "lowerarm_r": [6.0, 45.0, -26.0], "hand_r": [5.0, 1.0, -5.0], "upperarm_l": [-14.0, 8.0, 7.0], "lowerarm_l": [5.0, -35.0, 18.0], "thigh_l": [-6.0, 0.0, 3.0], "thigh_r": [-5.0, 0.0, -3.0], "calf_l": [15.0, 0.0, 0.0], "calf_r": [14.0, 0.0, 0.0] } },
+        { "frame": 10, "translation_cm": { "root": [0.0, 0.0, -0.5] }, "rotation_degrees": { "pelvis": [-8.0, 2.0, 0.0], "spine_02": [7.0, 0.0, 1.0], "spine_04": [9.0, -3.0, 2.0], "upperarm_r": [-16.0, -7.0, -9.0], "lowerarm_r": [6.0, 48.0, -28.0], "upperarm_l": [-13.0, 7.0, 8.0], "lowerarm_l": [5.0, -36.0, 19.0], "thigh_l": [-8.0, 0.0, 4.0], "thigh_r": [-7.0, 0.0, -4.0], "calf_l": [20.0, 0.0, 0.0], "calf_r": [19.0, 0.0, 0.0] } },
+        { "frame": 20, "translation_cm": { "root": [0.0, 0.0, -0.8] }, "rotation_degrees": { "pelvis": [-10.0, 5.0, -1.0], "spine_02": [8.0, 2.0, 1.0], "spine_04": [10.0, 2.0, 2.0], "upperarm_r": [-12.0, 8.0, -12.0], "lowerarm_r": [5.0, 55.0, -32.0], "hand_r": [4.0, 3.0, -7.0], "upperarm_l": [-11.0, -5.0, 10.0], "lowerarm_l": [4.0, -34.0, 20.0], "thigh_l": [-9.0, 0.0, 5.0], "thigh_r": [-8.0, 0.0, -5.0], "calf_l": [23.0, 0.0, 0.0], "calf_r": [22.0, 0.0, 0.0] } },
+        { "frame": 28, "translation_cm": { "root": [0.0, 0.0, -0.7] }, "rotation_degrees": { "pelvis": [-8.0, 2.0, -1.0], "spine_02": [7.0, 0.0, 1.0], "spine_04": [9.0, -2.0, 2.0], "upperarm_r": [-9.0, -2.0, -14.0], "lowerarm_r": [4.0, 50.0, -34.0], "hand_r": [3.0, 0.0, -8.0], "upperarm_l": [-10.0, 2.0, 11.0], "lowerarm_l": [4.0, -31.0, 20.0], "thigh_l": [-5.0, 0.0, 7.0], "thigh_r": [-7.0, 0.0, -5.0], "calf_l": [25.0, 0.0, 0.0], "calf_r": [21.0, 0.0, 0.0], "foot_l": [-5.0, 0.0, 1.0], "foot_r": [-4.0, 0.0, -1.0] } },
+        { "frame": 32, "translation_cm": { "root": [0.0, 0.0, -0.4] }, "rotation_degrees": { "pelvis": [-5.0, -3.0, -1.0], "spine_02": [5.0, -3.0, 1.0], "spine_04": [7.0, -6.0, 2.0], "upperarm_r": [-7.0, -18.0, -16.0], "lowerarm_r": [3.0, 38.0, -31.0], "hand_r": [2.0, -5.0, -9.0], "upperarm_l": [-9.0, 11.0, 10.0], "lowerarm_l": [3.0, -27.0, 18.0], "thigh_l": [-4.0, 0.0, 7.0], "thigh_r": [-5.0, 0.0, -5.0], "calf_l": [24.0, 0.0, 0.0], "calf_r": [19.0, 0.0, 0.0] } },
+        { "frame": 38, "translation_cm": { "root": [0.0, 0.0, 0.0] }, "rotation_degrees": { "pelvis": [-2.0, -8.0, 0.0], "spine_02": [3.0, -7.0, 1.0], "spine_04": [4.0, -11.0, 2.0], "upperarm_r": [-5.0, -31.0, -13.0], "lowerarm_r": [2.0, 16.0, -14.0], "hand_r": [1.0, -10.0, -6.0], "upperarm_l": [-8.0, 19.0, 8.0], "lowerarm_l": [3.0, -21.0, 15.0], "thigh_l": [-2.0, 0.0, 6.0], "thigh_r": [-3.0, 0.0, -4.0], "calf_l": [21.0, 0.0, 0.0], "calf_r": [17.0, 0.0, 0.0] } },
+        { "frame": 48, "translation_cm": { "root": [0.0, 0.0, 0.4] }, "rotation_degrees": { "pelvis": [0.0, -10.0, 1.0], "spine_02": [1.0, -9.0, 1.0], "spine_04": [2.0, -14.0, 2.0], "upperarm_r": [-4.0, -38.0, -9.0], "lowerarm_r": [2.0, -4.0, 4.0], "hand_r": [1.0, -13.0, 3.0], "upperarm_l": [-7.0, 23.0, 6.0], "lowerarm_l": [2.0, -15.0, 11.0], "thigh_l": [1.0, 0.0, 4.0], "thigh_r": [0.0, 0.0, -3.0], "calf_l": [16.0, 0.0, 0.0], "calf_r": [14.0, 0.0, 0.0] } },
+        { "frame": 60, "translation_cm": { "root": [0.0, 0.0, 0.2] }, "rotation_degrees": { "pelvis": [-2.0, -4.0, 0.0], "spine_02": [2.0, -4.0, 1.0], "spine_04": [3.0, -7.0, 2.0], "upperarm_r": [-8.0, -24.0, -8.0], "lowerarm_r": [3.0, 12.0, -6.0], "upperarm_l": [-8.0, 17.0, 6.0], "lowerarm_l": [3.0, -17.0, 10.0], "thigh_l": [-2.0, 0.0, 3.0], "thigh_r": [-2.0, 0.0, -3.0], "calf_l": [13.0, 0.0, 0.0], "calf_r": [12.0, 0.0, 0.0] } },
+        { "frame": 72, "translation_cm": { "root": [0.0, 0.0, 0.0] }, "rotation_degrees": { "pelvis": [-4.0, 1.0, 0.0], "spine_02": [4.0, -1.0, 1.0], "spine_04": [6.0, -3.0, 2.0], "upperarm_r": [-15.0, -10.0, -8.0], "lowerarm_r": [5.0, 38.0, -22.0], "upperarm_l": [-12.0, 9.0, 7.0], "lowerarm_l": [4.0, -30.0, 16.0], "thigh_l": [-5.0, 0.0, 3.0], "thigh_r": [-4.0, 0.0, -3.0], "calf_l": [15.0, 0.0, 0.0], "calf_r": [14.0, 0.0, 0.0] } }
+      ],
+      "curves": {
+        "DG_FootPlant_L": [[0, 1.0], [28, 1.0], [48, 1.0], [60, 0.6], [72, 1.0]],
+        "DG_FootPlant_R": [[0, 1.0], [28, 1.0], [48, 1.0], [60, 0.7], [72, 1.0]],
+        "DG_ReachbackAlpha": [[0, 0.0], [10, 0.25], [20, 1.0], [28, 0.7], [32, 0.35], [38, 0.0], [72, 0.0]],
+        "DG_BraceAlpha": [[0, 0.2], [20, 0.5], [28, 1.0], [38, 1.0], [48, 0.6], [60, 0.2], [72, 0.0]],
+        "DG_ReleaseApproachAlpha": [[0, 0.0], [28, 0.0], [32, 0.55], [38, 1.0], [46, 0.0], [72, 0.0]],
+        "DG_FollowThroughAlpha": [[0, 0.0], [38, 0.0], [48, 1.0], [60, 0.35], [72, 0.0]]
+      }
+    }
+  ]
+}

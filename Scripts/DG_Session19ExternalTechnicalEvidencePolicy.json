@@ -1,0 +1,101 @@
+{
+  "schema": "DiscGolfTour.Session19ExternalTechnicalEvidencePolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "policyId": "session19_external_shipping_technical_evidence_v1",
+  "mode": "FAIL_CLOSED_CANDIDATE_BOUND_TECHNICAL_EVIDENCE",
+  "hashAlgorithm": "SHA-256",
+  "archiveManifestAlgorithm": "SORTED_CANONICAL_RELATIVE_PATH_TAB_BYTES_TAB_UPPER_SHA256_LF",
+  "candidateIdPattern": "^S19_WindowsShipping_[A-Za-z0-9_-]{1,96}$",
+  "shippingExecutableBasename": "DiscGolfTour-Win64-Shipping.exe",
+  "userDir": {
+    "mustExistBeforeLaunch": true,
+    "mustBeEmptyBeforeLaunch": true,
+    "canonicalUuidBasenameRequired": true,
+    "mustBeExternalToProjectArchiveAndEvidence": true,
+    "reparsePointsRejected": true
+  },
+  "launch": {
+    "requiredArguments": [
+      "-d3d12",
+      "-windowed",
+      "-ResX=1280",
+      "-ResY=720",
+      "-NoSplash"
+    ],
+    "additionalArgumentsAllowed": false,
+    "forbiddenArgumentPrefixes": [
+      "-unattended",
+      "-nullrhi",
+      "-abslog",
+      "-course",
+      "-hole",
+      "-threeholeroundsmoketest",
+      "-session16",
+      "-session17",
+      "-testexit"
+    ],
+    "minimumTimeoutSeconds": 60,
+    "maximumTimeoutSeconds": 14400,
+    "defaultTimeoutSeconds": 3600,
+    "requiredExitCode": 0
+  },
+  "screenshots": {
+    "relativeDirectory": "Screenshots",
+    "requiredFiles": [
+      "001_front_end.png",
+      "002_hole1_tee.png",
+      "003_hole1_recovered_lie.png",
+      "004_hole1_complete.png",
+      "005_hole2_tee.png",
+      "006_hole2_recovered_lie.png",
+      "007_hole2_complete.png",
+      "008_hole3_tee.png",
+      "009_hole3_recovered_lie.png",
+      "010_final_scorecard.png"
+    ],
+    "allowedExtensions": [".png"],
+    "minimumWidth": 640,
+    "minimumHeight": 360,
+    "maximumWidth": 7680,
+    "maximumHeight": 4320,
+    "maximumFileBytes": 52428800,
+    "timestampToleranceSeconds": 5
+  },
+  "presentMon": {
+    "optional": true,
+    "relativePath": "PresentMon.csv",
+    "maximumFileBytes": 536870912,
+    "minimumDataRows": 1,
+    "requiredColumns": ["Application", "ProcessID"],
+    "applicationMustMatchShippingExecutable": true,
+    "processIdMustMatchLaunchedProcess": true,
+    "runnerArguments": [
+      "--process_id",
+      "{PID}",
+      "--output_file",
+      "{CSV}",
+      "--terminate_on_proc_exit"
+    ]
+  },
+  "evidence": {
+    "launchRecordName": "launch-record.json",
+    "manifestName": "technical-evidence-manifest.json",
+    "manifestDigestName": "technical-evidence-manifest.sha256",
+    "createNewRefuseOverwrite": true,
+    "unknownFilesRejected": true,
+    "hostPathsRecorded": false
+  },
+  "claimBoundary": {
+    "technicalArtifactCollectionOnly": true,
+    "manualGameplayAcceptance": false,
+    "manualReviewerId": null,
+    "manualReviewedUtc": null,
+    "humanPlayFeelApproval": false,
+    "visualProductApproval": false,
+    "accessibilityApproval": false,
+    "legalApproval": false,
+    "releaseApproval": false,
+    "releaseReady": false
+  }
+}

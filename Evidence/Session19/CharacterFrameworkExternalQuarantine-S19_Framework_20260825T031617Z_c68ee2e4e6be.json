@@ -1,0 +1,64 @@
+{
+  "schema": "DiscGolfTour.Session19CharacterFrameworkExternalQuarantineReceipt.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "runId": "S19_Framework_20260825T031617Z_c68ee2e4e6be",
+  "verifiedUtc": "2026-08-25T03:18:34.7077150Z",
+  "operation": "RECOVERABLE_MOVE_OUTSIDE_PROJECT",
+  "verificationRepair": true,
+  "moveCommandCompleted": true,
+  "state": "EXTERNAL_QUARANTINE_VERIFIED_SHIPPING_ABSENCE_PENDING",
+  "projectSourcesAbsent": true,
+  "destinationOutsideProject": true,
+  "destinationIntegrityVerified": true,
+  "deleted": false,
+  "hostPathRecorded": false,
+  "recoveryLocationToken": "DGTOUR_EXTERNAL_QUARANTINE/S19_Framework_20260825T031617Z_c68ee2e4e6be",
+  "beforeMoveManifest": {
+    "path": "Evidence/Session19/CharacterFrameworkBeforeMove-S19_Framework_20260825T031617Z_c68ee2e4e6be.tsv",
+    "bytes": 96660,
+    "sha256": "EEF548159719E2DCF5A0966621DF1F6A1313EB1A2A62B526C952AE8A29E766D5",
+    "rows": 513
+  },
+  "roots": [
+    {
+      "id": "project_plugin",
+      "projectPath": "Plugins/DiscGolfCharacterFramework",
+      "recoveryRelativePath": "ProjectPlugin/DiscGolfCharacterFramework",
+      "files": 417,
+      "bytes": 106181459,
+      "sourceAbsent": true,
+      "destinationPresent": true,
+      "matchingFiles": 417,
+      "actualFiles": 417,
+      "reparseEntries": 0
+    },
+    {
+      "id": "buildkit_plugin",
+      "projectPath": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Plugins/DiscGolfCharacterFramework",
+      "recoveryRelativePath": "BuildKitPlugin/DiscGolfCharacterFramework",
+      "files": 96,
+      "bytes": 183360,
+      "sourceAbsent": true,
+      "destinationPresent": true,
+      "matchingFiles": 96,
+      "actualFiles": 96,
+      "reparseEntries": 0
+    }
+  ],
+  "totals": {
+    "files": 513,
+    "bytes": 106364819,
+    "matchingFiles": 513,
+    "differenceCount": 0
+  },
+  "releaseClosure": {
+    "projectRootAbsenceSatisfied": true,
+    "shippingPackageAbsenceSatisfied": false,
+    "blockerClosed": false,
+    "remainingEvidence": [
+      "FRESH_WINDOWS_SHIPPING_UFS_NONUFS_AND_IOSTORE_ABSENCE"
+    ]
+  },
+  "receiptPath": "Evidence/Session19/CharacterFrameworkExternalQuarantine-S19_Framework_20260825T031617Z_c68ee2e4e6be.json"
+}

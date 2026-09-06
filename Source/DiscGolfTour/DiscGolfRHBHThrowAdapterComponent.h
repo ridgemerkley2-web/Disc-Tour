@@ -8,6 +8,8 @@
 #include "DiscGolfRHBHThrowAdapterComponent.generated.h"
 
 class UDiscGolfThrowComponent;
+class UDiscBagComponent;
+class UThrowControllerComponent;
 class USkeletalMeshComponent;
 class UStaticMeshComponent;
 
@@ -64,7 +66,30 @@ public:
         USkeletalMeshComponent* InCharacterMesh,
         UStaticMeshComponent* InHeldDiscVisual);
 
-    /** Starts the single supported animated slice: a right-handed backhand drive. */
+    /** Supplies the player-owned context and equipment gates for animated throws. */
+    void ConfigureIngressContracts(
+        UThrowControllerComponent* InThrowController,
+        UDiscBagComponent* InDiscBag);
+
+    /** Pure policy seam shared by runtime ingress and focused automation. */
+    static bool IsCommandEligibleForAnimatedRHBH(
+        const FThrowCommand& Command,
+        EDGHandedness CurrentProfileHandedness,
+        EDiscShotContext ExpectedShotContext);
+    /** Exact immutable player-equipment admission policy; never repairs identity. */
+    static bool IsSelectedEquipmentProvenanceExact(
+        const FThrowCommand& Command,
+        const UDiscBagComponent* DiscBag);
+    static bool IsWatchdogTimeoutValid(float TimeoutSeconds);
+
+    /**
+     * Copies only presentation scalars from the immutable command. World-space
+     * launch heading deliberately remains outside the rig's local aim offset.
+     */
+    static FDGThrowIntent BuildPresentationIntentForAnimatedRHBH(
+        const FThrowCommand& Command);
+
+    /** Starts an authored right-handed backhand Drive, Approach, or Putt family. */
     bool TryBeginRHBHThrow(const FThrowCommand& AuthoritativeCommand);
 
     /** Cancels only while the disc is still held; a released throw is immutable. */
@@ -138,6 +163,8 @@ public:
 #if WITH_DEV_AUTOMATION_TESTS
     /** Deterministic no-wait seam for the bounded recovery automation fixture. */
     void TriggerWatchdogForTesting();
+    bool TryBeginValidatedTransactionForTesting(const FThrowCommand& Command);
+    void TriggerReleaseForTesting(const FTransform& GripWorldTransform);
 #endif
 
     UPROPERTY(BlueprintAssignable, Category="Disc Golf|Character|Session 3")
@@ -159,11 +186,14 @@ private:
 
     void BindFrameworkDelegates();
     void UnbindFrameworkDelegates();
-    void ArmWatchdog(uint64 AttemptSerial);
+    bool ArmWatchdog(uint64 AttemptSerial);
     void ClearWatchdog();
     void HandleWatchdog(uint64 ExpectedAttemptSerial);
     void CompleteRecovery(bool bDiscWasReleased);
     void SetHeldDiscVisible(bool bVisible) const;
+    bool TryBeginValidatedTransaction(const FThrowCommand& Command);
+    bool TryAcquireEquipmentMutationLock();
+    void ReleaseEquipmentMutationLock();
 
     UPROPERTY(Transient)
     TObjectPtr<UDiscGolfThrowComponent> FrameworkThrowComponent;
@@ -174,7 +204,13 @@ private:
     UPROPERTY(Transient)
     TObjectPtr<UStaticMeshComponent> HeldDiscVisual;
 
-    UPROPERTY(EditAnywhere, Category="Disc Golf|Character|Session 3", meta=(ClampMin="0.25", UIMin="1.0", UIMax="10.0"))
+    UPROPERTY(Transient)
+    TObjectPtr<UThrowControllerComponent> ThrowController;
+
+    UPROPERTY(Transient)
+    TObjectPtr<UDiscBagComponent> DiscBag;
+
+    UPROPERTY(EditAnywhere, Category="Disc Golf|Character|Session 3", meta=(ClampMin="0.25", ClampMax="60.0", UIMin="1.0", UIMax="10.0"))
     float WatchdogTimeoutSeconds = 5.0f;
 
     UPROPERTY(VisibleInstanceOnly, Category="Disc Golf|Character|Session 3")
@@ -184,4 +220,5 @@ private:
     FDiscGolfAuthoritativeRHBHLaunchDelegate AuthoritativeLaunchDelegate;
     FTimerHandle WatchdogTimer;
     bool bLastLaunchAccepted = false;
+    bool bOwnsEquipmentMutationLock = false;
 };

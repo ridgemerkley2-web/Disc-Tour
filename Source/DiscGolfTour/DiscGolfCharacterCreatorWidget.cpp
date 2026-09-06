@@ -1,5 +1,6 @@
 #include "DiscGolfCharacterCreatorWidget.h"
 
+#include "DiscGolfAvatarBackendRuntime.h"
 #include "DiscGolfOutfitRuntime.h"
 #include "DiscGolfTourPlayerController.h"
 #include "Framework/Application/SlateApplication.h"
@@ -230,6 +231,56 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
         }
     }
 
+    TSharedRef<SHorizontalBox> BackendSelector =
+        SNew(SHorizontalBox)
+        + SHorizontalBox::Slot()
+        .AutoWidth()
+        .Padding(0.0f, 0.0f, 8.0f, 0.0f)
+        [
+            SNew(SButton)
+            .Text_Lambda([this]()
+            {
+                return FText::FromString(IsDGMasterBackendSelected()
+                    ? TEXT("● DGMASTER / PROXY")
+                    : TEXT("DGMASTER / PROXY"));
+            })
+            .OnClicked_UObject(
+                this,
+                &UDiscGolfCharacterCreatorWidget::HandleBackendSelection,
+                FName(DiscGolfAvatarBackendRuntime::DGMasterBackendId))
+        ]
+        + SHorizontalBox::Slot()
+        .AutoWidth()
+        .Padding(0.0f, 0.0f, 12.0f, 0.0f)
+        [
+            SNew(SButton)
+            .Text_UObject(
+                this,
+                &UDiscGolfCharacterCreatorWidget::GetMetaHumanBackendButtonText)
+            .IsEnabled_Lambda([this]()
+            {
+                const ADiscGolfTourPlayerController* Controller =
+                    OwningDiscGolfController.Get();
+                return Controller
+                    && Controller->IsCharacterCreatorMetaHumanBackendAvailable();
+            })
+            .OnClicked_UObject(
+                this,
+                &UDiscGolfCharacterCreatorWidget::HandleBackendSelection,
+                FName(DiscGolfAvatarBackendRuntime::MetaHumanAssembledBackendId))
+        ]
+        + SHorizontalBox::Slot()
+        .FillWidth(1.0f)
+        .VAlign(VAlign_Center)
+        [
+            SNew(STextBlock)
+            .Text_UObject(
+                this,
+                &UDiscGolfCharacterCreatorWidget::GetBackendStatusText)
+            .ColorAndOpacity(Muted)
+            .AutoWrapText(true)
+        ];
+
     RootSlateWidget =
         SNew(SOverlay)
         + SOverlay::Slot()
@@ -267,9 +318,15 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
                         .Padding(0.0f, 2.0f, 0.0f, 14.0f)
                         [
                             SNew(STextBlock)
-                            .Text(FText::FromString(TEXT("SESSION 7  //  FULL CHARACTER PROXY  //  ONE EXISTING PLAYER")))
+                            .Text(FText::FromString(TEXT("SESSION 8B  //  OPTIONAL VISUAL BACKEND  //  ONE EXISTING PLAYER")))
                             .ColorAndOpacity(Muted)
                             .Font(FCoreStyle::GetDefaultFontStyle("Regular", 10))
+                        ]
+                        + SVerticalBox::Slot()
+                        .AutoHeight()
+                        .Padding(0.0f, 0.0f, 0.0f, 12.0f)
+                        [
+                            BackendSelector
                         ]
                         + SVerticalBox::Slot()
                         .AutoHeight()
@@ -288,19 +345,19 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
                             ]
                             + SWidgetSwitcher::Slot()
                             [
-                                BuildBodyTab()
+                                BuildBackendAwareProxyTab(BuildBodyTab())
                             ]
                             + SWidgetSwitcher::Slot()
                             [
-                                BuildFaceTab()
+                                BuildBackendAwareProxyTab(BuildFaceTab())
                             ]
                             + SWidgetSwitcher::Slot()
                             [
-                                BuildHairTab()
+                                BuildBackendAwareProxyTab(BuildHairTab())
                             ]
                             + SWidgetSwitcher::Slot()
                             [
-                                BuildAppearanceTab()
+                                BuildBackendAwareProxyTab(BuildAppearanceTab())
                             ]
                             + SWidgetSwitcher::Slot()
                             [
@@ -308,7 +365,7 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
                             ]
                             + SWidgetSwitcher::Slot()
                             [
-                                BuildOutfitTab()
+                                BuildBackendAwareProxyTab(BuildOutfitTab())
                             ]
                         ]
                         + SVerticalBox::Slot()
@@ -526,6 +583,41 @@ TSharedRef<SWidget> UDiscGolfCharacterCreatorWidget::RebuildWidget()
 
     RebuildOutfitLists();
     return RootSlateWidget.ToSharedRef();
+}
+
+TSharedRef<SWidget>
+UDiscGolfCharacterCreatorWidget::BuildBackendAwareProxyTab(
+    const TSharedRef<SWidget>& ProxyTab)
+{
+    using namespace DiscGolfCharacterCreatorStyle;
+    return SNew(SVerticalBox)
+        + SVerticalBox::Slot()
+        .AutoHeight()
+        .Padding(0.0f, 0.0f, 0.0f, 10.0f)
+        [
+            SNew(STextBlock)
+            .Text(FText::FromString(
+                TEXT("CURATED REALISTIC PRESET: proxy-only controls are preserved for DGMaster fallback and are intentionally disabled for this backend.")))
+            .ColorAndOpacity(Warning)
+            .AutoWrapText(true)
+            .Visibility_Lambda([this]()
+            {
+                return IsDGMasterBackendSelected()
+                    ? EVisibility::Collapsed : EVisibility::Visible;
+            })
+        ]
+        + SVerticalBox::Slot()
+        .FillHeight(1.0f)
+        [
+            SNew(SBox)
+            .IsEnabled_Lambda([this]()
+            {
+                return IsDGMasterBackendSelected();
+            })
+            [
+                ProxyTab
+            ]
+        ];
 }
 
 void UDiscGolfCharacterCreatorWidget::ReleaseSlateResources(bool bReleaseChildren)
@@ -1562,6 +1654,21 @@ FReply UDiscGolfCharacterCreatorWidget::HandleCreatorTab(int32 TabIndex)
     return FReply::Handled();
 }
 
+FReply UDiscGolfCharacterCreatorWidget::HandleBackendSelection(FName BackendId)
+{
+    if (ADiscGolfTourPlayerController* Controller =
+            OwningDiscGolfController.Get())
+    {
+        FDGFullCharacterCustomization Updated;
+        if (Controller->SelectCharacterCreatorBackend(BackendId, Updated))
+        {
+            SetDraftCustomization(Updated);
+        }
+    }
+    InvalidateLayoutAndVolatility();
+    return FReply::Handled();
+}
+
 FReply UDiscGolfCharacterCreatorWidget::HandleOutfitSlot(EDGOutfitSlot OutfitSlot)
 {
     SelectedOutfitSlot = OutfitSlot;
@@ -1794,6 +1901,40 @@ FText UDiscGolfCharacterCreatorWidget::GetStatusText() const
     return FText::FromString(Controller
         ? Controller->GetCharacterCreatorStatusText()
         : FString(TEXT("Character creator controller unavailable.")));
+}
+
+FText UDiscGolfCharacterCreatorWidget::GetBackendStatusText() const
+{
+    if (IsDGMasterBackendSelected())
+    {
+        return FText::FromString(
+            TEXT("DGMaster remains the animation, release, disc, flight, and fallback authority."));
+    }
+    const ADiscGolfTourPlayerController* Controller =
+        OwningDiscGolfController.Get();
+    return FText::FromString(Controller
+        ? Controller->GetCharacterCreatorBackendStatusText()
+        : FString(TEXT("Realistic character availability cannot be verified.")));
+}
+
+FText UDiscGolfCharacterCreatorWidget::GetMetaHumanBackendButtonText() const
+{
+    const bool bSelected = DraftCustomization.AvatarBackendId
+        == FName(DiscGolfAvatarBackendRuntime::MetaHumanAssembledBackendId);
+    const ADiscGolfTourPlayerController* Controller =
+        OwningDiscGolfController.Get();
+    const bool bAvailable = Controller
+        && Controller->IsCharacterCreatorMetaHumanBackendAvailable();
+    return FText::FromString(FString(bSelected ? TEXT("● ") : TEXT(""))
+        + (bAvailable
+            ? TEXT("REALISTIC / CURATED")
+            : TEXT("REALISTIC / UNAVAILABLE")));
+}
+
+bool UDiscGolfCharacterCreatorWidget::IsDGMasterBackendSelected() const
+{
+    return DraftCustomization.AvatarBackendId
+        != FName(DiscGolfAvatarBackendRuntime::MetaHumanAssembledBackendId);
 }
 
 FText UDiscGolfCharacterCreatorWidget::GetCurrentLockText() const

@@ -1,0 +1,78 @@
+{
+  "candidateId": "S19_WindowsShipping_20260825T144334Z_bc556ba97658",
+  "candidateUserDirBindingSha256": "99b70dc35e486b1b9d3a8b95d37b726e628abb7797853a6270435843756876a5",
+  "counts": {
+    "approvedFiles": 4,
+    "forbiddenArtifacts": 0,
+    "observedFiles": 4,
+    "unknownFiles": 0
+  },
+  "failures": [],
+  "hostPathRecorded": false,
+  "observedFiles": [
+    {
+      "bytes": 239,
+      "classification": "crash_reporter_config_cache",
+      "relativePath": "Saved/Config/CrashReportClient/UECC-Windows-ECD556034FE8D3DA5398F0B09E2B1D21/CrashReportClient.ini",
+      "sha256": "ce69d7e7bbd1a64729bd4d5724f3c1efc47c6c3d555da9d2c6ad741eddc3d893"
+    },
+    {
+      "bytes": 1378,
+      "classification": "production_user_settings",
+      "relativePath": "Saved/Config/Windows/GameUserSettings.ini",
+      "sha256": "25034567f71ecec90a640fa803a6bb0292ec483021905251ec22f55c8b4aa91b"
+    },
+    {
+      "bytes": 38034,
+      "classification": "production_pso_pipeline_cache",
+      "relativePath": "Saved/DiscGolfTour_PCD3D_SM6.upipelinecache",
+      "sha256": "a68073687fdbb8668b443b4762503c2e445d4920895b1f5c87a9985dd7653018"
+    },
+    {
+      "bytes": 2875,
+      "classification": "production_profile",
+      "relativePath": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+      "sha256": "b208e2cb400c048988b0a17f7f84714e4dab65b59738551ca4cb5e3cb192df54"
+    }
+  ],
+  "policy": {
+    "approvedExactFiles": [
+      "Saved/Config/Windows/GameUserSettings.ini",
+      "Saved/DiscGolfTour_PCD3D_SM6.upipelinecache",
+      "Saved/SaveGames/DiscGolfTour_Profile_0.sav"
+    ],
+    "approvedPatternFiles": [
+      "Saved/Config/CrashReportClient/UECC-Windows-<32-hex>/CrashReportClient.ini"
+    ],
+    "forbiddenArtifactClasses": [
+      "CAPTURE_OUTPUT",
+      "DEVELOPMENT_ARTIFACT",
+      "DEVELOPMENT_EQUIPMENT_SAVE",
+      "DEVELOPMENT_THROWLAB_SAVE",
+      "DIAGNOSTICS_OUTPUT",
+      "ENVIRONMENT_REPORT",
+      "PHYSICS_OUTPUT",
+      "REGRESSION_OUTPUT",
+      "TEST_OUTPUT",
+      "TRAJECTORY_EXPORT",
+      "UNKNOWN_SAVEGAME"
+    ],
+    "maximumApprovedFileBytes": 16777216,
+    "maximumCrashReporterConfigFiles": 32,
+    "mode": "FAIL_CLOSED_EXACT_ALLOWLIST",
+    "reparsePointsRejected": true,
+    "requiredProductionProfile": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+    "unknownFilesRejected": true,
+    "unknownSaveGamesRejected": true
+  },
+  "releaseBoundary": {
+    "gameplayAcceptanceClaimed": false,
+    "releaseReadinessClaimed": false,
+    "technicalUserDirAcceptanceOnly": true
+  },
+  "schema": "DiscGolfTour.Session19FreshUserDirValidation.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "state": "PASS_FRESH_SHIPPING_USERDIR_ALLOWLIST",
+  "userDirToken": "shipping_final_S19_WindowsShipping_20260825T144334Z_bc556ba97658"
+}

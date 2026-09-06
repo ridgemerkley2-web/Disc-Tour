@@ -1,0 +1,145 @@
+{
+  "schema": "DiscGolfTour.Session10EnvironmentMachineEvidencePolicy.v1",
+  "schemaVersion": 1,
+  "session": 10,
+  "milestone": "v0.5",
+  "candidateId": "S19_WindowsShipping_20260827T023919Z_51a1c132f837",
+  "authority": "ADDITIVE_CANDIDATE_BOUND_MACHINE_ENVIRONMENT_EVIDENCE_NOT_ASSET_POPULATION_VISUAL_PROVENANCE_LEGAL_OWNER_OR_RELEASE_APPROVAL",
+  "state": "MACHINE_RHI_AND_BOUNDED_THREE_HOLE_PERFORMANCE_EVIDENCE_DECLARED_ASSET_AND_HUMAN_APPROVALS_PENDING",
+  "bindings": {
+    "session10TechnicalPolicy": {
+      "path": "Config/DG_Session10EnvironmentShippingTechnicalPolicy-S19_WindowsShipping_20260827T023919Z_51a1c132f837.json",
+      "bytes": 13064,
+      "sha256": "A39E46D9A73265A3394784FCF8A6A089B41F8DB12BFFD9A82F70520ACA2CD0EC"
+    },
+    "session10TechnicalReceipt": {
+      "path": "Evidence/Session10/EnvironmentShippingTechnicalV2-S19_WindowsShipping_20260827T023919Z_51a1c132f837.json",
+      "bytes": 13742,
+      "sha256": "8F8EFA582A1A198D4A66AF2396982E62FEE5134D90217FFCF508C8547129BD3C"
+    },
+    "categoryTechnicalPlan": {
+      "path": "Config/DG_Session10EnvironmentCategoryTechnicalPlan.json",
+      "bytes": 21024,
+      "sha256": "A4DCB8CD0D685A0DE31BFC8518C43AF783C68DCB2FD2A1D42037AD8CA8C12C8D"
+    },
+    "shippingPerformanceReceipt": {
+      "externalRootRelativePath": "ShippingPerformance/Receipts/ShippingPerformanceEvidence-S19_WindowsShipping_20260827T023919Z_51a1c132f837.json",
+      "bytes": 8522,
+      "sha256": "17EA52DE350C385A5F5BF98ABF7ED47817A96172F43A7C78A6713EEF7849E24C"
+    }
+  },
+  "candidateArchive": {
+    "archiveRecoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260827T023919Z_51a1c132f837/Windows",
+    "archiveFileCount": 31,
+    "archiveBytes": 1246026263,
+    "archiveInventorySha256": "657283B661685FC2CBC4E6A4244386281319F68DA581621E4B143AB404A8F6C8",
+    "archiveCanonicalManifestSha256": "5F8BB2E5885358CA3CBAD310AC0A4EC024196B4E80811AE8E748685E4DB50231",
+    "launcher": {
+      "relativePath": "DiscGolfTour.exe",
+      "bytes": 171520,
+      "sha256": "7C704AB7D2E69C9B644F53B57678F0D1F2011D0985A5A34BAF3CEA9155D029D7"
+    },
+    "shippingExecutable": {
+      "relativePath": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+      "bytes": 162632192,
+      "sha256": "9A7AB59B8B055335D249F4C7537EF047F6AADB687DEE20BD6D427C33CECADEF9"
+    }
+  },
+  "categoryBaseline": {
+    "categoryCount": 16,
+    "technicalContractCompleteCount": 16,
+    "populatedCategoryCount": 3,
+    "productionReadyCategoryCount": 0,
+    "missingCategoryCount": 13,
+    "populatedCategories": [
+      "TreeConiferYoung",
+      "Shrub",
+      "RockLarge"
+    ],
+    "missingCategories": [
+      "TreeConiferLarge",
+      "TreeConiferMedium",
+      "TreeDeciduousLarge",
+      "TreeDeciduousMedium",
+      "Sapling",
+      "Fern",
+      "Grass",
+      "GroundCover",
+      "Log",
+      "Stump",
+      "RockSmall",
+      "ForestDebris",
+      "LeafLitter"
+    ]
+  },
+  "shippingPerformanceEvidence": {
+    "schema": "DiscGolfTour.Session19ShippingPerformanceEvidence.v1",
+    "state": "PASS_CANDIDATE_BOUND_THREE_HOLE_RENDERED_PERFORMANCE",
+    "runId": "67b21cd9-8608-43a5-b447-42813f1c5be4",
+    "runRootRelativePath": "ShippingPerformance/ShippingPerformance/S19_WindowsShipping_20260827T023919Z_51a1c132f837/67b21cd9-8608-43a5-b447-42813f1c5be4",
+    "requiredHoleNumbers": [
+      1,
+      2,
+      3
+    ],
+    "requiredCourseId": "PineRidgeChampionship",
+    "requiredCaptureProfile": "OmenGameplay1080pHighFoliageV1",
+    "requiredCameraRoute": "authored_flyover_continuous",
+    "requiredRuntimeMode": "packaged",
+    "requiredRendered": true,
+    "requiredRhi": "D3D12",
+    "requiredResolution": [
+      1920,
+      1080
+    ],
+    "requiredFoliageQuality": 3,
+    "requiredDurationSecondsPerHole": 30,
+    "requiredMinimumSampleCountPerHole": 600,
+    "maximumAcceptedP95FrameMs": 22.0,
+    "maximumAcceptedHitchRatePercent": 1.0
+  },
+  "captureDeclarationContract": {
+    "runner": "Scripts/run_dg_session19_shipping_performance.py",
+    "validator": "Scripts/validate_dg_session19_shipping_performance.py",
+    "externalOutputOnly": true,
+    "appendOnly": true,
+    "archiveMustRemainByteIdentical": true,
+    "freshExternalUserDirPerHole": true,
+    "captureStartsOnlyByExplicitRunnerInvocation": true,
+    "longCaptureMayNotStartDuringPreflight": true,
+    "requiredArgumentsTemplate": [
+      "-Course=PineRidge",
+      "-Hole=<1|2|3>",
+      "-PerformanceCaptureSeconds=30",
+      "-ResX=1920",
+      "-ResY=1080",
+      "-ForceRes",
+      "-RenderOffscreen",
+      "-dx12",
+      "-unattended",
+      "-NoLoadExistingSave",
+      "-DGNoProfileWrites",
+      "-UserDir=<EXTERNAL_UUID>"
+    ]
+  },
+  "claimBoundary": {
+    "candidateBoundCategoryCoverageAudited": true,
+    "candidateBoundRenderedRhiTechnicalEvidenceAccepted": true,
+    "candidateBoundThreeHoleEnvironmentTraversalTechnicalEvidenceAccepted": true,
+    "candidateBoundBoundedPerformanceTechnicalEvidenceAccepted": true,
+    "allSixteenProductionSlotsBound": false,
+    "allSixteenProductionSlotsReady": false,
+    "allRequiredDedicatedProxiesAuthored": false,
+    "allRequiredWindMaterialsBound": false,
+    "allRequiredLodOrNaniteVerified": false,
+    "allThreeHolesLiveCollisionExerciseAccepted": false,
+    "visualQualityAccepted": false,
+    "sustainedPerformanceCertified": false,
+    "humanPerformanceAcceptance": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "ownerApproval": false,
+    "releaseApproval": false,
+    "releaseReady": false
+  }
+}

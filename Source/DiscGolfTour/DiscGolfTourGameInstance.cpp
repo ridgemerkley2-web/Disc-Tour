@@ -60,6 +60,15 @@ bool OutfitLoadoutsExactlyMatch(
     return true;
 }
 
+bool PlayerSettingsExactlyMatch(
+    const FDiscGolfPlayerSettings& A,
+    const FDiscGolfPlayerSettings& B)
+{
+    return FDiscGolfPlayerSettings::StaticStruct()->CompareScriptStruct(
+        &A, &B, 0);
+}
+
+#if DG_WITH_DEVELOPMENT_CONTENT
 bool IsSafeValidationSlotSuffix(const FString& Suffix)
 {
     constexpr int32 MaximumSuffixLength = 48;
@@ -80,6 +89,7 @@ bool IsSafeValidationSlotSuffix(const FString& Suffix)
     }
     return true;
 }
+#endif
 }
 
 DiscGolfProfilePersistence::EMigrationResult DiscGolfProfilePersistence::MigrateToCurrent(
@@ -164,6 +174,15 @@ DiscGolfProfilePersistence::EMigrationResult DiscGolfProfilePersistence::Migrate
         InOutProfile.SaveSchemaVersion = 9;
         bMigrated = true;
     }
+    if (InOutProfile.SaveSchemaVersion < 10)
+    {
+        // Schema 9 predates visual-backend selection. A pre-schema-10 archive
+        // must always start from the accepted DGMaster presentation, even if a
+        // synthetic object pre-populated the newly introduced property.
+        InOutProfile.CharacterCustomization.AvatarBackendId = TEXT("dg_master");
+        InOutProfile.SaveSchemaVersion = 10;
+        bMigrated = true;
+    }
 
     if (DiscGolfSaveSchema::IsCurrent(InOutProfile.SaveSchemaVersion))
     {
@@ -172,7 +191,7 @@ DiscGolfProfilePersistence::EMigrationResult DiscGolfProfilePersistence::Migrate
             InOutProfile.CharacterCustomization);
 
         // Compatibility mirrors keep accepted Session 4/6 readers and
-        // isolated regression fixtures working. They are never a schema-9
+        // isolated regression fixtures working. They are never a schema-10
         // read authority and are updated only from the complete payload.
         InOutProfile.CharacterProfile =
             FDiscGolfCharacterProfileSaveData::FromFramework(
@@ -187,6 +206,30 @@ DiscGolfProfilePersistence::EMigrationResult DiscGolfProfilePersistence::Migrate
     return bMigrated ? EMigrationResult::Migrated : EMigrationResult::AlreadyCurrent;
 }
 
+DiscGolfProfilePersistence::FProcessPolicy DiscGolfProfilePersistence::ResolveProcessPolicy(
+    const TCHAR* CommandLine,
+    bool bProtectReleasePerformanceAttempt)
+{
+    FProcessPolicy Policy;
+    if (!CommandLine)
+    {
+        return Policy;
+    }
+
+    const bool bNoLoadExistingSave = FParse::Param(
+        CommandLine, TEXT("NoLoadExistingSave"));
+    const bool bNoProfileWrites = FParse::Param(
+        CommandLine, TEXT("DGNoProfileWrites"));
+    const bool bReleasePerformanceAttempt = bProtectReleasePerformanceAttempt
+        && FString(CommandLine).Contains(
+            TEXT("-PerformanceCapture"), ESearchCase::IgnoreCase);
+    Policy.bLoadExistingProfile = !bNoLoadExistingSave && !bReleasePerformanceAttempt;
+    Policy.bAllowProfileWrites = !bNoLoadExistingSave
+        && !bNoProfileWrites && !bReleasePerformanceAttempt;
+    return Policy;
+}
+
+#if DG_WITH_DEVELOPMENT_CONTENT
 bool DiscGolfProfilePersistence::TryResolveSession6OutfitValidationSaveSlot(
     const TCHAR* CommandLine,
     FString& OutSaveSlot)
@@ -264,11 +307,19 @@ bool DiscGolfProfilePersistence::TryResolveSession7FullCharacterValidationSaveSl
     OutSaveSlot = MoveTemp(RequestedSlot);
     return true;
 }
+#endif
 
 void UDiscGolfTourGameInstance::Init()
 {
-    Super::Init();
-
+    // Snapshot process-wide persistence intent before Super initializes
+    // GameInstance subsystems or invokes ReceiveInit. Developer modules may
+    // append their own narrowly scoped flags later in startup; those must not
+    // retroactively change this profile policy.
+    ProcessPersistencePolicy =
+        DiscGolfProfilePersistence::ResolveProcessPolicy(
+            FCommandLine::Get(), DG_WITH_RELEASE_PERFORMANCE_CAPTURE != 0);
+    bool bSuppressInitializationProfileWrite = false;
+#if DG_WITH_DEVELOPMENT_CONTENT
     FString RequestedSession7Slot;
     const bool bSession7ValidationSlotWasRequested = FParse::Value(
         FCommandLine::Get(),
@@ -280,6 +331,7 @@ void UDiscGolfTourGameInstance::Init()
     {
         SaveSlot = MoveTemp(ValidatedSession7Slot);
         bUsingSession7FullCharacterValidationSaveSlot = true;
+        bSuppressInitializationProfileWrite = true;
         UE_LOG(LogDiscGolfTour, Display,
             TEXT("SESSION 7 FULL CHARACTER VALIDATION SAVE SLOT: %s (validation-only; production slot unchanged)."),
             *SaveSlot);
@@ -302,6 +354,7 @@ void UDiscGolfTourGameInstance::Init()
     {
         SaveSlot = MoveTemp(ValidatedValidationSlot);
         bUsingSession6OutfitValidationSaveSlot = true;
+        bSuppressInitializationProfileWrite = true;
         UE_LOG(LogDiscGolfTour, Display,
             TEXT("SESSION 6 OUTFIT VALIDATION SAVE SLOT: %s (validation-only; production slot unchanged)."),
             *SaveSlot);
@@ -313,9 +366,42 @@ void UDiscGolfTourGameInstance::Init()
             TEXT("Rejected unsafe or incompletely gated Session 6 outfit validation save slot; retaining the production profile slot."));
     }
 
-    if (USaveGame* Loaded = UGameplayStatics::LoadGameFromSlot(SaveSlot, 0))
+    const bool bRejectedValidationSlotRequest =
+        (bSession7ValidationSlotWasRequested
+            && !bUsingSession7FullCharacterValidationSaveSlot)
+        || (bValidationSlotWasRequested
+            && !bUsingSession6OutfitValidationSaveSlot);
+    if (bRejectedValidationSlotRequest)
     {
-        Profile = Cast<UDiscGolfSaveGame>(Loaded);
+        // A malformed or conflicting development validation request must not
+        // fall back to reading, migrating, or writing the production profile.
+        ProcessPersistencePolicy.bLoadExistingProfile = false;
+        ProcessPersistencePolicy.bAllowProfileWrites = false;
+        bSuppressInitializationProfileWrite = true;
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Validation profile request failed closed; production profile reads and writes are disabled for this process."));
+    }
+#endif
+
+    Super::Init();
+    if (!ProcessPersistencePolicy.bLoadExistingProfile)
+    {
+        UE_LOG(LogDiscGolfTour, Display,
+            TEXT("Existing profile load disabled for this ephemeral process."));
+    }
+    if (!ProcessPersistencePolicy.bAllowProfileWrites)
+    {
+        UE_LOG(LogDiscGolfTour, Display,
+            TEXT("Profile writes disabled for this ephemeral process."));
+    }
+
+    bool bCreatedNewProfile = false;
+    if (ProcessPersistencePolicy.bLoadExistingProfile)
+    {
+        if (USaveGame* Loaded = UGameplayStatics::LoadGameFromSlot(SaveSlot, 0))
+        {
+            Profile = Cast<UDiscGolfSaveGame>(Loaded);
+        }
     }
 
     if (!Profile)
@@ -324,6 +410,18 @@ void UDiscGolfTourGameInstance::Init()
         if (Profile)
         {
             Profile->UnlockedMolds = { TEXT("Apex"), TEXT("Vector"), TEXT("Line"), TEXT("Compass"), TEXT("Touch") };
+            Profile->CharacterCustomization =
+                DiscGolfFullCharacterRuntime::MakeFreshInstallCustomization(
+                    DG_RELEASE_V05_SCOPE != 0);
+            Profile->CharacterProfile =
+                FDiscGolfCharacterProfileSaveData::FromFramework(
+                    Profile->CharacterCustomization.Body,
+                    Profile->CharacterCustomization.ThrowStyle,
+                    Profile->CharacterCustomization.Identity.Handedness,
+                    Profile->CharacterCustomization.BodyBuild);
+            Profile->OutfitLoadout = DiscGolfOutfitRuntime::NormalizeForPersistence(
+                Profile->CharacterCustomization.Outfit);
+            bCreatedNewProfile = true;
         }
     }
 
@@ -335,6 +433,8 @@ void UDiscGolfTourGameInstance::Init()
     const FDiscGolfCharacterProfileSaveData CharacterProfileBeforeMigration =
         Profile->CharacterProfile;
     const FDGOutfitLoadout OutfitBeforeMigration = Profile->OutfitLoadout;
+    const FDiscGolfPlayerSettings PlayerSettingsBeforeMigration =
+        Profile->PlayerSettings;
     const FDGFullCharacterCustomization FullCharacterBeforeMigration =
         Profile->CharacterCustomization;
     const DiscGolfProfilePersistence::EMigrationResult MigrationResult =
@@ -346,12 +446,17 @@ void UDiscGolfTourGameInstance::Init()
             Profile->SaveSchemaVersion, DiscGolfSaveSchema::CurrentVersion);
         return;
     }
-    if (MigrationResult == DiscGolfProfilePersistence::EMigrationResult::Migrated ||
-        !CharacterProfilesExactlyMatch(CharacterProfileBeforeMigration, Profile->CharacterProfile) ||
-        !OutfitLoadoutsExactlyMatch(
-            OutfitBeforeMigration, Profile->OutfitLoadout) ||
-        !DiscGolfFullCharacterRuntime::AreCustomizationsEquivalent(
-            FullCharacterBeforeMigration, Profile->CharacterCustomization))
+    if (!bSuppressInitializationProfileWrite
+        && (bCreatedNewProfile
+            || MigrationResult == DiscGolfProfilePersistence::EMigrationResult::Migrated
+            || !CharacterProfilesExactlyMatch(
+                CharacterProfileBeforeMigration, Profile->CharacterProfile)
+            || !OutfitLoadoutsExactlyMatch(
+                OutfitBeforeMigration, Profile->OutfitLoadout)
+            || !PlayerSettingsExactlyMatch(
+                PlayerSettingsBeforeMigration, Profile->PlayerSettings)
+            || !DiscGolfFullCharacterRuntime::AreCustomizationsEquivalent(
+                FullCharacterBeforeMigration, Profile->CharacterCustomization)))
     {
         SaveProfile();
     }
@@ -529,7 +634,16 @@ void UDiscGolfTourGameInstance::SaveProfile()
 
 bool UDiscGolfTourGameInstance::SaveProfileInternal()
 {
-    return Profile
-        && DiscGolfSaveSchema::IsCurrent(Profile->SaveSchemaVersion)
-        && UGameplayStatics::SaveGameToSlot(Profile, SaveSlot, 0);
+    if (!Profile || !DiscGolfSaveSchema::IsCurrent(Profile->SaveSchemaVersion))
+    {
+        return false;
+    }
+    if (ProcessPersistencePolicy.AcceptsProfileWritesInMemoryOnly())
+    {
+        // Treat an intentionally ephemeral in-memory update as accepted so
+        // transactional callers do not roll it back merely because disk I/O
+        // was explicitly suppressed for this process.
+        return true;
+    }
+    return UGameplayStatics::SaveGameToSlot(Profile, SaveSlot, 0);
 }

@@ -303,8 +303,8 @@ bool FDiscGolfCharacterProfileDiskSlotRoundTripTest::RunTest(const FString& Para
     if (Restored)
     {
         const FDiscGolfCharacterProfileSaveData& Actual = Restored->CharacterProfile;
-        TestEqual(TEXT("Disk-slot payload retains schema 9"),
-            Restored->SaveSchemaVersion, 9);
+        TestEqual(TEXT("Disk-slot payload retains schema 10"),
+            Restored->SaveSchemaVersion, 10);
         TestEqual(TEXT("Disk-slot payload retains the current save schema"),
             Restored->SaveSchemaVersion, DiscGolfSaveSchema::CurrentVersion);
         TestTrue(TEXT("Handedness survives disk-slot persistence"),
@@ -374,10 +374,13 @@ bool FDiscGolfCharacterProfileSchemaMigrationTest::RunTest(const FString& Parame
     const DiscGolfProfilePersistence::EMigrationResult Result =
         DiscGolfProfilePersistence::MigrateToCurrent(*Legacy);
 
-    TestTrue(TEXT("Schema 6 profile performs every migration through Session 7"),
+    TestTrue(TEXT("Schema 6 profile performs every migration through Session 8"),
         Result == DiscGolfProfilePersistence::EMigrationResult::Migrated);
-    TestEqual(TEXT("Schema 6 profile advances to schema 9"),
-        Legacy->SaveSchemaVersion, 9);
+    TestEqual(TEXT("Schema 6 profile advances to schema 10"),
+        Legacy->SaveSchemaVersion, DiscGolfSaveSchema::CurrentVersion);
+    TestEqual(TEXT("Pre-schema-10 profiles deterministically request DGMaster"),
+        Legacy->CharacterCustomization.AvatarBackendId,
+        FName(TEXT("dg_master")));
     TestTrue(TEXT("Legacy save reconstructs baseline body defaults"),
         NearlyEqual(Legacy->CharacterProfile.HeightCm, 183.0f)
         && NearlyEqual(Legacy->CharacterProfile.WingspanScale, 1.0f)
@@ -413,7 +416,11 @@ bool FDiscGolfCharacterProfileSchema7OutfitMigrationTest::RunTest(const FString&
 
     TestTrue(TEXT("Schema 7 performs the Session 6 outfit migration"),
         Result == DiscGolfProfilePersistence::EMigrationResult::Migrated);
-    TestEqual(TEXT("Schema 7 advances to schema 9"), Legacy->SaveSchemaVersion, 9);
+    TestEqual(TEXT("Schema 7 advances to schema 10"),
+        Legacy->SaveSchemaVersion, DiscGolfSaveSchema::CurrentVersion);
+    TestEqual(TEXT("Schema 7 receives the deterministic DGMaster backend"),
+        Legacy->CharacterCustomization.AvatarBackendId,
+        FName(TEXT("dg_master")));
     TestTrue(TEXT("Schema 7 deterministically starts with an empty outfit"),
         Legacy->OutfitLoadout.Equipped.IsEmpty());
     return true;

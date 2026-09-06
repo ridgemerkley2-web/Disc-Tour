@@ -8,9 +8,9 @@ Pine Ridge is one persistent course property, not three disposable hole maps. Al
 
 | Hole | World origin (cm) | Yaw | Forest pattern |
 |---|---:|---:|---|
-| 1 Pine Ridge Opening | 0, 0, 0 | 0° | `BrewsterRidgeTreeLine` |
-| 2 Needle Gate | 14,500, 4,000, 100 | 8° | `NorthwoodBlackCompression` |
-| 3 Gallery Lake | 36,000, 10,500, -250 | -12° | `IdlewildLakeFrame` |
+| 1 Pine Ridge Opening | 0, 0, 0 | 0° | `OpeningBroadTreeLine` |
+| 2 Needle Gate | 14,500, 4,000, 100 | 8° | `NeedleCanopyCompression` |
+| 3 Gallery Lake | 36,000, 10,500, -250 | -12° | `GalleryLakeFrame` |
 
 The placement forms one roughly 580 m-long property. `Docs/PINE_RIDGE_GROUND_GRASS.md` now owns the continuous presentation height field and the two graded visual connector trails between the previous green and next tee. These trails do not change hole-local competitive geometry or introduce new gameplay collision.
 

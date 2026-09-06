@@ -24,6 +24,8 @@ public:
     void Configure(const FDiscGolfWindZoneDefinition& Definition, UStaticMesh* VisualizationMesh);
     bool ContainsPoint(const FVector& WorldLocationCm) const;
     FVector ModifyWind(const FVector& WindMps) const;
+    /** Exact effective containment bounds consumed by deterministic physics wind sampling. */
+    bool TryGetPhysicsWorldBounds(FBox& OutBounds, FString& OutError) const;
 
 private:
     UPROPERTY(VisibleAnywhere) TObjectPtr<UBoxComponent> ZoneBounds;

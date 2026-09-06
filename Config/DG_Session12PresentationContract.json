@@ -1,0 +1,363 @@
+{
+  "schema": "dg.session12.presentation.contract",
+  "schema_version": 1,
+  "contract_id": "DG_SESSION12_CAMERA_REPLAY_INPUT_UI_AUDIO_V1",
+  "audit_scope": "PROJECT_OWNED_PRESENTATION_ORCHESTRATION_TECHNICAL_CLOSURE",
+  "normal_status": "PASS_SESSION12_PRESENTATION_CONTRACT_RELEASE_BLOCKED",
+  "release_status": "BLOCKED_PENDING_SESSION9_TO_SESSION12_PRODUCTION_CLOSURE",
+  "implementation_status": "TECHNICAL_RUNTIME_IMPLEMENTATION_ACCEPTED_PRODUCTION_READINESS_PENDING",
+  "feature_complete": true,
+  "releaseBlocked": true,
+  "release_ready": false,
+  "release_use_allowed": false,
+  "authority": {
+    "camera": "ADiscBroadcastCameraDirector_AND_PROJECT_PLAYER_CAMERA_FLOW",
+    "replay": "ADiscReplayActor_OVER_IMMUTABLE_NATIVE_TRAJECTORY_SAMPLES",
+    "input": "ADiscGolfTourPlayerController_AND_UDiscGolfInputConfig",
+    "ui": "ADiscGolfHUD_AND_PROJECT_OWNED_WIDGETS",
+    "semantic_audio": "DiscGolfPresentationAudio",
+    "audio_router": "UDiscGolfPresentationAudioRouterComponent",
+    "settings_and_save": "UDiscGolfTourGameInstance_AND_UDiscGolfSaveGame_SCHEMA_10",
+    "throw": "EXISTING_SINGLE_RELEASE_ADAPTER_AND_ADiscGolfTourGameMode_LAUNCH_PATH",
+    "flight": "UDiscFlightComponent_FIXED_STEP_240_HZ_SI",
+    "rules_scoring_course": "EXISTING_PROJECT_OWNED_AUTHORITIES"
+  },
+  "forbidden_parallel_authorities": [
+    "UDiscGolfCameraDirectorComponent",
+    "UDiscGolfReplayBridgeComponent",
+    "UDiscGolfShotReplayComponent",
+    "UDiscGolfShotTracerComponent",
+    "UDiscGolfAudioBridgeComponent",
+    "UDiscGolfSettingsSubsystem",
+    "UDiscGolfUIFlowSubsystem"
+  ],
+  "optional_engine_policy": {
+    "hard_gameplay_cameras_dependency": false,
+    "hard_common_ui_dependency": false,
+    "engine_replay_is_authoritative": false,
+    "metasound_builder_runtime_dependency": false,
+    "telemetry_replay_remains_default": true,
+    "normal_umg_and_input_fallback_required": true,
+    "player_camera_fallback_required": true,
+    "normal_sound_or_silent_fallback_required": true
+  },
+  "continuity": {
+    "frozen_files": [
+      {
+        "path": "Config/DG_BrandLicenseContract.json",
+        "bytes": 9267,
+        "sha256": "3EF3CBAD7E66D89D41CFB8C8FF59516484D8258995CAFAF28F8D58C4D8EB2001"
+      },
+      {
+        "path": "Scripts/validate_dg_session9_brand_license.py",
+        "bytes": 74292,
+        "sha256": "69867A9CE89D8F7720E2A124BEEB09CE4FFDC02D6F95BED8A11D281EF0EB7550"
+      },
+      {
+        "path": "Config/DG_Session10EnvironmentContract.json",
+        "bytes": 19976,
+        "sha256": "05931329CE877E80D4D36691D9091BBD6DDACE8F3F40612C5BE11B47744CDDC5"
+      },
+      {
+        "path": "Scripts/validate_dg_session10_environment.py",
+        "bytes": 76608,
+        "sha256": "13F3AECBB569466B6E3E8C49E0B3FA599EF57B13CE23604602CDC3158809112A"
+      },
+      {
+        "path": "Config/DG_Session11EquipmentThrowLabContract.json",
+        "bytes": 20213,
+        "sha256": "5306B7C1354775A896332474711B5E6E92C44B44F7EFDE0D9353EB4E9DBCA79D"
+      },
+      {
+        "path": "Scripts/validate_dg_session11_equipment_throw_lab.py",
+        "bytes": 36254,
+        "sha256": "E9D262E61122176EB4515D4AA2A4854D6354EADA2871B3A01299B17B13179D8A"
+      }
+    ],
+    "protected_profile": {
+      "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+      "bytes": 5212,
+      "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14",
+      "writes_allowed": false
+    },
+    "preserved_boundaries": {
+      "single_release_and_flight_authority": true,
+      "fixed_step_240_hz_and_si_units": true,
+      "actual_sample_only_replay": true,
+      "protected_schema10_profile": true,
+      "isolated_equipment_and_throw_lab_saves": true,
+      "environment_presentation_only": true,
+      "automatic_environment_to_flight_wind_sync": false,
+      "pcg_runtime_generation": false,
+      "session10_quarantines": true,
+      "generic_equipment_identity": true
+    }
+  },
+  "donor_reference": {
+    "policy": "READ_ONLY_REFERENCE_NEVER_COPY_AS_AUTHORITY",
+    "bindings": [
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/CODEX/12_CAMERA_REPLAY_INPUT_UI_AUDIO.md",
+        "bytes": 2037,
+        "sha256": "69D596AD0FB2998CD48C3D1DB99371A44DF765CF81705B8E65FC6658E9767E7D"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Docs/38_CAMERA_REPLAY_TRACER.md",
+        "bytes": 1477,
+        "sha256": "CF0ADED53E2ADA05B72A76F4BF7798ECD35A381A9BB524FF4DB0E739F48D9B60"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Docs/39_INPUT_COMMONUI_ACCESSIBILITY.md",
+        "bytes": 1490,
+        "sha256": "6D632DA6F534E6F36F175C3768E9A36703035B9F4AF854A8739FA5438CD02430"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Docs/41_AUDIO_METASOUNDS.md",
+        "bytes": 1344,
+        "sha256": "A54750E99CDD730CC7E4C06BF240BB20AAC9E2517C40A5E42ED0239368861A66"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Docs/47_OPTIONAL_ENGINE_FEATURE_SAFETY.md",
+        "bytes": 946,
+        "sha256": "FE0597A50FCBBC5C12CADD2E83EE28E37806E7B1CA479C745C8D9AC466B5D076"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Config/DG_CameraReplaySchema.json",
+        "bytes": 558,
+        "sha256": "64BA9C8E4C12519F7F920263600E6B9328C08AABE74F85442CA910CBC7469E80"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Config/DG_InputActionSchema.json",
+        "bytes": 1267,
+        "sha256": "4CCE36862032D770F7DFCBF1FCC3796CA5D7174E14B646FE996EFCA5984788B9"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Config/DG_AudioParameterContract.json",
+        "bytes": 530,
+        "sha256": "631BE237BC59891CAA6C29B66BDA669695BF651648125DFF61B8B1F0822D7A88"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Config/DG_AccessibilityDefaults.json",
+        "bytes": 315,
+        "sha256": "EA476E04CF54A7EAE089C98401C04FC1A586AFDB82E702A8DDA0148D74B244BD"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Config/DG_OptionalEngineFeaturePolicy.json",
+        "bytes": 1477,
+        "sha256": "91A88850B5FB8752E81F462084C7D62038B8E3B4EF0E4098DD85370AE0EC761F"
+      }
+    ]
+  },
+  "audio_router_contract": {
+    "owner": "UDiscGolfPresentationAudioRouterComponent",
+    "semantic_trigger_owner": "DiscGolfPresentationAudio",
+    "plugin_value_dto": "FDGAudioEventPayload",
+    "plugin_audio_component_activated": false,
+    "component_tick": false,
+    "maximum_route_trace": 64,
+    "duplicate_semantic_event_suppression": true,
+    "synchronous_asset_load_during_routing": false,
+    "fallback_preload": "ASYNC_ONLY",
+    "missing_asset_result": "SUCCESSFUL_SILENT_ROUTE_WITH_EXPLICIT_STATUS",
+    "blueprint_provider_event": "RoutePresentationAudioEvent",
+    "semantic_id_preserved_outside_lossy_plugin_dto": true,
+    "pitch_preserved_outside_lossy_plugin_dto": true,
+    "project_settings_gain": "SANITIZED_MASTER_TIMES_EFFECTS_SEPARATE_FROM_SEMANTIC_INTENSITY",
+    "gameplay_mutation_allowed": false,
+    "production_audio_assets_present": false
+  },
+  "required_files": [
+    "Source/DiscGolfTour/DiscGolfPresentationAudioRouterComponent.h",
+    "Source/DiscGolfTour/DiscGolfPresentationAudioRouterComponent.cpp",
+    "Source/DiscGolfTour/DiscGolfCameraViewContract.h",
+    "Source/DiscGolfTour/DiscGolfCameraViewContract.cpp",
+    "Source/DiscGolfTour/DiscGolfPresentationMath.h",
+    "Source/DiscGolfTour/DiscGolfPresentationMath.cpp",
+    "Source/DiscGolfTour/DiscReplayActor.h",
+    "Source/DiscGolfTour/DiscReplayActor.cpp",
+    "Source/DiscGolfTour/DiscGolfInputRoutePolicy.h",
+    "Source/DiscGolfTour/DiscGolfInputConfig.h",
+    "Source/DiscGolfTour/DiscGolfInputConfig.cpp",
+    "Source/DiscGolfTour/DiscGolfPlayerExperience.h",
+    "Source/DiscGolfTour/DiscGolfPlayerExperience.cpp",
+    "Source/DiscGolfTour/ThrowControllerComponent.h",
+    "Source/DiscGolfTour/ThrowControllerComponent.cpp",
+    "Source/DiscGolfTour/DiscGolfTourPlayerController.h",
+    "Source/DiscGolfTour/DiscGolfTourPlayerController.cpp",
+    "Source/DiscGolfTour/DiscGolferPawn.h",
+    "Source/DiscGolfTour/DiscGolferPawn.cpp",
+    "Source/DiscGolfTour/DiscGolfHUD.cpp",
+    "Source/DiscGolfTour/DiscGolfTourGameMode.h",
+    "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+    "Source/DiscGolfTour/Tests/DiscGolfSession12AudioRouterTests.cpp",
+    "Source/DiscGolfTour/Tests/DiscGolfSession12CameraReplayTests.cpp",
+    "Source/DiscGolfTour/Tests/DiscGolfSession12InputUiTests.cpp",
+    "Source/DiscGolfTour/Tests/DiscGolfSession12PresentationContractTests.cpp",
+    "Config/DG_Session12PresentationContract.json",
+    "Scripts/validate_dg_session12_presentation.py",
+    "Docs/DG_SESSION12_PRESENTATION_AUDIT.md"
+  ],
+  "implementation_capabilities": [
+    {
+      "id": "project_owned_audio_router",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "id": "semantic_audio_router_runtime_wiring",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "id": "project_owned_camera_lifecycle",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "id": "immutable_sample_replay_presentation",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "id": "explicit_input_context_and_remap_flow",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "id": "read_only_ui_and_accessibility_presentation",
+      "status": "TECHNICAL_PASS"
+    },
+    {
+      "id": "live_editor_and_fresh_packaged_closure",
+      "status": "TECHNICAL_PASS"
+    }
+  ],
+  "test_contract": {
+    "focused_filter": "DiscGolfTour.Session12.*",
+    "audio_tests": [
+      "DiscGolfTour.Session12.Audio.SemanticProviderMapping",
+      "DiscGolfTour.Session12.Audio.PayloadSanitization",
+      "DiscGolfTour.Session12.Audio.SilentFallbackAndDedupe",
+      "DiscGolfTour.Session12.Audio.RouteTraceBound",
+      "DiscGolfTour.Session12.Audio.InvalidEventIsAtomic"
+    ],
+    "contract_test": "DiscGolfTour.Session12.Contract.FailClosed",
+    "full_filter": "DiscGolfTour.",
+    "editor_and_game_development_builds_required": true,
+    "reference_flight_required": true,
+    "live_editor_game_required": true,
+    "fresh_non_iterative_package_required": true,
+    "packaged_live_required": true,
+    "protected_profile_hash_required_after_all_runs": true
+  },
+  "closure_evidence": {
+    "editor_development_build": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session12EditorBuildClosure_8f79bfcd-5783-4e2f-9bd2-fcf14359b4a5.log",
+      "bytes": 9511,
+      "sha256": "D31838DF690A592032A8E6A0C65C6FA7D5292BCB8F814DDEF803DD9937DBA32E"
+    },
+    "game_development_build": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session12GameBuildClosure_8f79bfcd-5783-4e2f-9bd2-fcf14359b4a5.log",
+      "bytes": 8996,
+      "sha256": "1EFE34ECE2A7EFA3ABE24D98086AFBF63FBB241367C3FB7D5DB6A47F0C81BD3C"
+    },
+    "focused_automation": {
+      "status": "PASS",
+      "path": "Saved/Automation/Session12FocusedClosure_db263248-c975-4058-be62-87669bc17d00/index.json",
+      "bytes": 7115,
+      "sha256": "08B086F3EA66596825CC408A5D8772890B7E9AD6A93303E91C1B31A8FFEB8301",
+      "succeeded": 16,
+      "failed": 0,
+      "not_run": 0
+    },
+    "full_automation": {
+      "status": "PASS",
+      "path": "Saved/Automation/Session12FullClosure_67b0de32-7266-4b9d-ab18-539ac11fc267/index.json",
+      "bytes": 72160,
+      "sha256": "B5B32C9B4F7A62ADAC4148D19FB7620D05FE569936D0851DC591E3D60C7E3BB0",
+      "succeeded": 180,
+      "failed": 0,
+      "not_run": 0
+    },
+    "post_fix_camera_automation": {
+      "status": "PASS",
+      "path": "Saved/Automation/Session12CameraClosure_f2310155-9c8b-43ff-bd27-236d255a903c/index.json",
+      "bytes": 3144,
+      "sha256": "886D93BA381BF1099C6DDEB5524CD73A50C1FD1B95164B21BE512EDF485EACC8",
+      "succeeded": 6,
+      "failed": 0,
+      "not_run": 0
+    },
+    "live_editor_game": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session12LiveClosure_d9a4b071-53e3-4804-b851-b0f8d98ca388.log",
+      "bytes": 213848,
+      "sha256": "44C8FC1AF72E3CB987F86941A39592ABA20AC600DD8AC59A4A641F79C5A1D57D",
+      "solver_samples": 1968,
+      "bounded_actual_samples": 492,
+      "replay_progress": 0.168,
+      "audio_routes": 7
+    },
+    "fresh_package": {
+      "status": "PASS",
+      "archive_path": "C:/DGTour_Packages/S12_Presentation_Closure_cdb72579-35bf-4463-b3db-1dac5cfd7d3d",
+      "path": "Saved/Logs/Session12PackageClosure_cdb72579-35bf-4463-b3db-1dac5cfd7d3d.log",
+      "bytes": 319246,
+      "sha256": "D097EE5AEA97348252742F24AB2D0C06B80DB824EAB7964A7C3CAF2524A5B940",
+      "cooked_packages": 984,
+      "incrementally_skipped": 0
+    },
+    "packaged_live": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session12PackagedClosureFinal_0c92b43a-266d-4c7f-920c-232b64c8befd.log",
+      "bytes": 76872,
+      "sha256": "7DFB350A2A45AB73857FFC0640DB51D7C1631A18FDAE837DCD60F99D8306DC24",
+      "solver_samples": 1968,
+      "bounded_actual_samples": 492,
+      "replay_progress": 0.168,
+      "audio_routes": 7
+    },
+    "protected_profile_after_all_runs": {
+      "status": "PASS",
+      "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+      "bytes": 5212,
+      "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14"
+    },
+    "reference_flight": {
+      "status": "PASS",
+      "preset": "Apex RHBH 82% / 3 deg hyzer",
+      "carry_m": 84.5,
+      "peak_m": 9.9,
+      "flight_s": 7.42
+    }
+  },
+  "exit_gate": {
+    "status": "TECHNICAL_EXIT_ACCEPTED_PRODUCTION_READINESS_PENDING",
+    "technical_audio_router_complete": true,
+    "all_capabilities_technical_pass": true,
+    "live_editor_game_pass": true,
+    "fresh_package_pass": true,
+    "packaged_live_pass": true,
+    "production_readiness_approved": false
+  },
+  "validation_contract": {
+    "validator_path": "Scripts/validate_dg_session12_presentation.py",
+    "report_path": "Saved/PresentationReports/DG_Session12PresentationAudit.json",
+    "normal_mode_exit_code_when_technical_state_is_valid": 0,
+    "release_required_exit_code": 2,
+    "normal_mode_requires_release_blocked": true,
+    "expected_release_blocker_count": 11,
+    "pending_integration_is_reported_not_hidden": false
+  },
+  "session12_release_blocker": "SESSION12_PRESENTATION_INPUT_AUDIO_PRODUCTION_READINESS_PENDING",
+  "release_blockers": [
+    "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+    "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+    "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+    "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+    "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+    "POLY_HAVEN_DERIVED_RUNTIME_PROVENANCE_RECEIPT_INCOMPLETE",
+    "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+    "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED",
+    "SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY",
+    "SESSION11_EQUIPMENT_PHYSICS_AND_PRODUCTION_READINESS_PENDING",
+    "SESSION12_PRESENTATION_INPUT_AUDIO_PRODUCTION_READINESS_PENDING"
+  ]
+}

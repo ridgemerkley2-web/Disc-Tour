@@ -1,0 +1,1170 @@
+{
+  "schema": "DiscGolfTour.Session19BakedPcgSourceClosurePreBuild.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "candidateId": "S19_WindowsShipping_20260825T193000Z_a47c2e91b6f4",
+  "verifiedUtc": "2026-08-25T19:27:54.457738Z",
+  "state": "PASS_PREBUILD_BAKED_PCG_SOURCE_CLOSURE",
+  "policy": "Config/DG_Session19BakedPcgPolicy.json",
+  "closure": {
+    "algorithm": "SHA256_CANONICAL_JSON",
+    "fileCount": 230,
+    "serializedContentGenerateMarkerCount": 0,
+    "sha256": "0433F828907CFD2212F10D9ADDBAC5729B8A7081568739E0F28450DBA78E5C42",
+    "files": [
+      {
+        "path": "Config/DG_Session13CourseAuthoringPcgContract.json",
+        "bytes": 16197,
+        "sha256": "A169FD261F16ECB84629F6C25B634BADE08ED63B4CB794861E49FA678B40014B"
+      },
+      {
+        "path": "Config/DG_Session19BakedPcgPolicy.json",
+        "bytes": 5509,
+        "sha256": "A40390DF6D0BE32537D5555C5E5238AB1147B1068C2BC70B337A5B5A50CBCE4B"
+      },
+      {
+        "path": "Config/DG_Session19ReleaseScopeContract.json",
+        "bytes": 68486,
+        "sha256": "4FC7F52EE4577D6EC8E4BE257C93A7C7A8D81E1996C0FA84F034FBD0DB57D9E0"
+      },
+      {
+        "path": "Config/DG_Session19ShippingContentPolicy.json",
+        "bytes": 10490,
+        "sha256": "7EE34C47885E0D082E3CADAF7038F86970A44BAC2C253127C107B43E397C4A0A"
+      },
+      {
+        "path": "Data/PineRidgeCourse.json",
+        "bytes": 668,
+        "sha256": "67C7EE82B3A9734724CAA3F7AD37EE46E77DBF736F25F93EF3CE49FDF97150CF"
+      },
+      {
+        "path": "Data/PineRidgeHole1.json",
+        "bytes": 7740,
+        "sha256": "CD1991551FD3F13465A5C6737871A2D4B91A31E078CAD1C97F458A7A5081F317"
+      },
+      {
+        "path": "Data/PineRidgeHole2.json",
+        "bytes": 8586,
+        "sha256": "AB55ACE68264C270DE932DC0E0DEA644B844AEBB29F6CC0E994614789CA96F2E"
+      },
+      {
+        "path": "Data/PineRidgeHole3.json",
+        "bytes": 8509,
+        "sha256": "A1FC744234E94FBE383F5AED21DCEF9D84A4213CF9E8625B57CA4C3339EC46A2"
+      },
+      {
+        "path": "Docs/DG_SESSION13_COURSE_AUTHORING_PCG_AUDIT.md",
+        "bytes": 7257,
+        "sha256": "810610B96E1DCD2F700C908B48E48F9B9E5080B6F3A32FA461D7F60BDAE443F8"
+      },
+      {
+        "path": "Evidence/Session19/BakedPcgSourceAuthorityReceipt.json",
+        "bytes": 2931,
+        "sha256": "4C7189B03C723A5906F284D5ECF7C7AEFB7EE5368F7E16B837CACF145C879B47"
+      },
+      {
+        "path": "Scripts/validate_dg_session13_course_authoring_pcg.py",
+        "bytes": 45116,
+        "sha256": "C090554AA5036FABD748040005B56DE739A6E5E275B4D8A4A61A69B3A647FC91"
+      },
+      {
+        "path": "Scripts/validate_dg_session19_baked_pcg.py",
+        "bytes": 57232,
+        "sha256": "C0DE6A2D760C2A9FCB2CED444F5CED2EB1B85BCC435D9466A729BBD5F233B999"
+      },
+      {
+        "path": "Source/DiscGolfTour/BasketActor.cpp",
+        "bytes": 3885,
+        "sha256": "84F10177BE9BD75AA894A4DF95B3E9D68B62619A6C178D81622B400E20C7F148"
+      },
+      {
+        "path": "Source/DiscGolfTour/BasketActor.h",
+        "bytes": 990,
+        "sha256": "DB4194FF2CD808577C4FF766726A1E9900BA323A8E0EC307BE7592503482B14A"
+      },
+      {
+        "path": "Source/DiscGolfTour/DevCourseBootstrap.cpp",
+        "bytes": 41059,
+        "sha256": "E563F1308E109B305563CCDAD007939CDB0F718A38F847A447C14AE549134FBF"
+      },
+      {
+        "path": "Source/DiscGolfTour/DevCourseBootstrap.h",
+        "bytes": 5292,
+        "sha256": "7B210DAEA95F3629E127A71200DBF351B38E7CAF5EB98542D43D65DB97541E18"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscActor.cpp",
+        "bytes": 3186,
+        "sha256": "EBF14FD51577117455F08803B5E097AE673371DBF962FAD8ABD44CFBDE3446A4"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscActor.h",
+        "bytes": 2064,
+        "sha256": "A934C0642E97669AE907AFE19B36EC548964A5362466BDDFA31CCA6B3BFFED1A"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscBagComponent.cpp",
+        "bytes": 17831,
+        "sha256": "452450C9B16DA2473C4D2A35BD6D77F8816DA20C4D0DA545ED37F9F0D606A074"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscBagComponent.h",
+        "bytes": 2929,
+        "sha256": "94CA6943F1D6248929FE755F667336464A2C658AFB5AD61857DF83D10D44BF16"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscBroadcastCameraDirector.cpp",
+        "bytes": 11265,
+        "sha256": "B25D7985D2538DCEB4BA9FEABFDED047BD3C97298B6A17584FA810A03A800A60"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscBroadcastCameraDirector.h",
+        "bytes": 2306,
+        "sha256": "7BF81A17BCCABA2913550847684333613230C91F7BF4A4687F9EA0B456F83272"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscCatalogSubsystem.cpp",
+        "bytes": 13226,
+        "sha256": "D2B5E5E9F816014F330E5E5CB5486E752005BBB99E163AAD9A8513665D4C2112"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscCatalogSubsystem.h",
+        "bytes": 2492,
+        "sha256": "ED728A677D62FDD9A7BC8A9E7DB3C63BCCB2CF3AE93F2E81EB8C5C405632E999"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscEquipmentDataAssets.cpp",
+        "bytes": 445,
+        "sha256": "DD597087B988D3C9C129142246824F94BBCFB0A7BBF1EBD08EDF3107A1417930"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscEquipmentDataAssets.h",
+        "bytes": 849,
+        "sha256": "5516E88BD87D3DAAE13449F118F8AB6CF730CC162542B976285F39DD30345368"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscEquipmentSaveGame.h",
+        "bytes": 686,
+        "sha256": "E5ED2CCED03144BD61AF46DB15969F551896433E2D886A1CEA5BD16DD3C5B908"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscFlightComponent.cpp",
+        "bytes": 29852,
+        "sha256": "CDECE7BA964D73D4F33D41752F417CAB3B916B8652E1B148B2C39DE5487E89A8"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscFlightComponent.h",
+        "bytes": 4956,
+        "sha256": "A66ADD6B98F4373FBAFFA6C9675BA68C4B24DA869C19C89D5FE02323E2FCF4B4"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfAvatarBackendRuntime.cpp",
+        "bytes": 3598,
+        "sha256": "33FFA2D8BB5568D774870E7A3041B3BEB1EE485065CE106308285C3AD8750D88"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfAvatarBackendRuntime.h",
+        "bytes": 2691,
+        "sha256": "E652CA43351E786D138B6B2978FE3E2C8A41612BC067F6C357203834597B61FD"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfBroadcastCameraMath.h",
+        "bytes": 6016,
+        "sha256": "448F41A411F988A39A8B4098CDA90CEDCA081B6FBC90D09FE6B79A08F560C5E2"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfBuiltInEnvironmentProvider.cpp",
+        "bytes": 5972,
+        "sha256": "F4066C96DE58992EE1D69177F0EB29307B08E5E6A2593A74C8D1554DAD49CD0D"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfBuiltInEnvironmentProvider.h",
+        "bytes": 3995,
+        "sha256": "630E975EA0CE8E4C5AFEDA070EDF1724E84DC9B9F43C5A5B71A60E2A1D164604"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCameraViewContract.cpp",
+        "bytes": 3126,
+        "sha256": "8D3F400F1DE155FBE4593040A966A4CFFC062B0109855EC0D6F1C844DA021F04"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCameraViewContract.h",
+        "bytes": 2075,
+        "sha256": "622E6938B37687E0EC4FAB4657A611F049E37D851EED80FFDC8F0516E2794C7E"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCharacterCreatorWidget.cpp",
+        "bytes": 81482,
+        "sha256": "4642796F20DB79D67C35B17AC0F9A4E3884DE3A48AA15C78015EBFB1088D02A5"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCharacterCreatorWidget.h",
+        "bytes": 7231,
+        "sha256": "70515732096521C0A252B0ABCE680C07EC43D977918D717895D2ADE60E639F7A"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCharacterProfileRuntime.cpp",
+        "bytes": 5425,
+        "sha256": "DF1ED7FBC2626858DB2F0E81384AC9E3EFE2D6E9FD6B327BDE77E62D580A6A03"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCharacterProfileRuntime.h",
+        "bytes": 6629,
+        "sha256": "EEAA41CB3F9D2D869CAF00AE4E04F6EB92E3C4B8CA6E63D86C8785A5ECB10AF5"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCharacterRigUnits.cpp",
+        "bytes": 26992,
+        "sha256": "CE5BE6D8CC22FF87C9568BFAF2EE720E5350D825B5792AA49BF409DFB79602D4"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCharacterRigUnits.h",
+        "bytes": 2174,
+        "sha256": "EF7F7FAF40082AE8DDF6B44BC37EBDBDE9327850FFC6E1FB6DD9449A997F6B0F"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCourseDefinition.cpp",
+        "bytes": 77293,
+        "sha256": "96D5BC48ECF4895311E36427C376658FF2511521075336F7B1120D9EA5DED016"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCourseDefinition.h",
+        "bytes": 9970,
+        "sha256": "C40EF2BF2DC966CFD0892DB67EC2A076644D1A7AC31FE7B8C36609C5DE526AA4"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCourseFeatureActor.cpp",
+        "bytes": 1940,
+        "sha256": "8F5E10283A56129456727D13E45F49648D9730A8F513203A6796EA6DC9ED0AF5"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCourseFeatureActor.h",
+        "bytes": 1405,
+        "sha256": "BE2B76EC23115A1DFF92EC72C9123C0667530FD849B55FC4496177F4680B0254"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCoursePresentationDefinition.cpp",
+        "bytes": 15349,
+        "sha256": "54E06792E8A0912BFFE7EEBAA0619913114F25930835C7A61AACB9FC323E188B"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCoursePresentationDefinition.h",
+        "bytes": 2172,
+        "sha256": "353BA7F159EE95B0D88976DCB7DB7636F33FA0C5469B66CAB3C4ACBE6345C90B"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCourseRules.cpp",
+        "bytes": 11455,
+        "sha256": "59C076EBE2636E155E1ABE2B7DEE2EF30502CAF11B187DF2B58415E86268AE61"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCourseRules.h",
+        "bytes": 2800,
+        "sha256": "FDE7969D6C831E9D18E04324DE2EE47A718B8B7F8582D858D2177D064DC74CFE"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCourseSurfaceActor.cpp",
+        "bytes": 1384,
+        "sha256": "237A260BE6CCF8B76C7B757A77541858887A5C818FAB325F89A44487243F3041"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfCourseSurfaceActor.h",
+        "bytes": 804,
+        "sha256": "24AF09EA10DF095D7EF23A7672A584C18315500847C5E1D5EE4F1306B079A7BB"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfEnvironmentController.cpp",
+        "bytes": 6996,
+        "sha256": "A61C43491C208C26CE0BF5D1B33B662FC5278F789EBE63E9626CB06AFDDF047F"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfEnvironmentController.h",
+        "bytes": 2279,
+        "sha256": "251BF70587E1E5C8C3F68547AE02AE463B690F096A2FB7396AA3AD60F58D90F5"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfEnvironmentDataAssets.cpp",
+        "bytes": 7936,
+        "sha256": "98EF4AA374ABFA983DE3DE59D0A48020070B7B8317A04EB46F245BEDD66CA1DB"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfEnvironmentDataAssets.h",
+        "bytes": 3649,
+        "sha256": "96D468C733F0963BF2E1A3D1A61CA6E68707A360738EE2030F2D654E7887538B"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfEnvironmentTypes.h",
+        "bytes": 8831,
+        "sha256": "5A5269B03F77B59438CB3192A28F1A975F223D7A19BB0373B2EEF44E5A88C394"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfEnvironmentZoneActor.cpp",
+        "bytes": 5421,
+        "sha256": "33EC5366D03B8BC657B4116C460CBD752D03F9EEC623AB0C2214DA2290C83C61"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfEnvironmentZoneActor.h",
+        "bytes": 3129,
+        "sha256": "E959C19D53F7983BDECD1171BA2051429168F73C23805E7ACAF1BB461B7CA919"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolferPawn.cpp",
+        "bytes": 68488,
+        "sha256": "BFCDF4FD4EEDB632C1B8F06C36140D96E55B5958EE6E2579B0D08F12B8F52BE1"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolferPawn.h",
+        "bytes": 10013,
+        "sha256": "2B5733A6E086D257C6B82F3BC7689B32EFAF65C1AB085A572DD99F919BE81D79"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolferPresentationComponent.cpp",
+        "bytes": 5235,
+        "sha256": "37D14DF9F4B8C57D852245EB2E48D10998D0212146606B51CBF9DB98F43A642F"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolferPresentationComponent.h",
+        "bytes": 3517,
+        "sha256": "8A6EBD2DD717D5AFA0C2035ACB99E15ECAEB14D40EA5DAEB907291D4C347BA13"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfFixturePresentationActor.cpp",
+        "bytes": 9820,
+        "sha256": "00C9FBCF55AA04EA37AD3A9B7FD68CF0B1739265DDA824AD0AB6D7F23D01A4C9"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfFixturePresentationActor.h",
+        "bytes": 2273,
+        "sha256": "764E75072E2EAEC79BACFDA53EDCBA0FE25E7BBB23332B9DDC732A73EE8C881E"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfFixtureQaRunner.cpp",
+        "bytes": 15954,
+        "sha256": "6DE6B028BBBE71C091D99E6C903E87CC3F32B69A78DC3FD0A906A1DB1C89F781"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfFixtureQaRunner.h",
+        "bytes": 1441,
+        "sha256": "6A246BC9CB8340EBA7A2B4BE898DF27EBCEBE76A85D084B50BBE65DAD12E364A"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfFlyoverRouteActor.cpp",
+        "bytes": 3032,
+        "sha256": "5EAAF5667A1573DAC13231657B001B0B907156FA720C2493B5AC830748897681"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfFlyoverRouteActor.h",
+        "bytes": 1426,
+        "sha256": "0084369B6E018D9DAF1A631FE19A99315762D58E15C0A235B351DCCE585425D8"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfFoliagePresentationActor.cpp",
+        "bytes": 16413,
+        "sha256": "77F6043F9A84D4101FF1CDBD7E110258EA1950DA2418A6AD8AD5F7DBFE7C96A6"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfFoliagePresentationActor.h",
+        "bytes": 2645,
+        "sha256": "D23B1356B1DD8A9DF05A20461AEE39348FB3A0BBF8A71C3DE6C89828D7C5033D"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfFullCharacterRuntime.cpp",
+        "bytes": 33358,
+        "sha256": "17B10554B858719012A83F9E067C7E74913DF7CF9E73AFFF6A8A33FA2F4FEA4E"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfFullCharacterRuntime.h",
+        "bytes": 5671,
+        "sha256": "7E3A7FFDDBBAD940F233C8588C07EAF5309F0D8B0133D495FC353D43E8D74768"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfGameplayGate.h",
+        "bytes": 551,
+        "sha256": "7707E640AA42001CD7154DD4DB0B2A69E8EB60A353D3F43559646AE1B1506C97"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfHoleActor.cpp",
+        "bytes": 844,
+        "sha256": "E84CB10B6D31932A8AA0B44AA43536709AAD1963E8387E0CB3D68A1518D52197"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfHoleActor.h",
+        "bytes": 2327,
+        "sha256": "525797F06E650F4A5BF1D465A8F84922A95E675CAD7F5BF5585D51DFDFFECB64"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfHUD.cpp",
+        "bytes": 59990,
+        "sha256": "35386321F9538988F14FFC99D3A7536C349F03956020F3F39A5C8BB275484E76"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfHUD.h",
+        "bytes": 1487,
+        "sha256": "7BE355DCD6D39DBBDAC539376B9E91156D4192B41DF3F292CF315BD51C576AC5"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfHudPresentationState.h",
+        "bytes": 2473,
+        "sha256": "F0D8A9F7E457E553F22136BE0ED0AC920F55CC1CDA2614D546A8ADED9FF8A3E3"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfInputConfig.cpp",
+        "bytes": 15076,
+        "sha256": "8DF4D2438A25C72A8ADA1DD7286A66F271EDE5561A3C675E314F33F8256C05B8"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfInputConfig.h",
+        "bytes": 4301,
+        "sha256": "D542189C3C1B7C87380115124BF1A57C1CB66D45250BE9A62C9CE393EA2B7F7C"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfInputRoutePolicy.h",
+        "bytes": 6595,
+        "sha256": "6E6E9482B5BECBADD221B4A1AAF3F862CFA23F95E8F0ECE0755BDEE26BEA6F3A"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfMath.h",
+        "bytes": 22616,
+        "sha256": "41ADC41041A1A35DD437659E339BEEF9B48BD51FE7C5403882A155EE4EB7F9F8"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfMetaHumanAvatarBackendComponent.cpp",
+        "bytes": 119562,
+        "sha256": "D496FCC4BC9BE39AE72CCF591E7A8D3741D3138847E7FFC693B039E728FCE51F"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfMetaHumanAvatarBackendComponent.h",
+        "bytes": 7450,
+        "sha256": "BE5AFD64FC17B74302B1FEBA3B4367DDF884FE50CBD8A4C6CE43831AFEBE1CA0"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfMetaHumanOutfitRequiredBonesComponent.cpp",
+        "bytes": 15571,
+        "sha256": "99E77E5511457E80394D5131A8F235EBF260DCDB55089BED99047B7E9611CB1A"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfMetaHumanOutfitRequiredBonesComponent.h",
+        "bytes": 2765,
+        "sha256": "E3481A7AB831DC23BC094C5B9F23E87C91CA0413DE2BEDDBE8D5AD55AF25E0F6"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfMetaHumanRetargetAnimInstance.cpp",
+        "bytes": 16713,
+        "sha256": "AE9D7378B6AACE43AE4519AB240EB9D827E4911923A28175DA7ABED045A5E717"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfMetaHumanRetargetAnimInstance.h",
+        "bytes": 3217,
+        "sha256": "24F29CB116B0B583F71BBA3B79D5D0F5613542DD6861F5D2F9E7109C7158C14E"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfMetaHumanVisualContract.h",
+        "bytes": 1614,
+        "sha256": "F13964E2869F97C90A43F42F7D95D7CD2209E983327F4B0220C28FCDA47F2B4A"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfOutfitRuntime.cpp",
+        "bytes": 12674,
+        "sha256": "D1DD2236FB1B10CFDE2E720BA0FB57D175FF668BA5F867D884F18048C09E33B5"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfOutfitRuntime.h",
+        "bytes": 3075,
+        "sha256": "140E397D28180B42CA3E4726FC6ADF92EFF9604AE50BE91BB71CAE8FCAC7514C"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfPerformanceBudget.h",
+        "bytes": 5366,
+        "sha256": "27B81AC3ABF384D885408CB36401EDB1F28BD3C7DB55E3082D62C8C8D53370FD"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfPlayerExperience.cpp",
+        "bytes": 9355,
+        "sha256": "379869AB41BAD10191087DE6DE2666C437B7AB76FE6647B9A32AAA6FC1D8DB5C"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfPlayerExperience.h",
+        "bytes": 8122,
+        "sha256": "ECFD172963CCC0FF6FEEAC2165E7CEB518AA8C98207F1234EE8D4350FDBC4962"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfPresentationAudio.cpp",
+        "bytes": 20336,
+        "sha256": "E244565502C7D401821D1141FAABF2F0EAA41510ED0538683ADC80C7B7BA11AE"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfPresentationAudio.h",
+        "bytes": 4811,
+        "sha256": "A95589AD8BA2F2F6BEFA587C066AEBECCF693E16BBD563D361D0CEEC5B9528C6"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfPresentationAudioRouterComponent.cpp",
+        "bytes": 14431,
+        "sha256": "D3B423F0613B913860EB8110D013FA5054F3A8A4635CEFF740E5F8B05066165E"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfPresentationAudioRouterComponent.h",
+        "bytes": 5992,
+        "sha256": "EF5C3331FD71610C2B9208471F5372BEF449EC3EDD1F1B9868BD32BFED056C1E"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfPresentationMath.cpp",
+        "bytes": 8921,
+        "sha256": "81F11426449C3C4793CD6B0D42A5554D8C2121F4D674C75C6746263BBD3B9A5D"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfPresentationMath.h",
+        "bytes": 6827,
+        "sha256": "C78F6A404B733A7D7FF177C5A51636AB36096DCEACBA4EC4146D57D2930725D5"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfProductionMotion.h",
+        "bytes": 1784,
+        "sha256": "1A035AB9702715B41DCD352A74DB6F2543CE3C31DB7571FACB9D2300FE76FD8A"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfQualityAdapter.cpp",
+        "bytes": 4624,
+        "sha256": "2B467179C891CB21AEE63F2AE1B65F6FADB144809BCDC1237E3227166E4F7BAC"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfQualityAdapter.h",
+        "bytes": 1568,
+        "sha256": "B0EC1C45BA9B49579B8DE933CC5385355D9A4DE84108B4F51D19D856FD45C16F"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfRHBHThrowAdapterComponent.cpp",
+        "bytes": 8747,
+        "sha256": "A5987DF12011D11B6575DF41B580B7DB79473CDDF087DFD20831C9CF29E753C6"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfRHBHThrowAdapterComponent.h",
+        "bytes": 6749,
+        "sha256": "15F66EF6654B80385E04ACE7E019CBB3F0390C4F37A93914BE2209DAAD7E77EC"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfRHBHThrowTransaction.h",
+        "bytes": 6879,
+        "sha256": "5D22DDFF64C1FFB2019A4AD518A535AF8099694072F1A9D2212EBAF91293E92E"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfRoundFlowPresentation.cpp",
+        "bytes": 15356,
+        "sha256": "0686A03238D3ADD8EBBDD5A6ACC0596279B34328123951A10D4D1BAD902E4422"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfRoundFlowPresentation.h",
+        "bytes": 3347,
+        "sha256": "3FAD0352720AA3C4D897D417153FF93533D88138F8F4585B79547E4BCE536740"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfRoundFlowWidget.cpp",
+        "bytes": 10214,
+        "sha256": "637F41BD747E5BF01703528EB35382D4D3B8A38229D5D21B8EBAB950F5D91761"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfRoundFlowWidget.h",
+        "bytes": 2476,
+        "sha256": "25818252A4397B3A9BC82136B41915F7BF95C9322713B0EAFD8C679C466E6D9B"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfRoundState.cpp",
+        "bytes": 4112,
+        "sha256": "96F6BBBCA808916D81BE9F751F051C7BAB79C66CF5C5787496520555FEB3643D"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfRoundState.h",
+        "bytes": 2277,
+        "sha256": "C3DC6C8F7C452A00530C97631C89DFC703DBDAB23A3F9E98160AAEC68920D65B"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfRouteTelemetry.cpp",
+        "bytes": 23459,
+        "sha256": "34B2C90707C07014D843790B1F26658F19E5ED0276DD418D59A16FE841B41240"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfRouteTelemetry.h",
+        "bytes": 3734,
+        "sha256": "BA8907140EFC533DCB082B26CD589DE60A728E1B26362B439FD272B931B623C5"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfRuntimeCookManifest.cpp",
+        "bytes": 9182,
+        "sha256": "8CAFE7D9A28473FC4ABF9083403F52A62AE09811A3333D345705CD7AF83286A1"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfRuntimeCookManifest.h",
+        "bytes": 3804,
+        "sha256": "EF167210A9731C8AD52F02CA32F205DF07197850364D0557E32974DACA377698"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfSaveGame.h",
+        "bytes": 2572,
+        "sha256": "5620C359BC4ACB2462F596CD5ED2011D1C965B1E6EA126F21E7F01728F2016D0"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfSession16CorePlayabilityContract.cpp",
+        "bytes": 14665,
+        "sha256": "05189FA85191229E6552AC241BD22045D954F936AD5DD78279E369032782BBB8"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfSession16CorePlayabilityContract.h",
+        "bytes": 2039,
+        "sha256": "E3A976681A2856C9E66863F877EE58966C23C1E6A3EBB9E707297447F7C58A93"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfSession5MocapValidationPaths.h",
+        "bytes": 1864,
+        "sha256": "0A1F666E570C4F64D965D85C49AB3EA7C451A6C38B134D3B5BC19F5C297D0260"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTerrainPresentationActor.cpp",
+        "bytes": 70772,
+        "sha256": "2A52D12BD0FB1E792053521C71BAFB2F785449D44713ECED4594E98B590D6F73"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTerrainPresentationActor.h",
+        "bytes": 8643,
+        "sha256": "6FFE9C37A5684D0079F1EF62892DC0405A8ED691E056C2C694407326D1D7DC63"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTour.Build.cs",
+        "bytes": 2533,
+        "sha256": "1397BCAB888AF4EE6A1D83EA68FF4E9EBD9E3E5C365EE1FADD6F3877ACBC2337"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTour.cpp",
+        "bytes": 186,
+        "sha256": "C3DD4F0BA0462D7445979268F6419F9198BF1AA80F4EB8B7ADBD157BC9147C2D"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTour.h",
+        "bytes": 113,
+        "sha256": "40FF1C4339E4AA79091CFB0E30A093B7CB347AD70B7BA5DC5F386121FC256D68"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTourGameInstance.cpp",
+        "bytes": 20722,
+        "sha256": "9885782A57840CB86B04C098253141714CC23E090D208D9829AEA466D7583010"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTourGameInstance.h",
+        "bytes": 3702,
+        "sha256": "04C60E8D0FDAF453CACE40F769CF12080670911092807102FEBCD121DEC836B2"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+        "bytes": 230306,
+        "sha256": "E4E36FEB309CFBC5DCECABD5DD2AC85F2BE73DA27AD957492283B35ADCFC24E7"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTourGameMode.h",
+        "bytes": 22229,
+        "sha256": "2F5E10B52CDFFA53872E5083C39907E4E226F41A01779414777B9341593FEB57"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTourPlayerController.cpp",
+        "bytes": 101857,
+        "sha256": "DDA5A7B7894ACA364CA1212337E3EF9A76A1F0C4D83B604BB9B96284BE8F6CD9"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTourPlayerController.h",
+        "bytes": 12962,
+        "sha256": "66DF865ECA36B291C0C4F8D1CF4A7A3EEA7C947EE933C8935F943342BA5661F8"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTypes.h",
+        "bytes": 18059,
+        "sha256": "39F235F16FD303B318E78C8A52037E637275687B590DC62D9137B2B07F097462"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfVegetationInteractionActor.cpp",
+        "bytes": 1552,
+        "sha256": "1240AAD32F5139402894A7CC38F8A613301A6BD67F8823E3A0EF3F4C87C363B9"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfVegetationInteractionActor.h",
+        "bytes": 1332,
+        "sha256": "D9087368E4EA56A371F2FDC2157A61C8D667CADA812E1266100FD391F41DD4A0"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfWaterPresentationActor.cpp",
+        "bytes": 6986,
+        "sha256": "1269A39398D2773B224387AB5156091060319BC3681F3E64F748F99787FF9FCF"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfWaterPresentationActor.h",
+        "bytes": 1200,
+        "sha256": "0A9EB377F837A49BACBC01D256CD0BDFBE2682FB306AEB3464DA3ACACA3A5852"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfWindZoneActor.cpp",
+        "bytes": 1500,
+        "sha256": "49DFB9E9B626F060873A3BE16ACF1D93C7A83885F86C2D9B15870DE4930D02CB"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfWindZoneActor.h",
+        "bytes": 1076,
+        "sha256": "594130361BE0089515FB373F1462B2D3BFF4E4CCA1554F6AAA8A62469817A68F"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfWorldFixtureActor.cpp",
+        "bytes": 4530,
+        "sha256": "67CFE04A3F56D1341EC4B6400C43892711D96EF1ABFEC36880776E92B41B8560"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfWorldFixtureActor.h",
+        "bytes": 1245,
+        "sha256": "9E722BB6558C8AB18DCA3004F89995900734F4D0004885DADE3E62C887EA817F"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscReplayActor.cpp",
+        "bytes": 8609,
+        "sha256": "3E02F8EE046ED502808E5AAB49DDB49749CEFCBF447358415640DBD129DD889B"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscReplayActor.h",
+        "bytes": 3677,
+        "sha256": "8E40631FD3AE3D150C4A9F5C5E07DC659AA06232B7F80BE82444089173A511AB"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscTrajectorySubsystem.cpp",
+        "bytes": 50163,
+        "sha256": "D13499CE189EEF6C4489BADA9061CDA4FEAC2149949C1D7F255849BF25B62597"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscTrajectorySubsystem.h",
+        "bytes": 4592,
+        "sha256": "ECC4A1DB58495396CDFA210EFBA4289542B15A569AE5655EFDB981EB81F712AD"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscTrajectoryTypes.h",
+        "bytes": 5644,
+        "sha256": "4C30D14E48392226E80EEC23EFFB03DE5574830F4442C78A739FA44A7DD02C19"
+      },
+      {
+        "path": "Source/DiscGolfTour/PineRidgeHole1Environment.cpp",
+        "bytes": 8456,
+        "sha256": "694D7A292F57FCD90FD1449FADAD70B8175FADF0DF60B67E82E3CC61B2857F1B"
+      },
+      {
+        "path": "Source/DiscGolfTour/PineRidgeHole1Environment.h",
+        "bytes": 2030,
+        "sha256": "E4A427D9981D0A3293D791E15273EC40E8F10176DCBDF1FEAF6991BE7642F334"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscCatalogTests.cpp",
+        "bytes": 8450,
+        "sha256": "494286FC34205818DBC05A9CB670ADAD202BF990EA3B79B20D667CE3F3A7753E"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscEquipmentSession11Tests.cpp",
+        "bytes": 16426,
+        "sha256": "65989A2643D20440C377CDBBC1EB7DD8403A76D874DC55E223D49749E05F9586"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfAvatarBackendRuntimeTests.cpp",
+        "bytes": 20089,
+        "sha256": "83EA0E1B10925B4B662B14181DBD8DCF37B3362F70E8F26B3EF386B67F5B761C"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfBrandLicenseTests.cpp",
+        "bytes": 2522,
+        "sha256": "BFD160A275A9B0355D9210D937CE34D24C4853E6B5CA1177ED70B299391AEE93"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfBroadcastCameraTests.cpp",
+        "bytes": 5903,
+        "sha256": "F1B1A24D0551739F9176D928CD2062265AE9BF9D34E254A43787FE38FDD0818E"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfBuiltInEnvironmentProviderTests.cpp",
+        "bytes": 4424,
+        "sha256": "3283F60B05BF3E392DACDE93661468C36A29A874A5A36DFC5867EB4DD7577BF9"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfCharacterProfileRuntimeTests.cpp",
+        "bytes": 24757,
+        "sha256": "71BBD7091D97A2F0A048C05A0E7303C3739E7C8D20D37C357CA696047429FB9E"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfCourseDefinitionTests.cpp",
+        "bytes": 17604,
+        "sha256": "A0DB56F9051C5431C1482440628F6D37F84F44EBED825FB33F545BDBAFE0215A"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfCourseRulesTests.cpp",
+        "bytes": 12357,
+        "sha256": "A50AA575C3E54AD0DB193A5DD9A5F3F6BCA0F4BD0E0D6E6D79D045B1705DD643"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfEnvironmentTests.cpp",
+        "bytes": 10826,
+        "sha256": "0C2AC8B677A6EF2E6445A84E0D06441C0418184A8F7E2E2A56F94A1A9CA6AB5C"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfFixtureTests.cpp",
+        "bytes": 3562,
+        "sha256": "9CE1C073E9CC35874DEB9C59427D3941B60886CD3EFAD2AE0657F9CACD8659CA"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfFullCharacterRuntimeTests.cpp",
+        "bytes": 31444,
+        "sha256": "DD3FEBA43E8063D4E60B1FF1F7768110591B29388B0ADB76B9FA4068A67885FD"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfGameplayGateTests.cpp",
+        "bytes": 1544,
+        "sha256": "6EC31FE2AFDBA3229CD469B5BD1993B0395D056093E4E42B2C5B1E32DAEB6CB1"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfGroundTests.cpp",
+        "bytes": 8242,
+        "sha256": "8C76C0C136E3CFDF06DA906CBA0C91D5D6F838A4600E1A2FC1A322936A8F3C85"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfHudPresentationTests.cpp",
+        "bytes": 3169,
+        "sha256": "2C67BA30AF684DC20820D59DDC2E0828ACB5B99CC83C12B5AB58323A7382D8EC"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfInputTests.cpp",
+        "bytes": 15797,
+        "sha256": "A90B041269361BBDBAC197AF942885B29E92CE1B84AD51B48BC9FC9DA1F41E00"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfMathTests.cpp",
+        "bytes": 3251,
+        "sha256": "A6DF51E0015E1177E9FB98377ACA6AC70FC26E8D7859416EDD113AD17FFC6A26"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfMetaHumanRetargetPolicyTests.cpp",
+        "bytes": 3710,
+        "sha256": "6B0D71C76334B94B1AE7BCF2A8352B4E81B5EAB48CDD8A7BD2E7DE87DE5D43A0"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfOutfitRuntimeTests.cpp",
+        "bytes": 12017,
+        "sha256": "BBDCF0085F7A594C67D12A0BBE06915B6EDE1AF6E5F8F9FACDFA817C77DA3510"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfPlayerExperienceTests.cpp",
+        "bytes": 6721,
+        "sha256": "D3C4161BAAE5AAF2052129C5D361018F3CF621735B6FF0FC6AAFE639A84FA08A"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfPresentationAudioTests.cpp",
+        "bytes": 15733,
+        "sha256": "71EB7E184DDF0393D4A9A3166D07CDBD4BB5F6E04F54ABE936F8CF7D2880DAC3"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfPresentationTests.cpp",
+        "bytes": 14154,
+        "sha256": "BCB1168138890C945055E57578FFB6815A27128C06917865CF562D833547DFF0"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfProductionMotionTests.cpp",
+        "bytes": 2063,
+        "sha256": "49ED6D3D8DB0721D65A369A816C39A25288D11924A2E21C16C98A41D9DEFF6AF"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfPuttingTests.cpp",
+        "bytes": 6651,
+        "sha256": "B409AD049DF7D97E94F505E2012A55293D7AB7326DA31CF217851B3023C3AC97"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfQualityAdapterTests.cpp",
+        "bytes": 10910,
+        "sha256": "70C8BC64839CBF307FE54738FBD242125A98144F51075601F3A23B6FA17D7C8F"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfReleaseTests.cpp",
+        "bytes": 9410,
+        "sha256": "3D9D5B0252D0DF5181ECA7E66DBABED43847066E7624597354D8B4C931514C61"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfRoundStateTests.cpp",
+        "bytes": 3727,
+        "sha256": "3A8F4EF503BB414EFB21A45C5F647F5BF6F141F40BE131CDD982311A4F03756D"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfRouteTelemetryTests.cpp",
+        "bytes": 5537,
+        "sha256": "CE35288FA572CD616261E740EBC86300A808B2724674CAB34821A75C42FCE6BF"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfRuntimeCookManifestTests.cpp",
+        "bytes": 1134,
+        "sha256": "28C0742B1BB7A33E791204D90042F989E53C1628B05CA607519FD77AA1C30103"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSaveSchemaTests.cpp",
+        "bytes": 9566,
+        "sha256": "9D3B548A9EF8192FDD142823603FA02CF84FD7F93F1A8D098C94076F3B704DB4"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession10EnvironmentContractTests.cpp",
+        "bytes": 3505,
+        "sha256": "CD7477FE58AE0943BFA57F50CFE680381BF8D43CC62464DA96711707A8CB73F6"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession12AudioRouterTests.cpp",
+        "bytes": 10438,
+        "sha256": "95685B63681CF1813F15FAEDF8723D6958D27D78B92F64F3D401E4D0D905188C"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession12CameraReplayTests.cpp",
+        "bytes": 18743,
+        "sha256": "F703C72ABEC15541F6BA0C1FFB8672C4FC7AA0CEA14000C64626F7D9F8965807"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession12InputUiTests.cpp",
+        "bytes": 6018,
+        "sha256": "26A2470D3C6F4206692C03A53F9979ADD512C6215A5853B9CEAB6163A038D4EC"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession12PresentationContractTests.cpp",
+        "bytes": 4629,
+        "sha256": "1CBAB3EBF4AFEAEA7A9B58CB3CD357D52EECD5FD3C97806C7965181B0A852A0C"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession13CourseJsonTests.cpp",
+        "bytes": 6880,
+        "sha256": "11AFE846F508676D48D9A19961A04CDF2F28D0BBC8AB0C634F89F1217175EFB5"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession16CorePlayabilityTests.cpp",
+        "bytes": 18566,
+        "sha256": "8891E32DAEC20986110756B20961F71207FD8BAF39B152B800D7A385D8FFDC60"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession17RoundFlowUiTests.cpp",
+        "bytes": 15432,
+        "sha256": "936C23019080E57B5E41E63CA7725F6A8FBBCEE8C8C9B0E9BCFB84443B96B50A"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession18ProvenanceTests.cpp",
+        "bytes": 9950,
+        "sha256": "ABB813054781D786EA6A2B597A6817B1B9903FEC58962024FA50436A074EA0E1"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession19AudioCandidateTests.cpp",
+        "bytes": 2235,
+        "sha256": "6D53EFFED73540687A0F9EBFDFD5B28F311D63D2EB6C94ECEA4BE60287A53544"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSession3ThrowTransactionTests.cpp",
+        "bytes": 13682,
+        "sha256": "1847BB59061F08566B0C784E9E44FBB90794EE436BF66C9CC46B6C441604D933"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscTrajectoryTests.cpp",
+        "bytes": 9843,
+        "sha256": "83F1CCF51AA4C94EA20AD73FE0FAB1656CB2415BFB5CA36EBA667C28DADA888C"
+      },
+      {
+        "path": "Source/DiscGolfTour/ThrowControllerComponent.cpp",
+        "bytes": 6299,
+        "sha256": "A1EC7BB98D8FCCD8EADEA3E4A93A77B9AD7B2594ECA8AA1F379D3F6AB0CCE31D"
+      },
+      {
+        "path": "Source/DiscGolfTour/ThrowControllerComponent.h",
+        "bytes": 3742,
+        "sha256": "190DA2E711A7BA191FF33B3D3EF4B3EFEE26759E02A80C39FF9B6E979A18EF9C"
+      },
+      {
+        "path": "Source/DiscGolfTour/WindDirector.cpp",
+        "bytes": 2003,
+        "sha256": "2CC523579E1968C8ED5BA8221ADF412590ED952A15708C44EA26E0DFE2CD05A9"
+      },
+      {
+        "path": "Source/DiscGolfTour/WindDirector.h",
+        "bytes": 1127,
+        "sha256": "ADE87CAAA9E85405F16CF93B224847CF812AF02F0D4323F9ED5BBB35D054E351"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringActors.cpp",
+        "bytes": 18438,
+        "sha256": "8A8E1A59A3F0E571A09A8C8113B0C435F768151492DBF2C0AF45AEA866E7C2C3"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringActors.h",
+        "bytes": 9689,
+        "sha256": "B2E22D5AC9351553C755E593CFB4CDFB73FC1505A5E3B1B3E788E8DBB284EC01"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringExporter.cpp",
+        "bytes": 6443,
+        "sha256": "88C8734B2794BCD3715C88C68B452B926E0F6535060ABB44C4F3233D9C60FFB8"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringExporter.h",
+        "bytes": 1717,
+        "sha256": "D442A9A52FA2C44A2E6162D114F82E780324FCEC3022AD6BE564F9223108CD61"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringPcgAdapter.cpp",
+        "bytes": 10400,
+        "sha256": "92B5EAA2BED962D47C7C4BF42A02B9C38F95B8A993554EAAA09936506202BEDC"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringPcgAdapter.h",
+        "bytes": 2133,
+        "sha256": "F1C079EBFD96D4848ACFE4F781FBD9AAB9AD7FDF80407E2311AEF2D63145F4ED"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringValidation.cpp",
+        "bytes": 32262,
+        "sha256": "69CF2960ADC7C2C334417B1D66C85FF15D41993E796818A4EA42B821907E39D7"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfCourseAuthoringValidation.h",
+        "bytes": 885,
+        "sha256": "64D2BB47AC4B8111EDC0BF19F2D6CCBA3F2FFBEFCA025704777F99955C6CBD05"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfEnvironmentAssetBinder.cpp",
+        "bytes": 49905,
+        "sha256": "5984654F618F10E6763989739A5F8CEB4ECB1CCC8291EED9BC899E4B32875E86"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfEnvironmentAssetBinder.h",
+        "bytes": 7348,
+        "sha256": "A83C0957577F8BB3BBDE21F9AFF2118CF02FEA3BEB4B7959D0963A3A355015C8"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfHoleAuthoringUtility.cpp",
+        "bytes": 12031,
+        "sha256": "72B269342A51090C29FE4A27765DCD029094DA67C19863AE703CDD5401E6404B"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfHoleAuthoringUtility.h",
+        "bytes": 3687,
+        "sha256": "05AC1E1A463E22153826FBE9B18D4EFBEF4CDE860AE1745FA8785F93ED5FEE6D"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfPcgAuthoringController.cpp",
+        "bytes": 1556,
+        "sha256": "8491E1EA0C5A2C35E41242C5A0AE1FADA067C986A1A3D2862D4095BD868BD3AF"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfPcgAuthoringController.h",
+        "bytes": 977,
+        "sha256": "6B4F39AC41A4EEB3F54C34091A68D4ADE8EDAB7AF7FCCF6AA707915A721AA9FE"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfProductionMotionAuthoringUtility.cpp",
+        "bytes": 55538,
+        "sha256": "31B50ED9D09B1D5A75BA70EE746CBF2887F4F9F40125488387AB1AA5EC05EAE9"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfProductionMotionAuthoringUtility.h",
+        "bytes": 1000,
+        "sha256": "A6B6D4C2A343C12273EC5C70C0D9C1F66EF95BCE4C874272386F2252A2AB2115"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfSession3AssetUtility.cpp",
+        "bytes": 62736,
+        "sha256": "4DA852CB874F7A6F0BDAC74A5F843C30760A535DC47154398E1E47F43C5F6CC7"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfSession3AssetUtility.h",
+        "bytes": 862,
+        "sha256": "525E3042E72A0D48721BB70576B36DFB1EA172893E6F7F407BFD4181D4119729"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfSession4AssetUtility.cpp",
+        "bytes": 55311,
+        "sha256": "090F168FEAF127662E58CD66FF47B95BAFA6527F441C83B05A36A8C78D1664E7"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfSession4AssetUtility.h",
+        "bytes": 745,
+        "sha256": "76E5A3C7C1271E6B2ABEFB57DDC9694DEE3216F37342347FE4DA91F975BD3E08"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfSession5MocapUtility.cpp",
+        "bytes": 116962,
+        "sha256": "A14320A2169A3AC7B294F6161791EF6277271D97C77966B8375EE51369BE5300"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfSession5MocapUtility.h",
+        "bytes": 1124,
+        "sha256": "8D0B0D5FCB1EAC4BB963F8E19533F7FE7BD6A934FF1849568E2BF593290998A1"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfSession8BMetaHumanUtility.cpp",
+        "bytes": 257337,
+        "sha256": "34F7FA325F3E6D39150E678D3E1EB29B9F595184D3AA2695DB5BC28DB5150B17"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfSession8BMetaHumanUtility.h",
+        "bytes": 3026,
+        "sha256": "337F553445AA86281BC7DC28137FB35B3A18ABAC1FA54428FFC36B20099530A4"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfTourEditor.Build.cs",
+        "bytes": 1388,
+        "sha256": "C2E8914FF36FDEF743AD960BC9331E76DB5E501EC63C0784C3EBFACAE3A9BC53"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/DiscGolfTourEditor.cpp",
+        "bytes": 93,
+        "sha256": "183E9831309EC439BB4D325C4F2DBF374C008FDFA7DFE06BF1DEC08130B6F3B3"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/PCGDiscGolfZoneDensity.cpp",
+        "bytes": 7685,
+        "sha256": "2DB0AD74B3D6DB1C4F65C4022B45146B5BBF36F5BB5350148581542AD102652B"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/PCGDiscGolfZoneDensity.h",
+        "bytes": 2519,
+        "sha256": "4E741F4F22D7D6A90EB7A0500797B0646888C1BFD59A282E07838F4F8C346C64"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/Tests/DiscGolfCourseAuthoringActorsTests.cpp",
+        "bytes": 11714,
+        "sha256": "5B918B2292CD5C71021A1CAEA22CECA5FE2D9C0042984857FC8B50E363AD2A47"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/Tests/DiscGolfCourseAuthoringExporterTests.cpp",
+        "bytes": 13460,
+        "sha256": "1852A6E870515B97E5EE2E0507BDC9B0E99165B8E2BA1BDB341EB7F4027AE1ED"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/Tests/DiscGolfCourseAuthoringPcgAdapterTests.cpp",
+        "bytes": 10564,
+        "sha256": "B8224317B4A947887AEA3496C3354A712CB68C046040AE1C608F1D8BB43BE0DF"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/Tests/DiscGolfCourseAuthoringValidationTests.cpp",
+        "bytes": 16535,
+        "sha256": "6C375476833655EDA115223B329411C66BD1E823060B0D0E06E6664E2219008F"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/Tests/DiscGolfEnvironmentAssetBinderTests.cpp",
+        "bytes": 30902,
+        "sha256": "EBE29B58CC5E55B217FC575AB5EA1500081E1CB95579514569EDE96962EE8FD3"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/Tests/DiscGolfHoleAuthoringUtilityTests.cpp",
+        "bytes": 2918,
+        "sha256": "1DE2811A2C1DE57FC0F48FC226A29967D69D15116981DD8EAC1BF1176E34A744"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/Tests/DiscGolfPcgShippingSeparationTests.cpp",
+        "bytes": 2437,
+        "sha256": "8B0EE72994FDCDB9843B3DE04ACF60881D27A656BECEB053B692BA4E556FD978"
+      },
+      {
+        "path": "Source/DiscGolfTourEditor/Tests/DiscGolfSession13CourseAuthoringFixtureTests.cpp",
+        "bytes": 6030,
+        "sha256": "0555D22FB8A946E9D20C6D0A2DE7B5C9970240519A79FBF1E941C270486ACE0C"
+      }
+    ]
+  },
+  "postBuildRevalidationRequired": true,
+  "releaseReady": false,
+  "receiptPath": "Evidence/Session19/BakedPcgSourceClosurePreBuild-S19_WindowsShipping_20260825T193000Z_a47c2e91b6f4.json"
+}

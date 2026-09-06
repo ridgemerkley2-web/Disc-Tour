@@ -1,0 +1,538 @@
+{
+  "schema": "DiscGolfTour.Session19Session12PresentationTechnicalPolicy.v3",
+  "schemaVersion": 3,
+  "session": 19,
+  "policyId": "windows_shipping_session12_presentation_input_audio_candidate_bound_technical_v2",
+  "receiptPattern": "Evidence/Session19/Session12PresentationTechnicalAudioCoverage-{candidateId}.json",
+  "selfTestMinimumMutationCount": 30,
+  "candidate": {
+    "candidateId": "S19_WindowsShipping_20260826T200427Z_9e7536afd2ec",
+    "archiveLeaf": "Windows",
+    "externalRunTokenPattern": "{candidateId}_{uuid}",
+    "archiveFileCount": 31,
+    "archiveBytes": 1246018071,
+    "archiveCanonicalManifestSha256": "362CA24911629BE4EEC5076F6A0D5C0DCD6F7071C1DD2BAB102D86CF7807A184",
+    "shippingExeRelativePath": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+    "shippingExeBytes": 162624000,
+    "shippingExeSha256": "BA88E76589A25D5EC1E6072EC68CF983A116012BDD7BCE1F75E7CB46CE319754"
+  },
+  "projectBindings": [
+    {
+      "role": "SESSION12_CONTRACT",
+      "path": "Config/DG_Session12PresentationContract.json",
+      "bytes": 14978,
+      "sha256": "B8385D58B102C06AC19A986B14E2858C1906F7BD79D28D48C9AB555D0EB4AB3F"
+    },
+    {
+      "role": "SESSION12_VALIDATOR",
+      "path": "Scripts/validate_dg_session12_presentation.py",
+      "bytes": 30684,
+      "sha256": "D2FCEE88310BF00B3A7F0EE1803E8F2216D5E42C15161B631E8A473A683B5388"
+    },
+    {
+      "role": "AUDIO_EVENT_COVERAGE_MANIFEST",
+      "path": "Config/DG_Session12AudioEventCoverage.json",
+      "bytes": 9642,
+      "sha256": "91723978D733BF895277EAE2F5369EB559F47D1CA841703A1418D1B37DB39982"
+    },
+    {
+      "role": "ORIGINAL_AUDIO_CANDIDATE_PACK",
+      "path": "Config/DG_Session19OriginalAudioCandidatePack.json",
+      "bytes": 9875,
+      "sha256": "A21C72AB08E13D99CAA93731E3AFE4BDFDBF9E79A0FD4CE924A33189E7AD6B1A"
+    },
+    {
+      "role": "ORIGINAL_AUDIO_IMPORT_RECEIPT",
+      "path": "Evidence/Session19/OriginalAudioCandidateImport.json",
+      "bytes": 6363,
+      "sha256": "3FD33651C3CD0C660800E68548E6634C4A1E2160980778391C23D8FA4CBA55FA"
+    },
+    {
+      "role": "SHIPPING_AUDIO_COOK_POLICY",
+      "path": "Config/DG_Session19ShippingAudioPolicy.json",
+      "bytes": 2567,
+      "sha256": "7FE436903454D1CDCFBF607812061D13202C74B758C069032949CB5FB158A023"
+    },
+    {
+      "role": "SHIPPING_AUDIO_COOK_RECEIPT",
+      "path": "Evidence/Session19/ShippingAudioCook-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+      "bytes": 29815,
+      "sha256": "F6C041DDCE2A3460DF7C283C274B6C063727FCFA51EC43BBF816DFBBDCD3DEF7"
+    },
+    {
+      "role": "ORIGINAL_AUDIO_IMPORT_LOG",
+      "path": "Saved/Logs/Session19OriginalAudioCandidateImport.log",
+      "bytes": 301715,
+      "sha256": "D3F7CC48AD9375EF3B99183C328C064F95EF0595A355864DE053A07BB0D95FBA"
+    },
+    {
+      "role": "ORIGINAL_AUDIO_AUTOMATION_LOG",
+      "path": "Saved/Logs/Session19AudioCandidateAutomation.log",
+      "bytes": 289311,
+      "sha256": "D00B5E4B01FF669B0ACCD118EA67FCC848400E24CD2C05CAA774C2628176ECBD"
+    },
+    {
+      "role": "FOCUSED_AUTOMATION_INDEX",
+      "path": "Saved/Automation/Session12FocusedClosure_db263248-c975-4058-be62-87669bc17d00/index.json",
+      "bytes": 7115,
+      "sha256": "08B086F3EA66596825CC408A5D8772890B7E9AD6A93303E91C1B31A8FFEB8301"
+    },
+    {
+      "role": "CAMERA_AUTOMATION_INDEX",
+      "path": "Saved/Automation/Session12CameraClosure_f2310155-9c8b-43ff-bd27-236d255a903c/index.json",
+      "bytes": 3144,
+      "sha256": "886D93BA381BF1099C6DDEB5524CD73A50C1FD1B95164B21BE512EDF485EACC8"
+    },
+    {
+      "role": "FOCUSED_AUTOMATION_LOG",
+      "path": "Saved/Logs/Session12FocusedClosure_db263248-c975-4058-be62-87669bc17d00.log",
+      "bytes": 311340,
+      "sha256": "F810C4473DF04681DAC0C58B7F8D6FE5D0D31B3B23BA02C5E2D65FB93CC9A001"
+    },
+    {
+      "role": "CAMERA_AUTOMATION_LOG",
+      "path": "Saved/Logs/Session12CameraClosure_f2310155-9c8b-43ff-bd27-236d255a903c.log",
+      "bytes": 301845,
+      "sha256": "14F0EB6BA71748EF1DF16D45E464A88A5D34D54D40F79503EB48DE009D823317"
+    },
+    {
+      "role": "FOCUS_ACTION_WHITELIST_LOG",
+      "path": "Saved/Logs/Automation_S17_ActionWhitelist_PostRoundFlowPatch.log",
+      "bytes": 288237,
+      "sha256": "97D969AE7E963A9BF06327A63E16390B4EA7DB702B6EF4A801082DD8C8CA5CDD"
+    },
+    {
+      "role": "FOCUS_INTRO_RELEASE_LOG",
+      "path": "Saved/Logs/Automation_S19_IntroReleaseBarrier_PostRoundFlowPatch.log",
+      "bytes": 288946,
+      "sha256": "62CE13D057AFA6142E9D6B67D86194B50B19A9C02578C3A189C4ED60FB1D0B88"
+    },
+    {
+      "role": "CURRENT_FULL_AUTOMATION_LOG",
+      "path": "Saved/Logs/Automation_DiscGolfTour_Full_PostRoundFlowPatch.log",
+      "bytes": 540767,
+      "sha256": "B730F07812C5FEBD3238B106FC8DFE9EA566C7DB38E0460BC021A37CF9C7045E"
+    },
+    {
+      "role": "SHIPPING_CANDIDATE_VERIFICATION",
+      "path": "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+      "bytes": 6452,
+      "sha256": "9D7F82CFC86843C6B3C3F6265BFD7EE04DBB05DFC6E89A1F84BDFFC7839431A3"
+    },
+    {
+      "role": "CANDIDATE_CONTENT",
+      "path": "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+      "bytes": 26660,
+      "sha256": "8237F4DAF5FD668BDC6ED2A89106847DEE6C3C5420765EF673DA53AE8C7706A7"
+    },
+    {
+      "role": "SHIPPING_BINARY",
+      "path": "Evidence/Session19/ShippingBinary-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+      "bytes": 1346,
+      "sha256": "38E5A3A305039194213F63F2EF97924692D8468E6AEE14A33941772DE859AA5D"
+    }
+  ],
+  "dynamicCandidateEvidence": [
+    {
+      "role": "EXTERNAL_TECHNICAL_VALIDATION",
+      "pattern": "Evidence/Session19/ExternalTechnicalEvidence-{candidateId}.json",
+      "requiredSchema": "DiscGolfTour.Session19ExternalTechnicalEvidenceValidation.v1",
+      "requiredState": "PASS_CANDIDATE_BOUND_EXTERNAL_TECHNICAL_EVIDENCE"
+    },
+    {
+      "role": "FRESH_USERDIR_VALIDATION",
+      "pattern": "Evidence/Session19/FreshUserDir-{candidateId}.json",
+      "requiredSchema": "DiscGolfTour.Session19FreshUserDirValidation.v1",
+      "requiredState": "PASS_FRESH_SHIPPING_USERDIR_ALLOWLIST"
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "Source/DiscGolfTour/DiscGolfInputRoutePolicy.h",
+      "bytes": 6595,
+      "sha256": "6E6E9482B5BECBADD221B4A1AAF3F862CFA23F95E8F0ECE0755BDEE26BEA6F3A",
+      "markers": [
+        "FDiscGolfPresentationDismissInputBarrier",
+        "ForwardReleaseAndConsume",
+        "DismissAndConsume"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscGolfInputConfig.cpp",
+      "bytes": 15076,
+      "sha256": "8DF4D2438A25C72A8ADA1DD7286A66F271EDE5561A3C675E314F33F8256C05B8",
+      "markers": [
+        "IsRemapCandidateCompatible",
+        "bSouthpawController",
+        "ControllerDeadZone"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscGolfTourPlayerController.cpp",
+      "bytes": 102229,
+      "sha256": "B691156042969E21C0601E7B3C4B4EFC9D88710099E68534A960FDA05D3791F3",
+      "markers": [
+        "ClearKeyboardFocus",
+        "bFreshThrowDownRequiredAfterPresentation",
+        "CompletePresentationDismissRelease",
+        "RestoreGameplayContextAfterPresentationDismiss"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscGolfHUD.cpp",
+      "bytes": 60478,
+      "sha256": "4E3DC85EF5BB2E718FE2A65B2795EA4BABDA4068B37CC6775C67037D38434E65",
+      "markers": [
+        "FViewportLayout",
+        "PresentationState.bShowReplayChrome",
+        "PresentationState.bShowShotSetup"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscGolfCameraViewContract.cpp",
+      "bytes": 3126,
+      "sha256": "8D3F400F1DE155FBE4593040A966A4CFFC062B0109855EC0D6F1C844DA021F04",
+      "markers": [
+        "TryAcquire",
+        "TryRelease",
+        "RequiredOwner"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscReplayActor.cpp",
+      "bytes": 8609,
+      "sha256": "3E02F8EE046ED502808E5AAB49DDB49749CEFCBF447358415640DBD129DD889B",
+      "markers": [
+        "InitializeReplay",
+        "ValidateReplayInput",
+        "SeekReplay",
+        "SetPlaybackRate"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscGolfPresentationAudio.h",
+      "bytes": 4811,
+      "sha256": "A95589AD8BA2F2F6BEFA587C066AEBECCF693E16BBD563D361D0CEEC5B9528C6",
+      "markers": [
+        "ThrowRelease",
+        "AirborneFlight",
+        "GroundContact",
+        "GroundState",
+        "BasketOutcome",
+        "Penalty",
+        "HoleStart",
+        "HoleCompletion",
+        "HoleTransition",
+        "RoundCompletion",
+        "Replay",
+        "Flyover"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscGolfPresentationAudio.cpp",
+      "bytes": 20336,
+      "sha256": "E244565502C7D401821D1141FAABF2F0EAA41510ED0538683ADC80C7B7BA11AE",
+      "markers": [
+        "ResolveThrowRelease",
+        "ResolveGroundContact",
+        "ResolveBasketOutcome",
+        "ResolveHoleStart",
+        "ResolveRoundCompletion",
+        "ResolveReplay",
+        "ResolveFlyover"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscGolfPresentationAudioRouterComponent.h",
+      "bytes": 5992,
+      "sha256": "EF5C3331FD71610C2B9208471F5372BEF449EC3EDD1F1B9868BD32BFED056C1E",
+      "markers": [
+        "CategoryId",
+        "GeneratedCandidateFallbackSounds",
+        "HasGeneratedCandidateBinding"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscGolfPresentationAudioRouterComponent.cpp",
+      "bytes": 14431,
+      "sha256": "D3B423F0613B913860EB8110D013FA5054F3A8A4635CEFF740E5F8B05066165E",
+      "markers": [
+        "RoutePresentationAudioEvent",
+        "SILENT ASSET FALLBACK",
+        "MaximumRouteTrace",
+        "AddGeneratedCandidate",
+        "/Game/Presentation/Audio/Generated/SW_Flyover.SW_Flyover"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "bytes": 268701,
+      "sha256": "8C1E4B8DE36723E5CEF022E741F6121CF892933449007F863690C1B169B56F8A",
+      "markers": [
+        "RecordPresentationAudioEvent",
+        "ResolveThrowRelease",
+        "ResolveReplay",
+        "ResolveFlyover"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/Tests/DiscGolfInputTests.cpp",
+      "bytes": 15797,
+      "sha256": "A90B041269361BBDBAC197AF942885B29E92CE1B84AD51B48BC9FC9DA1F41E00",
+      "markers": [
+        "FDiscGolfPresentationDismissInputBarrier",
+        "HoleIntroConfirmIsolation",
+        "Next deliberate Space press passes through"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/Tests/DiscGolfSession12AudioRouterTests.cpp",
+      "bytes": 10438,
+      "sha256": "95685B63681CF1813F15FAEDF8723D6958D27D78B92F64F3D401E4D0D905188C",
+      "markers": [
+        "DiscGolfTour.Session12.Audio.SemanticProviderMapping",
+        "DiscGolfTour.Session12.Audio.SilentFallbackAndDedupe"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/Tests/DiscGolfSession12CameraReplayTests.cpp",
+      "bytes": 18743,
+      "sha256": "F703C72ABEC15541F6BA0C1FFB8672C4FC7AA0CEA14000C64626F7D9F8965807",
+      "markers": [
+        "DiscGolfTour.Session12.CameraReplay.ActualSampleSelection",
+        "DiscGolfTour.Session12.CameraReplay.ViewOwnershipAndStaleRejection"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/Tests/DiscGolfSession12InputUiTests.cpp",
+      "bytes": 6018,
+      "sha256": "26A2470D3C6F4206692C03A53F9979ADD512C6215A5853B9CEAB6163A038D4EC",
+      "markers": [
+        "DiscGolfTour.Session12.Input.RouteIsolation",
+        "DiscGolfTour.Session12.Accessibility.SettingsNormalizationAndColor",
+        "DiscGolfTour.Session12.Accessibility.AssistCommandCaptureParity"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/Tests/DiscGolfSession17RoundFlowUiTests.cpp",
+      "bytes": 15432,
+      "sha256": "936C23019080E57B5E41E63CA7725F6A8FBBCEE8C8C9B0E9BCFB84443B96B50A",
+      "markers": [
+        "DiscGolfTour.Session17.RoundFlow.ActionWhitelist.Exact",
+        "DiscGolfTour.Session17.RoundFlow.Widget.FocusAndStructure"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/Tests/DiscGolfSession19AudioCandidateTests.cpp",
+      "bytes": 2235,
+      "sha256": "6D53EFFED73540687A0F9EBFDFD5B28F311D63D2EB6C94ECEA4BE60287A53544",
+      "markers": [
+        "DiscGolfTour.Session19.AudioCandidate.CategoryBindings",
+        "GetGeneratedCandidateBindingCount"
+      ]
+    },
+    {
+      "path": "Scripts/generate_dg_session19_audio_candidate_pack.py",
+      "bytes": 9215,
+      "sha256": "4099117A2101B84EA4B3E6BA7382469B3E5988CFB4523F178516CFDD763DBED8",
+      "markers": [
+        "PROJECT_OWNED_ORIGINAL_PROCEDURAL_SYNTHESIS",
+        "externalSamplesUsed",
+        "--verify"
+      ]
+    },
+    {
+      "path": "Scripts/author_dg_session19_audio_candidate_pack.py",
+      "bytes": 5449,
+      "sha256": "7ECAD87D4442CEB9B1A3F4A4995B4DE0348EF33E5C6F90E349787AF1FF4D9270",
+      "markers": [
+        "DG_AUDIO_CANDIDATE_AUTHORING",
+        "replace_existing = False",
+        "shippingCookProven"
+      ]
+    }
+  ],
+  "requiredFocusedTests": [
+    "DiscGolfTour.Session12.Accessibility.AssistCommandCaptureParity",
+    "DiscGolfTour.Session12.Accessibility.SettingsNormalizationAndColor",
+    "DiscGolfTour.Session12.Audio.InvalidEventIsAtomic",
+    "DiscGolfTour.Session12.Audio.PayloadSanitization",
+    "DiscGolfTour.Session12.Audio.RouteTraceBound",
+    "DiscGolfTour.Session12.Audio.SemanticProviderMapping",
+    "DiscGolfTour.Session12.Audio.SilentFallbackAndDedupe",
+    "DiscGolfTour.Session12.CameraReplay.ActualSampleSelection",
+    "DiscGolfTour.Session12.CameraReplay.ActualSampleValidation",
+    "DiscGolfTour.Session12.CameraReplay.PlaybackControlMath",
+    "DiscGolfTour.Session12.CameraReplay.ReplayActorControls",
+    "DiscGolfTour.Session12.CameraReplay.ViewModeCoverage",
+    "DiscGolfTour.Session12.CameraReplay.ViewOwnershipAndStaleRejection",
+    "DiscGolfTour.Session12.Contract.FailClosed",
+    "DiscGolfTour.Session12.Input.RouteIsolation",
+    "DiscGolfTour.Session12.Input.SouthpawAndDeadZoneFallback"
+  ],
+  "requiredCameraTests": [
+    "DiscGolfTour.Session12.CameraReplay.ActualSampleSelection",
+    "DiscGolfTour.Session12.CameraReplay.ActualSampleValidation",
+    "DiscGolfTour.Session12.CameraReplay.PlaybackControlMath",
+    "DiscGolfTour.Session12.CameraReplay.ReplayActorControls",
+    "DiscGolfTour.Session12.CameraReplay.ViewModeCoverage",
+    "DiscGolfTour.Session12.CameraReplay.ViewOwnershipAndStaleRejection"
+  ],
+  "requiredCurrentLogTests": [
+    "DiscGolfTour.Session12.Audio.SemanticProviderMapping",
+    "DiscGolfTour.Session12.CameraReplay.ReplayActorControls",
+    "DiscGolfTour.Session12.Input.RouteIsolation",
+    "DiscGolfTour.Session17.RoundFlow.ActionWhitelist.Exact",
+    "DiscGolfTour.Session17.RoundFlow.Widget.FocusAndStructure",
+    "DiscGolfTour.Session19.Input.HoleIntroConfirmIsolation"
+  ],
+  "audioCoverage": {
+    "manifestRole": "AUDIO_EVENT_COVERAGE_MANIFEST",
+    "requiredCategoryCount": 12,
+    "orderedCategories": [
+      "ThrowRelease",
+      "AirborneFlight",
+      "GroundContact",
+      "GroundState",
+      "BasketOutcome",
+      "Penalty",
+      "HoleStart",
+      "HoleCompletion",
+      "HoleTransition",
+      "RoundCompletion",
+      "Replay",
+      "Flyover"
+    ],
+    "runtimeHookCoverageRequired": true,
+    "productionAssetCoverageRequired": false,
+    "intentionalSilenceCategoryCount": 0,
+    "unboundProductionAssetCategoryCount": 12,
+    "rawProductionAudioFileCount": 0
+  },
+  "originalAudioCandidate": {
+    "manifestRole": "ORIGINAL_AUDIO_CANDIDATE_PACK",
+    "categoryCount": 12,
+    "sourceMasterCount": 12,
+    "runtimeSoftBindingCount": 12,
+    "cookRoot": "/Game/Presentation/Audio/Generated",
+    "projectOwnedOriginalSynthesis": true,
+    "externalSamplesUsed": false,
+    "serializedUnrealAssetsPresent": true,
+    "shippingCookReceiptRole": "SHIPPING_AUDIO_COOK_RECEIPT",
+    "shippingCookProven": true,
+    "audibleRuntimePlaybackProven": false,
+    "selectedShippingCandidateContainsAudioCandidate": true,
+    "shippingCandidateInvalidatedBySourceDelta": false,
+    "freshShippingRebuildRequired": false
+  },
+  "externalBindings": [
+    {
+      "role": "LAUNCH_RECORD",
+      "path": "launch-record.json"
+    },
+    {
+      "role": "TECHNICAL_MANIFEST",
+      "path": "technical-evidence-manifest.json"
+    },
+    {
+      "role": "TECHNICAL_MANIFEST_SIDECAR",
+      "path": "technical-evidence-manifest.sha256"
+    }
+  ],
+  "requiredMilestones": [
+    {
+      "path": "Screenshots/001_front_end.png",
+      "semantic": "FRESH_ROUND_ENTRY_HOLE_1_SHOT_1_PRESENTATION"
+    },
+    {
+      "path": "Screenshots/002_hole1_tee.png",
+      "semantic": "HOLE_1_TEE_PRESENTATION"
+    },
+    {
+      "path": "Screenshots/003_hole1_recovered_lie.png",
+      "semantic": "HOLE_1_RECOVERED_LIE_PRESENTATION"
+    },
+    {
+      "path": "Screenshots/004_hole1_complete.png",
+      "semantic": "HOLE_1_COMPLETE_PRESENTATION"
+    },
+    {
+      "path": "Screenshots/005_hole2_tee.png",
+      "semantic": "HOLE_2_TEE_PRESENTATION"
+    },
+    {
+      "path": "Screenshots/006_hole2_recovered_lie.png",
+      "semantic": "HOLE_2_RECOVERED_LIE_PRESENTATION"
+    },
+    {
+      "path": "Screenshots/007_hole2_complete.png",
+      "semantic": "HOLE_2_COMPLETE_PRESENTATION"
+    },
+    {
+      "path": "Screenshots/008_hole3_tee.png",
+      "semantic": "HOLE_3_TEE_PRESENTATION"
+    },
+    {
+      "path": "Screenshots/009_hole3_recovered_lie.png",
+      "semantic": "HOLE_3_RECOVERED_LIE_PRESENTATION"
+    },
+    {
+      "path": "Screenshots/010_final_scorecard.png",
+      "semantic": "FINAL_SCORECARD_PRESENTATION"
+    }
+  ],
+  "technicalClaims": {
+    "implementedUiAndInputRouting": true,
+    "presentationFocusBarriers": true,
+    "cameraAndReplayWiring": true,
+    "authoredSemanticAudioEventCoverage": true,
+    "freshInstallMilestonePresentationObserved": true,
+    "candidateAndEvidenceImmutableBinding": true,
+    "allTwelveSemanticAudioRuntimeHooksValidated": true,
+    "unboundAudioAssetDispositionsExplicit": true,
+    "originalProjectOwnedAudioSourceMastersBound": true,
+    "runtimeCategorySoftBindingsImplemented": true,
+    "audioCookRootConfigured": true,
+    "serializedUnrealSoundAssetsImported": true,
+    "shippingAudioCookReceiptValidated": true
+  },
+  "unsupportedClaims": {
+    "unsupportedDeviceCoverage": false,
+    "productionAudioAssetsPresent": false,
+    "audibleProductionCategoryCoverage": false,
+    "intentionalSilenceDesignApproval": false,
+    "audibleRuntimePlaybackProven": false,
+    "audioLicensingApproved": false,
+    "manualAudioMixReview": false,
+    "manualCameraReview": false,
+    "manualReplayReview": false,
+    "accessibilityApproval": false,
+    "visualQualityApproval": false,
+    "productOwnerApproval": false,
+    "humanPlayFeelApproval": false,
+    "manualGameplayAcceptance": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "blockerClosed": false,
+    "releaseApproval": false,
+    "releaseReady": false
+  },
+  "releaseRequiredExitCode": 2,
+  "trustedRuntimeJournalContract": {
+    "manifestSchema": "DiscGolfTour.Session19ExternalTechnicalEvidenceManifest.v2",
+    "manifestSchemaVersion": 2,
+    "launchRecordSchema": "DiscGolfTour.Session19ExternalTechnicalEvidenceLaunchRecord.v2",
+    "launchRecordSchemaVersion": 2,
+    "runtimeJournalSchema": "DiscGolfTour.Session19ThreeHoleRuntimeJournal.v1",
+    "runtimeJournalUserDirRelativePath": "Saved/TechnicalEvidence/three-hole-runtime-journal-v1.jsonl",
+    "runtimeJournalValidationState": "PASS_GAME_EMITTED_THREE_HOLE_RUNTIME_JOURNAL",
+    "requireIndependentRawJournalValidation": true,
+    "trustBoundary": {
+      "evidenceTrustModel": "BOUNDED_OPERATIONAL_PROCESS_EVIDENCE_NOT_CRYPTOGRAPHIC_ATTESTATION",
+      "cryptographicProcessAttestation": false,
+      "tamperProofEvidence": false,
+      "hostileSameUserForgeryResistance": false
+    }
+  }
+}

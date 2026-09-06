@@ -66,14 +66,28 @@ bool ADiscReplayActor::InitializeReplay(
     const TArray<FDiscTrajectorySample>& InSamples,
     float InPlaybackRate)
 {
-    if (InSamples.Num() < 2) return false;
-    Samples = InSamples;
+    Samples.Reset();
     PlaybackTimeSeconds = 0.0f;
-    DurationSeconds = FMath::Max(Samples.Last().TimeSeconds - Samples[0].TimeSeconds, 0.0f);
-    PlaybackRate = FMath::Clamp(InPlaybackRate, 0.10f, 2.0f);
+    DurationSeconds = 0.0f;
     FinishHoldRemaining = 0.0f;
-    bPlaying = DurationSeconds > SMALL_NUMBER;
+    bPlaying = false;
+    bPaused = false;
     bFinishBroadcast = false;
+    LastValidationError.Reset();
+    SetActorTickEnabled(false);
+    SetActorHiddenInGame(true);
+
+    if (!ValidateReplayInput(InSamples, LastValidationError)) return false;
+    if (!FMath::IsFinite(InPlaybackRate))
+    {
+        LastValidationError = TEXT("Replay playback rate must be finite");
+        return false;
+    }
+
+    Samples = InSamples;
+    DurationSeconds = Samples.Last().TimeSeconds - Samples[0].TimeSeconds;
+    PlaybackRate = NormalizePlaybackRate(InPlaybackRate);
+    bPlaying = true;
     CameraMode = EDiscReplayCameraMode::Tracking;
     ReplayCamera->SetActive(true);
     TeeCamera->SetActive(false);
@@ -90,12 +104,104 @@ bool ADiscReplayActor::InitializeReplay(
     return bPlaying;
 }
 
+bool ADiscReplayActor::ValidateReplayInput(
+    const TArray<FDiscTrajectorySample>& InSamples,
+    FString& OutError)
+{
+    for (int32 Index = 1; Index < InSamples.Num(); ++Index)
+    {
+        if (!FMath::IsFinite(InSamples[Index - 1].TimeSeconds)
+            || !FMath::IsFinite(InSamples[Index].TimeSeconds)
+            || InSamples[Index].TimeSeconds <= InSamples[Index - 1].TimeSeconds)
+        {
+            OutError = TEXT("Replay actor samples must be strictly time ordered");
+            return false;
+        }
+    }
+    FDiscActualReplaySelectionPolicy Policy;
+    Policy.MaxSourceSamples = MaxReplayInputSamples;
+    Policy.MaxOutputSamples = MaxReplayInputSamples;
+    Policy.MaxSampleRateHz = 240.0f;
+    Policy.MaxDurationSeconds = MaxReplayDurationSeconds;
+    return DiscGolfPresentationMath::ValidateActualReplaySource(
+        InSamples, TArray<FDiscGroundTransition>(), Policy, OutError);
+}
+
+float ADiscReplayActor::NormalizePlaybackRate(float InPlaybackRate)
+{
+    return FMath::IsFinite(InPlaybackRate)
+        ? FMath::Clamp(InPlaybackRate, MinimumPlaybackRate, MaximumPlaybackRate)
+        : 0.75f;
+}
+
+float ADiscReplayActor::NextPlaybackRate(float InPlaybackRate)
+{
+    const float Rate = NormalizePlaybackRate(InPlaybackRate);
+    if (Rate < 0.50f - KINDA_SMALL_NUMBER) return 0.50f;
+    if (Rate < 0.75f - KINDA_SMALL_NUMBER) return 0.75f;
+    if (Rate < 1.00f - KINDA_SMALL_NUMBER) return 1.00f;
+    if (Rate < 1.50f - KINDA_SMALL_NUMBER) return 1.50f;
+    return 0.50f;
+}
+
 void ADiscReplayActor::CycleCameraMode()
 {
     CameraMode = CameraMode == EDiscReplayCameraMode::Tracking
         ? EDiscReplayCameraMode::Tee : EDiscReplayCameraMode::Tracking;
     ReplayCamera->SetActive(CameraMode == EDiscReplayCameraMode::Tracking);
     TeeCamera->SetActive(CameraMode == EDiscReplayCameraMode::Tee);
+}
+
+void ADiscReplayActor::PauseReplay()
+{
+    if (!bPlaying || bFinishBroadcast) return;
+    bPlaying = false;
+    bPaused = true;
+    SetActorTickEnabled(false);
+}
+
+bool ADiscReplayActor::ResumeReplay()
+{
+    if (Samples.Num() < 2 || bFinishBroadcast || bPlaying) return false;
+    bPaused = false;
+    bPlaying = true;
+    if (PlaybackTimeSeconds >= DurationSeconds && FinishHoldRemaining <= 0.0f)
+    {
+        FinishHoldRemaining = 0.65f;
+    }
+    SetActorTickEnabled(true);
+    return true;
+}
+
+bool ADiscReplayActor::SeekReplay(float TimeSeconds)
+{
+    if (Samples.Num() < 2 || bFinishBroadcast || !FMath::IsFinite(TimeSeconds)) return false;
+    PlaybackTimeSeconds = FMath::Clamp(TimeSeconds, 0.0f, DurationSeconds);
+    FinishHoldRemaining = PlaybackTimeSeconds >= DurationSeconds ? 0.65f : 0.0f;
+    ApplyPlaybackFrame(PlaybackTimeSeconds);
+    return true;
+}
+
+bool ADiscReplayActor::SetPlaybackRate(float InPlaybackRate)
+{
+    if (!FMath::IsFinite(InPlaybackRate)) return false;
+    PlaybackRate = NormalizePlaybackRate(InPlaybackRate);
+    return true;
+}
+
+float ADiscReplayActor::CyclePlaybackRate()
+{
+    PlaybackRate = NextPlaybackRate(PlaybackRate);
+    return PlaybackRate;
+}
+
+void ADiscReplayActor::SetReducedMotion(bool bInReducedMotion)
+{
+    bReducedMotion = bInReducedMotion;
+    if (CameraArm)
+    {
+        CameraArm->bEnableCameraLag = !bReducedMotion;
+    }
 }
 
 void ADiscReplayActor::Tick(float DeltaSeconds)
@@ -147,6 +253,7 @@ void ADiscReplayActor::FinishReplay()
     if (bFinishBroadcast) return;
     bFinishBroadcast = true;
     bPlaying = false;
+    bPaused = false;
     SetActorTickEnabled(false);
     OnReplayFinished.Broadcast(this);
 }

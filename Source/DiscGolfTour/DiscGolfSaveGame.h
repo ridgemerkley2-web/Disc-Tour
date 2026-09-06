@@ -12,7 +12,7 @@
 
 namespace DiscGolfSaveSchema
 {
-    inline constexpr int32 CurrentVersion = 9;
+    inline constexpr int32 CurrentVersion = 10;
 
     constexpr bool IsCurrent(const int32 Version)
     {
@@ -28,8 +28,6 @@ class DISCGOLFTOUR_API UDiscGolfSaveGame : public USaveGame
 public:
     UPROPERTY(BlueprintReadWrite, SaveGame) int32 SaveSchemaVersion = DiscGolfSaveSchema::CurrentVersion;
     UPROPERTY(BlueprintReadWrite) FString PlayerName = TEXT("Player");
-    UPROPERTY(BlueprintReadWrite) int32 CareerXP = 0;
-    UPROPERTY(BlueprintReadWrite) int32 CareerCash = 0;
     UPROPERTY(BlueprintReadWrite) TArray<FName> UnlockedMolds;
     UPROPERTY(BlueprintReadWrite) int32 PreferredGraphicsPreset = 2;
     UPROPERTY(BlueprintReadWrite, SaveGame) bool bHasPracticeRoundSnapshot = false;
@@ -44,12 +42,12 @@ public:
     UPROPERTY(BlueprintReadWrite, SaveGame) FName PracticeMoldId = TEXT("Apex");
     UPROPERTY(BlueprintReadWrite, SaveGame) EDiscPlastic PracticePlastic = EDiscPlastic::Tour;
     UPROPERTY(BlueprintReadWrite, SaveGame) FDiscGolfPlayerSettings PlayerSettings;
-    /** Schema-9 authority for the complete character; contains stable IDs and values only. */
+    /** Schema-10 authority for the complete character; contains stable IDs and values only. */
     UPROPERTY(BlueprintReadWrite, SaveGame) FDGFullCharacterCustomization CharacterCustomization;
 
     // Schema-8 migration and accepted Session 4/6 compatibility mirrors.
     // Keep both names and SaveGame flags: CPF_Deprecated would prevent old
-    // archives from loading these fields. Schema-9 runtime reads the complete
+    // archives from loading these fields. Schema-10 runtime reads the complete
     // CharacterCustomization payload exclusively.
     UPROPERTY(BlueprintReadWrite, SaveGame) FDiscGolfCharacterProfileSaveData CharacterProfile;
     UPROPERTY(BlueprintReadWrite, SaveGame) FDGOutfitLoadout OutfitLoadout;

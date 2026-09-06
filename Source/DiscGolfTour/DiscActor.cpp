@@ -1,5 +1,7 @@
 #include "DiscActor.h"
 #include "DiscFlightComponent.h"
+#include "DiscGolfMath.h"
+#include "DiscGolfTour.h"
 #include "WindDirector.h"
 #include "Camera/CameraComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -23,7 +25,7 @@ ADiscActor::ADiscActor()
     if (CylinderMesh.Succeeded())
     {
         DiscMesh->SetStaticMesh(CylinderMesh.Object);
-        DiscMesh->SetRelativeScale3D(FVector(0.21f, 0.21f, 0.015f));
+        DiscMesh->SetRelativeScale3D(DiscGolfMath::CanonicalDiscCollisionScale());
     }
 
     FlightComponent = CreateDefaultSubobject<UDiscFlightComponent>(TEXT("FlightComponent"));
@@ -45,16 +47,71 @@ void ADiscActor::BeginPlay()
     DiscMesh->OnComponentBeginOverlap.AddDynamic(this, &ADiscActor::HandleDiscOverlap);
 }
 
-void ADiscActor::InitializeDisc(const FResolvedDiscDefinition& InDisc, AWindDirector* InWindDirector)
+bool ADiscActor::InitializeDisc(const FResolvedDiscDefinition& InDisc, AWindDirector* InWindDirector)
 {
+    FString Error;
+    if (!DiscGolfMath::IsResolvedDiscDefinitionValid(InDisc, &Error))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Disc actor initialization rejected: %s"), *Error);
+        return false;
+    }
+    if (InWindDirector && !InWindDirector->ValidatePhysicsWindConfiguration(Error))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Disc actor initialization rejected by wind configuration: %s"), *Error);
+        return false;
+    }
+    if (!FlightComponent->ConfigureDisc(InDisc)
+        || !FlightComponent->SetWindDirector(InWindDirector))
+    {
+        return false;
+    }
+
     ResolvedDisc = InDisc;
-    FlightComponent->ConfigureDisc(InDisc);
-    FlightComponent->SetWindDirector(InWindDirector);
+    bDiscInitialized = true;
+    return true;
 }
 
-void ADiscActor::Throw(const FThrowRelease& Release)
+bool ADiscActor::ConfigureLaunchingActorCollisionExclusion(AActor* LaunchingActor)
 {
-    FlightComponent->Launch(Release);
+    if (!DiscMesh || !IsValid(LaunchingActor) || LaunchingActor == this
+        || FlightComponent->IsFlying())
+    {
+        return false;
+    }
+
+    const auto& ExistingExclusions = DiscMesh->GetMoveIgnoreActors();
+    if (!ExistingExclusions.IsEmpty()
+        && (ExistingExclusions.Num() != 1
+            || !ExistingExclusions.Contains(LaunchingActor)))
+    {
+        return false;
+    }
+    DiscMesh->IgnoreActorWhenMoving(LaunchingActor, true);
+    return IsLaunchingActorCollisionExcluded(LaunchingActor);
+}
+
+bool ADiscActor::IsLaunchingActorCollisionExcluded(
+    const AActor* LaunchingActor) const
+{
+    if (!DiscMesh || !IsValid(LaunchingActor))
+    {
+        return false;
+    }
+    const auto& Exclusions = DiscMesh->GetMoveIgnoreActors();
+    return Exclusions.Num() == 1 && Exclusions.Contains(LaunchingActor);
+}
+
+bool ADiscActor::Throw(const FThrowRelease& Release)
+{
+    if (!bDiscInitialized)
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Disc actor throw rejected because initialization never completed."));
+        return false;
+    }
+    return FlightComponent->Launch(Release);
 }
 
 void ADiscActor::HoleOut()
@@ -69,8 +126,8 @@ void ADiscActor::ResolveBasketContact(
     const FVector& CaptureWorldLocationCm)
 {
     if (!FlightComponent->IsFlying() || Evaluation.Result == EBasketContactResult::None) return;
-    FlightComponent->ApplyBasketContact(Evaluation, CaptureWorldLocationCm);
-    if (Evaluation.Result == EBasketContactResult::Caught)
+    if (FlightComponent->ApplyBasketContact(Evaluation, CaptureWorldLocationCm)
+        && Evaluation.Result == EBasketContactResult::Caught)
     {
         HoleOut();
     }

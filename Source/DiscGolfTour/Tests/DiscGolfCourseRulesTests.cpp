@@ -129,6 +129,52 @@ bool FDiscGolfObReliefPlacementTest::RunTest(const FString& Parameters)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfSurfaceProbeFailClosedTest,
+    "DiscGolfTour.Rules.SurfaceProbeFailClosed",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDiscGolfSurfaceProbeFailClosedTest::RunTest(const FString& Parameters)
+{
+    const FVector RawNearGround(1000.0f, 2000.0f, 64.0f);
+    const FVector Ground(1000.0f, 2000.0f, 0.0f);
+    const FVector RawUnderTerrain(1000.0f, 2000.0f, -8000.0f);
+    TestFalse(TEXT("A missing trace is never accepted through the default fairway value"),
+        DiscGolfCourseRules::IsInBoundsSurfaceProbe(
+            false, ECourseSurfaceType::Fairway, RawNearGround, Ground));
+    TestTrue(TEXT("A traced fairway is in bounds"),
+        DiscGolfCourseRules::IsInBoundsSurfaceProbe(
+            true, ECourseSurfaceType::Fairway, RawNearGround, Ground));
+    TestFalse(TEXT("A traced OB surface is outside the playable boundary"),
+        DiscGolfCourseRules::IsInBoundsSurfaceProbe(
+            true, ECourseSurfaceType::OutOfBounds, RawNearGround, Ground));
+    TestFalse(TEXT("A traced hazard is not eligible as last-in-bounds relief"),
+        DiscGolfCourseRules::IsInBoundsSurfaceProbe(
+            true, ECourseSurfaceType::Hazard, RawNearGround, Ground));
+    TestFalse(TEXT("Another hole's typed terrain cannot support a far-below-world lie"),
+        DiscGolfCourseRules::IsSupportedSettledSurfaceProbe(
+            true, RawUnderTerrain, Ground));
+    TestTrue(TEXT("An airborne in-bounds trajectory sample can project to its typed surface"),
+        DiscGolfCourseRules::IsInBoundsSurfaceProbe(
+            true, ECourseSurfaceType::Fairway,
+            FVector(1000.0f, 2000.0f, 500.0f), Ground));
+    TestTrue(TEXT("A supported hazard remains a valid play-from-result surface"),
+        DiscGolfCourseRules::IsSupportedSettledSurfaceProbe(
+            true, RawNearGround, Ground));
+
+    const FVector UnsupportedRaw(42000.0f, -17000.0f, -8000.0f);
+    const FVector ProvenRelief(9800.0f, 600.0f, 0.0f);
+    const FVector Basket(11000.0f, 800.0f, 80.0f);
+    const FDiscGolfLieState Recovered = DiscGolfCourseRules::ResolveLie(
+        ECourseSurfaceType::OutOfBounds, UnsupportedRaw, ProvenRelief, Basket);
+    TestEqual(TEXT("Unsupported settled locations receive an OB penalty"),
+        Recovered.PenaltyType, EDiscGolfPenaltyType::OutOfBounds);
+    TestTrue(TEXT("Unsupported settled locations recover to the proven relief"),
+        Recovered.LieLocationCm.Equals(ProvenRelief));
+    TestTrue(TEXT("Raw unsupported telemetry remains available for diagnosis"),
+        Recovered.RawDiscLocationCm.Equals(UnsupportedRaw));
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfLieSaveSerializationTest,
     "DiscGolfTour.Rules.LieSaveSerialization",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)

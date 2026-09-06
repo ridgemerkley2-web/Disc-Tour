@@ -1,0 +1,206 @@
+{
+  "schema": "DiscGolfTour.Session19ManualReleaseReviewPolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "policyId": "session19_manual_external_release_review_v1",
+  "authority": "ADDITIVE_FAIL_CLOSED_REVIEW_PACKET_NOT_LEGAL_ADVICE_OR_RELEASE_APPROVAL",
+  "normalStatus": "PASS_REVIEW_PACKET_VALID_HUMAN_APPROVALS_PENDING",
+  "releaseStatus": "BLOCKED_PENDING_NAMED_HUMAN_DECISIONS_AND_MISSING_PRODUCTION_ARTIFACTS",
+  "releaseReady": false,
+  "publicReleaseApproved": false,
+  "blanketAuthorizationIsApprovalEvidence": false,
+  "scope": {
+    "platform": "Windows",
+    "configuration": "Shipping",
+    "milestone": "v0.5",
+    "courseId": "PineRidgeChampionship",
+    "layoutId": "Championship",
+    "holeNumbers": [1, 2, 3]
+  },
+  "decisionPolicy": {
+    "allowedStates": ["PENDING", "APPROVED", "REJECTED"],
+    "currentState": "PENDING",
+    "requiredCandidateBindingFields": [
+      "shippingArchiveReceiptPath",
+      "shippingArchiveManifestSha256",
+      "shippingExecutableSha256",
+      "captureSetManifestSha256"
+    ],
+    "requiredReviewerFields": [
+      "role",
+      "reviewerId",
+      "reviewedUtc",
+      "decision",
+      "reviewArtifactId"
+    ],
+    "confidentialMaterialPolicy": "STORE_ONLY_SANITIZED_DECISION_IDENTIFIERS_AND_DISPOSITIONS_IN_REPOSITORY",
+    "acceptedDecisionRecordPath": null,
+    "approvalRecords": []
+  },
+  "publicNameInventory": {
+    "title": {
+      "candidate": null,
+      "workingNames": ["DGTour", "DiscGolfTour", "Disc Golf Tour"],
+      "sourcePaths": ["Config/DefaultGame.ini", "DiscGolfTour.uproject"],
+      "state": "NOT_LOCKED_NOT_CLEARED"
+    },
+    "equipment": [
+      {"kind": "mold", "stableId": "Apex", "candidateDisplayName": "Apex", "sourcePath": "Content/Data/Discs/Molds/DA_Mold_Apex.uasset"},
+      {"kind": "mold", "stableId": "Vector", "candidateDisplayName": "Vector", "sourcePath": "Content/Data/Discs/Molds/DA_Mold_Vector.uasset"},
+      {"kind": "mold", "stableId": "Line", "candidateDisplayName": "Line", "sourcePath": "Content/Data/Discs/Molds/DA_Mold_Line.uasset"},
+      {"kind": "mold", "stableId": "Compass", "candidateDisplayName": "Compass", "sourcePath": "Content/Data/Discs/Molds/DA_Mold_Compass.uasset"},
+      {"kind": "mold", "stableId": "Touch", "candidateDisplayName": "Touch", "sourcePath": "Content/Data/Discs/Molds/DA_Mold_Touch.uasset"},
+      {"kind": "plastic", "stableId": "Base", "candidateDisplayName": "Base", "sourcePath": "Content/Data/Discs/Plastics/DA_Plastic_Base.uasset"},
+      {"kind": "plastic", "stableId": "Tour", "candidateDisplayName": "Tour", "sourcePath": "Content/Data/Discs/Plastics/DA_Plastic_Tour.uasset"},
+      {"kind": "plastic", "stableId": "Crystal", "candidateDisplayName": "Crystal", "sourcePath": "Content/Data/Discs/Plastics/DA_Plastic_Crystal.uasset"}
+    ],
+    "course": [
+      {"kind": "course", "stableId": "PineRidgeChampionship", "candidateDisplayName": "Pine Ridge Championship", "sourcePath": "Data/PineRidgeCourse.json"},
+      {"kind": "hole", "stableId": "PineRidgeChampionship.Hole1", "candidateDisplayName": "Pine Ridge Opening", "sourcePath": "Data/PineRidgeHole1.json"},
+      {"kind": "hole", "stableId": "PineRidgeChampionship.Hole2", "candidateDisplayName": "Needle Gate", "sourcePath": "Data/PineRidgeHole2.json"},
+      {"kind": "hole", "stableId": "PineRidgeChampionship.Hole3", "candidateDisplayName": "Gallery Lake", "sourcePath": "Data/PineRidgeHole3.json"}
+    ]
+  },
+  "audioCoverageContract": {
+    "requiredSemanticCategories": [
+      "ThrowRelease",
+      "AirborneFlight",
+      "GroundContact",
+      "GroundState",
+      "BasketOutcome",
+      "Penalty",
+      "HoleStart",
+      "HoleCompletion",
+      "HoleTransition",
+      "RoundCompletion",
+      "Replay",
+      "Flyover"
+    ],
+    "acceptedMediaExtensions": [".wav", ".wave", ".ogg", ".flac", ".aif", ".aiff"],
+    "acceptedAuthoredAudioManifestPath": null,
+    "acceptedMixReviewPath": null,
+    "silentFallbackIsProductionCoverage": false
+  },
+  "finalCaptureContract": {
+    "acceptedCaptureManifestPath": null,
+    "mustBeFromBoundShippingCandidate": true,
+    "requiredViews": [
+      "front_end_title",
+      "settings_accessibility",
+      "hole1_intro_route_tee",
+      "hole1_flight_lie_score",
+      "hole2_intro_route_tee",
+      "hole2_flight_lie_score",
+      "hole3_intro_route_tee",
+      "hole3_flight_lie_score",
+      "scorecard",
+      "round_complete",
+      "character_setup",
+      "character_drive_release_followthrough",
+      "character_approach",
+      "character_putt",
+      "environment_fairway_close",
+      "environment_forest_route_gap",
+      "environment_gallery_lake",
+      "all_logo_signage_sponsor_and_brand_surfaces"
+    ],
+    "requiredResolutions": ["1280x720", "1920x1080"],
+    "savedOrDevelopmentCapturesAreFinalEvidence": false
+  },
+  "reviewGates": [
+    {
+      "gateId": "PUBLIC_TITLE_CLEARANCE",
+      "blockerIds": ["FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED"],
+      "state": "PENDING",
+      "objectiveBoundary": "WORKING_TITLE_SURFACES_INVENTORIED_FINAL_PUBLIC_TITLE_IS_NULL",
+      "requiredHumanRoles": ["PRODUCT_OWNER", "QUALIFIED_LEGAL_REVIEWER"],
+      "requiredDecisions": ["LOCK_EXACT_PUBLIC_TITLE", "CLEAR_TITLE_FOR_TARGET_MARKETS_OR_REPLACE", "APPROVE_FINAL_PACKAGE_TITLE_SURFACE_INVENTORY"],
+      "requiredArtifacts": ["SANITIZED_TITLE_LOCK_RECORD", "SANITIZED_LEGAL_CLEARANCE_DISPOSITION", "BOUND_SHIPPING_TITLE_SURFACE_INVENTORY"],
+      "closed": false
+    },
+    {
+      "gateId": "PUBLIC_DISPLAY_NAME_CLEARANCE",
+      "blockerIds": ["EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE"],
+      "state": "PENDING",
+      "objectiveBoundary": "TWELVE_SHIPPING_CANDIDATE_DISPLAY_NAMES_INVENTORIED",
+      "requiredHumanRoles": ["PRODUCT_OWNER", "QUALIFIED_LEGAL_REVIEWER"],
+      "requiredDecisions": ["APPROVE_OR_REPLACE_EACH_OF_EIGHT_EQUIPMENT_NAMES", "APPROVE_OR_REPLACE_COURSE_AND_THREE_HOLE_NAMES", "PRESERVE_STABLE_SAVE_IDS_WHEN_RENAMING"],
+      "requiredArtifacts": ["ROW_LEVEL_PUBLIC_NAME_DISPOSITION", "SANITIZED_CLEARANCE_OR_REPLACEMENT_RECORD", "BOUND_SHIPPING_RUNTIME_NAME_SCAN"],
+      "closed": false
+    },
+    {
+      "gateId": "LOGO_AND_TRADE_DRESS_REVIEW",
+      "blockerIds": ["MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED"],
+      "state": "PENDING",
+      "objectiveBoundary": "ACTIVE_GENERIC_BRAND_DECLARATION_HAS_ZERO_AUTHORIZED_LOGOS_STRING_SCANS_CANNOT_PROVE_VISUAL_ORIGINALITY",
+      "requiredHumanRoles": ["PRODUCT_OWNER", "QUALIFIED_LEGAL_REVIEWER"],
+      "requiredDecisions": ["REVIEW_EVERY_LOGO_SIGNAGE_SPONSOR_STAMP_SCOREBUG_FONT_COLOR_AND_LAYOUT_SURFACE", "REJECT_UNLICENSED_LOGOS_LIKENESSES_COPIED_ARTWORK_OR_CONFUSING_TRADE_DRESS", "APPROVE_OR_REPLACE_EACH_EXCEPTION"],
+      "requiredArtifacts": ["BOUND_FINAL_CAPTURE_MANIFEST", "SURFACE_BY_SURFACE_VISUAL_REVIEW_RECORD", "SANITIZED_LEGAL_TRADE_DRESS_DISPOSITION"],
+      "closed": false
+    },
+    {
+      "gateId": "FINAL_VISUAL_PRODUCT_APPROVAL",
+      "blockerIds": ["SESSION15_VERTICAL_SLICE_PRODUCTION_READINESS_PENDING"],
+      "state": "PENDING",
+      "objectiveBoundary": "NO_ACCEPTED_SESSION19_SHIPPING_CAPTURE_MANIFEST_IS_BOUND",
+      "requiredHumanRoles": ["PRODUCT_OWNER", "ART_DIRECTOR_OR_DELEGATE", "ACCESSIBILITY_REVIEWER"],
+      "requiredDecisions": ["APPROVE_ALL_EIGHTEEN_REQUIRED_VIEWS_AT_BOTH_RESOLUTIONS", "APPROVE_ROUTE_RESULT_TRANSITION_SCORE_AND_SAFE_ZONE_READABILITY", "APPROVE_VISUAL_DEFECT_AND_SUBSTITUTION_LOG"],
+      "requiredArtifacts": ["BOUND_FINAL_CAPTURE_MANIFEST", "VISUAL_DEFECT_DISPOSITION", "OWNER_ART_AND_ACCESSIBILITY_SIGNOFFS"],
+      "closed": false
+    },
+    {
+      "gateId": "AUTHORED_AUDIO_LICENSE_COVERAGE_AND_MIX",
+      "blockerIds": ["SESSION12_PRESENTATION_INPUT_AUDIO_PRODUCTION_READINESS_PENDING", "SESSION15_VERTICAL_SLICE_PRODUCTION_READINESS_PENDING"],
+      "state": "PENDING",
+      "objectiveBoundary": "SEMANTIC_ROUTER_EXISTS_BUT_SILENT_FALLBACK_IS_NOT_AUTHORED_AUDIO",
+      "requiredHumanRoles": ["AUDIO_OWNER", "LICENSE_REVIEWER", "PRODUCT_OWNER"],
+      "requiredDecisions": ["APPROVE_LICENSE_PROVENANCE_FOR_EVERY_SHIPPING_AUDIO_ASSET", "APPROVE_COVERAGE_OR_EXPLICIT_INTENTIONAL_SILENCE_FOR_ALL_TWELVE_SEMANTIC_CATEGORIES", "APPROVE_MIX_DYNAMIC_RANGE_LOOP_SEAMS_SPATIALIZATION_AND_ACCESSIBILITY"],
+      "requiredArtifacts": ["AUTHORED_AUDIO_SOURCE_TO_RUNTIME_LICENSE_MANIFEST", "EVENT_COVERAGE_MATRIX", "BOUND_SHIPPING_MIX_REVIEW_RECORD"],
+      "closed": false
+    },
+    {
+      "gateId": "PRODUCTION_CHARACTER_MOTION_AND_VISUAL_APPROVAL",
+      "blockerIds": ["SESSION15_VERTICAL_SLICE_PRODUCTION_READINESS_PENDING"],
+      "state": "PENDING",
+      "objectiveBoundary": "CHARACTER_TECHNICAL_ASSETS_EXIST_BUT_EXCLUDED_PROTOTYPE_OR_SYNTHETIC_MOTION_IS_NOT_PRODUCTION_MOTION",
+      "requiredHumanRoles": ["ANIMATION_OWNER", "ART_DIRECTOR_OR_DELEGATE", "PRODUCT_OWNER"],
+      "requiredDecisions": ["APPROVE_PLAYER_MESH_MATERIALS_HAIR_GARMENT_AND_LIKENESS_BOUNDARY", "APPROVE_DRIVE_APPROACH_PUTT_RELEASE_GRIP_FOOT_PLANT_AND_RECOVERY_MOTION", "APPROVE_CAMERA_LOD_CLOTH_INTERSECTION_AND_DEFORMATION_QUALITY"],
+      "requiredArtifacts": ["PRODUCTION_MOTION_SOURCE_AND_LICENSE_MANIFEST", "BOUND_CHARACTER_MOTION_CAPTURE_SET", "CHARACTER_VISUAL_DEFECT_DISPOSITION_AND_SIGNOFF"],
+      "closed": false
+    },
+    {
+      "gateId": "PRODUCTION_ENVIRONMENT_ACCEPTANCE",
+      "blockerIds": ["SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY", "SESSION15_VERTICAL_SLICE_PRODUCTION_READINESS_PENDING"],
+      "state": "PENDING",
+      "objectiveBoundary": "ENVIRONMENT_IMPLEMENTATION_AND_PROVENANCE_EVIDENCE_EXIST_BUT_FINAL_BOUND_SHIPPING_ACCEPTANCE_IS_ABSENT",
+      "requiredHumanRoles": ["ENVIRONMENT_OWNER", "LEVEL_DESIGN_OWNER", "PRODUCT_OWNER"],
+      "requiredDecisions": ["APPROVE_ALL_THREE_HOLE_ROUTE_GAPS_LANDING_READABILITY_AND_COLLISION_PROXY_ALIGNMENT", "APPROVE_FOLIAGE_GROUND_WATER_WIND_LOD_CULLING_AND_CAMERA_CLEARANCE", "APPROVE_FINAL_RHI_PERFORMANCE_AND_VISUAL_DEFECT_DISPOSITION"],
+      "requiredArtifacts": ["BOUND_THREE_HOLE_ENVIRONMENT_CAPTURE_MANIFEST", "COLLISION_INTERACTION_AND_CAMERA_CLEARANCE_REVIEW", "BOUND_SHIPPING_PERFORMANCE_REPORT", "ENVIRONMENT_OWNER_AND_PRODUCT_OWNER_SIGNOFFS"],
+      "closed": false
+    },
+    {
+      "gateId": "PHYSICS_CALIBRATION_AND_PLAY_FEEL_APPROVAL",
+      "blockerIds": ["SESSION11_EQUIPMENT_PHYSICS_AND_PRODUCTION_READINESS_PENDING", "SESSION15_VERTICAL_SLICE_PRODUCTION_READINESS_PENDING"],
+      "state": "PENDING",
+      "objectiveBoundary": "DETERMINISTIC_REGRESSION_PROVES_STABILITY_NOT_REAL_WORLD_CALIBRATION_OR_DESIRED_FEEL",
+      "requiredHumanRoles": ["PHYSICS_OWNER", "PLAYTEST_OWNER", "PRODUCT_OWNER"],
+      "requiredDecisions": ["APPROVE_PREDECLARED_TOLERANCES_AND_MEASURED_REFERENCE_DATASET", "APPROVE_REPEATED_MOLD_PLASTIC_HANDEDNESS_WIND_GROUND_FIXTURE_AND_PUTTING_RESULTS", "APPROVE_STRUCTURED_BLIND_OR_RECORDED_PLAY_FEEL_RESULTS_AND_OPEN_OUTLIER_DISPOSITION"],
+      "requiredArtifacts": ["MEASURED_REFERENCE_DATASET_AND_PROVENANCE", "REPEATED_TOLERANCED_CALIBRATION_REPORT", "STRUCTURED_PLAYTEST_PROTOCOL_RESULTS_AND_OUTLIER_LOG", "PHYSICS_PLAYTEST_AND_PRODUCT_OWNER_SIGNOFFS"],
+      "closed": false
+    }
+  ],
+  "requiredFiles": [
+    "Config/DG_Session19ManualReleaseReviewPolicy.json",
+    "Scripts/validate_dg_session19_manual_release_review.py",
+    "Docs/DG_SESSION19_MANUAL_RELEASE_REVIEW.md",
+    "Evidence/Session19/ManualReleaseReviewInventory.json",
+    "Evidence/Session19/ManualReleaseDecisionRecord.template.json"
+  ],
+  "validation": {
+    "validatorPath": "Scripts/validate_dg_session19_manual_release_review.py",
+    "normalExpectedExitCode": 0,
+    "humanApprovalRequiredExpectedExitCode": 2,
+    "selfTestMinimumMutationCount": 24,
+    "normalModeMustRemainHumanBlocked": true
+  }
+}

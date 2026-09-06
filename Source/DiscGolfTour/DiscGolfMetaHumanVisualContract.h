@@ -9,9 +9,13 @@ class UDiscGolfAvatarBackendProfile;
 class USkeletalMeshComponent;
 
 /**
- * Project-owned, dependency-free contract for an assembled MetaHuman actor.
- * A future assembled actor Blueprint must implement both operations and return
- * success only after its tagged body/head and DG-source retarget are usable.
+ * Project-owned contract for an assembled MetaHuman presentation actor.
+ * The Blueprint accepts a prevalidated profile/configuration request. A fixed
+ * curated preset may intentionally apply no DG proxy-only appearance fields,
+ * but must say so instead of claiming a mapping. Returning true does not prove
+ * retarget readiness: the native adapter separately locates the tagged body/head,
+ * installs the DG-source retarget instance, and verifies it before the visual can
+ * be promoted to ready.
  */
 UINTERFACE(BlueprintType, Blueprintable)
 class DISCGOLFTOUR_API UDiscGolfMetaHumanVisualContract : public UInterface

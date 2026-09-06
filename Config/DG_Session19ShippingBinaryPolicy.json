@@ -1,0 +1,271 @@
+{
+  "schema": "DiscGolfTour.Session19ShippingBinaryPolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "policyId": "windows_shipping_v05_executable_marker_policy_v1",
+  "target": {
+    "platform": "Win64",
+    "configuration": "Shipping",
+    "format": "PE32+",
+    "machine": "AMD64",
+    "milestone": "v0.5"
+  },
+  "inputContract": {
+    "explicitExecutableArgumentRequiredForValidation": true,
+    "minimumBytes": 4096,
+    "maximumBytes": 2147483648,
+    "requireExecutableImage": true,
+    "rejectDllImage": true
+  },
+  "scanContract": {
+    "caseInsensitive": true,
+    "encodings": [
+      "ascii",
+      "utf-16le"
+    ],
+    "matchMode": "literal-substring"
+  },
+  "requiredMarkers": [
+    {
+      "id": "project_owned_runtime_foundation",
+      "value": "DiscGolfRuntimeFoundation",
+      "requireAnyEncoding": true
+    },
+    {
+      "id": "release_performance_capture_entrypoint",
+      "value": "PerformanceCaptureSeconds=",
+      "requireAnyEncoding": true
+    },
+    {
+      "id": "release_performance_capture_fail_closed_rejection",
+      "value": "RELEASE PERFORMANCE CAPTURE REJECTED:",
+      "requireAnyEncoding": true
+    },
+    {
+      "id": "release_performance_capture_exclusive_namespace",
+      "value": "ReleasePerformanceCapture.guard",
+      "requireAnyEncoding": true
+    },
+    {
+      "id": "release_performance_capture_external_uuid_guard",
+      "value": "release performance capture requires a fresh external UUID UserDir",
+      "requireAnyEncoding": true
+    },
+    {
+      "id": "release_performance_capture_exact_render_guard",
+      "value": "release performance capture requires exact Pine Ridge hole, duration, resolution, offscreen, and D3D12 flags",
+      "requireAnyEncoding": true
+    },
+    {
+      "id": "release_performance_capture_public_snapshot_rejection",
+      "value": "Shipping public performance snapshot rejected.",
+      "requireAnyEncoding": true
+    },
+    {
+      "id": "release_performance_capture_public_reset_rejection",
+      "value": "Shipping public performance telemetry reset rejected.",
+      "requireAnyEncoding": true
+    }
+  ],
+  "allowedPublicGameplayMarkers": [
+    "DGT_Scorecard",
+    "DGT_Replay",
+    "DGT_ReplayPause",
+    "DGT_ReplaySeek",
+    "DGT_ReplayRate",
+    "DGT_NextHole",
+    "DGT_RestartRound",
+    "DGT_PreviewFlyover",
+    "DGT_ToggleDiscFavorite"
+  ],
+  "forbiddenMarkerGroups": [
+    {
+      "id": "legacy_character_framework",
+      "markers": [
+        "DiscGolfCharacterFramework",
+        "/Script/DiscGolfCharacterFramework"
+      ]
+    },
+    {
+      "id": "throw_lab",
+      "markers": [
+        "ThrowLab"
+      ]
+    },
+    {
+      "id": "career_ai_runtime_runner_save",
+      "markers": [
+        "DiscGolfCareerSubsystem",
+        "DiscGolfCareerProgressSaveGame",
+        "DiscGolfCompetitionRuntime",
+        "DiscGolfAIPlannerAdapter",
+        "DiscGolfAIGolferProfile",
+        "DiscGolfAIShotPlannerComponent",
+        "DGAISkillProfile",
+        "DGAIShotContext",
+        "DGAIShotCandidate",
+        "DGCompetitionFormat",
+        "DGTournamentRoundDefinition",
+        "DGScorecardHole",
+        "DGRoundScorecard",
+        "DGSponsorshipProgress",
+        "DGCareerProgress",
+        "DGT_Career_",
+        "Session14AIGolferSmoke"
+      ]
+    },
+    {
+      "id": "developer_editor_modules",
+      "markers": [
+        "DiscGolfTourDeveloper",
+        "/Script/DiscGolfTourDeveloper",
+        "DiscGolfTourEditor",
+        "/Script/DiscGolfTourEditor"
+      ]
+    },
+    {
+      "id": "session_runner_capture_cook_packaged_classes",
+      "markers": [
+        "DiscGolfSession3SmokeRunner",
+        "DiscGolfSession3VisualCaptureRunner",
+        "DiscGolfSession4VisualCaptureRunner",
+        "DiscGolfSession5MocapSmokeRunner",
+        "DiscGolfSession5MocapVisualCaptureRunner",
+        "DiscGolfSession6OutfitSmokeRunner",
+        "DiscGolfSession6OutfitVisualCaptureRunner",
+        "DiscGolfSession7FullCharacterSmokeRunner",
+        "DiscGolfSession7FullCharacterVisualCaptureRunner",
+        "DiscGolfSession8CookClosureRunner",
+        "DiscGolfSession8BMetaHumanPackagedRunner",
+        "DiscGolfSession14AISmokeRunner",
+        "DiscGolfSession15VerticalSliceRunner",
+        "DiscGolfSession15VerticalSliceContract"
+      ]
+    },
+    {
+      "id": "session_validation_commands_and_saves",
+      "markers": [
+        "Session3ThrowSmokeTest",
+        "Session3VisualCapture",
+        "Session4Profile=",
+        "Session4VisualCapture",
+        "Session5MocapPipelineSmokeTest",
+        "Session5MocapVisualCapture",
+        "Session6OutfitThrowSmokeTest",
+        "Session6OutfitVisualCapture",
+        "Session6OutfitValidationNoSave",
+        "Session6OutfitValidationSaveSlot",
+        "Session7FullCharacterThrowSmokeTest",
+        "Session7FullCharacterVisualCapture",
+        "Session7FullCharacterValidationNoSave",
+        "Session7FullCharacterValidationSaveSlot",
+        "Session8CookClosureSmokeTest",
+        "Session8BMetaHumanPackagedAcceptance",
+        "Session14AIGolferSmokeTest",
+        "Session15VerticalSlice",
+        "DiscGolfTour_Automation_Session6Outfit_",
+        "DiscGolfTour_Automation_Session7FullCharacter_"
+      ]
+    },
+    {
+      "id": "developer_console_and_commandline_entrypoints",
+      "markers": [
+        "DGT_RunRegressionSuite",
+        "DGT_RunSelectedRegression",
+        "DGT_RunRulesFixture",
+        "DGT_LoadCourse",
+        "DGT_ToggleCourse",
+        "DGT_LoadHole",
+        "DGT_ToggleTracer",
+        "DGT_CapturePerformance",
+        "DGT_ResetPerformanceTelemetry",
+        "DGT_ToggleDeveloperHud",
+        "DGT_ToggleLevelDesignReview",
+        "DGT_StartNeedleGateTelemetry",
+        "DGT_ResetNeedleGateTelemetry",
+        "DGT_SelectTelemetryRoute",
+        "DGT_TelemetryTradeoffUnderstood",
+        "DGT_TelemetryNextShotClear",
+        "DGT_SaveRouteTelemetry",
+        "DGT_StopRouteTelemetry",
+        "NeedleGateRouteTelemetrySmokeTest",
+        "NeedleGateRouteTelemetry",
+        "FixtureCollisionSmokeTest",
+        "RegressionSuiteSmokeTest",
+        "VisualQA",
+        "LevelDesignReview",
+        "Session12PresentationSmokeTest",
+        "Session16MainMenuSmokeTest",
+        "Session16RulesSmokeTest",
+        "Session16CorePlayabilityGate",
+        "Session16TemporaryStateSmokeTest",
+        "Session17RoundFlowSmokeTest",
+        "Session17RoundFlowGate"
+      ]
+    },
+    {
+      "id": "developer_input_actions",
+      "markers": [
+        "Cycle Physics Preset",
+        "Run Physics Preset",
+        "Run Physics Suite",
+        "IA_CycleRegressionPreset_Runtime",
+        "IA_RunRegressionPreset_Runtime",
+        "IA_RunRegressionSuite_Runtime"
+      ]
+    },
+    {
+      "id": "character_prototype_proxy_assets",
+      "markers": [
+        "AM_DG_RHBH_Prototype",
+        "A_DG_RHBH_Prototype",
+        "SK_DG_Master_Proxy",
+        "SK_DG_Head_Proxy",
+        "M_DG_HeadProxy",
+        "M_DG_HairProxy",
+        "M_DG_OutfitProxy",
+        "DA_DG_Outfit_Proxy_",
+        "Session6ProxyOutfit",
+        "Session7ProxyCustomization",
+        "DG_Session7_ProxyCustomization"
+      ]
+    },
+    {
+      "id": "regression_and_cook_manifest_json",
+      "markers": [
+        "PhysicsRegressionPresets.json",
+        "LatestPhysicsRegression.json",
+        "DG_FlightRegressionSchema.json",
+        "DG_RuntimeCookManifest.json",
+        "DA_DG_RuntimeCookManifest"
+      ]
+    },
+    {
+      "id": "never_cook_and_quarantined_paths",
+      "markers": [
+        "/Animation/Mocap/",
+        "/Animation/Throws/",
+        "/Characters/Customization/",
+        "/Characters/MetaHuman/Source/",
+        "/DiscGolf/Cook/",
+        "/DiscGolf/Tests/",
+        "/Materials/CharacterCustomization/",
+        "/Materials/Outfits/",
+        "/Outfits/",
+        "/PN_interactiveSpruceForest/",
+        "/Stump_Scanned/",
+        "/WaterMaterials/",
+        "/Plugins/DiscGolfCharacterFramework/"
+      ]
+    }
+  ],
+  "evidenceContract": {
+    "writeOnlyWithExplicitOutputArgument": true,
+    "recordHostPaths": false,
+    "passState": "PASS_BINARY_MARKER_POLICY_ONLY",
+    "failState": "FAIL_BINARY_MARKER_POLICY",
+    "releaseReady": false,
+    "resolvedBlockers": [],
+    "disclaimer": "This result evaluates one executable against a bounded marker policy. It does not prove cook, package, archive, provenance, playability, legal clearance, blocker closure, or release readiness."
+  }
+}

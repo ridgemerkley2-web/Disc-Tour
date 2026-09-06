@@ -15,6 +15,23 @@ bool FDiscGolfPuttingContextTest::RunTest(const FString& Parameters)
         DiscGolfMath::ShotContextForLie(ELieType::Circle2), EDiscShotContext::Circle2Putt);
     TestEqual(TEXT("Fairway preserves the drive model"),
         DiscGolfMath::ShotContextForLie(ELieType::Fairway), EDiscShotContext::Drive);
+    TestTrue(TEXT("Ordinary drivers retain the configured global flight timeout"),
+        FMath::IsNearlyEqual(DiscGolfMath::EffectiveFlightTimeoutSeconds(
+            EDiscShotContext::Drive, 12, 30.0f), 30.0f));
+    TestTrue(TEXT("Putting camera lockout is bounded"),
+        FMath::IsNearlyEqual(DiscGolfMath::EffectiveFlightTimeoutSeconds(
+            EDiscShotContext::Circle2Putt, 2, 30.0f), 8.0f));
+    TestTrue(TEXT("A low-speed disc used as a driver cannot reach the global watchdog"),
+        FMath::IsNearlyEqual(DiscGolfMath::EffectiveFlightTimeoutSeconds(
+            EDiscShotContext::Drive, 2, 30.0f), 12.0f));
+    TestTrue(TEXT("A normal downhill flight remains inside the safety envelope"),
+        DiscGolfMath::IsFlightStateWithinSafetyEnvelope(
+            FVector(10000.0f, 0.0f, -350.0f), FVector(12.0f, 0.0f, -1.0f),
+            FVector(0.0f, 0.0f, 100.0f)));
+    TestFalse(TEXT("The Candidate 9 subterranean endpoint exits the safety envelope"),
+        DiscGolfMath::IsFlightStateWithinSafetyEnvelope(
+            FVector(37531.730077, -741.393292, -9611.595602), FVector::ZeroVector,
+            FVector(0.0f, 0.0f, 100.0f)));
     return true;
 }
 
@@ -29,6 +46,18 @@ bool FDiscGolfPuttingPowerTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("Longer putts receive more recommended pace"), FourteenMeterPower > SevenMeterPower);
     TestTrue(TEXT("Power/range preview round-trips at seven meters"),
         FMath::IsNearlyEqual(DiscGolfMath::EstimatedPuttRangeMeters(SevenMeterPower), 7.0f, 0.01f));
+    TestTrue(TEXT("Circle 1 tap-ins use the proven low-band-safe launch angle"),
+        FMath::IsNearlyEqual(DiscGolfMath::RecommendedPuttLaunchAngleDeg(
+            EDiscShotContext::Circle1Putt, 1.5f), 10.0f));
+    TestTrue(TEXT("Circle 1 restores its full launch angle at seven meters"),
+        FMath::IsNearlyEqual(DiscGolfMath::RecommendedPuttLaunchAngleDeg(
+            EDiscShotContext::Circle1Putt, 7.0f), 14.0f));
+    TestTrue(TEXT("Circle 1 launch angle scales continuously through the green"),
+        FMath::IsNearlyEqual(DiscGolfMath::RecommendedPuttLaunchAngleDeg(
+            EDiscShotContext::Circle1Putt, 4.5f), 12.0f));
+    TestTrue(TEXT("Circle 2 retains its calibrated launch angle"),
+        FMath::IsNearlyEqual(DiscGolfMath::RecommendedPuttLaunchAngleDeg(
+            EDiscShotContext::Circle2Putt, 14.0f), 12.0f));
 
     FThrowCommand Command;
     Command.ShotContext = EDiscShotContext::Circle1Putt;

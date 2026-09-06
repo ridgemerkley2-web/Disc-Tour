@@ -1,0 +1,97 @@
+{
+  "schema": "DiscGolfTour.Session19BakedPcgCandidateVerification.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "candidateId": "S19_WindowsShipping_ThrowPhysicsAudit_20260826T002500Z",
+  "verifiedUtc": "2026-08-26T00:39:58.836201Z",
+  "state": "PASS_CANDIDATE_BOUND_AUTHORED_DATA_RUNTIME_AND_BAKED_OUTPUT_ACCEPTANCE_PENDING",
+  "policy": "Config/DG_Session19BakedPcgPolicy.json",
+  "archive": {
+    "hostPathRecorded": false,
+    "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_ThrowPhysicsAudit_20260826T002500Z/Windows",
+    "fileCount": 31,
+    "bytes": 1245919975,
+    "canonicalManifestSha256": "72DBAD8DCD8ED63B1F24C6B46B3DA42A56420AB031652B57BB9412AB7C46E736",
+    "liveHashRevalidationPass": true
+  },
+  "shippingExecutable": {
+    "path": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+    "bytes": 162526208,
+    "sha256": "31DCDA7BF5B6F4B0CFFAA829129DF16E5081D495AA1566C381FA944FB157455D",
+    "literalGenerateStringAbsenceClaimed": false
+  },
+  "sourceClosure": {
+    "requiredForFutureCandidates": true,
+    "retrofitAllowed": false,
+    "preBuildReceiptProvided": true,
+    "preBuildReceipt": {
+      "path": "Evidence/Session19/BakedPcgSourceClosurePreBuild-S19_WindowsShipping_ThrowPhysicsAudit_20260826T002500Z.json",
+      "bytes": 46443,
+      "sha256": "31359AAA0D0E00374A5994E51D8AE2610B827B8FD491EE617EF19DD274951DED",
+      "preBuildSha256": "6094A7BA4CBCCB076F11B12D45FAD115441BBA7D3E5871CE7A64B6F3638B003F"
+    },
+    "postBuildSha256": "6094A7BA4CBCCB076F11B12D45FAD115441BBA7D3E5871CE7A64B6F3638B003F",
+    "prePostMatch": true
+  },
+  "authoredRuntimeData": {
+    "stagingClass": "NONUFS",
+    "archiveDataRoot": "DiscGolfTour/Data",
+    "manifest": {
+      "path": "Manifest_NonUFSFiles_Win64.txt",
+      "bytes": 1809,
+      "sha256": "F934DC90B3FC902D15A39F2D9300A9F1D0E6912E0D469EC4169A3BED52D4CA3F"
+    },
+    "files": [
+      {
+        "sourcePath": "Data/PineRidgeHole1.json",
+        "archivePath": "DiscGolfTour/Data/PineRidgeHole1.json",
+        "bytes": 7740,
+        "sha256": "CD1991551FD3F13465A5C6737871A2D4B91A31E078CAD1C97F458A7A5081F317",
+        "sourceAuthorityMatch": true,
+        "nonUfsManifestOccurrenceCount": 1,
+        "ufsManifestOccurrenceCount": 0
+      },
+      {
+        "sourcePath": "Data/PineRidgeHole2.json",
+        "archivePath": "DiscGolfTour/Data/PineRidgeHole2.json",
+        "bytes": 8586,
+        "sha256": "AB55ACE68264C270DE932DC0E0DEA644B844AEBB29F6CC0E994614789CA96F2E",
+        "sourceAuthorityMatch": true,
+        "nonUfsManifestOccurrenceCount": 1,
+        "ufsManifestOccurrenceCount": 0
+      },
+      {
+        "sourcePath": "Data/PineRidgeHole3.json",
+        "archivePath": "DiscGolfTour/Data/PineRidgeHole3.json",
+        "bytes": 8509,
+        "sha256": "A1FC744234E94FBE383F5AED21DCEF9D84A4213CF9E8625B57CA4C3339EC46A2",
+        "sourceAuthorityMatch": true,
+        "nonUfsManifestOccurrenceCount": 1,
+        "ufsManifestOccurrenceCount": 0
+      }
+    ],
+    "allThreeExactSourceAuthorityMatches": true,
+    "allThreeNonUfsManifestBindingsExact": true,
+    "allThreeUfsManifestOccurrencesAbsent": true,
+    "ioStoreMembershipClaimed": false
+  },
+  "technicalBoundary": {
+    "candidateBoundAuthoredDataPass": true,
+    "runtimeAuthoredSelectionProven": false,
+    "cookedRuntimePcgConsumerAbsenceProven": false,
+    "reachableRuntimeGenerationCallsiteAbsenceProven": false,
+    "literalBinaryStringAbsenceAcceptedAsProof": false,
+    "deterministicBakeSaveReopenProven": false,
+    "threeHoleCollisionVisualPerformanceAccepted": false
+  },
+  "shippingPackageEvidenceAccepted": false,
+  "blockerClosed": false,
+  "releaseReady": false,
+  "remainingEvidence": [
+    "SHIPPING_LOG_PROVES_AUTHORED_JSON_FOR_HOLES_1_2_3_WITH_NO_SOURCE_FALLBACK",
+    "COOKED_ASSET_REGISTRY_HAS_NO_RUNTIME_PCG_GENERATION_CONSUMER",
+    "DETERMINISTIC_BAKE_SAVE_REOPEN_IDENTITY",
+    "THREE_HOLE_COLLISION_VISUAL_AND_PERFORMANCE_ACCEPTANCE"
+  ],
+  "receiptPath": "Evidence/Session19/BakedPcgCandidateVerification-S19_WindowsShipping_ThrowPhysicsAudit_20260826T002500Z.json"
+}

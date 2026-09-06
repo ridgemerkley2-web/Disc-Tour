@@ -224,6 +224,62 @@ FVector DiscGolfCourseRules::ReliefPointInsideBoundary(
     return InsideBoundaryCm + Inward * FMath::Max(ReliefDistanceCm, 0.0f);
 }
 
+bool DiscGolfCourseRules::IsSupportedSettledSurfaceProbe(
+    bool bSurfaceTraceHit,
+    const FVector& RawLocationCm,
+    const FVector& GroundLocationCm,
+    float MaximumVerticalSeparationCm)
+{
+    const bool bFinite = FMath::IsFinite(RawLocationCm.X)
+        && FMath::IsFinite(RawLocationCm.Y)
+        && FMath::IsFinite(RawLocationCm.Z)
+        && FMath::IsFinite(GroundLocationCm.X)
+        && FMath::IsFinite(GroundLocationCm.Y)
+        && FMath::IsFinite(GroundLocationCm.Z);
+    return bSurfaceTraceHit && bFinite
+        && FMath::Abs(RawLocationCm.Z - GroundLocationCm.Z)
+            <= FMath::Max(MaximumVerticalSeparationCm, 0.0f);
+}
+
+bool DiscGolfCourseRules::TryProjectRestoredLieToSupportedGround(
+    const FDiscGolfLieState& SavedLieState,
+    bool bSurfaceTraceHit,
+    const FVector& GroundLocationCm,
+    FDiscGolfLieState& OutLieState,
+    float MaximumVerticalSeparationCm)
+{
+    if (!IsSupportedSettledSurfaceProbe(
+            bSurfaceTraceHit,
+            SavedLieState.LieLocationCm,
+            GroundLocationCm,
+            MaximumVerticalSeparationCm))
+    {
+        return false;
+    }
+
+    FDiscGolfLieState Candidate = SavedLieState;
+    // The production probe is vertical. Preserve the playable XY authority as
+    // well as every raw-impact/penalty field, and replace only stale clearance.
+    Candidate.LieLocationCm.Z = GroundLocationCm.Z;
+    OutLieState = MoveTemp(Candidate);
+    return true;
+}
+
+bool DiscGolfCourseRules::IsInBoundsSurfaceProbe(
+    bool bSurfaceTraceHit,
+    ECourseSurfaceType Surface,
+    const FVector& RawLocationCm,
+    const FVector& GroundLocationCm)
+{
+    const bool bFinite = FMath::IsFinite(RawLocationCm.X)
+        && FMath::IsFinite(RawLocationCm.Y)
+        && FMath::IsFinite(RawLocationCm.Z)
+        && FMath::IsFinite(GroundLocationCm.X)
+        && FMath::IsFinite(GroundLocationCm.Y)
+        && FMath::IsFinite(GroundLocationCm.Z);
+    return bSurfaceTraceHit && bFinite && !IsPenaltySurface(Surface);
+}
+
 bool DiscGolfCourseRules::IsPenaltySurface(ECourseSurfaceType Surface)
 {
     return Surface == ECourseSurfaceType::OutOfBounds || Surface == ECourseSurfaceType::Hazard;

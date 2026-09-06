@@ -2,7 +2,7 @@
   "FileVersion": 3,
   "EngineAssociation": "5.8",
   "Category": "Games",
-  "Description": "Realistic disc golf simulation and tour game prototype.",
+  "Description": "Three-hole disc golf simulation with broadcast-style tour presentation.",
   "Modules": [
     {
       "Name": "DiscGolfTour",
@@ -10,9 +10,22 @@
       "LoadingPhase": "Default"
     },
     {
+      "Name": "DiscGolfRuntimeFoundation",
+      "Type": "Runtime",
+      "LoadingPhase": "PreDefault"
+    },
+    {
       "Name": "DiscGolfTourEditor",
       "Type": "Editor",
       "LoadingPhase": "Default"
+    },
+    {
+      "Name": "DiscGolfTourDeveloper",
+      "Type": "DeveloperTool",
+      "LoadingPhase": "PostEngineInit",
+      "TargetConfigurationDenyList": [
+        "Shipping"
+      ]
     }
   ],
   "Plugins": [
@@ -26,7 +39,10 @@
     },
     {
       "Name": "PCG",
-      "Enabled": true
+      "Enabled": true,
+      "TargetAllowList": [
+        "Editor"
+      ]
     },
     {
       "Name": "PythonScriptPlugin",
@@ -37,10 +53,27 @@
     },
     {
       "Name": "EditorScriptingUtilities",
+      "Enabled": true
+    },
+    {
+      "Name": "MetaHumanCharacter",
+      "Enabled": true
+    },
+    {
+      "Name": "MetaHumanBodyTracker",
       "Enabled": true,
       "TargetAllowList": [
         "Editor"
+      ],
+      "SupportedTargetPlatforms": [
+        "Win64",
+        "Mac",
+        "Linux"
       ]
+    },
+    {
+      "Name": "HairStrands",
+      "Enabled": true
     },
     {
       "Name": "ControlRig",
@@ -62,7 +95,74 @@
       ]
     },
     {
-      "Name": "DiscGolfCharacterFramework",
+      "Name": "ChaosVD",
+      "Enabled": true,
+      "TargetConfigurationDenyList": [
+        "Shipping"
+      ]
+    },
+    {
+      "Name": "ConcertMain",
+      "Enabled": true,
+      "TargetConfigurationDenyList": [
+        "Shipping"
+      ]
+    },
+    {
+      "Name": "ConcertSyncClient",
+      "Enabled": true,
+      "TargetConfigurationDenyList": [
+        "Shipping"
+      ]
+    },
+    {
+      "Name": "ConcertSyncCore",
+      "Enabled": true,
+      "TargetConfigurationDenyList": [
+        "Shipping"
+      ]
+    },
+    {
+      "Name": "ConcertSharedSlate",
+      "Enabled": true,
+      "TargetConfigurationDenyList": [
+        "Shipping"
+      ]
+    },
+    {
+      "Name": "AssetManagerEditor",
+      "Enabled": true,
+      "TargetConfigurationDenyList": [
+        "Shipping"
+      ]
+    },
+    {
+      "Name": "BlueprintMaterialTextureNodes",
+      "Enabled": true
+    },
+    {
+      "Name": "ConsoleVariables",
+      "Enabled": true,
+      "TargetConfigurationDenyList": [
+        "Shipping"
+      ]
+    },
+    {
+      "Name": "FacialAnimation",
+      "Enabled": true,
+      "TargetConfigurationDenyList": [
+        "Shipping"
+      ]
+    },
+    {
+      "Name": "SpeedTreeImporter",
+      "Enabled": true,
+      "TargetConfigurationDenyList": [
+        "Shipping"
+      ]
+    },
+    {
+      "Name": "Landmass",
       "Enabled": true
     }
   ]

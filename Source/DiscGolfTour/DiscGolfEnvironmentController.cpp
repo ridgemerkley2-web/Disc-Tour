@@ -1,5 +1,6 @@
 #include "DiscGolfEnvironmentController.h"
 
+#include "DiscGolfTour.h"
 #include "DiscGolfEnvironmentDataAssets.h"
 #include "DiscGolfEnvironmentZoneActor.h"
 #include "WindDirector.h"
@@ -7,8 +8,6 @@
 #include "EngineUtils.h"
 #include "Kismet/KismetMaterialLibrary.h"
 #include "Materials/MaterialParameterCollection.h"
-#include "PCGComponent.h"
-#include "PCGGraph.h"
 
 namespace
 {
@@ -55,11 +54,6 @@ ADiscGolfEnvironmentController::ADiscGolfEnvironmentController()
     GenerationBounds->SetCanEverAffectNavigation(false);
     GenerationBounds->SetHiddenInGame(true);
 
-    PCGComponent = CreateDefaultSubobject<UPCGComponent>(TEXT("ForestPCG"));
-    PCGComponent->GenerationTrigger = EPCGComponentGenerationTrigger::GenerateOnDemand;
-    PCGComponent->bGenerateOnDropWhenTriggerOnDemand = false;
-    PCGComponent->bIsComponentPartitioned = true;
-
     Tags.AddUnique(TEXT("Environment.Controller"));
 }
 
@@ -67,13 +61,11 @@ void ADiscGolfEnvironmentController::OnConstruction(const FTransform& Transform)
 {
     Super::OnConstruction(Transform);
     GenerationBounds->SetBoxExtent(CourseExtentCm.GetAbs());
-    ApplyPreset();
 }
 
 void ADiscGolfEnvironmentController::BeginPlay()
 {
     Super::BeginPlay();
-    ApplyPreset();
     if (bSynchronizeDiscFlightWind && GetWorld())
     {
         for (TActorIterator<AWindDirector> It(GetWorld()); It; ++It)
@@ -84,41 +76,46 @@ void ADiscGolfEnvironmentController::BeginPlay()
     }
 }
 
-void ADiscGolfEnvironmentController::ApplyPreset()
-{
-    UDiscGolfForestPreset* Preset = ForestPreset.LoadSynchronous();
-    if (!Preset || !PCGComponent) return;
-    PCGComponent->Seed = Preset->Clearance.RandomSeed;
-    if (UPCGGraphInterface* Graph = Preset->ForestGraph.LoadSynchronous())
-    {
-        PCGComponent->SetGraph(Graph);
-    }
-}
-
-void ADiscGolfEnvironmentController::GenerateForest()
-{
-    ApplyPreset();
-    if (PCGComponent && PCGComponent->GetGraph())
-    {
-        PCGComponent->GenerateLocal(EPCGComponentGenerationTrigger::GenerateOnDemand, true,
-            PCGHiGenGrid::UninitializedGridSize());
-    }
-}
-
-void ADiscGolfEnvironmentController::CleanupForest()
-{
-    if (PCGComponent) PCGComponent->CleanupLocal(true);
-}
-
-void ADiscGolfEnvironmentController::SynchronizeWindDirector(AWindDirector* WindDirector) const
+bool ADiscGolfEnvironmentController::SynchronizeWindDirector(AWindDirector* WindDirector) const
 {
     const UDiscGolfForestPreset* Preset = ForestPreset.LoadSynchronous();
-    if (!Preset || !WindDirector) return;
+    if (!Preset || !WindDirector)
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Environment wind synchronization rejected a missing preset or wind director."));
+        return false;
+    }
+
+    const FDiscGolfEnvironmentWindSettings& Settings = Preset->Wind;
+    const bool bDirectionFinite = FMath::IsFinite(Settings.Direction.X)
+        && FMath::IsFinite(Settings.Direction.Y)
+        && FMath::IsFinite(Settings.Direction.Z)
+        && FMath::IsFinite(Settings.Direction.SizeSquared());
+    if (!bDirectionFinite
+        || !FMath::IsFinite(Settings.SpeedMps)
+        || Settings.SpeedMps < 0.0f
+        || (Settings.SpeedMps > 0.0f && Settings.Direction.IsNearlyZero()))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Environment wind synchronization rejected invalid direction/speed data."));
+        return false;
+    }
+
     const FVector Direction = Preset->Wind.Direction.GetSafeNormal(
         UE_SMALL_NUMBER, FVector::ForwardVector);
-    WindDirector->BaseWindMps = Direction * Preset->Wind.SpeedMps;
-    WindDirector->GustAmplitudeMps = Preset->Wind.GustStrengthMps;
-    WindDirector->GustFrequencyHz = Preset->Wind.GustFrequencyHz;
+    FString WindError;
+    if (!WindDirector->TryConfigurePhysicsWind(
+        Direction * Settings.SpeedMps,
+        Settings.GustStrengthMps,
+        Settings.GustFrequencyHz,
+        WindError))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Environment wind synchronization rejected invalid preset data: %s"),
+            *WindError);
+        return false;
+    }
+
     if (UMaterialParameterCollection* WindCollection =
         Preset->Wind.FoliageWindCollection.LoadSynchronous())
     {
@@ -132,6 +129,7 @@ void ADiscGolfEnvironmentController::SynchronizeWindDirector(AWindDirector* Wind
             const_cast<ADiscGolfEnvironmentController*>(this), WindCollection,
             TEXT("GustStrengthMps"), Preset->Wind.GustStrengthMps);
     }
+    return true;
 }
 
 float ADiscGolfEnvironmentController::EvaluateDensity(
@@ -185,9 +183,27 @@ float ADiscGolfEnvironmentController::EvaluateDensityFromZones(
 
 bool ADiscGolfEnvironmentController::HasProductionConfiguration() const
 {
+#if WITH_EDITORONLY_DATA
     const UDiscGolfForestPreset* Preset = ForestPreset.LoadSynchronous();
     const UDiscGolfEnvironmentAssetSet* Assets = Preset
         ? Preset->AssetSet.LoadSynchronous() : nullptr;
-    return Preset && Assets && Assets->GetPopulatedSlotCount() > 0
-        && !Preset->ForestGraph.IsNull();
+    return Preset && Assets && IsProductionConfigurationComplete(
+        Assets->Slots.Num(),
+        Assets->GetPopulatedSlotCount(),
+        !Preset->ForestGraph.IsNull());
+#else
+    // Shipping never contains or evaluates the authoring graph property.
+    return false;
+#endif
+}
+
+bool ADiscGolfEnvironmentController::IsProductionConfigurationComplete(
+    int32 BindingSlotCount,
+    int32 PopulatedSlotCount,
+    bool bHasAuthoringGraph)
+{
+    constexpr int32 RequiredBindingSlotCount = 16;
+    return BindingSlotCount == RequiredBindingSlotCount
+        && PopulatedSlotCount == RequiredBindingSlotCount
+        && bHasAuthoringGraph;
 }

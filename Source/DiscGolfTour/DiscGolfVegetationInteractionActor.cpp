@@ -30,5 +30,8 @@ bool ADiscGolfVegetationInteractionActor::HasValidInteractionContract() const
         && InteractionVolume->GetCollisionResponseToChannel(ECC_WorldDynamic) == ECR_Overlap
         && InteractionVolume->GetGenerateOverlapEvents()
         && Profile.VelocityMultiplier > 0.0f && Profile.VelocityMultiplier <= 1.0f
-        && Profile.SpinMultiplier > 0.0f && Profile.SpinMultiplier <= 1.0f;
+        && Profile.SpinMultiplier > 0.0f && Profile.SpinMultiplier <= 1.0f
+        && FMath::IsFinite(Profile.ReentryCooldownSeconds)
+        && Profile.ReentryCooldownSeconds >= 0.0f
+        && Profile.ReentryCooldownSeconds <= 2.0f;
 }

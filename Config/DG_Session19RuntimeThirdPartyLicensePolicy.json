@@ -1,0 +1,197 @@
+{
+  "schema": "DiscGolfTour.Session19RuntimeThirdPartyLicensePolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "policyId": "ue58_windows_shipping_runtime_dll_notice_inventory_v1",
+  "engineAssociation": "5.8",
+  "state": "TECHNICAL_AUTHORITY_IMPLEMENTED_LEGAL_APPROVAL_PENDING",
+  "legalApproval": false,
+  "distributionClearance": false,
+  "archiveDllPolicy": {
+    "extension": ".dll",
+    "caseInsensitive": true,
+    "requireEveryStagedDllMapped": true,
+    "allowMappedIdentityToMatchMultipleComponents": false
+  },
+  "noticeTemplate": {
+    "stagedFilename": "NOTICES.txt",
+    "deterministicNewline": "LF",
+    "manifestTimestampUtc": "2000-01-01T00:00:00.000Z",
+    "headerLines": [
+      "DISC GOLF TOUR - THIRD-PARTY RUNTIME NOTICE INVENTORY",
+      "",
+      "This deterministic file inventories the license authorities mapped to the Windows runtime DLLs staged by the UE 5.8 build.",
+      "It preserves locally installed authority text and references; it is not legal advice, legal approval, or distribution clearance.",
+      "Legal approval and distribution clearance remain explicitly pending."
+    ],
+    "baselineNoticeFiles": [
+      "Engine/Source/ThirdParty/Licenses/NOTICES.txt"
+    ]
+  },
+  "components": [
+    {
+      "componentId": "d3d12_redistributable",
+      "displayName": "Microsoft D3D12 Redistributable",
+      "stagedRuntimeDlls": [
+        "DiscGolfTour/Binaries/Win64/D3D12/x64/D3D12Core.dll",
+        "DiscGolfTour/Binaries/Win64/D3D12/x64/d3d12SDKLayers.dll"
+      ],
+      "classificationAuthorityId": "MICROSOFT_D3D12_REDISTRIBUTABLE",
+      "classificationLicenseId": "MICROSOFT_D3D12_REDISTRIBUTABLE_TERMS",
+      "licenseEvidenceStatus": "LOCAL_TPS_REFERENCE_ONLY",
+      "licenseReferenceUrl": "https://support.microsoft.com/en-us/office/microsoft-software-license-terms-5476247d-05e5-4ac7-b77c-1b8cd229e91a",
+      "authorityFiles": [
+        "Engine/Binaries/ThirdParty/Windows/DirectX/D3D12-Redistributable.tps"
+      ],
+      "noticeTextFiles": [
+        "Engine/Binaries/ThirdParty/Windows/DirectX/D3D12-Redistributable.tps"
+      ]
+    },
+    {
+      "componentId": "directml",
+      "displayName": "Microsoft DirectML 1.15.4",
+      "stagedRuntimeDlls": [
+        "DiscGolfTour/Binaries/Win64/DML/x64/DirectML.dll"
+      ],
+      "classificationAuthorityId": "MICROSOFT_DIRECTML",
+      "classificationLicenseId": "MIT",
+      "licenseEvidenceStatus": "LOCAL_LICENSE_TEXT_PRESENT",
+      "licenseReferenceUrl": "https://www.nuget.org/packages/Microsoft.AI.DirectML/1.15.4/License",
+      "authorityFiles": [
+        "Engine/Plugins/NNE/NNERuntimeORT/Source/ThirdParty/Onnxruntime/DirectML_v1.15.4.tps",
+        "Engine/Source/ThirdParty/Licenses/DirectML_v1.15.4.license"
+      ],
+      "noticeTextFiles": [
+        "Engine/Source/ThirdParty/Licenses/DirectML_v1.15.4.license"
+      ]
+    },
+    {
+      "componentId": "onetbb",
+      "displayName": "Intel oneTBB",
+      "stagedRuntimeDlls": [
+        "DiscGolfTour/Binaries/Win64/tbb12.dll",
+        "DiscGolfTour/Binaries/Win64/tbbmalloc.dll"
+      ],
+      "classificationAuthorityId": "INTEL_ONETBB",
+      "classificationLicenseId": "Apache-2.0",
+      "licenseEvidenceStatus": "LOCAL_LICENSE_TEXT_PRESENT",
+      "licenseReferenceUrl": "https://github.com/uxlfoundation/oneTBB/blob/v2022.3.0/LICENSE.txt",
+      "authorityFiles": [
+        "Engine/Source/ThirdParty/Intel/TBB/oneTBB.tps",
+        "Engine/Source/ThirdParty/Licenses/oneTBB_LICENSE.txt"
+      ],
+      "noticeTextFiles": [
+        "Engine/Source/ThirdParty/Licenses/oneTBB_LICENSE.txt"
+      ]
+    },
+    {
+      "componentId": "dbghelp",
+      "displayName": "Microsoft Windows SDK DbgHelp",
+      "stagedRuntimeDlls": [
+        "Engine/Binaries/ThirdParty/DbgHelp/dbghelp.dll"
+      ],
+      "classificationAuthorityId": "MICROSOFT_WINDOWS_SDK",
+      "classificationLicenseId": "MICROSOFT_WINDOWS_SDK_TERMS",
+      "licenseEvidenceStatus": "LOCAL_TPS_REFERENCE_ONLY",
+      "licenseReferenceUrl": "https://learn.microsoft.com/en-us/legal/windows-sdk/license-terms-ewdk",
+      "authorityFiles": [
+        "Engine/Binaries/ThirdParty/DbgHelp/dbghelp.tps"
+      ],
+      "noticeTextFiles": [
+        "Engine/Binaries/ThirdParty/DbgHelp/dbghelp.tps"
+      ]
+    },
+    {
+      "componentId": "msquic",
+      "displayName": "Microsoft MsQuic 2.1.8",
+      "stagedRuntimeDlls": [
+        "Engine/Binaries/ThirdParty/MsQuic/v220/win64/msquic.dll"
+      ],
+      "classificationAuthorityId": "MICROSOFT_MSQUIC",
+      "classificationLicenseId": "MIT",
+      "licenseEvidenceStatus": "LOCAL_LICENSE_TEXT_PRESENT",
+      "licenseReferenceUrl": "https://github.com/microsoft/msquic/blob/v2.1.8/LICENSE",
+      "authorityFiles": [
+        "Engine/Source/ThirdParty/MsQuic/MsQuic.tps",
+        "Engine/Source/ThirdParty/Licenses/MsQuic_License.txt"
+      ],
+      "noticeTextFiles": [
+        "Engine/Source/ThirdParty/Licenses/MsQuic_License.txt"
+      ]
+    },
+    {
+      "componentId": "nvidia_aftermath",
+      "displayName": "NVIDIA Aftermath SDK 2025.5.0.251114",
+      "stagedRuntimeDlls": [
+        "Engine/Binaries/ThirdParty/NVIDIA/NVaftermath/Win64/GFSDK_Aftermath_Lib.x64.dll"
+      ],
+      "classificationAuthorityId": "NVIDIA_AFTERMATH_SDK",
+      "classificationLicenseId": "NVIDIA_AFTERMATH_SDK_TERMS",
+      "licenseEvidenceStatus": "LOCAL_LICENSE_TEXT_PRESENT_LEGAL_REVIEW_REQUIRED",
+      "licenseReferenceUrl": "https://developer.nvidia.com/nsight-aftermath",
+      "authorityFiles": [
+        "Engine/Binaries/ThirdParty/NVIDIA/NVaftermath/Aftermath.tps",
+        "Engine/Source/ThirdParty/NVIDIA/NVaftermath/NVIDIA Aftermath SDK_v2025.5.0.251114 (e2e87085-29ce-4eef-9a5c-7496689bcf5b).tps",
+        "Engine/Source/ThirdParty/Licenses/NVIDIA Aftermath SDK_v2025.5.0.251114 (a5c10ac5-23d6-4a87-9630-a522f9e02023).license"
+      ],
+      "noticeTextFiles": [
+        "Engine/Source/ThirdParty/Licenses/NVIDIA Aftermath SDK_v2025.5.0.251114 (a5c10ac5-23d6-4a87-9630-a522f9e02023).license"
+      ]
+    },
+    {
+      "componentId": "ogg_vorbis",
+      "displayName": "Ogg Vorbis Audio Compression",
+      "stagedRuntimeDlls": [
+        "Engine/Binaries/ThirdParty/Ogg/Win64/VS2015/libogg_64.dll",
+        "Engine/Binaries/ThirdParty/Vorbis/Win64/VS2015/libvorbis_64.dll",
+        "Engine/Binaries/ThirdParty/Vorbis/Win64/VS2015/libvorbisfile_64.dll"
+      ],
+      "classificationAuthorityId": "XIPH_OGG_VORBIS",
+      "classificationLicenseId": "BSD-3-Clause",
+      "licenseEvidenceStatus": "LOCAL_LICENSE_TEXT_PRESENT",
+      "licenseReferenceUrl": "https://www.xiph.org/licenses/bsd/",
+      "authorityFiles": [
+        "Engine/Binaries/ThirdParty/Ogg/OggVorbis.tps",
+        "Engine/Binaries/ThirdParty/Vorbis/OggVorbis.tps",
+        "Engine/Source/ThirdParty/Ogg/OggVorbis.tps",
+        "Engine/Source/ThirdParty/Licenses/OggVorbis1.2.0_License.txt"
+      ],
+      "noticeTextFiles": [
+        "Engine/Source/ThirdParty/Licenses/OggVorbis1.2.0_License.txt"
+      ]
+    },
+    {
+      "componentId": "xaudio2_redist",
+      "displayName": "Microsoft XAudio2 9 Redistributable 1.0.0.1",
+      "stagedRuntimeDlls": [
+        "Engine/Binaries/ThirdParty/Windows/XAudio2_9/x64/xaudio2_9redist.dll"
+      ],
+      "classificationAuthorityId": "MICROSOFT_XAUDIO2_REDIST",
+      "classificationLicenseId": "MICROSOFT_XAUDIO2_REDIST_TERMS",
+      "licenseEvidenceStatus": "REFERENCE_ONLY_LOCAL_LICENSE_TEXT_ABSENT",
+      "licenseReferenceUrl": "https://www.nuget.org/packages/Microsoft.XAudio2.Redist/",
+      "authorityFiles": [
+        "Engine/Source/ThirdParty/Windows/XAudio2_9/XAudio2_9.Build.cs"
+      ],
+      "noticeTextFiles": []
+    },
+    {
+      "componentId": "onnxruntime",
+      "displayName": "Microsoft ONNX Runtime 1.24.1",
+      "stagedRuntimeDlls": [
+        "Engine/Plugins/NNE/NNERuntimeORT/Binaries/ThirdParty/Onnxruntime/Win64/onnxruntime.dll"
+      ],
+      "classificationAuthorityId": "MICROSOFT_ONNXRUNTIME",
+      "classificationLicenseId": "MIT",
+      "licenseEvidenceStatus": "LOCAL_LICENSE_TEXT_PRESENT",
+      "licenseReferenceUrl": "https://www.nuget.org/packages/Microsoft.ML.OnnxRuntime.DirectML/1.24.1/License",
+      "authorityFiles": [
+        "Engine/Plugins/NNE/NNERuntimeORT/Source/ThirdParty/Onnxruntime/Onnxruntime_v1.24.1.tps",
+        "Engine/Source/ThirdParty/Licenses/Onnxruntime_v1.24.1.license"
+      ],
+      "noticeTextFiles": [
+        "Engine/Source/ThirdParty/Licenses/Onnxruntime_v1.24.1.license"
+      ]
+    }
+  ]
+}

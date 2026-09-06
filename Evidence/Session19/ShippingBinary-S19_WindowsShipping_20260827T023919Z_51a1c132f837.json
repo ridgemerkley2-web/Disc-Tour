@@ -1,0 +1,79 @@
+{
+  "checkedUtc": "2026-08-27T02:51:07.901184Z",
+  "disclaimer": "This result evaluates one executable against a bounded marker policy. It does not prove cook, package, archive, provenance, playability, legal clearance, blocker closure, or release readiness.",
+  "errors": [],
+  "input": {
+    "bytes": 162632192,
+    "fileName": "DiscGolfTour-Win64-Shipping.exe",
+    "hostPathRecorded": false,
+    "pe": {
+      "dllImage": false,
+      "executableImage": true,
+      "format": "PE32+",
+      "machine": "AMD64",
+      "sectionCount": 9
+    },
+    "sha256": "9a7ab59b8b055335d249f4c7537ef047f6aadb687dee20bd6d427c33cecadef9"
+  },
+  "passed": true,
+  "policyId": "windows_shipping_v05_executable_marker_policy_v1",
+  "policySha256": "8ae17ed2bb100c99828aed8a2e459b55fdf0cf2840d05894d72349c79483cef2",
+  "releaseReady": false,
+  "resolvedBlockers": [],
+  "scan": {
+    "caseInsensitive": true,
+    "encodings": [
+      "ascii",
+      "utf-16le"
+    ],
+    "forbiddenMatchCount": 0,
+    "forbiddenMatches": [],
+    "missingRequiredMarkerIds": [],
+    "required": [
+      {
+        "foundAscii": true,
+        "foundUtf16Le": true,
+        "id": "project_owned_runtime_foundation"
+      },
+      {
+        "foundAscii": false,
+        "foundUtf16Le": true,
+        "id": "release_performance_capture_entrypoint"
+      },
+      {
+        "foundAscii": false,
+        "foundUtf16Le": true,
+        "id": "release_performance_capture_fail_closed_rejection"
+      },
+      {
+        "foundAscii": false,
+        "foundUtf16Le": true,
+        "id": "release_performance_capture_exclusive_namespace"
+      },
+      {
+        "foundAscii": false,
+        "foundUtf16Le": true,
+        "id": "release_performance_capture_external_uuid_guard"
+      },
+      {
+        "foundAscii": false,
+        "foundUtf16Le": true,
+        "id": "release_performance_capture_exact_render_guard"
+      },
+      {
+        "foundAscii": false,
+        "foundUtf16Le": true,
+        "id": "release_performance_capture_public_snapshot_rejection"
+      },
+      {
+        "foundAscii": false,
+        "foundUtf16Le": true,
+        "id": "release_performance_capture_public_reset_rejection"
+      }
+    ]
+  },
+  "schema": "DiscGolfTour.Session19ShippingBinaryEvidence.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "state": "PASS_BINARY_MARKER_POLICY_ONLY"
+}

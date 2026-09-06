@@ -1,0 +1,130 @@
+{
+  "schema": "DiscGolfTour.Session19SerializedAssetMigrationReceipt.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "evidenceId": "session19_retained_v05_serialized_asset_migration_20260824",
+  "authority": "ADDITIVE_ENGINEERING_EVIDENCE_NOT_RELEASE_OR_LEGAL_APPROVAL",
+  "state": "SOURCE_AND_RETAINED_ASSET_MIGRATION_VERIFIED_FRESH_SHIPPING_PACKAGE_PROOF_PENDING",
+  "policy": {
+    "path": "Config/DG_Session19SerializedAssetMigrationPolicy.json",
+    "bytes": 5365,
+    "sha256": "EA2B8D4232F787606BEDEDB84CFAB20E6EE7C3B91542BBBDE5E5D8A083A79139"
+  },
+  "inventory": {
+    "path": "Evidence/Session19/SerializedAssetMigrationInventory.tsv",
+    "bytes": 10279,
+    "sha256": "1B7B853153ADD65924B9D090B91B219A225F8E327DD95617505B5DE95CDC953B"
+  },
+  "workflow": {
+    "command": "UnrealEditor-Cmd.exe C:/DGTour/DiscGolfTour.uproject -run=PythonScript -script=C:/DGTour/Scripts/migrate_dg_session19_serialized_assets.py -unattended -nop4 -nosplash -nullrhi",
+    "migrationScript": {
+      "path": "Scripts/migrate_dg_session19_serialized_assets.py",
+      "bytes": 15439,
+      "sha256": "426CC6451F6535E4ACDD0DC0D804CF0D1FAA8B8CBB311A40BF2ABA3BD8A3450B"
+    },
+    "controlRigFoundationScript": {
+      "path": "Scripts/create_dg_character_rig_session2.py",
+      "bytes": 43897,
+      "sha256": "AAE1D209CD4C279568BD18E58D482FFDEE32F9D427D09722351CA55F1372AB76"
+    },
+    "recreationRun": {
+      "path": "Saved/Logs/Session19SerializedAssetMigrationFinal.log",
+      "bytes": 271927,
+      "sha256": "393B3A56DCC23F82CE4C7D851CCB5E07C52794A78921E159F7379324F8372E58"
+    },
+    "normalizationAcceptanceRun": {
+      "path": "Saved/Logs/Session19SerializedAssetMigrationFinalRetry.log",
+      "bytes": 276007,
+      "sha256": "E3D6E2204858B9ECA75E8755D9E393B4D9438C2A0A6DA864E2A5D0A098438B55"
+    },
+    "finalCleanLoadRun": {
+      "path": "Saved/Logs/Session19SerializedAssetMigrationAccepted.log",
+      "bytes": 274200,
+      "sha256": "E3C2324DE866E0DB5B9F21D74DE462801BC0D5131587713B8E264CF2C0B86B94"
+    },
+    "editorBuildRun": {
+      "path": "Saved/Logs/Session19SerializedAssetMigrationEditorBuild.log",
+      "bytes": 7867,
+      "sha256": "1BCA21D253581ED9EC57CB93D800D802C508456CDDC80C27F5F965449412B4F0"
+    },
+    "finalRunReport": {
+      "path": "Saved/Session19/SerializedAssetMigrationRun.json",
+      "bytes": 4664,
+      "sha256": "9A79FDCCC89F58AB45DF3C932F8E135C1B67294074A893F144844EDFB4D75477"
+    }
+  },
+  "boundary": {
+    "legacyScriptPackage": "/Script/DiscGolfCharacterFramework",
+    "replacementScriptPackage": "/Script/DiscGolfRuntimeFoundation",
+    "retainedAssetCount": 6,
+    "excludedAssetCount": 39,
+    "protectedContentFileCount": 414,
+    "protectedContentMutationCount": 0,
+    "legacyPluginProjectEntryPresent": false,
+    "legacyPluginEnabledByDefault": false,
+    "legacySourceTreeRetainedPendingVerifiedQuarantine": true
+  },
+  "retainedAssets": [
+    {
+      "package": "/Game/DiscGolf/Animation/ABP_DG_Player",
+      "path": "Content/DiscGolf/Animation/ABP_DG_Player.uasset",
+      "bytes": 58347,
+      "sha256": "4006F2FBF0B38FB7033F2944807B0BEE503FA3C730D3D701C9F8EC7D7FBDA995"
+    },
+    {
+      "package": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster",
+      "path": "Content/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster.uasset",
+      "bytes": 2101,
+      "sha256": "A2F9E5D40DCF0EA00F127B1B0046A6B85090B5148F06D0EB96D7DEE5AACDBDCF"
+    },
+    {
+      "package": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default",
+      "path": "Content/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default.uasset",
+      "bytes": 2176,
+      "sha256": "12E2A6BC0E01EEB9D69C4459B5FA3A963DC756F644EAA001D14CE15486E68465"
+    },
+    {
+      "package": "/Game/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default",
+      "path": "Content/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default.uasset",
+      "bytes": 225443,
+      "sha256": "865D94042B1306EDE1752CEC3D174A0C662BC767F481F5D0576AFF62EF888E30"
+    },
+    {
+      "package": "/Game/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter",
+      "path": "Content/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter.uasset",
+      "bytes": 1455,
+      "sha256": "A1CF50EFC926B31D3AB330A94EEAC536950B2964F7BE6819C93577930F7784B8"
+    },
+    {
+      "package": "/Game/DiscGolf/Rigs/CR_DG_Master",
+      "path": "Content/DiscGolf/Rigs/CR_DG_Master.uasset",
+      "bytes": 205044,
+      "sha256": "D9699721E2C9E8297016CC386A03941AD7BB4AC6AB39118E7FBA453EB649A822"
+    }
+  ],
+  "excludedEvidence": {
+    "assetCount": 39,
+    "allPreMigrationIdentitiesPreserved": true,
+    "legacyMarkerAssetCount": 39,
+    "allLegacyMarkerAssetsWithinNeverCookRoots": true
+  },
+  "acceptance": {
+    "editorDevelopmentBuildSucceeded": true,
+    "retainedPackagesLoadedAndSaved": 6,
+    "blueprintsAndControlRigCompiled": [
+      "/Game/DiscGolf/Animation/ABP_DG_Player",
+      "/Game/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default",
+      "/Game/DiscGolf/Rigs/CR_DG_Master"
+    ],
+    "legacyModuleNotLoadedInFinalRun": true,
+    "gitLfsTracksUassetAndUmap": true
+  },
+  "closure": {
+    "sourceAndRetainedAssetMigrationAccepted": true,
+    "freshShippingPackageEvidenceAccepted": false,
+    "blockerId": "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+    "blockerClosed": false,
+    "remainingReleaseBlockerCount": 13,
+    "releaseReady": false
+  }
+}

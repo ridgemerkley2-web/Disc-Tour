@@ -102,16 +102,30 @@ class GroundImpact:
     friction: float
 
 
-def resolve_release(*, timing_error: float, power: float, hand_sign: float) -> Release:
+def throw_rotation_sign(*, throw_style: str, handedness: str) -> float:
+    """Mirror DiscGolfMath::ThrowRotationSign without conflating style and hand."""
+    if throw_style not in {"backhand", "forehand"}:
+        raise AssertionError(f"unknown throw style: {throw_style}")
+    if handedness not in {"right", "left"}:
+        raise AssertionError(f"unknown handedness: {handedness}")
+    style_sign = 1.0 if throw_style == "backhand" else -1.0
+    handedness_sign = 1.0 if handedness == "right" else -1.0
+    return style_sign * handedness_sign
+
+
+def resolve_release(*, timing_error: float, power: float,
+                    throw_style: str = "backhand", handedness: str = "right") -> Release:
     """Mirror the deterministic release-quality boundary used before Unreal flight."""
+    rotation_sign = throw_rotation_sign(
+        throw_style=throw_style, handedness=handedness)
     timing_error = clamp(timing_error, -1.0, 1.0)
     severity = clamp((abs(timing_error)-RELEASE_PERFECT_ERROR)/(1.0-RELEASE_PERFECT_ERROR), 0.0, 1.0)
     signed_severity = math.copysign(severity, timing_error) if severity > 0.0 else 0.0
     speed_multiplier = 1.0-0.16*severity**1.25
     spin_multiplier = 1.0-0.22*severity**1.15
-    min_speed = 8.5 if hand_sign > 0.0 else 8.0
-    max_speed = 30.5 if hand_sign > 0.0 else 27.5
-    max_spin = 1050.0 if hand_sign > 0.0 else 900.0
+    min_speed = 8.5 if throw_style == "backhand" else 8.0
+    max_speed = 30.5 if throw_style == "backhand" else 27.5
+    max_spin = 1050.0 if throw_style == "backhand" else 900.0
     power = clamp(power, 0.0, 1.0)
     return Release(
         quality=1.0-severity,
@@ -119,7 +133,7 @@ def resolve_release(*, timing_error: float, power: float, hand_sign: float) -> R
         spin_multiplier=spin_multiplier,
         speed_mps=(min_speed+(max_speed-min_speed)*power)*speed_multiplier,
         spin_rpm=(300.0+(max_spin-300.0)*power)*spin_multiplier,
-        aim_offset_deg=hand_sign*signed_severity*6.0,
+        aim_offset_deg=rotation_sign*signed_severity*6.0,
         hyzer_offset_deg=signed_severity*4.0,
         nose_offset_deg=signed_severity*3.0,
         launch_offset_deg=signed_severity*2.0,
@@ -185,12 +199,20 @@ def resolve_ground_impact(*, velocity: V, surface_normal: V, disc_normal: V,
                         profile.spin_retention*0.82, incidence, edge_angle, restitution, friction)
 
 
-def simulate(*, hand_sign: float=1.0, hyzer_deg: float=3.0, power: float=0.82,
+def simulate(*, throw_style: str = "backhand", handedness: str = "right",
+             hyzer_deg: float=3.0, power: float=0.82,
              nose_deg: float=1.0, launch_deg: float=7.0, timing_error: float=0.0,
              wind: V=(0.0,0.0,0.0)) -> Result:
     a = Aero()
-    release = resolve_release(timing_error=timing_error, power=power, hand_sign=hand_sign)
-    spin = hand_sign * release.spin_rpm * 2.0*math.pi/60.0
+    rotation_sign = throw_rotation_sign(
+        throw_style=throw_style, handedness=handedness)
+    release = resolve_release(
+        timing_error=timing_error,
+        power=power,
+        throw_style=throw_style,
+        handedness=handedness,
+    )
+    spin = rotation_sign * release.spin_rpm * 2.0*math.pi/60.0
 
     # Script frame: +X down-fairway, +Y player-right, +Z up.
     aim_rad = math.radians(release.aim_offset_deg)
@@ -203,7 +225,8 @@ def simulate(*, hand_sign: float=1.0, hyzer_deg: float=3.0, power: float=0.82,
     launch = norm((math.cos(launch_rad)*flat[0], math.cos(launch_rad)*flat[1], math.sin(launch_rad)))
     forward = norm(rotate(launch, right, -math.radians(effective_nose_deg)))
     normal = norm(cross(forward, right), (0.0,0.0,1.0))
-    normal = norm(rotate(normal, forward, hand_sign*math.radians(effective_hyzer_deg)), normal)
+    normal = norm(rotate(
+        normal, forward, rotation_sign*math.radians(effective_hyzer_deg)), normal)
 
     pos = (0.0, 0.0, 1.5)
     vel = mul(launch, release.speed_mps)
@@ -268,12 +291,17 @@ def simulate(*, hand_sign: float=1.0, hyzer_deg: float=3.0, power: float=0.82,
 
 
 def check() -> None:
-    baseline = simulate(hand_sign=1.0, hyzer_deg=3.0)
-    bh_flat = simulate(hand_sign=1.0, hyzer_deg=0.0)
-    fh_flat = simulate(hand_sign=-1.0, hyzer_deg=0.0)
-    perfect = resolve_release(timing_error=0.0, power=0.82, hand_sign=1.0)
-    early = resolve_release(timing_error=-0.75, power=0.82, hand_sign=1.0)
-    late = resolve_release(timing_error=0.75, power=0.82, hand_sign=1.0)
+    baseline = simulate(throw_style="backhand", handedness="right", hyzer_deg=3.0)
+    rhbh_flat = simulate(throw_style="backhand", handedness="right", hyzer_deg=0.0)
+    lhbh_flat = simulate(throw_style="backhand", handedness="left", hyzer_deg=0.0)
+    rhfh_flat = simulate(throw_style="forehand", handedness="right", hyzer_deg=0.0)
+    lhfh_flat = simulate(throw_style="forehand", handedness="left", hyzer_deg=0.0)
+    perfect = resolve_release(timing_error=0.0, power=0.82)
+    early = resolve_release(timing_error=-0.75, power=0.82)
+    late = resolve_release(timing_error=0.75, power=0.82)
+    left_backhand_late = resolve_release(
+        timing_error=0.75, power=0.82,
+        throw_style="backhand", handedness="left")
     fairway_skip = resolve_ground_impact(
         velocity=(10.0,0.0,-1.5), surface_normal=(0.0,0.0,1.0), disc_normal=(0.0,0.0,1.0),
         spin_rpm=700.0, base_restitution=0.16, base_friction=0.46, surface="fairway")
@@ -300,10 +328,28 @@ def check() -> None:
     assert 2.0 <= baseline.peak_m <= 30.0, f"baseline peak outside prototype envelope: {baseline.peak_m:.1f} m"
     assert 2.0 <= baseline.flight_s <= 15.0, f"baseline flight time outside prototype envelope: {baseline.flight_s:.1f} s"
 
-    # With zero launch hyzer, handedness should reverse lateral tendency rather
-    # than produce two unrelated behaviors. BH/FH release-speed/spin caps differ.
-    assert bh_flat.lateral_m * fh_flat.lateral_m <= 0.0, (
-        f"handedness did not mirror lateral tendency: BH={bh_flat.lateral_m:.1f}m FH={fh_flat.lateral_m:.1f}m"
+    # Each style must mirror laterally by hand without changing that style's
+    # speed/spin magnitude. Style remains an independent performance input.
+    assert rhbh_flat.lateral_m * lhbh_flat.lateral_m < 0.0, (
+        "backhand handedness did not mirror lateral tendency: "
+        f"RHBH={rhbh_flat.lateral_m:.1f}m LHBH={lhbh_flat.lateral_m:.1f}m"
+    )
+    assert rhfh_flat.lateral_m * lhfh_flat.lateral_m < 0.0, (
+        "forehand handedness did not mirror lateral tendency: "
+        f"RHFH={rhfh_flat.lateral_m:.1f}m LHFH={lhfh_flat.lateral_m:.1f}m"
+    )
+    assert math.isclose(
+        abs(rhbh_flat.lateral_m), abs(lhbh_flat.lateral_m), rel_tol=0.0, abs_tol=0.05
+    ), "backhand mirror changed lateral magnitude"
+    assert math.isclose(
+        abs(rhfh_flat.lateral_m), abs(lhfh_flat.lateral_m), rel_tol=0.0, abs_tol=0.05
+    ), "forehand mirror changed lateral magnitude"
+    assert math.isclose(perfect.speed_mps, resolve_release(
+        timing_error=0.0, power=0.82, handedness="left").speed_mps, abs_tol=1e-6), (
+        "backhand release magnitude changed with handedness"
+    )
+    assert math.isclose(late.aim_offset_deg, -left_backhand_late.aim_offset_deg, abs_tol=1e-6), (
+        "backhand timing aim did not mirror with handedness"
     )
 
     # Release quality must preserve the calibrated perfect baseline, penalize
@@ -333,7 +379,11 @@ def check() -> None:
 
     print("Reference flight envelope OK")
     print(f"  Apex RHBH 82% / 3 deg hyzer: carry={baseline.carry_m:.1f}m ({baseline.carry_m*3.28084:.0f}ft), peak={baseline.peak_m:.1f}m, flight={baseline.flight_s:.2f}s")
-    print(f"  Flat mirror: BH lateral={bh_flat.lateral_m:.1f}m, FH lateral={fh_flat.lateral_m:.1f}m")
+    print(
+        "  Flat mirror: "
+        f"RHBH/LHBH={rhbh_flat.lateral_m:.1f}/{lhbh_flat.lateral_m:.1f}m, "
+        f"RHFH/LHFH={rhfh_flat.lateral_m:.1f}/{lhfh_flat.lateral_m:.1f}m"
+    )
     print(f"  Release model: perfect={perfect.speed_mps:.2f}m/s, 75% miss={late.speed_mps:.2f}m/s, aim={late.aim_offset_deg:+.2f}deg")
     print(f"  Ground model: fairway={fairway_skip.state}, rough={rough_landing.state}, edge={edge_roll.state}, base/crystal={base_borderline.state}/{crystal_borderline.state}")
 

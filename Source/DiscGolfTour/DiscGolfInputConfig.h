@@ -96,7 +96,10 @@ public:
     static bool IsRemapCandidateCompatible(const FKey& ReferenceKey, const FKey& CandidateKey, FString& OutReason);
 
     /** Build the asset-free keyboard, mouse, and controller regression layout. */
-    static UDiscGolfInputConfig* BuildRuntimeFallback(UObject* Outer);
+    static UDiscGolfInputConfig* BuildRuntimeFallback(
+        UObject* Outer,
+        bool bSouthpawController = false,
+        float ControllerDeadZone = 0.25f);
 };
 
 /** Input Action subclass used only to attach remapping metadata at runtime. */

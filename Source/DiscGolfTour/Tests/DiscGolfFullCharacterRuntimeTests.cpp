@@ -54,6 +54,7 @@ FDGFullCharacterCustomization MakeRoundTripFixture()
 {
     FDGFullCharacterCustomization Result =
         DiscGolfFullCharacterRuntime::MakeDefaultCustomization();
+    Result.AvatarBackendId = TEXT("metahuman_assembled");
     Result.Identity.DisplayName = TEXT("Session Seven Player");
     Result.Identity.Handedness = EDGHandedness::Left;
     Result.Identity.VoiceId = TEXT("voice_alt");
@@ -128,7 +129,17 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfFullCharacterContractTest,
 
 bool FDiscGolfFullCharacterContractTest::RunTest(const FString& Parameters)
 {
+    const FDGFullCharacterCustomization SafeFreshInstall =
+        DiscGolfFullCharacterRuntime::MakeFreshInstallCustomization(false);
+    const FDGFullCharacterCustomization ReleaseFreshInstall =
+        DiscGolfFullCharacterRuntime::MakeFreshInstallCustomization(true);
+    TestEqual(TEXT("A non-release fresh install retains the stable DGMaster default"),
+        SafeFreshInstall.AvatarBackendId, FName(TEXT("dg_master")));
+    TestEqual(TEXT("A release fresh install requests the retained MetaHuman backend"),
+        ReleaseFreshInstall.AvatarBackendId, FName(TEXT("metahuman_assembled")));
+
     FDGFullCharacterCustomization Character;
+    Character.AvatarBackendId = TEXT("unknown_backend");
     Character.Identity.DisplayName =
         TEXT("  Player\x2028\tName\r\nWith A Deliberately Overlong Suffix  ");
     Character.Identity.VoiceId = NAME_None;
@@ -151,6 +162,23 @@ bool FDiscGolfFullCharacterContractTest::RunTest(const FString& Parameters)
 
     DiscGolfFullCharacterRuntime::NormalizeForPersistence(Character);
 
+    TestEqual(TEXT("Unknown backend IDs fail closed to DGMaster"),
+        Character.AvatarBackendId, FName(TEXT("dg_master")));
+    FDGFullCharacterCustomization MetaHumanCharacter = Character;
+    MetaHumanCharacter.AvatarBackendId = TEXT("metahuman_assembled");
+    DiscGolfFullCharacterRuntime::NormalizeForPersistence(MetaHumanCharacter);
+    TestEqual(TEXT("The canonical MetaHuman request survives normalization"),
+        MetaHumanCharacter.AvatarBackendId,
+        FName(TEXT("metahuman_assembled")));
+    const FDiscGolfFullCustomizationResolution RuntimeResolved =
+        DiscGolfFullCharacterRuntime::ResolveForRuntime(
+            MetaHumanCharacter, nullptr, nullptr);
+    TestEqual(TEXT("Transient content resolution does not rewrite the backend request"),
+        RuntimeResolved.Character.AvatarBackendId,
+        FName(TEXT("metahuman_assembled")));
+    TestFalse(TEXT("Backend selection participates in full-character equivalence"),
+        DiscGolfFullCharacterRuntime::AreCustomizationsEquivalent(
+            Character, MetaHumanCharacter));
     TestTrue(TEXT("Display names strip controls and retain printable text"),
         !Character.Identity.DisplayName.Contains(TEXT("\t"))
         && !Character.Identity.DisplayName.Contains(TEXT("\r"))
@@ -262,6 +290,8 @@ bool FDiscGolfFullCharacterPresetAndRandomizeTest::RunTest(const FString& Parame
         FName(TEXT("pronouns_catalog_only")));
     TestEqual(TEXT("Identity randomization does not invent a display name"),
         IdentityRandomized.Identity.DisplayName, FString(TEXT("Locked Name")));
+    TestEqual(TEXT("Randomization preserves the requested avatar backend"),
+        IdentityRandomized.AvatarBackendId, Current.AvatarBackendId);
     TestTrue(TEXT("All locked non-identity categories are retained exactly"),
         Session7NearlyEqual(IdentityRandomized.Body.HeightCm, Current.Body.HeightCm)
         && IdentityRandomized.Face.PresetId == Current.Face.PresetId
@@ -369,7 +399,7 @@ bool FDiscGolfFullCharacterNestedSaveGameFlagsTest::RunTest(
     const FProperty* FullPayloadProperty = FindFProperty<FProperty>(
         UDiscGolfSaveGame::StaticClass(),
         GET_MEMBER_NAME_CHECKED(UDiscGolfSaveGame, CharacterCustomization));
-    TestTrue(TEXT("The schema-9 root full-character payload carries SaveGame"),
+    TestTrue(TEXT("The schema-10 root full-character payload carries SaveGame"),
         FullPayloadProperty
         && FullPayloadProperty->HasAnyPropertyFlags(CPF_SaveGame));
 
@@ -430,9 +460,9 @@ bool FDiscGolfFullCharacterMemoryRoundTripTest::RunTest(const FString& Parameter
         Restored->Serialize(Archive);
     }
 
-    TestEqual(TEXT("The nested payload retains schema 9"),
-        Restored->SaveSchemaVersion, 9);
-    TestTrue(TEXT("Every nested identity/body/face/hair/appearance/throw/outfit field survives SaveGame serialization"),
+    TestEqual(TEXT("The nested payload retains schema 10"),
+        Restored->SaveSchemaVersion, DiscGolfSaveSchema::CurrentVersion);
+    TestTrue(TEXT("Every nested backend/identity/body/face/hair/appearance/throw/outfit field survives SaveGame serialization"),
         DiscGolfFullCharacterRuntime::AreCustomizationsEquivalent(
             Expected, Restored->CharacterCustomization));
     TestTrue(TEXT("Serialized full-character power and spin remain presentation-neutral"),
@@ -461,14 +491,16 @@ bool FDiscGolfFullCharacterSchema8MigrationTest::RunTest(const FString& Paramete
         EDGOutfitSlot::Top, TEXT("proxy_s6_top_tee_01"), TEXT("Teal")));
     Legacy->CharacterCustomization.Identity.DisplayName =
         TEXT("Synthetic pre-schema-9 poison");
+    Legacy->CharacterCustomization.AvatarBackendId =
+        TEXT("metahuman_assembled");
     Legacy->CharacterCustomization.Hair.HairStyleId = TEXT("hair_poison");
 
     const DiscGolfProfilePersistence::EMigrationResult Migration =
         DiscGolfProfilePersistence::MigrateToCurrent(*Legacy);
     TestTrue(TEXT("Schema 8 performs the explicit full-character migration"),
         Migration == DiscGolfProfilePersistence::EMigrationResult::Migrated);
-    TestEqual(TEXT("Schema 8 advances exactly to schema 9"),
-        Legacy->SaveSchemaVersion, 9);
+    TestEqual(TEXT("Schema 8 advances through schema 10"),
+        Legacy->SaveSchemaVersion, DiscGolfSaveSchema::CurrentVersion);
     TestTrue(TEXT("Legacy body, build, throw and handedness populate the sole current payload"),
         Session7NearlyEqual(Legacy->CharacterCustomization.Body.HeightCm, 201.0f)
         && Session7NearlyEqual(Legacy->CharacterCustomization.Body.WingspanScale, 1.06f)
@@ -489,7 +521,9 @@ bool FDiscGolfFullCharacterSchema8MigrationTest::RunTest(const FString& Paramete
         && MigratedTop->ItemId == FName(TEXT("proxy_s6_top_tee_01"))
         && MigratedTop->VariantId == FName(TEXT("Teal")));
     TestTrue(TEXT("New fields initialize from deterministic schema defaults"),
-        Legacy->CharacterCustomization.Identity.DisplayName == TEXT("Player")
+        Legacy->CharacterCustomization.AvatarBackendId
+            == FName(TEXT("dg_master"))
+        && Legacy->CharacterCustomization.Identity.DisplayName == TEXT("Player")
         && Legacy->CharacterCustomization.Hair.HairStyleId
             == FName(TEXT("hair_none"))
         && Legacy->CharacterCustomization.Face.MorphValues.Num() == 20);
@@ -506,8 +540,29 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfFullCharacterCurrentAuthorityTest,
 bool FDiscGolfFullCharacterCurrentAuthorityTest::RunTest(
     const FString& Parameters)
 {
+    UDiscGolfSaveGame* Legacy9 = NewObject<UDiscGolfSaveGame>();
+    Legacy9->SaveSchemaVersion = 9;
+    Legacy9->CharacterCustomization = MakeRoundTripFixture();
+    const DiscGolfProfilePersistence::EMigrationResult LegacyMigration =
+        DiscGolfProfilePersistence::MigrateToCurrent(*Legacy9);
+    TestTrue(TEXT("A schema-9 payload performs the backend migration"),
+        LegacyMigration == DiscGolfProfilePersistence::EMigrationResult::Migrated);
+    TestEqual(TEXT("Schema 9 advances exactly to schema 10"),
+        Legacy9->SaveSchemaVersion, DiscGolfSaveSchema::CurrentVersion);
+    TestEqual(TEXT("Every pre-schema-10 save deterministically requests DGMaster"),
+        Legacy9->CharacterCustomization.AvatarBackendId,
+        FName(TEXT("dg_master")));
+    TestTrue(TEXT("The schema-9 backend migration is idempotent"),
+        DiscGolfProfilePersistence::MigrateToCurrent(*Legacy9)
+            == DiscGolfProfilePersistence::EMigrationResult::AlreadyCurrent);
+    TestTrue(TEXT("The backend migration preserves existing full-character truth"),
+        Session7NearlyEqual(
+            Legacy9->CharacterCustomization.Body.HeightCm, 201.0f)
+        && Legacy9->CharacterCustomization.Identity.Handedness
+            == EDGHandedness::Left);
+
     UDiscGolfSaveGame* Current = NewObject<UDiscGolfSaveGame>();
-    Current->SaveSchemaVersion = 9;
+    Current->SaveSchemaVersion = DiscGolfSaveSchema::CurrentVersion;
     Current->CharacterCustomization = MakeRoundTripFixture();
     Current->CharacterCustomization.ThrowStyle.PowerMultiplier = 1.25f;
     Current->CharacterCustomization.ThrowStyle.SpinMultiplier = 0.75f;
@@ -518,9 +573,9 @@ bool FDiscGolfFullCharacterCurrentAuthorityTest::RunTest(
 
     const DiscGolfProfilePersistence::EMigrationResult Migration =
         DiscGolfProfilePersistence::MigrateToCurrent(*Current);
-    TestTrue(TEXT("A schema-9 payload needs no version migration"),
+    TestTrue(TEXT("A schema-10 payload needs no version migration"),
         Migration == DiscGolfProfilePersistence::EMigrationResult::AlreadyCurrent);
-    TestTrue(TEXT("Schema-9 reads the complete payload instead of legacy mirrors"),
+    TestTrue(TEXT("Schema-10 reads the complete payload instead of legacy mirrors"),
         Session7NearlyEqual(Current->CharacterCustomization.Body.HeightCm, 201.0f)
         && Current->CharacterCustomization.Identity.Handedness
             == EDGHandedness::Left
@@ -530,10 +585,13 @@ bool FDiscGolfFullCharacterCurrentAuthorityTest::RunTest(
             Current->CharacterCustomization.ThrowStyle.PowerMultiplier, 1.0f)
         && Session7NearlyEqual(
             Current->CharacterCustomization.ThrowStyle.SpinMultiplier, 1.0f));
-    TestTrue(TEXT("Schema-9 rewrites the Session 4 mirror from full truth"),
+    TestEqual(TEXT("Current requested backend persists without content resolution"),
+        Current->CharacterCustomization.AvatarBackendId,
+        FName(TEXT("metahuman_assembled")));
+    TestTrue(TEXT("Schema-10 rewrites the Session 4 mirror from full truth"),
         Session7NearlyEqual(Current->CharacterProfile.HeightCm, 201.0f)
         && Current->CharacterProfile.GetHandedness() == EDGHandedness::Left);
-    TestTrue(TEXT("Schema-9 rewrites the Session 6 mirror from full truth"),
+    TestTrue(TEXT("Schema-10 rewrites the Session 6 mirror from full truth"),
         DiscGolfOutfitRuntime::AreLoadoutsEquivalent(
             Current->OutfitLoadout, Current->CharacterCustomization.Outfit));
     return true;
@@ -555,17 +613,17 @@ bool FDiscGolfFullCharacterDiskRoundTripTest::RunTest(const FString& Parameters)
     UDiscGolfSaveGame* Source = NewObject<UDiscGolfSaveGame>();
     Source->CharacterCustomization = Expected;
     const bool bSaved = UGameplayStatics::SaveGameToSlot(Source, SlotName, 0);
-    TestTrue(TEXT("The complete schema-9 character saves to an isolated disk slot"),
+    TestTrue(TEXT("The complete schema-10 character saves to an isolated disk slot"),
         bSaved);
 
     UDiscGolfSaveGame* Restored = bSaved
         ? Cast<UDiscGolfSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0))
         : nullptr;
-    TestNotNull(TEXT("The isolated schema-9 disk slot reloads"), Restored);
+    TestNotNull(TEXT("The isolated schema-10 disk slot reloads"), Restored);
     if (Restored)
     {
-        TestEqual(TEXT("The disk payload retains schema 9"),
-            Restored->SaveSchemaVersion, 9);
+        TestEqual(TEXT("The disk payload retains schema 10"),
+            Restored->SaveSchemaVersion, DiscGolfSaveSchema::CurrentVersion);
         TestTrue(TEXT("The complete character reconstructs from the real disk path"),
             DiscGolfFullCharacterRuntime::AreCustomizationsEquivalent(
                 Expected, Restored->CharacterCustomization));

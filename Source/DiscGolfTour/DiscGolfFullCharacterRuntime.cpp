@@ -1,5 +1,6 @@
 #include "DiscGolfFullCharacterRuntime.h"
 
+#include "DiscGolfAvatarBackendRuntime.h"
 #include "DiscGolfCharacterProfileRuntime.h"
 #include "DiscGolfCosmeticCatalog.h"
 #include "DiscGolfOutfitCatalog.h"
@@ -284,10 +285,32 @@ FDGFullCharacterCustomization DiscGolfFullCharacterRuntime::MakeDefaultCustomiza
     return Result;
 }
 
+FDGFullCharacterCustomization DiscGolfFullCharacterRuntime::MakeFreshInstallCustomization(
+    const bool bPreferRetainedMetaHuman)
+{
+    FDGFullCharacterCustomization Result = MakeDefaultCustomization();
+    if (bPreferRetainedMetaHuman)
+    {
+        Result.AvatarBackendId =
+            DiscGolfAvatarBackendRuntime::MetaHumanAssembledBackendId;
+    }
+    NormalizeForPersistence(Result);
+    return Result;
+}
+
 void DiscGolfFullCharacterRuntime::NormalizeForPersistence(
     FDGFullCharacterCustomization& InOutCharacter)
 {
     const FDGFullCharacterCustomization Defaults;
+
+    static const FName CanonicalDGMasterBackendId(
+        DiscGolfAvatarBackendRuntime::DGMasterBackendId);
+    static const FName CanonicalMetaHumanBackendId(
+        DiscGolfAvatarBackendRuntime::MetaHumanAssembledBackendId);
+    InOutCharacter.AvatarBackendId =
+        InOutCharacter.AvatarBackendId == CanonicalMetaHumanBackendId
+            ? CanonicalMetaHumanBackendId
+            : CanonicalDGMasterBackendId;
 
     FString SafeDisplayName;
     SafeDisplayName.Reserve(InOutCharacter.Identity.DisplayName.Len());
@@ -406,7 +429,8 @@ bool DiscGolfFullCharacterRuntime::AreCustomizationsEquivalent(
     const FDGFullCharacterCustomization& A,
     const FDGFullCharacterCustomization& B)
 {
-    return A.Identity.DisplayName == B.Identity.DisplayName
+    return A.AvatarBackendId == B.AvatarBackendId
+        && A.Identity.DisplayName == B.Identity.DisplayName
         && A.Identity.Handedness == B.Identity.Handedness
         && A.Identity.VoiceId == B.Identity.VoiceId
         && A.Identity.PronounSetId == B.Identity.PronounSetId
@@ -850,6 +874,9 @@ FDGFullCharacterCustomization DiscGolfFullCharacterRuntime::Randomize(
     if (Locks.bAppearance) Resolved.Appearance = NormalizedCurrent.Appearance;
     if (Locks.bThrowStyle) Resolved.ThrowStyle = NormalizedCurrent.ThrowStyle;
     if (Locks.bOutfit) Resolved.Outfit = NormalizedCurrent.Outfit;
+    // Backend selection is not a randomizable appearance category. Preserve
+    // the caller's normalized request even if runtime catalogs repair fields.
+    Resolved.AvatarBackendId = NormalizedCurrent.AvatarBackendId;
     NormalizeForPersistence(Resolved);
     return Resolved;
 }

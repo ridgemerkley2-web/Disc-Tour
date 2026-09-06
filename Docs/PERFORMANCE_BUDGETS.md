@@ -26,15 +26,60 @@ The runtime HUD reports average FPS, P95 frame time, physical process memory, an
 and High foliage population. The capture then traverses the active hole's authored flyover for a
 10-second residency warm-up before resetting telemetry and sampling the requested duration.
 
-Launch the packaged Development build with an explicit course/hole, exact backbuffer, and capture duration:
+The packaged Development build retains the flexible 5-300 second diagnostic path. Launch it with an
+explicit course/hole, exact backbuffer, and capture duration:
 
 ```powershell
 DiscGolfTour.exe -Course=PineRidge -Hole=1 -PerformanceCaptureSeconds=30 `
   -ResX=1920 -ResY=1080 -ForceRes -RenderOffscreen -dx12 -unattended
 ```
 
-The duration is clamped to 5-300 seconds. The process writes a schema-v2 timestamped JSON artifact plus
-`Saved/PerformanceCaptures/LatestPerformance.json`, logs the final state, and exits non-zero unless the
+The Shipping SKU exposes only the release-performance subset. Every run must use a newly generated
+lowercase UUIDv4 directory outside both the project and package roots. The directory must have no prior
+`Saved/PerformanceCaptures` or `Saved/SaveGames` namespace. The exact guarded command is:
+
+```powershell
+$captureToken = [guid]::NewGuid().ToString().ToLowerInvariant()
+$captureUserDir = "C:\DGTourExternal\PerformanceCaptures\$captureToken"
+DiscGolfTour.exe -Course=PineRidge -Hole=1 -PerformanceCaptureSeconds=30 `
+  -ResX=1920 -ResY=1080 -ForceRes -RenderOffscreen -dx12 -unattended `
+  -NoLoadExistingSave -DGNoProfileWrites -UserDir=$captureUserDir
+```
+
+Repeat with holes 2 and 3, creating a different UUIDv4 UserDir for every process. Shipping keeps
+`DG_WITH_DEVELOPMENT_CONTENT=0`; this narrowly compiled harness does not expose the developer HUD,
+regression runners, route telemetry, visual-QA commands, test saves, or gameplay cheats. Any attempted
+capture with a missing, duplicate, conflicting, local, reused, or malformed requirement exits nonzero.
+The twelve shown arguments are the complete Shipping allowlist for a capture process; do not append
+benchmark, fixed-time-step, fixed-seed, VSync, windowing, console-exec, logging, or other Unreal flags.
+Even a malformed capture attempt disables profile load/write before GameMode validates and rejects it.
+The runtime also fails the process if the actual RHI, adapter, viewport, quality profile, requested hole,
+or continuous authored flyover differs from the guarded contract.
+
+For the release candidate, prefer the append-only external runner. It hashes the archive before and
+after all three processes, launches the primary Shipping executable with three unique UUIDv4 UserDirs,
+and binds each sanitized launch record, process log, exclusive namespace guard, timestamped report,
+and `LatestPerformance.json` into one independently revalidated receipt. Keep the external root short
+enough for Windows paths, and keep the archive in the exact `<candidate-id>\Windows` directory:
+
+```powershell
+python Scripts/run_dg_session19_shipping_performance.py `
+  --archive C:\DGTour_Packages\S19_WindowsShipping_<candidate>\Windows `
+  --candidate-id S19_WindowsShipping_<candidate> `
+  --external-root C:\DGTourExternal `
+  --receipt-output C:\DGTourExternal\Receipts\ShippingPerformance-S19_WindowsShipping_<candidate>.json
+```
+
+The same external run can be rechecked read-only with
+`Scripts/validate_dg_session19_shipping_performance.py --run-root C:\DGTourExternal\ShippingPerformance\<candidate-id>\<run-uuid> --archive <archive> --candidate-id <candidate-id> --output C:\DGTourExternal\Receipts\<new-receipt-name>.json`.
+Receipt outputs are append-only and must remain under the selected external evidence root; archive-local,
+project-local, or run-local output paths fail closed. Both tools revalidate the run and archive after an
+external receipt is written before returning success.
+Both tools explicitly leave GPU/thread profiling, thermal soak, power mode, wall-power state, GPU driver,
+and release readiness false unless separately measured and reviewed.
+
+Development duration is clamped to 5-300 seconds; Shipping requires exactly 30 seconds. The process writes a schema-v2 timestamped JSON artifact plus
+`Saved/PerformanceCaptures/LatestPerformance.json`, records the final state, and exits non-zero unless the
 sample passes. Local practice saves are ignored during this gate. Schema v2 records and validates the
 capture profile, continuous authored camera route, warm-up, requested duration, rendered/NullRHI state,
 actual RHI adapter, resolution, runtime mode, and every scalability level. The independent validator rejects
@@ -42,7 +87,7 @@ NullRHI, resized windows, the wrong GPU/RHI identity, the wrong preset, or a mis
 
 Capture all three authored holes at the intended resolution and scalability preset after each substantial terrain, foliage, lighting, character, UI, or effects integration. A gray-box or NullRHI result is useful for code regression but is not production-art evidence.
 
-## Current packaged Omen result
+## Historical packaged Development Omen result
 
 The August 13, 2026 packaged Development gate ran on the NVIDIA GeForce RTX 5060 Laptop GPU at exact
 1920x1080 D3D12. Each hole used the same persistent property, High foliage population, 10-second warm-up,
@@ -56,6 +101,9 @@ The August 13, 2026 packaged Development gate ran on the NVIDIA GeForce RTX 5060
 
 Evidence is preserved as `Saved/PerformanceCaptures/PackagedFinal_Hole1_1080p.json` through
 `PackagedFinal_Hole3_1080p.json`, with matching logs under `Saved/Logs/Performance_Packaged_Final_*`.
+These reports are a historical baseline only; they are not performance evidence for a later Shipping
+candidate. Release evidence must bind the three fresh report and log hashes to the exact Shipping
+executable and archive manifest used for the runs.
 
 ## Interpretation limits
 

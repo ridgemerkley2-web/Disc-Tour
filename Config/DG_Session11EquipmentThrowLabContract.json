@@ -1,0 +1,509 @@
+{
+  "schema": "DiscGolfTour.Session11EquipmentThrowLabContract.v1",
+  "schema_version": 1,
+  "contract_id": "session11_equipment_throw_lab_source_first_v1",
+  "audit_scope": "TECHNICAL_DEVELOPMENT_EQUIPMENT_AND_THROW_LAB_GATE_NOT_PRODUCTION_OR_RELEASE_APPROVAL",
+  "normal_status": "PASS_TECHNICAL_EQUIPMENT_THROW_LAB_CONTRACT_RELEASE_BLOCKED",
+  "release_status": "BLOCKED_PENDING_SESSION9_SESSION10_AND_SESSION11_PRODUCTION_CLOSURE",
+  "authority": "PROJECT_OWNED_CATALOG_BAG_RELEASE_FLIGHT_TRAJECTORY_AND_REPLAY_REMAIN_AUTHORITATIVE",
+  "implementation_status": "TECHNICAL_RUNTIME_IMPLEMENTATION_ACCEPTED_PRODUCTION_READINESS_PENDING",
+  "feature_complete": true,
+  "releaseBlocked": true,
+  "release_ready": false,
+  "release_use_allowed": false,
+  "donor_reference": {
+    "policy": "REFERENCE_ONLY_ADAPT_DO_NOT_COPY_OR_REPLACE_INSTALLED_PLUGIN_OR_PROJECT_AUTHORITIES",
+    "session_spec": {
+      "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/CODEX/11_DISC_EQUIPMENT_THROW_LAB.md",
+      "bytes": 2266,
+      "sha256": "7B990AC275A9B8F531BCB567B568D1DA3CCDFE71C073350CA80833C285C17FEB"
+    },
+    "equipment_schema": {
+      "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Config/DG_DiscEquipmentSchema.json",
+      "bytes": 760,
+      "sha256": "F7667FFDF676048EE157E9FDFCC801E1E548AA2B8A45DDE475DF81675058CF46"
+    },
+    "telemetry_schema": {
+      "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Config/DG_ThrowLabTelemetrySchema.json",
+      "bytes": 667,
+      "sha256": "421EA0810E30D90FBA5C9A12D38FBD8CA31F705FAA596142053B35972F45F410"
+    },
+    "premium_starter_payload_policy": "REJECT_SUPERSEDED_BY_SESSION9_GENERIC_ONLY_RUNTIME_POLICY",
+    "plugin_bag_component_policy": "DORMANT_NO_PARALLEL_BAG_AUTHORITY",
+    "plugin_telemetry_component_policy": "DORMANT_NO_PARALLEL_FLIGHT_OR_RECORDING_AUTHORITY",
+    "plugin_throw_lab_save_policy": "REFERENCE_DTO_ONLY_UNTIL_PROJECT_OWNED_PERSISTENCE_ADAPTER_IS_EXPLICITLY_ACCEPTED"
+  },
+  "continuity": {
+    "session9": {
+      "contract_path": "Config/DG_BrandLicenseContract.json",
+      "contract_bytes": 9267,
+      "contract_sha256": "3EF3CBAD7E66D89D41CFB8C8FF59516484D8258995CAFAF28F8D58C4D8EB2001",
+      "validator_path": "Scripts/validate_dg_session9_brand_license.py",
+      "validator_bytes": 74292,
+      "validator_sha256": "69867A9CE89D8F7720E2A124BEEB09CE4FFDC02D6F95BED8A11D281EF0EB7550",
+      "expected_release_ready": false,
+      "expected_release_blocker_count": 8,
+      "release_blockers": [
+        "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+        "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+        "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+        "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+        "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+        "POLY_HAVEN_DERIVED_RUNTIME_PROVENANCE_RECEIPT_INCOMPLETE",
+        "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+        "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED"
+      ]
+    },
+    "session10": {
+      "contract_path": "Config/DG_Session10EnvironmentContract.json",
+      "contract_bytes": 19976,
+      "contract_sha256": "05931329CE877E80D4D36691D9091BBD6DDACE8F3F40612C5BE11B47744CDDC5",
+      "validator_path": "Scripts/validate_dg_session10_environment.py",
+      "validator_bytes": 76608,
+      "validator_sha256": "13F3AECBB569466B6E3E8C49E0B3FA599EF57B13CE23604602CDC3158809112A",
+      "expected_release_ready": false,
+      "expected_release_blocker_count": 9,
+      "session10_release_blockers": [
+        "SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY"
+      ],
+      "preserved_boundaries": {
+        "environment_presentation_only": true,
+        "automatic_environment_to_flight_wind_sync": false,
+        "assets_ready": false,
+        "pcg_runtime_generation": false,
+        "quarantined_roots": [
+          "/Game/PN_interactiveSpruceForest",
+          "/Game/Stump_Scanned",
+          "/Game/WaterMaterials"
+        ]
+      }
+    }
+  },
+  "brand_and_identity_contract": {
+    "active_brand_id": "dg_generic",
+    "premium_disc_golf_status": "DORMANT_BLOCKED_NOT_ADOPTED_FROM_DONOR",
+    "unknown_brand_policy": "BLOCK",
+    "equipment_names_status": "PENDING_PUBLIC_NAME_CLEARANCE_DEVELOPMENT_ONLY",
+    "real_manufacturer_or_product_data_allowed": false,
+    "generic_development_equipment_allowed": true,
+    "forbidden_active_runtime_tokens": [
+      "premium_disc_golf",
+      "premium_default",
+      "premium_bag_default",
+      "premium_proto_p1",
+      "premium_proto_m1",
+      "premium_proto_f1",
+      "premium_proto_d1"
+    ]
+  },
+  "current_authority_inventory": {
+    "required_files": [
+      "Config/DefaultGame.ini",
+      "Source/DiscGolfTour/DiscGolfTypes.h",
+      "Source/DiscGolfTour/DiscEquipmentDataAssets.h",
+      "Source/DiscGolfTour/DiscEquipmentDataAssets.cpp",
+      "Source/DiscGolfTour/DiscCatalogSubsystem.h",
+      "Source/DiscGolfTour/DiscCatalogSubsystem.cpp",
+      "Source/DiscGolfTour/DiscBagComponent.h",
+      "Source/DiscGolfTour/DiscBagComponent.cpp",
+      "Source/DiscGolfTour/DiscEquipmentSaveGame.h",
+      "Source/DiscGolfTour/DiscTrajectoryTypes.h",
+      "Source/DiscGolfTour/DiscTrajectorySubsystem.h",
+      "Source/DiscGolfTour/DiscTrajectorySubsystem.cpp",
+      "Source/DiscGolfTour/DiscFlightComponent.h",
+      "Source/DiscGolfTour/DiscFlightComponent.cpp",
+      "Source/DiscGolfTour/DiscActor.h",
+      "Source/DiscGolfTour/DiscActor.cpp",
+      "Source/DiscGolfTour/DiscReplayActor.h",
+      "Source/DiscGolfTour/DiscReplayActor.cpp",
+      "Source/DiscGolfTour/DiscGolfSaveGame.h",
+      "Source/DiscGolfTour/DiscGolfTourGameInstance.h",
+      "Source/DiscGolfTour/DiscGolfTourGameInstance.cpp",
+      "Source/DiscGolfTour/DiscGolfTourGameMode.h",
+      "Source/DiscGolfTour/DiscGolfTourGameMode.cpp"
+    ],
+    "baseline_hashes": [
+      {
+        "path": "Config/DefaultGame.ini",
+        "sha256": "DDAA82FBFD302C7AC501202EB3AE93EC152359CA83DEC3B7561D034A395E07AA"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTypes.h",
+        "sha256": "F42E0400F935E0B963DB81ECDA4129EA3F84466A57E125222C9CD5BB45C54BE8"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscEquipmentDataAssets.h",
+        "sha256": "5516E88BD87D3DAAE13449F118F8AB6CF730CC162542B976285F39DD30345368"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscEquipmentDataAssets.cpp",
+        "sha256": "DD597087B988D3C9C129142246824F94BBCFB0A7BBF1EBD08EDF3107A1417930"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscCatalogSubsystem.h",
+        "sha256": "ED728A677D62FDD9A7BC8A9E7DB3C63BCCB2CF3AE93F2E81EB8C5C405632E999"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscCatalogSubsystem.cpp",
+        "sha256": "D2B5E5E9F816014F330E5E5CB5486E752005BBB99E163AAD9A8513665D4C2112"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscBagComponent.h",
+        "sha256": "DC3F54DAC9BF24676499FCB9551FE25B676521758733376E3234E7961EB90825"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscBagComponent.cpp",
+        "sha256": "699E618119970035323EA7B3C76A63F22680A1B42D51397776B9D346CAC9877D"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscTrajectoryTypes.h",
+        "sha256": "4C30D14E48392226E80EEC23EFFB03DE5574830F4442C78A739FA44A7DD02C19"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscTrajectorySubsystem.h",
+        "sha256": "ECC4A1DB58495396CDFA210EFBA4289542B15A569AE5655EFDB981EB81F712AD"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscTrajectorySubsystem.cpp",
+        "sha256": "9D4476BAA5981A141EDF3D09718858A35C5F7A0B6F7EFEC8B1D6AA7031BEA266"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscFlightComponent.h",
+        "sha256": "A66ADD6B98F4373FBAFFA6C9675BA68C4B24DA869C19C89D5FE02323E2FCF4B4"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscFlightComponent.cpp",
+        "sha256": "6324782E253EDBC7D1A31B7AA4756147C093A9D05BA9E9E990AF5FAED03DE936"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscActor.h",
+        "sha256": "A934C0642E97669AE907AFE19B36EC548964A5362466BDDFA31CCA6B3BFFED1A"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscActor.cpp",
+        "sha256": "EBF14FD51577117455F08803B5E097AE673371DBF962FAD8ABD44CFBDE3446A4"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscReplayActor.h",
+        "sha256": "5C4586C7C08519E93B1C583C68FC5A1FEAE901CC361FC2AD6B57608557AB4E33"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscReplayActor.cpp",
+        "sha256": "B29D9C6B33AC8A4F2A8B04C00F19074D0CED7D5C5D009E12B2C17C7DF1CE8126"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfSaveGame.h",
+        "sha256": "DE31A3A5A6B538AD0EAC1D51B19C6F01F9FA6CCBF890F0AB3DAD415DBFE4DAEB"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTourGameInstance.h",
+        "sha256": "B0045A2FFA1D4B7F8FB69104F14B43B8551C23759A79A64CED0A5AB8B5D1F936"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfTourGameInstance.cpp",
+        "sha256": "8FD5014FAFDA7C92166D26510383A21BF42CE274228CBE843034F48F70B0FD24"
+      }
+    ],
+    "owners": {
+      "catalog": "UDiscCatalogSubsystem",
+      "bag": "UDiscBagComponent",
+      "release": "DiscGolfMath::ResolveThrowRelease",
+      "launch": "ADiscGolfTourGameMode::LaunchThrow",
+      "gameplay_disc": "ADiscActor",
+      "flight": "UDiscFlightComponent",
+      "trajectory_and_regression": "UDiscTrajectorySubsystem",
+      "replay": "ADiscReplayActor",
+      "save": "UDiscGolfTourGameInstance/UDiscGolfSaveGame"
+    },
+    "parallel_authority_allowed": false
+  },
+  "generic_catalog_contract": {
+    "primary_asset_root": "Content/Data/Discs",
+    "expected_mold_count": 5,
+    "expected_plastic_count": 3,
+    "stable_mold_ids": [
+      "Apex",
+      "Vector",
+      "Line",
+      "Compass",
+      "Touch"
+    ],
+    "stable_plastic_ids": [
+      "Base",
+      "Tour",
+      "Crystal"
+    ],
+    "exact_assets": [
+      {
+        "path": "Content/Data/Discs/Molds/DA_Mold_Apex.uasset",
+        "bytes": 2009,
+        "sha256": "C280DFAB44AA0EDDBC996F2C321DEE541D0B23C9E4879706F14346B05718AEAA"
+      },
+      {
+        "path": "Content/Data/Discs/Molds/DA_Mold_Compass.uasset",
+        "bytes": 2073,
+        "sha256": "8499F1D6E2B1B440E7E994E61CB87EA9EF52583EB451D06AF24281BC9FC77E8C"
+      },
+      {
+        "path": "Content/Data/Discs/Molds/DA_Mold_Line.uasset",
+        "bytes": 1904,
+        "sha256": "50FE515D59783D797FAA5488548F3F5F4630256C00CDF9254BD247BADDF23E39"
+      },
+      {
+        "path": "Content/Data/Discs/Molds/DA_Mold_Touch.uasset",
+        "bytes": 2102,
+        "sha256": "AFCFB8A80C3D5BA6C37B8C280E4C3593D04D44D5CF41FFE88C10C189ED1BF9D6"
+      },
+      {
+        "path": "Content/Data/Discs/Molds/DA_Mold_Vector.uasset",
+        "bytes": 2082,
+        "sha256": "7EAA0C21D998B98E5753187E722BB22E42E124B2C2F9DE9746B3F6D74780086B"
+      },
+      {
+        "path": "Content/Data/Discs/Plastics/DA_Plastic_Base.uasset",
+        "bytes": 1897,
+        "sha256": "E4BD3EE047C002CA53231312E5AA3E850317702F42BAA810A22D89B883A5285D"
+      },
+      {
+        "path": "Content/Data/Discs/Plastics/DA_Plastic_Crystal.uasset",
+        "bytes": 1918,
+        "sha256": "C19030DA0EEE0AA73DDD18BC37278D19E007CFA2C8A08095D8C7F5B3FEFC2FD3"
+      },
+      {
+        "path": "Content/Data/Discs/Plastics/DA_Plastic_Tour.uasset",
+        "bytes": 1460,
+        "sha256": "70012C7B71125B0BC52D66A6BD590078925E04E72503CFCEF692CB9139FE7827"
+      }
+    ],
+    "flight_numbers_policy": "PRESENTATION_AND_TUNING_METADATA_NOT_COMPLETE_AERODYNAMIC_AUTHORITY",
+    "existing_aerodynamic_coefficients_remain_authoritative": true,
+    "public_name_clearance_complete": false,
+    "release_use_allowed": false
+  },
+  "equipment_instance_contract": {
+    "required_fields": [
+      "InstanceId",
+      "DiscDefinitionId",
+      "PlasticId",
+      "MassGrams",
+      "Wear01",
+      "Color",
+      "StampId",
+      "Nickname",
+      "Favorite"
+    ],
+    "default_bag_capacity": 24,
+    "one_selected_disc": true,
+    "selected_instance_must_exist_in_bag": true,
+    "instance_ids_must_be_unique": true,
+    "definition_and_plastic_ids_must_resolve": true,
+    "invalid_or_missing_content_policy": "ATOMIC_CANONICAL_FALLBACK_NO_PARTIAL_SELECTION",
+    "default_reference_mass_grams": 175.0,
+    "default_reference_wear01": 0.0,
+    "default_mapping_must_preserve_reference_physics": true,
+    "non_default_mass_and_wear_status": "UNCALIBRATED_DEVELOPMENT_ONLY",
+    "selected_instance_snapshot_point": "SUCCESSFUL_EXISTING_LAUNCH_TRANSACTION",
+    "mutates_post_release_physics": false
+  },
+  "telemetry_contract": {
+    "record_origin": "SUCCESSFUL_EXISTING_GAME_MODE_LAUNCH_NOT_ANIMATION_NOTIFY_ALONE",
+    "finish_origins": [
+      "EXISTING_SETTLED_AUTHORITY",
+      "EXISTING_HOLED_OUT_AUTHORITY",
+      "EXISTING_OUT_OF_BOUNDS_LIE_AUTHORITY"
+    ],
+    "release_fields": [
+      "disc_instance",
+      "position_orientation",
+      "release_speed_mps",
+      "spin_rpm",
+      "hyzer_degrees",
+      "nose_degrees",
+      "launch_elevation_degrees",
+      "wobble_degrees",
+      "wind_mps"
+    ],
+    "sample_fields": [
+      "time_seconds",
+      "world_location_cm",
+      "linear_velocity_mps",
+      "angular_velocity_rad_per_sec",
+      "orientation"
+    ],
+    "summary_fields": [
+      "apex_meters",
+      "carry_meters",
+      "total_distance_meters",
+      "ground_play_meters",
+      "flight_time_seconds",
+      "maximum_speed_mps",
+      "lateral_deviation_meters",
+      "out_of_bounds",
+      "holed_out"
+    ],
+    "impact_history_required": true,
+    "source_trajectory_sampling_hz": 240.0,
+    "stored_throw_lab_max_sampling_hz": 60.0,
+    "max_samples_per_record": 2400,
+    "downsample_policy": "DETERMINISTIC_RETAIN_FIRST_LAST_AND_DISCRETE_TRANSITIONS_OR_IMPACTS",
+    "world_position_unit": "CENTIMETERS",
+    "linear_velocity_unit": "METERS_PER_SECOND",
+    "spin_unit": "RPM",
+    "angular_velocity_unit": "RADIANS_PER_SECOND",
+    "telemetry_changes_simulation": false,
+    "exactly_one_record_per_completed_authoritative_throw": true,
+    "cancelled_or_rejected_throw_record_count": 0
+  },
+  "development_ui_contract": {
+    "shipping_ui_claimed": false,
+    "bag_features": [
+      "selected_disc_display",
+      "bag_or_disc_wheel",
+      "favorite_indicator",
+      "weight_plastic_wear_color_display",
+      "select_disc_before_throw"
+    ],
+    "throw_lab_features": [
+      "release_metrics",
+      "actual_sampled_trajectory",
+      "summary",
+      "save_pin_delete",
+      "compare_at_least_two_throws",
+      "replay_selected_actual_throw"
+    ],
+    "fake_post_release_curve_allowed": false,
+    "active_throw_or_replay_mutation_allowed": false
+  },
+  "persistence_contract": {
+    "project_save_remains_authoritative": true,
+    "stable_ids_not_display_names": true,
+    "schema_migration_required_for_new_bag_payload": true,
+    "missing_content_fallback_required": true,
+    "atomic_save_failure_rollback_required": true,
+    "production_save_automation_mutation_allowed": false,
+    "automation_user_dir_policy": "DISPOSABLE_EXTERNAL_UUID",
+    "protected_save_path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+    "protected_save_bytes": 5212,
+    "protected_save_sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14"
+  },
+  "regression_contract": {
+    "authority": "EXISTING_SOURCE_CONTROLLED_PHYSICS_REGRESSION_PRESETS_AND_TRAJECTORY_SUBSYSTEM",
+    "create_parallel_regression_authority": false,
+    "uncalibrated_cases_enforced": false,
+    "new_mass_or_wear_ranges_status": "UNENFORCED_UNTIL_APPROVED_REPEATED_AND_TOLERANCED",
+    "reference_flight_must_remain_green": true,
+    "default_equipment_reference_envelopes_must_remain_green": true
+  },
+  "implementation_capabilities": [
+    {
+      "capability_id": "equipment_instance_runtime_and_validation",
+      "status": "TECHNICAL_PASS",
+      "required_for_session11_completion": true
+    },
+    {
+      "capability_id": "bag_instance_persistence_and_schema_migration",
+      "status": "TECHNICAL_PASS",
+      "required_for_session11_completion": true
+    },
+    {
+      "capability_id": "selected_instance_authoritative_launch_snapshot",
+      "status": "TECHNICAL_PASS",
+      "required_for_session11_completion": true
+    },
+    {
+      "capability_id": "bounded_throw_lab_record_adapter",
+      "status": "TECHNICAL_PASS",
+      "required_for_session11_completion": true
+    },
+    {
+      "capability_id": "functional_development_bag_and_throw_lab_ui",
+      "status": "TECHNICAL_PASS",
+      "required_for_session11_completion": true
+    },
+    {
+      "capability_id": "session11_focused_automation_and_live_throw_matrix",
+      "status": "TECHNICAL_PASS",
+      "required_for_session11_completion": true
+    },
+    {
+      "capability_id": "fresh_non_iterative_development_package_closure",
+      "status": "TECHNICAL_PASS",
+      "required_for_session11_completion": true
+    }
+  ],
+  "technical_closure_evidence": {
+    "focused_automation": {
+      "report": "Saved/Automation/Session11FocusedPersistence_ebae02cb-31a5-47d3-bf8f-bd5402f84c27/index.json",
+      "succeeded": 12,
+      "failed": 0
+    },
+    "full_automation": {
+      "report": "Saved/Automation/Session11FullClosure_2ca2924c-7fe3-40ac-957b-66bf47c471fb/index.json",
+      "succeeded": 164,
+      "failed": 0
+    },
+    "editor_and_game_builds": "PASS_DEVELOPMENT_WIN64",
+    "live_throw": {
+      "log": "Saved/Logs/Session11Live_89df456b-cf09-4103-a430-c48f317ee25f.log",
+      "solver_samples": 1965,
+      "bounded_throw_lab_samples": 490,
+      "status": "PASS"
+    },
+    "fresh_package": {
+      "run_id": "03294b72-f2f8-469f-90aa-75e13a907f45",
+      "archive": "C:/DGTour_Packages/S11_EquipmentThrowLab_Final_03294b72-f2f8-469f-90aa-75e13a907f45",
+      "packages_cooked": 984,
+      "packages_incrementally_skipped": 0,
+      "status": "PASS"
+    },
+    "packaged_live_throw": {
+      "log": "Saved/Logs/Session11PackagedFinal_2f108006-2f2d-4478-a36e-2063a9b7293c.log",
+      "solver_samples": 1965,
+      "bounded_throw_lab_samples": 490,
+      "isolated_equipment_save_bytes": 5092,
+      "status": "PASS"
+    }
+  },
+  "exit_gate": {
+    "status": "SATISFIED_TECHNICAL_RELEASE_BLOCKED",
+    "requirements": [
+      "VALID_SAVED_GENERIC_DISC_INSTANCE_SELECTABLE_BEFORE_LEGAL_THROW",
+      "SELECTED_INSTANCE_RESOLVED_ONCE_THROUGH_EXISTING_CATALOG_AND_LAUNCH_PATH",
+      "ONE_INPUT_ONE_RELEASE_ONE_GAMEPLAY_DISC_ONE_FLIGHT_PRESERVED",
+      "ONE_BOUNDED_CORRECTLY_UNITIZED_RECORD_PER_COMPLETED_THROW",
+      "SAVE_PIN_DELETE_COMPARE_TWO_AND_REPLAY_ACTUAL_SAMPLES_FUNCTIONAL",
+      "INVALID_OR_MISSING_DATA_RECOVERS_ATOMICALLY",
+      "DEFAULT_REFERENCE_PHYSICS_AND_ALL_PRIOR REGRESSIONS_PRESERVED",
+      "SESSION9_SESSION10_ENVIRONMENT_QUARANTINE_AND_SAVE_BOUNDARIES_PRESERVED",
+      "EDITOR_GAME_FOCUSED_FULL_LIVE_AND_PACKAGE_GATES_PASS"
+    ],
+    "production_equipment_claimed": false,
+    "calibrated_weight_or_wear_claimed": false,
+    "shipping_ui_claimed": false,
+    "public_release_claimed": false
+  },
+  "validation_contract": {
+    "validator_path": "Scripts/validate_dg_session11_equipment_throw_lab.py",
+    "report_path": "Saved/EquipmentReports/DG_Session11EquipmentThrowLabAudit.json",
+    "normal_mode_exit_code": 0,
+    "release_required_exit_code": 2,
+    "pending_implementation_artifact_count": 0,
+    "pending_artifacts_are_technical_errors_during_scaffold_phase": false,
+    "normal_mode_requires_release_blocked": true
+  },
+  "session11_release_blockers": [
+    "SESSION11_EQUIPMENT_PHYSICS_AND_PRODUCTION_READINESS_PENDING"
+  ],
+  "release_blockers": [
+    "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+    "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+    "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+    "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+    "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+    "POLY_HAVEN_DERIVED_RUNTIME_PROVENANCE_RECEIPT_INCOMPLETE",
+    "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+    "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED",
+    "SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY",
+    "SESSION11_EQUIPMENT_PHYSICS_AND_PRODUCTION_READINESS_PENDING"
+  ]
+}

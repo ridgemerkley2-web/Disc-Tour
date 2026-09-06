@@ -1,0 +1,330 @@
+{
+  "schema": "DiscGolfTour.Session19SustainedShippingEtwProfilePolicy.v3",
+  "schemaVersion": 3,
+  "session": 19,
+  "policyId": "windows_shipping_external_wpr_cpu_gpu_etw_profile_v3",
+  "candidateId": "S19_WindowsShipping_20260827T023919Z_51a1c132f837",
+  "authority": "ADDITIVE_EXTERNAL_WINDOWS_ETW_PROFILE_LANE_NOT_A_MODIFICATION_OF_FROZEN_V1_V2_EVIDENCE_OR_HUMAN_RELEASE_APPROVAL",
+  "state": "CAPTURE_READY_EXPORT_BLOCKED_WPAEXPORTER_UNAVAILABLE",
+  "bindings": {
+    "shippingProfileLaneAudit": {
+      "path": "Scripts/audit_dg_session19_shipping_profile_lane.py",
+      "bytes": 17628,
+      "sha256": "6856294DFB45108C095EA70BE72AD3E648E55C91C75CE93FDF68F46FBD49E110"
+    },
+    "declarationGenerator": {
+      "path": "Scripts/generate_dg_session19_sustained_etw_profile_declaration.py",
+      "bytes": 43411,
+      "sha256": "30545437DC9BB4DB51FFD6454B39D6ADF25DBA24308BC82A16C1BA784B4E3CBD"
+    },
+    "runner": {
+      "path": "Scripts/run_dg_session19_sustained_etw_profile.py",
+      "bytes": 61744,
+      "sha256": "3A2838B6B612A2952F6F98FB34D5D3807E81FAF52B7F5DE67B77930852FF2960"
+    },
+    "validator": {
+      "path": "Scripts/validate_dg_session19_sustained_etw_profile.py",
+      "bytes": 96310,
+      "sha256": "571372D54B6C4328AE4F2E69B427D1A26907694CC4B8BCB325788AC1EB501F2A"
+    },
+    "shippingPerformanceReceipt": {
+      "externalRootRelativePath": "ShippingPerformance/Receipts/ShippingPerformanceEvidence-S19_WindowsShipping_20260827T023919Z_51a1c132f837.json",
+      "bytes": 8522,
+      "sha256": "17EA52DE350C385A5F5BF98ABF7ED47817A96172F43A7C78A6713EEF7849E24C",
+      "schema": "DiscGolfTour.Session19ShippingPerformanceEvidence.v1",
+      "state": "PASS_CANDIDATE_BOUND_THREE_HOLE_RENDERED_PERFORMANCE",
+      "runId": "67b21cd9-8608-43a5-b447-42813f1c5be4",
+      "runRootRelativePath": "ShippingPerformance/ShippingPerformance/S19_WindowsShipping_20260827T023919Z_51a1c132f837/67b21cd9-8608-43a5-b447-42813f1c5be4"
+    }
+  },
+  "hostToolIdentities": {
+    "wpr": {
+      "fileName": "wpr.exe",
+      "bytes": 389120,
+      "sha256": "64F6D9F83A8B9F8C720870109A6374F650E3786F0EA3F6E3A6C02463257BBFC2"
+    },
+    "tracerpt": {
+      "fileName": "tracerpt.exe",
+      "bytes": 430080,
+      "sha256": "A83FE5CE5F57FAFDF5DCED6EF3BA8BE143B474658D6224ADB51C42BFCEC77464"
+    },
+    "wpaExporter": {
+      "available": false,
+      "binding": null
+    }
+  },
+  "candidateArchive": {
+    "archiveRecoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260827T023919Z_51a1c132f837/Windows",
+    "fileCount": 31,
+    "bytes": 1246026263,
+    "inventorySha256": "657283B661685FC2CBC4E6A4244386281319F68DA581621E4B143AB404A8F6C8",
+    "launcher": {
+      "relativePath": "DiscGolfTour.exe",
+      "bytes": 171520,
+      "sha256": "7C704AB7D2E69C9B644F53B57678F0D1F2011D0985A5A34BAF3CEA9155D029D7"
+    },
+    "shippingExecutable": {
+      "relativePath": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+      "bytes": 162632192,
+      "sha256": "9A7AB59B8B055335D249F4C7537EF047F6AADB687DEE20BD6D427C33CECADEF9"
+    }
+  },
+  "shippingTraceBoundary": {
+    "ordinaryShippingFullUnrealTraceCompiled": false,
+    "fullShippingTraceUnsupportedGuardPresent": true,
+    "externalEtwRequired": true,
+    "unrealTraceMayNotBeSubstitutedOrFabricated": true
+  },
+  "predeclaration": {
+    "minimumDurationSeconds": 900,
+    "maximumDurationSeconds": 7200,
+    "defaultDurationSeconds": 1800,
+    "declarationMustPrecedeCapture": true,
+    "runIdKind": "LOWERCASE_RFC4122_UUID_V4",
+    "externalOnly": true,
+    "appendOnly": true,
+    "captureStartsOnlyWithExplicitCaptureModeAndCandidateConfirmation": true,
+    "preflightNeverStartsWprOrGame": true,
+    "captureForbiddenWhileExportToolingIsBlocked": true
+  },
+  "wprContract": {
+    "requiredExecutableName": "wpr.exe",
+    "requiredProfiles": [
+      "CPU",
+      "GPU"
+    ],
+    "profileListingArguments": [
+      "-profiles"
+    ],
+    "profileDetailsArguments": {
+      "CPU": [
+        "-profiledetails",
+        "CPU.light"
+      ],
+      "GPU": [
+        "-profiledetails",
+        "GPU.light"
+      ]
+    },
+    "requiredProfileDetailTokens": {
+      "CPU": [
+        "CPU.Light",
+        "SampledProfile",
+        "CSwitch"
+      ],
+      "GPU": [
+        "GPU.Light",
+        "Microsoft-Windows-DxgKrnl",
+        "DX"
+      ]
+    },
+    "statusArguments": [
+      "-status"
+    ],
+    "requiredIdleStatusToken": "WPR is not recording",
+    "startArgumentsTemplate": [
+      "-start",
+      "CPU.light",
+      "-start",
+      "GPU.light",
+      "-filemode",
+      "-recordtempto",
+      "<EXTERNAL_WORKING_DIRECTORY>"
+    ],
+    "stopArgumentsTemplate": [
+      "-stop",
+      "<EXTERNAL_ETL_PATH>"
+    ],
+    "cancelArguments": [
+      "-cancel"
+    ],
+    "requireNoPreexistingRecording": true,
+    "requireStartExitCodeZero": true,
+    "requireStopExitCodeZero": true
+  },
+  "captureProvenanceContract": {
+    "gameProcessMustBindPidCreationUtcExecutablePathBytesAndSha256": true,
+    "gamePidMustMatchEveryRawCpuGpuRole": true,
+    "gameProcessCreationMustFallInsideCaptureWindow": true,
+    "wprStartAndStopMustRecordExactArgumentsStartFinishAndExitCode": true,
+    "wprStartAndStopExitCodesMustBeZero": true,
+    "wprStartMustPrecedeGameProcessCreation": true,
+    "gameProcessExitMustPrecedeWprStop": true
+  },
+  "etlContract": {
+    "artifactName": "SustainedCpuGpu.etl",
+    "minimumBytes": 1048576,
+    "minimumDistinctByteValues": 32,
+    "minimumNonZeroRatio": 0.05,
+    "maximumBytes": 34359738368,
+    "mustBeRegularNonReparseFile": true,
+    "mustBeCreatedInsideDeclaredRun": true,
+    "mustBeBoundBySha256": true,
+    "mustFollowWprStartAndPrecedeWprStopRecord": true,
+    "textJsonZipPePlaceholdersForbidden": true,
+    "byteEnvelopeNeverEstablishesRealEtl": true,
+    "realEtlRequiresBoundTracerptProviderProof": true
+  },
+  "tracerptContract": {
+    "requiredExecutableName": "tracerpt.exe",
+    "argumentsTemplate": [
+      "<EXTERNAL_ETL_PATH>",
+      "-o",
+      "<EXTERNAL_TRACERPT_CSV_PATH>",
+      "-of",
+      "CSV",
+      "-summary",
+      "<EXTERNAL_TRACERPT_SUMMARY_PATH>",
+      "-y"
+    ],
+    "minimumParsedCsvBytes": 1024,
+    "minimumParsedEventRows": 1000,
+    "requiredParsedCsvColumnsSubset": [
+      "Event Name",
+      "PID",
+      "TID",
+      "Clock-Time",
+      "User Data"
+    ],
+    "minimumSummaryBytes": 32,
+    "requiredProviderTokens": [
+      "DxgKrnl",
+      "Process"
+    ],
+    "inputEtlOutputAndToolMustBeSha256Bound": true,
+    "invocationExitCodeMustBeZero": true,
+    "gamePidMustAppearInParsedOutput": true,
+    "invocationMustFollowWprStop": true,
+    "highEntropyEnvelopeAloneNeverAuthorizesRealEtl": true
+  },
+  "exportContract": {
+    "requiredExporterExecutableName": "WPAExporter.exe",
+    "exporterMustExistBeforeCapture": true,
+    "exporterMustBeBoundByBytesSha256AndVersion": true,
+    "wpaProfileMustBePredeclaredByPathBytesAndSha256": true,
+    "requiredProfileExtension": ".wpaProfile",
+    "invocationArgumentsTemplate": [
+      "-i",
+      "<EXTERNAL_ETL_PATH>",
+      "-profile",
+      "<BOUND_WPA_PROFILE_PATH>",
+      "-delimiter",
+      ",",
+      "-outputfolder",
+      "<EXTERNAL_WPA_OUTPUT_DIRECTORY>"
+    ],
+    "invocationExitCodeMustBeZero": true,
+    "invocationMustBindExactToolProfileInputAndOutputInventory": true,
+    "invocationMustFollowTracerptProviderProof": true,
+    "rawCpuAndGpuBindingsMustExistInInvocationOutputInventory": true,
+    "rawCpuArtifactName": "RawCpuTiming.csv",
+    "rawGpuArtifactName": "RawGpuTiming.csv",
+    "normalizedArtifactName": "NormalizedRoleTiming.json",
+    "normalizedSchema": "DiscGolfTour.Session19SustainedShippingEtwNormalizedRoleTiming.v3",
+    "requiredRawCpuColumns": [
+      "Process",
+      "ProcessId",
+      "Thread",
+      "ThreadId",
+      "StartTimeSeconds",
+      "DurationMilliseconds"
+    ],
+    "requiredRawGpuColumns": [
+      "Process",
+      "ProcessId",
+      "StartTimeSeconds",
+      "DurationMilliseconds",
+      "Engine"
+    ],
+    "requiredProcessName": "DiscGolfTour-Win64-Shipping.exe",
+    "requiredRoles": [
+      "GPU",
+      "GameThread",
+      "RenderThread",
+      "RHIThread"
+    ],
+    "minimumRawArtifactBytes": 256,
+    "maximumRawArtifactBytes": 536870912,
+    "minimumEventsPerRole": 60,
+    "minimumObservedDurationSecondsPerRole": 60.0,
+    "declaredDurationCoverageToleranceSeconds": 2.0,
+    "everyRoleMustSpanDeclaredDuration": true,
+    "percentileMethod": "NEAREST_RANK_CEIL_0_95_N",
+    "requiredRoleKeys": [
+      "role",
+      "sourceTable",
+      "sourceArtifactSha256",
+      "processName",
+      "processId",
+      "threadName",
+      "threadId",
+      "eventCount",
+      "firstTimestampSeconds",
+      "lastTimestampSeconds",
+      "observedDurationSeconds",
+      "averageDurationMilliseconds",
+      "p95DurationMilliseconds",
+      "maximumDurationMilliseconds"
+    ],
+    "normalizedExportMustBindExactEtlAndRawArtifacts": true,
+    "rawEventsMustIndependentlyRecomputeEveryNormalizedRole": true,
+    "allFourRolesMustShareOnePositiveProcessId": true,
+    "normalizedExportMustBeStrictFiniteJson": true,
+    "technicalClaimForbiddenWithoutAllFourRoles": true
+  },
+  "chronologyContract": {
+    "futureTimestampToleranceSeconds": 2,
+    "declarationMustPrecedeCaptureStart": true,
+    "wprStartMustNotFollowGameStart": true,
+    "gameFinishMustNotFollowWprStop": true,
+    "etlMustPrecedeExport": true,
+    "exportMustPrecedeRunManifest": true,
+    "archivePostMustFollowGameFinish": true
+  },
+  "requiredArtifacts": {
+    "archivePre": "ArchiveSnapshot.Pre.json",
+    "archivePost": "ArchiveSnapshot.Post.json",
+    "captureRecord": "EtwCaptureRecord.json",
+    "etl": "SustainedCpuGpu.etl",
+    "tracerptCsv": "TracerptEvents.csv",
+    "tracerptSummary": "TracerptSummary.txt",
+    "providerProof": "TracerptProviderProof.json",
+    "wpaInvocation": "WpaExporterInvocation.json",
+    "rawCpu": "RawCpuTiming.csv",
+    "rawGpu": "RawGpuTiming.csv",
+    "normalizedRoles": "NormalizedRoleTiming.json",
+    "exportRecord": "WpaExportRecord.json",
+    "runManifest": "RunManifest.json"
+  },
+  "schemas": {
+    "declaration": "DiscGolfTour.Session19SustainedShippingEtwProfileDeclaration.v3",
+    "archiveSnapshot": "DiscGolfTour.Session19SustainedShippingEtwArchiveSnapshot.v3",
+    "captureRecord": "DiscGolfTour.Session19SustainedShippingEtwCaptureRecord.v3",
+    "providerProof": "DiscGolfTour.Session19SustainedShippingEtwProviderProof.v3",
+    "wpaInvocation": "DiscGolfTour.Session19SustainedShippingEtwWpaInvocation.v3",
+    "exportRecord": "DiscGolfTour.Session19SustainedShippingEtwExportRecord.v3",
+    "runManifest": "DiscGolfTour.Session19SustainedShippingEtwRunManifest.v3",
+    "technicalAudit": "DiscGolfTour.Session19SustainedShippingEtwTechnicalAudit.v3"
+  },
+  "technicalPassState": "PASS_CANDIDATE_BOUND_SUSTAINED_SHIPPING_EXTERNAL_WPR_CPU_GPU_ETW_FOUR_ROLE_PROFILE_HUMAN_APPROVALS_PENDING",
+  "failState": "FAIL_CLOSED",
+  "claimBoundary": {
+    "candidateArchiveBound": true,
+    "threeHoleRenderedPerformanceReceiptBound": true,
+    "externalWprCpuGpuEtwRequired": true,
+    "realEtlRequired": true,
+    "trustedTracerptProviderProofRequired": true,
+    "actualWpaExporterInvocationRequired": true,
+    "gameProcessPidExecutableAndWindowBindingRequired": true,
+    "normalizedGpuGameRenderRhiExportRequired": true,
+    "technicalEvidenceAccepted": false,
+    "sustainedPerformanceCertified": false,
+    "cryptographicProcessAttestation": false,
+    "hostileSameUserForgeryResistance": false,
+    "humanPerformanceAcceptance": false,
+    "productOwnerApproval": false,
+    "releaseApproval": false,
+    "releaseReady": false,
+    "evidenceTrustModel": "BOUNDED_OPERATIONAL_PROCESS_EVIDENCE_NOT_CRYPTOGRAPHIC_ATTESTATION"
+  }
+}

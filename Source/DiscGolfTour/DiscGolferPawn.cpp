@@ -1,6 +1,9 @@
 #include "DiscGolferPawn.h"
 #include "DiscBagComponent.h"
 #include "DiscGolfInputConfig.h"
+#include "DiscGolfInputRoutePolicy.h"
+#include "DiscGolfHoleActor.h"
+#include "DiscGolfMath.h"
 #include "DiscGolfTour.h"
 #include "ThrowControllerComponent.h"
 #include "DiscGolfTourGameMode.h"
@@ -10,6 +13,8 @@
 #include "DiscGolfCharacterProfileRuntime.h"
 #include "DiscGolfCharacterProfile.h"
 #include "DiscGolfAppearanceComponent.h"
+#include "DiscGolfAvatarBackendProfile.h"
+#include "DiscGolfAvatarBackendRuntime.h"
 #include "DiscGolfCharacterCustomizationComponent.h"
 #include "DiscGolfCosmeticCatalog.h"
 #include "DiscGolfFullCharacterRuntime.h"
@@ -17,19 +22,25 @@
 #include "DiscGolfOutfitCatalog.h"
 #include "DiscGolfOutfitComponent.h"
 #include "DiscGolfOutfitRuntime.h"
+#include "DiscGolfProductionMotion.h"
+#include "DiscGolfAnimationLibrary.h"
 #include "DiscGolfAnimInstance.h"
 #include "DiscGolfThrowComponent.h"
 #include "DiscGolfTourGameInstance.h"
+#if DG_WITH_DEVELOPMENT_CONTENT
 #include "DiscGolfSession5MocapValidationPaths.h"
+#endif
 #include "Algo/Unique.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/PrimitiveComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
+#include "Engine/SkeletalMesh.h"
 #include "InputActionValue.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -40,6 +51,67 @@
 
 namespace
 {
+    constexpr float MinimumThrowMontagePlayRate = 0.90f;
+    constexpr float MaximumThrowMontagePlayRate = 1.10f;
+
+    FName MotionFamilyId(EGolferAnimationFamily Family)
+    {
+        switch (Family)
+        {
+            case EGolferAnimationFamily::Approach: return TEXT("Approach");
+            case EGolferAnimationFamily::Putt: return TEXT("Putt");
+            default: return TEXT("Drive");
+        }
+    }
+
+    bool IsRecommendedPowerRangeValid(const FDGThrowAnimationEntry& Entry)
+    {
+        return FMath::IsFinite(Entry.RecommendedPowerMin)
+            && FMath::IsFinite(Entry.RecommendedPowerMax)
+            && Entry.RecommendedPowerMin >= 0.0f
+            && Entry.RecommendedPowerMax <= 1.0f
+            && Entry.RecommendedPowerMin <= Entry.RecommendedPowerMax;
+    }
+
+    bool IsMontageLifecycleSafe(const UAnimMontage* Montage)
+    {
+        return UDiscGolfThrowComponent::IsAuthoredMontageLifecycleSafe(Montage);
+    }
+
+    float ComputeThrowMontagePlayRate(const FThrowCommand& Command)
+    {
+        if (!DiscGolfMath::IsThrowCommandValid(Command))
+        {
+            return 1.0f;
+        }
+
+        // Presentation cadence varies narrowly with captured command intent.
+        // It never feeds back into release speed, spin, angle, or direction.
+        const float PowerRate = FMath::Lerp(
+            0.94f, 1.06f, FMath::Clamp(Command.Power01, 0.0f, 1.0f));
+        const float TimingRate = FMath::Lerp(
+            1.0f, 0.97f, FMath::Clamp(FMath::Abs(Command.TimingError), 0.0f, 1.0f));
+        return FMath::Clamp(
+            PowerRate * TimingRate,
+            MinimumThrowMontagePlayRate,
+            MaximumThrowMontagePlayRate);
+    }
+
+    bool IsRouteAllowed(const ADiscGolferPawn* Golfer, EDiscGolfInputRoute Route)
+    {
+        const ADiscGolfTourPlayerController* Controller = Golfer
+            ? Cast<ADiscGolfTourPlayerController>(Golfer->GetController()) : nullptr;
+        return !Controller || Controller->IsInputRouteAllowed(Route);
+    }
+
+    EDiscGolfInputRoute GetActiveInputRoute(const ADiscGolferPawn* Golfer)
+    {
+        const ADiscGolfTourPlayerController* Controller = Golfer
+            ? Cast<ADiscGolfTourPlayerController>(Golfer->GetController()) : nullptr;
+        return Controller ? Controller->GetActiveInputRoute() : EDiscGolfInputRoute::Gameplay;
+    }
+
+#if DG_WITH_DEVELOPMENT_CONTENT
     bool ResolveSession4ProfileOverride(
         UObject* Outer,
         FDGBodyProfile& OutBody,
@@ -123,6 +195,7 @@ namespace
 
         return false;
     }
+#endif
 }
 
 ADiscGolferPawn::ADiscGolferPawn()
@@ -138,12 +211,12 @@ ADiscGolferPawn::ADiscGolferPawn()
     static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMesh(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> MasterGolferMesh(
         TEXT("/Game/DiscGolf/Characters/Meshes/SK_DG_Master.SK_DG_Master"));
+#if DG_WITH_DEVELOPMENT_CONTENT
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> ModularProxyHead(
         DiscGolfFullCharacterRuntime::HeadMeshObjectPath);
+#endif
     static ConstructorHelpers::FClassFinder<UAnimInstance> PlayerAnimationBlueprint(
         TEXT("/Game/DiscGolf/Animation/ABP_DG_Player"));
-    static ConstructorHelpers::FObjectFinder<UAnimMontage> RHBHMontage(
-        TEXT("/Game/DiscGolf/Animation/Throws/AM_DG_RHBH_Prototype.AM_DG_RHBH_Prototype"));
     static ConstructorHelpers::FObjectFinder<UDiscGolfCharacterProfile> DefaultCharacterProfile(
         TEXT("/Game/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter.DA_DG_DefaultCharacter"));
 
@@ -187,10 +260,12 @@ ADiscGolferPawn::ADiscGolferPawn()
     ModularHeadMesh->VisibilityBasedAnimTickOption =
         EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
     ModularHeadMesh->bEnableUpdateRateOptimizations = false;
+#if DG_WITH_DEVELOPMENT_CONTENT
     if (ModularProxyHead.Succeeded())
     {
         ModularHeadMesh->SetSkeletalMeshAsset(ModularProxyHead.Object);
     }
+#endif
     ModularHeadMesh->SetVisibility(false);
 
     HeldDiscVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldDiscVisual"));
@@ -234,12 +309,148 @@ ADiscGolferPawn::ADiscGolferPawn()
         FrameworkThrowComponent->CharacterProfile = CharacterProfileTemplate;
     }
     RHBHThrowAdapter = CreateDefaultSubobject<UDiscGolfRHBHThrowAdapterComponent>(TEXT("RHBHThrowAdapter"));
-    RHBHThrowMontage = RHBHMontage.Succeeded() ? RHBHMontage.Object : nullptr;
+    ProductionAnimationLibrary = nullptr;
+    ProductionDriveMontage = nullptr;
+    ProductionApproachMontage = nullptr;
+    ProductionPuttMontage = nullptr;
+    RHBHThrowMontage = nullptr;
 }
 
 void ADiscGolferPawn::BeginPlay()
 {
     Super::BeginPlay();
+
+    // Runtime loading happens after CDO construction so the guarded authoring
+    // commandlet can run before these candidate packages exist. Packaging still
+    // includes the complete root through the explicit AlwaysCook contract.
+    ProductionDriveMontage = LoadObject<UAnimMontage>(
+        nullptr, DiscGolfProductionMotion::DriveMontage);
+    ProductionApproachMontage = LoadObject<UAnimMontage>(
+        nullptr, DiscGolfProductionMotion::ApproachMontage);
+    ProductionPuttMontage = LoadObject<UAnimMontage>(
+        nullptr, DiscGolfProductionMotion::PuttMontage);
+    ProductionAnimationLibrary = LoadObject<UDiscGolfAnimationLibrary>(
+        nullptr, DiscGolfProductionMotion::Library);
+    RHBHThrowMontage = ProductionDriveMontage;
+    ProductionMotionCandidateRevision =
+        DiscGolfProductionMotion::ActiveAssetRevision;
+
+#if DG_WITH_DEVELOPMENT_CONTENT
+    // An explicitly requested evidence capture may exercise a staged candidate
+    // without changing ActiveVersion, the accepted library asset, or Shipping.
+    // Load into temporaries and swap all four pointers atomically only after the
+    // exact v007 library and all three montages prove present and internally
+    // bound to the expected versioned object paths.
+    FString RequestedMotionCandidate;
+    const bool bCandidateValuePresent = FParse::Value(
+        FCommandLine::Get(), TEXT("DGProductionMotionCandidate="),
+        RequestedMotionCandidate);
+    if (bCandidateValuePresent)
+    {
+        const bool bIsVisualEvidenceCapture =
+            FParse::Param(FCommandLine::Get(),
+                TEXT("Session19MetaHumanProductionVisualCapture"))
+            || FParse::Param(FCommandLine::Get(),
+                TEXT("Session19ProductionMotionVisualCapture"));
+        const bool bExactRequest = RequestedMotionCandidate == TEXT("v007")
+            && bIsVisualEvidenceCapture
+            && FParse::Param(FCommandLine::Get(), TEXT("unattended"));
+        if (!bExactRequest)
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("PRODUCTION MOTION CANDIDATE OVERRIDE REFUSED: exact v007 + unattended Session19 visual capture is required (requested=%s)."),
+                *RequestedMotionCandidate);
+        }
+        else
+        {
+            UAnimMontage* CandidateDrive = LoadObject<UAnimMontage>(
+                nullptr, DiscGolfProductionMotion::V7::DriveMontage);
+            UAnimMontage* CandidateApproach = LoadObject<UAnimMontage>(
+                nullptr, DiscGolfProductionMotion::V7::ApproachMontage);
+            UAnimMontage* CandidatePutt = LoadObject<UAnimMontage>(
+                nullptr, DiscGolfProductionMotion::V7::PuttMontage);
+            UDiscGolfAnimationLibrary* CandidateLibrary =
+                LoadObject<UDiscGolfAnimationLibrary>(
+                    nullptr, DiscGolfProductionMotion::V7::Library);
+            const TMap<FName, FString> ExpectedMontages = {
+                {TEXT("Drive"), DiscGolfProductionMotion::V7::DriveMontage},
+                {TEXT("Approach"), DiscGolfProductionMotion::V7::ApproachMontage},
+                {TEXT("Putt"), DiscGolfProductionMotion::V7::PuttMontage},
+            };
+            const TMap<FName, FName> ExpectedStyles = {
+                {TEXT("Drive"), TEXT("DG_Drive_Procedural_Candidate_v007")},
+                {TEXT("Approach"), TEXT("DG_Approach_Procedural_Candidate_v007")},
+                {TEXT("Putt"), TEXT("DG_Putt_Procedural_Candidate_v007")},
+            };
+            const TMap<FName, FVector2D> ExpectedPowerRanges = {
+                {TEXT("Drive"), FVector2D(0.62, 1.0)},
+                {TEXT("Approach"), FVector2D(0.25, 0.72)},
+                {TEXT("Putt"), FVector2D(0.05, 0.45)},
+            };
+            bool bExactLibrary = CandidateLibrary
+                && CandidateLibrary->Entries.Num() == ExpectedMontages.Num();
+            TSet<FName> ObservedFamilies;
+            if (bExactLibrary)
+            {
+                for (const FDGThrowAnimationEntry& Entry
+                    : CandidateLibrary->Entries)
+                {
+                    const FString* ExpectedPath =
+                        ExpectedMontages.Find(Entry.MotionFamilyId);
+                    const FName* ExpectedStyle =
+                        ExpectedStyles.Find(Entry.MotionFamilyId);
+                    const FVector2D* ExpectedPowerRange =
+                        ExpectedPowerRanges.Find(Entry.MotionFamilyId);
+                    const FString ActualPath =
+                        Entry.Montage.ToSoftObjectPath().ToString();
+                    if (!ExpectedPath
+                        || !ExpectedStyle
+                        || !ExpectedPowerRange
+                        || Entry.ThrowType != EDGThrowType::Backhand
+                        || Entry.Handedness != EDGHandedness::Right
+                        || Entry.StyleId != *ExpectedStyle
+                        || ActualPath != *ExpectedPath
+                        || !FMath::IsNearlyEqual(
+                            Entry.RecommendedPowerMin,
+                            static_cast<float>(ExpectedPowerRange->X))
+                        || !FMath::IsNearlyEqual(
+                            Entry.RecommendedPowerMax,
+                            static_cast<float>(ExpectedPowerRange->Y))
+                        || ObservedFamilies.Contains(Entry.MotionFamilyId))
+                    {
+                        bExactLibrary = false;
+                        break;
+                    }
+                    ObservedFamilies.Add(Entry.MotionFamilyId);
+                }
+                bExactLibrary = bExactLibrary
+                    && ObservedFamilies.Num() == ExpectedMontages.Num();
+            }
+            if (CandidateDrive && CandidateApproach && CandidatePutt
+                && CandidateDrive->GetSkeleton()
+                && CandidateApproach->GetSkeleton() == CandidateDrive->GetSkeleton()
+                && CandidatePutt->GetSkeleton() == CandidateDrive->GetSkeleton()
+                && bExactLibrary)
+            {
+                ProductionDriveMontage = CandidateDrive;
+                ProductionApproachMontage = CandidateApproach;
+                ProductionPuttMontage = CandidatePutt;
+                ProductionAnimationLibrary = CandidateLibrary;
+                RHBHThrowMontage = CandidateDrive;
+                ProductionMotionCandidateRevision =
+                    DiscGolfProductionMotion::V7::AssetRevision;
+                UE_LOG(LogDiscGolfTour, Display,
+                    TEXT("PRODUCTION MOTION CANDIDATE OVERRIDE: v007 isolated visual evidence only; ActiveVersion=%s remains unchanged."),
+                    DiscGolfProductionMotion::ActiveVersion);
+            }
+            else
+            {
+                UE_LOG(LogDiscGolfTour, Error,
+                    TEXT("PRODUCTION MOTION CANDIDATE OVERRIDE FAILED CLOSED: exact v007 library/montage set is unavailable or inconsistent; accepted v006 remains selected."));
+            }
+        }
+    }
+#endif
 
     FDGFullCharacterCustomization StartupCustomization =
         DiscGolfFullCharacterRuntime::MakeDefaultCustomization();
@@ -249,9 +460,10 @@ void ADiscGolferPawn::BeginPlay()
         StartupCustomization = Instance->GetFullCharacterCustomization();
     }
 
-    // Session 5 may exercise a pipeline-produced montage only in an explicit,
-    // unattended validation process.  The constructor and every normal game
-    // launch retain the accepted Session 3 prototype montage.
+#if DG_WITH_DEVELOPMENT_CONTENT
+    // Session 5 may override the separately authored production candidate only
+    // in an explicit unattended development process. Shipping never references
+    // the prototype or synthetic pipeline montage.
     if (DiscGolfSession5MocapValidation::IsPipelineRuntimeValidationRequested())
     {
         RHBHThrowMontage = LoadObject<UAnimMontage>(
@@ -271,6 +483,7 @@ void ADiscGolferPawn::BeginPlay()
                 DiscGolfSession5MocapValidation::PipelineTestMontage);
         }
     }
+#endif
 
     if (CharacterProfileTemplate && FrameworkThrowComponent)
     {
@@ -285,6 +498,7 @@ void ADiscGolferPawn::BeginPlay()
             FDGThrowStyle SavedStyle = StartupCustomization.ThrowStyle;
             EDGHandedness SavedHandedness =
                 StartupCustomization.Identity.Handedness;
+#if DG_WITH_DEVELOPMENT_CONTENT
             FString Session4OverrideLabel;
             if (ResolveSession4ProfileOverride(
                     this, SavedBody, SavedStyle, SavedHandedness, Session4OverrideLabel))
@@ -293,6 +507,7 @@ void ADiscGolferPawn::BeginPlay()
                     TEXT("SESSION 4 PROFILE OVERRIDE: %s (transient, save slot unchanged)."),
                     *Session4OverrideLabel);
             }
+#endif
             StartupCustomization.Body = SavedBody;
             StartupCustomization.ThrowStyle = SavedStyle;
             StartupCustomization.Identity.Handedness = SavedHandedness;
@@ -349,10 +564,28 @@ void ADiscGolferPawn::BeginPlay()
     if (RHBHThrowAdapter)
     {
         RHBHThrowAdapter->Configure(FrameworkThrowComponent, SkeletalMesh, HeldDiscVisual);
+        RHBHThrowAdapter->ConfigureIngressContracts(ThrowController, DiscBag);
         RHBHThrowAdapter->GetAuthoritativeLaunchDelegate().BindUObject(
             this, &ADiscGolferPawn::HandleAnimatedRHBHRelease);
         RHBHThrowAdapter->OnThrowRecovered.AddUniqueDynamic(
             this, &ADiscGolferPawn::HandleAnimatedThrowRecovered);
+    }
+    const FDGFullCharacterCustomization& BackendCustomization =
+        CharacterCustomization
+        ? CharacterCustomization->Current
+        : StartupCustomization;
+    FString BackendStatus;
+    const bool bBackendApplied = ApplyAvatarBackendForCustomization(
+        BackendCustomization, true, BackendStatus);
+    const bool bMetaHumanFallback =
+        BackendCustomization.AvatarBackendId
+            == FName(DiscGolfAvatarBackendRuntime::MetaHumanAssembledBackendId)
+        && (!AvatarBackendComponent
+            || !AvatarBackendComponent->IsVisualBackendReady());
+    if (!bBackendApplied || bMetaHumanFallback)
+    {
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Avatar backend startup recovery: %s"), *BackendStatus);
     }
 }
 
@@ -390,7 +623,8 @@ bool ADiscGolferPawn::IsCharacterProfileChangeSafe() const
 bool ADiscGolferPawn::PreviewCharacterCreatorProfile(
     const FDGBodyProfile& Body,
     const FDGThrowStyle& Style,
-    EDGHandedness Handedness)
+    EDGHandedness Handedness,
+    bool bAllowAvatarBackendFallback)
 {
     if (!RuntimeCharacterProfile || !IsCharacterProfileChangeSafe())
     {
@@ -406,7 +640,7 @@ bool ADiscGolferPawn::PreviewCharacterCreatorProfile(
         Candidate.Identity.Handedness = Handedness;
         FString IgnoredStatus;
         return ApplyFullCharacterCustomizationTransactionally(
-            Candidate, true, IgnoredStatus);
+            Candidate, true, IgnoredStatus, bAllowAvatarBackendFallback);
     }
 
     ApplyCharacterProfileUnchecked(Body, Style, Handedness);
@@ -487,7 +721,8 @@ bool ADiscGolferPawn::PreviewFullCharacterCustomization(
 bool ADiscGolferPawn::ApplyFullCharacterCustomizationTransactionally(
     const FDGFullCharacterCustomization& Requested,
     bool bAllowUnavailableItems,
-    FString& OutStatus)
+    FString& OutStatus,
+    bool bAllowAvatarBackendFallback)
 {
     OutStatus.Reset();
     if (!CharacterCustomization || !RuntimeCharacterProfile
@@ -537,10 +772,37 @@ bool ADiscGolferPawn::ApplyFullCharacterCustomizationTransactionally(
 
     CharacterCustomization->Current.Outfit = GetCurrentOutfitLoadout();
     ApplyFullCustomizationVisuals();
+    FString BackendStatus;
+    if (!ApplyAvatarBackendForCustomization(
+            CharacterCustomization->Current,
+            bAllowAvatarBackendFallback,
+            BackendStatus))
+    {
+        CharacterCustomization->Current = Previous;
+        ApplyCharacterProfileUnchecked(
+            Previous.Body, Previous.ThrowStyle, Previous.Identity.Handedness);
+        RuntimeCharacterProfile->DisplayName =
+            FText::FromString(Previous.Identity.DisplayName);
+        FString RollbackStatus;
+        ApplyOutfitLoadoutTransactionally(
+            Previous.Outfit, true, RollbackStatus);
+        ApplyFullCustomizationVisuals();
+        FString BackendRollbackStatus;
+        ApplyAvatarBackendForCustomization(
+            Previous, true, BackendRollbackStatus);
+        OutStatus = BackendStatus.IsEmpty()
+            ? TEXT("Visual backend preview failed; the previous character was restored.")
+            : BackendStatus;
+        return false;
+    }
     TArray<FString> StatusParts = Resolution.Warnings;
     if (!OutfitStatus.IsEmpty())
     {
         StatusParts.Add(OutfitStatus);
+    }
+    if (!BackendStatus.IsEmpty())
+    {
+        StatusParts.Add(BackendStatus);
     }
     OutStatus = FString::Join(StatusParts, TEXT(" "));
     return true;
@@ -689,6 +951,7 @@ void ADiscGolferPawn::ApplyFullCustomizationVisuals()
         ModularHeadMesh->MarkRenderDynamicDataDirty();
     }
     SkeletalMesh->MarkRenderDynamicDataDirty();
+    SetDGProxyPresentationVisible(bDGProxyPresentationVisible);
 }
 
 void ADiscGolferPawn::RebuildCustomizationHairForCoverage()
@@ -710,6 +973,204 @@ void ADiscGolferPawn::RebuildCustomizationHairForCoverage()
     }
     CharacterCustomization->RebuildHair(ModularHeadMesh);
     CharacterCustomization->Current.Hair.HairStyleId = SelectedHairStyleId;
+    SetDGProxyPresentationVisible(bDGProxyPresentationVisible);
+}
+
+bool ADiscGolferPawn::IsDGProxyPresentationVisible() const
+{
+    TInlineComponentArray<UPrimitiveComponent*> PawnPrimitives;
+    GetComponents(PawnPrimitives);
+    for (const UPrimitiveComponent* Primitive : PawnPrimitives)
+    {
+        if (!IsValid(Primitive) || Primitive == HeldDiscVisual
+            || Primitive == Capsule)
+        {
+            continue;
+        }
+        const bool bProxyPrimitive = Primitive == SkeletalMesh
+            || Primitive == ModularHeadMesh
+            || Primitive == BodyMesh
+            || Primitive == HeadMesh
+            || (SkeletalMesh && Primitive->IsAttachedTo(SkeletalMesh))
+            || (ModularHeadMesh
+                && Primitive->IsAttachedTo(ModularHeadMesh));
+        if (bProxyPrimitive && Primitive->IsVisible()
+            && !Primitive->bHiddenInGame)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void ADiscGolferPawn::SetDGProxyPresentationVisible(bool bVisible)
+{
+    bDGProxyPresentationVisible = bVisible;
+    const bool bHasSkeletalAsset = SkeletalMesh
+        && SkeletalMesh->GetSkeletalMeshAsset();
+    const bool bHasModularHead = bHasSkeletalAsset && ModularHeadMesh
+        && ModularHeadMesh->GetSkeletalMeshAsset();
+
+    TInlineComponentArray<UPrimitiveComponent*> PawnPrimitives;
+    GetComponents(PawnPrimitives);
+    for (UPrimitiveComponent* Primitive : PawnPrimitives)
+    {
+        if (!IsValid(Primitive) || Primitive == HeldDiscVisual
+            || Primitive == Capsule)
+        {
+            continue;
+        }
+        const bool bProxyPrimitive = Primitive == SkeletalMesh
+            || Primitive == ModularHeadMesh
+            || Primitive == BodyMesh
+            || Primitive == HeadMesh
+            || (SkeletalMesh && Primitive->IsAttachedTo(SkeletalMesh))
+            || (ModularHeadMesh && Primitive->IsAttachedTo(ModularHeadMesh));
+        if (!bProxyPrimitive)
+        {
+            continue;
+        }
+
+        bool bPrimitiveVisible = bVisible;
+        if (Primitive == SkeletalMesh)
+        {
+            bPrimitiveVisible = bVisible && bHasSkeletalAsset;
+        }
+        else if (Primitive == ModularHeadMesh)
+        {
+            bPrimitiveVisible = bVisible && bHasModularHead;
+        }
+        else if (Primitive == BodyMesh || Primitive == HeadMesh)
+        {
+            bPrimitiveVisible = bVisible && !bHasSkeletalAsset;
+        }
+        Primitive->SetVisibility(bPrimitiveVisible, false);
+        Primitive->SetHiddenInGame(!bPrimitiveVisible, false);
+    }
+}
+
+bool ADiscGolferPawn::ApplyAvatarBackendForCustomization(
+    const FDGFullCharacterCustomization& Customization,
+    bool bAllowDGMasterFallback,
+    FString& OutStatus)
+{
+    OutStatus.Reset();
+    if (!AvatarBackendComponent || !SkeletalMesh)
+    {
+        OutStatus = TEXT("Avatar backend component or DG animation source is unavailable.");
+        SetDGProxyPresentationVisible(true);
+        return bAllowDGMasterFallback;
+    }
+    const auto RetainVerifiedVisualOrShowProxy = [this]()
+    {
+        const bool bRetainedVerifiedVisual =
+            AvatarBackendComponent->IsPresentationPolicyVerified();
+        if (!bRetainedVerifiedVisual
+            && AvatarBackendComponent->IsVisualBackendReady())
+        {
+            AvatarBackendComponent->GetPresentationPolicyStatus();
+            AvatarBackendComponent->DestroyVisualBackend();
+        }
+        SetDGProxyPresentationVisible(!bRetainedVerifiedVisual);
+    };
+
+    UDiscGolfAvatarBackendProfile* MetaHumanProfile = nullptr;
+    if (Customization.AvatarBackendId
+        == FName(DiscGolfAvatarBackendRuntime::MetaHumanAssembledBackendId))
+    {
+        MetaHumanProfile = LoadObject<UDiscGolfAvatarBackendProfile>(
+            nullptr,
+            DiscGolfAvatarBackendRuntime::MetaHumanDefaultProfileObjectPath);
+    }
+    const FDiscGolfAvatarBackendResolution BackendResolution =
+        DiscGolfAvatarBackendRuntime::ResolveBackend(
+            Customization.AvatarBackendId,
+            MetaHumanProfile);
+
+    if (!BackendResolution.bMetaHumanAttemptAllowed)
+    {
+        SetDGProxyPresentationVisible(true);
+        // Finalize any already-promoted MetaHuman evidence before the
+        // framework's nonvirtual destroy seam clears the active actor.
+        AvatarBackendComponent->GetPresentationPolicyStatus();
+        AvatarBackendComponent->DestroyVisualBackend();
+        AvatarBackendComponent->BackendProfile = nullptr;
+        if (Customization.AvatarBackendId
+            == FName(DiscGolfAvatarBackendRuntime::MetaHumanAssembledBackendId))
+        {
+            UE_LOG(LogDiscGolfTour, Warning,
+                TEXT("Realistic character backend resolution failed: %s"),
+                *BackendResolution.Status);
+            OutStatus = TEXT("Realistic character backend is unavailable; DGMaster fallback remains active.");
+            return bAllowDGMasterFallback;
+        }
+        return true;
+    }
+
+    AvatarBackendComponent->BackendProfile = MetaHumanProfile;
+    const EDGMetaHumanPresentationPolicy DesiredPresentationPolicy =
+        bCharacterCreatorPreviewActive
+        ? EDGMetaHumanPresentationPolicy::CharacterCreator
+        : EDGMetaHumanPresentationPolicy::GameplayPerformance;
+    if (!AvatarBackendComponent->SetPresentationPolicy(
+            DesiredPresentationPolicy))
+    {
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Realistic character %s policy verification failed: %s"),
+            DesiredPresentationPolicy
+                    == EDGMetaHumanPresentationPolicy::CharacterCreator
+                ? TEXT("CharacterCreator")
+                : TEXT("GameplayPerformance"),
+            *AvatarBackendComponent->GetPresentationPolicyStatus());
+        OutStatus = FString::Printf(
+            TEXT("Realistic character %s policy was not verified; the last verified visual or DGMaster fallback was retained."),
+            DesiredPresentationPolicy
+                    == EDGMetaHumanPresentationPolicy::CharacterCreator
+                ? TEXT("CharacterCreator")
+                : TEXT("GameplayPerformance"));
+        if (bAllowDGMasterFallback)
+        {
+            AvatarBackendComponent->GetPresentationPolicyStatus();
+            AvatarBackendComponent->DestroyVisualBackend();
+            AvatarBackendComponent->BackendProfile = nullptr;
+            SetDGProxyPresentationVisible(true);
+            return true;
+        }
+        RetainVerifiedVisualOrShowProxy();
+        return false;
+    }
+    const bool bSameVerifiedBackend =
+        AvatarBackendComponent->IsVisualBackendReady()
+        && AvatarBackendComponent->GetActiveBackendProfile()
+            == MetaHumanProfile;
+    const bool bReady = bSameVerifiedBackend
+        ? AvatarBackendComponent->ApplyCustomizationToVisual(Customization)
+        : AvatarBackendComponent->BuildVisualBackend(
+            SkeletalMesh, Customization);
+    if (!bReady || !AvatarBackendComponent->IsVisualBackendReady()
+        || AvatarBackendComponent->GetVerifiedPresentationPolicy()
+            != DesiredPresentationPolicy
+        || !AvatarBackendComponent->IsPresentationPolicyVerified())
+    {
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Realistic character adapter verification failed: %s"),
+            *AvatarBackendComponent->GetLastAdapterStatus());
+        OutStatus = TEXT("Realistic character verification failed; DGMaster remains visible.");
+        if (bAllowDGMasterFallback)
+        {
+            AvatarBackendComponent->GetPresentationPolicyStatus();
+            AvatarBackendComponent->DestroyVisualBackend();
+            AvatarBackendComponent->BackendProfile = nullptr;
+            SetDGProxyPresentationVisible(true);
+            return true;
+        }
+        RetainVerifiedVisualOrShowProxy();
+        return false;
+    }
+
+    SetDGProxyPresentationVisible(false);
+    OutStatus = TEXT("Verified realistic character presentation is active; DGMaster remains the hidden animation and gameplay authority.");
+    return true;
 }
 
 void ADiscGolferPawn::RefreshCharacterProfilePresentation()
@@ -733,11 +1194,34 @@ void ADiscGolferPawn::RefreshCharacterProfilePresentation()
     SkeletalMesh->MarkRenderDynamicDataDirty();
 }
 
-void ADiscGolferPawn::BeginCharacterCreatorPreview()
+bool ADiscGolferPawn::BeginCharacterCreatorPreview()
 {
-    if (bCharacterCreatorPreviewActive || !CameraBoom || !Camera || !SkeletalMesh)
+    if (!CameraBoom || !Camera || !SkeletalMesh || !AvatarBackendComponent)
     {
-        return;
+        return false;
+    }
+    if (!AvatarBackendComponent->SetPresentationPolicy(
+            EDGMetaHumanPresentationPolicy::CharacterCreator))
+    {
+        if (!AvatarBackendComponent->IsPresentationPolicyVerified())
+        {
+            if (AvatarBackendComponent->IsVisualBackendReady())
+            {
+                AvatarBackendComponent->GetPresentationPolicyStatus();
+                AvatarBackendComponent->DestroyVisualBackend();
+            }
+            SetDGProxyPresentationVisible(true);
+        }
+        UE_LOG(
+            LogDiscGolfTour,
+            Error,
+            TEXT("Character creator preview rejected before camera/tick mutation: %s"),
+            *AvatarBackendComponent->GetPresentationPolicyStatus());
+        return false;
+    }
+    if (bCharacterCreatorPreviewActive)
+    {
+        return true;
     }
 
     bCharacterCreatorPreviewActive = true;
@@ -781,13 +1265,37 @@ void ADiscGolferPawn::BeginCharacterCreatorPreview()
         // immediately as well so the first creator frame is deterministic.
         PlayerCameraManager->UpdateCamera(0.0f);
     }
+    return true;
 }
 
-void ADiscGolferPawn::EndCharacterCreatorPreview(bool bRestoreView)
+bool ADiscGolferPawn::EndCharacterCreatorPreview(bool bRestoreView)
 {
+    if (!AvatarBackendComponent
+        || !AvatarBackendComponent->SetPresentationPolicy(
+            EDGMetaHumanPresentationPolicy::GameplayPerformance))
+    {
+        if (AvatarBackendComponent
+            && !AvatarBackendComponent->IsPresentationPolicyVerified())
+        {
+            if (AvatarBackendComponent->IsVisualBackendReady())
+            {
+                AvatarBackendComponent->GetPresentationPolicyStatus();
+                AvatarBackendComponent->DestroyVisualBackend();
+            }
+            SetDGProxyPresentationVisible(true);
+        }
+        UE_LOG(
+            LogDiscGolfTour,
+            Error,
+            TEXT("Character creator preview remains active because gameplay policy was not verified: %s"),
+            AvatarBackendComponent
+                ? *AvatarBackendComponent->GetPresentationPolicyStatus()
+                : TEXT("avatar backend component is unavailable"));
+        return false;
+    }
     if (!bCharacterCreatorPreviewActive)
     {
-        return;
+        return true;
     }
 
     bCharacterCreatorPreviewActive = false;
@@ -833,6 +1341,7 @@ void ADiscGolferPawn::EndCharacterCreatorPreview(bool bRestoreView)
         PlayerCameraManager->PrimaryActorTick.bTickEvenWhenPaused =
             bSavedPlayerCameraManagerTickWhenPaused;
     }
+    return true;
 }
 
 void ADiscGolferPawn::RotateCharacterCreatorPreview(float DeltaYawDegrees)
@@ -868,6 +1377,64 @@ void ADiscGolferPawn::ZoomCharacterCreatorPreview(float DeltaArmLength)
     }
 }
 
+bool ADiscGolferPawn::SetCharacterCreatorPreviewFraming(
+    float TargetArmLength,
+    float BoomPitchDegrees,
+    float SubjectYawOffsetDegrees,
+    float VerticalSocketOffsetCm)
+{
+    if (!bCharacterCreatorPreviewActive || !CameraBoom || !SkeletalMesh
+        || !FMath::IsFinite(TargetArmLength)
+        || !FMath::IsFinite(BoomPitchDegrees)
+        || !FMath::IsFinite(SubjectYawOffsetDegrees)
+        || !FMath::IsFinite(VerticalSocketOffsetCm))
+    {
+        return false;
+    }
+
+    CameraBoom->TargetArmLength = FMath::Clamp(
+        TargetArmLength, 300.0f, 680.0f);
+    FVector SocketOffset = CameraBoom->SocketOffset;
+    SocketOffset.Z = FMath::Clamp(VerticalSocketOffsetCm, 0.0f, 120.0f);
+    CameraBoom->SocketOffset = SocketOffset;
+    // BeginCharacterCreatorPreview establishes the intentional front-facing
+    // 180-degree creator yaw. Preserve that active creator orbit while making
+    // arm length and pitch absolute, rather than restoring gameplay yaw.
+    FRotator BoomRotation = CameraBoom->GetRelativeRotation();
+    BoomRotation.Pitch = FMath::Clamp(BoomPitchDegrees, -25.0f, 10.0f);
+    CameraBoom->SetRelativeRotation(BoomRotation);
+
+    FRotator SubjectRotation = SavedPreviewSkeletalRotation;
+    SubjectRotation.Yaw = FMath::UnwindDegrees(
+        SubjectRotation.Yaw
+        + FMath::Clamp(SubjectYawOffsetDegrees, -45.0f, 45.0f));
+    SkeletalMesh->SetRelativeRotation(SubjectRotation);
+
+    if (!CameraBoom->IsRegistered())
+    {
+        return false;
+    }
+    CameraBoom->TickComponent(
+        0.0f, ELevelTick::LEVELTICK_All, nullptr);
+    if (const APlayerController* PlayerController =
+            Cast<APlayerController>(GetController());
+        PlayerController && PlayerController->PlayerCameraManager)
+    {
+        PlayerController->PlayerCameraManager->UpdateCamera(0.0f);
+    }
+    return FMath::IsNearlyEqual(
+            CameraBoom->TargetArmLength,
+            FMath::Clamp(TargetArmLength, 300.0f, 680.0f))
+        && FMath::IsNearlyEqual(
+            CameraBoom->GetRelativeRotation().Pitch,
+            FMath::Clamp(BoomPitchDegrees, -25.0f, 10.0f),
+            0.01f)
+        && FMath::IsNearlyEqual(
+            CameraBoom->SocketOffset.Z,
+            FMath::Clamp(VerticalSocketOffsetCm, 0.0f, 120.0f),
+            0.01f);
+}
+
 void ADiscGolferPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -892,9 +1459,11 @@ void ADiscGolferPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
     EnhancedInput->BindAction(InputConfig->ThrowAction, ETriggerEvent::Started, this, &ADiscGolferPawn::InputThrow);
     EnhancedInput->BindAction(InputConfig->ToggleThrowStyleAction, ETriggerEvent::Started, this, &ADiscGolferPawn::InputToggleThrowStyle);
     EnhancedInput->BindAction(InputConfig->ResetHoleAction, ETriggerEvent::Started, this, &ADiscGolferPawn::InputResetHole);
+#if DG_WITH_DEVELOPMENT_CONTENT
     EnhancedInput->BindAction(InputConfig->CycleRegressionPresetAction, ETriggerEvent::Started, this, &ADiscGolferPawn::InputCycleRegressionPreset);
     EnhancedInput->BindAction(InputConfig->RunRegressionPresetAction, ETriggerEvent::Started, this, &ADiscGolferPawn::InputRunRegressionPreset);
     EnhancedInput->BindAction(InputConfig->RunRegressionSuiteAction, ETriggerEvent::Started, this, &ADiscGolferPawn::InputRunRegressionSuite);
+#endif
     EnhancedInput->BindAction(InputConfig->ToggleShotTracerAction, ETriggerEvent::Started, this, &ADiscGolferPawn::InputToggleShotTracer);
     EnhancedInput->BindAction(InputConfig->InstantReplayAction, ETriggerEvent::Started, this, &ADiscGolferPawn::InputInstantReplay);
     EnhancedInput->BindAction(InputConfig->ToggleCourseAction, ETriggerEvent::Started, this, &ADiscGolferPawn::InputToggleCourse);
@@ -911,11 +1480,33 @@ void ADiscGolferPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 void ADiscGolferPawn::FaceLocation(const FVector& WorldLocation)
 {
-    const FVector ToTarget = WorldLocation - GetActorLocation();
-    if (!ToTarget.IsNearlyZero())
+    const auto IsFiniteVector = [](const FVector& Value)
     {
-        const FRotator LookRotation = ToTarget.Rotation();
-        SetActorRotation(FRotator(0.0f, LookRotation.Yaw, 0.0f));
+        return FMath::IsFinite(Value.X)
+            && FMath::IsFinite(Value.Y)
+            && FMath::IsFinite(Value.Z);
+    };
+
+    const FVector ActorLocation = GetActorLocation();
+    if (!IsFiniteVector(WorldLocation) || !IsFiniteVector(ActorLocation))
+    {
+        return;
+    }
+
+    const FVector ToTarget = WorldLocation - ActorLocation;
+    const float HorizontalDistanceSquared = FVector2D(ToTarget.X, ToTarget.Y).SizeSquared();
+    if (!IsFiniteVector(ToTarget)
+        || !FMath::IsFinite(HorizontalDistanceSquared)
+        || FMath::IsNearlyZero(HorizontalDistanceSquared))
+    {
+        return;
+    }
+
+    const FRotator LookRotation = ToTarget.Rotation();
+    const FRotator NewRotation(0.0f, LookRotation.Yaw, 0.0f);
+    if (FMath::IsFinite(LookRotation.Yaw) && !NewRotation.ContainsNaN())
+    {
+        SetActorRotation(NewRotation);
     }
 }
 
@@ -935,11 +1526,13 @@ void ADiscGolferPawn::CancelThrowPresentation()
 {
     if (ThrowController) ThrowController->CancelTiming();
     if (PresentationComponent) PresentationComponent->CancelTiming();
+    EndPreCommitThrowPresentation();
 }
 
 bool ADiscGolferPawn::IsAnimatedThrowActive() const
 {
-    return RHBHThrowAdapter && RHBHThrowAdapter->IsThrowActive();
+    return ActiveRHBHMontageAttemptSerial > 0
+        || (RHBHThrowAdapter && RHBHThrowAdapter->IsThrowActive());
 }
 
 FString ADiscGolferPawn::GetActiveRHBHThrowMontagePath() const
@@ -947,18 +1540,175 @@ FString ADiscGolferPawn::GetActiveRHBHThrowMontagePath() const
     return RHBHThrowMontage ? RHBHThrowMontage->GetPathName() : FString();
 }
 
+void ADiscGolferPawn::RefreshPreCommitThrowPresentation()
+{
+    if (!FrameworkThrowComponent
+        || !ThrowController
+        || (RHBHThrowAdapter && RHBHThrowAdapter->IsThrowActive())
+        || (FrameworkThrowComponent->bThrowActive
+            && FrameworkThrowComponent->IsThrowCommitted()))
+    {
+        return;
+    }
+
+    FDGThrowIntent Intent;
+    Intent.ThrowType = ThrowController->GetThrowStyle() == EThrowStyle::Forehand
+        ? EDGThrowType::Forehand
+        : EDGThrowType::Backhand;
+    Intent.Power01 = ThrowController->GetPower01();
+    Intent.HyzerDegrees = ThrowController->GetHyzerDeg();
+    Intent.NoseDegrees = ThrowController->GetNoseDeg();
+    // The rig expects a local cosmetic delta, not the pawn's absolute world
+    // heading. Direction remains locked in the gameplay controller.
+    Intent.AimYawDegrees = 0.0f;
+    FrameworkThrowComponent->SetThrowIntent(Intent);
+    if (!FrameworkThrowComponent->bThrowActive)
+    {
+        FrameworkThrowComponent->BeginAimPreview();
+    }
+}
+
+void ADiscGolferPawn::EndPreCommitThrowPresentation()
+{
+    if (FrameworkThrowComponent
+        && FrameworkThrowComponent->bThrowActive
+        && !FrameworkThrowComponent->IsThrowCommitted())
+    {
+        FrameworkThrowComponent->CancelThrow();
+    }
+}
+
+UAnimMontage* ADiscGolferPawn::ResolveRHBHThrowMontage(
+    const FThrowCommand& AuthoritativeCommand,
+    EGolferAnimationFamily AnimationFamily) const
+{
+    const auto IsUsableMontage = [this](const UAnimMontage* Montage)
+    {
+        if (!IsMontageLifecycleSafe(Montage))
+        {
+            return false;
+        }
+
+        const USkeletalMesh* MeshAsset = SkeletalMesh
+            ? SkeletalMesh->GetSkeletalMeshAsset() : nullptr;
+        return !MeshAsset
+            || !MeshAsset->GetSkeleton()
+            || Montage->GetSkeleton() == MeshAsset->GetSkeleton();
+    };
+
+    UAnimMontage* BestLibraryMontage = nullptr;
+    float BestSelectionScore = TNumericLimits<float>::Max();
+    const FName ExpectedFamilyId = MotionFamilyId(AnimationFamily);
+    if (ProductionAnimationLibrary)
+    {
+        for (const FDGThrowAnimationEntry& Entry : ProductionAnimationLibrary->Entries)
+        {
+            if (Entry.ThrowType != EDGThrowType::Backhand
+                || Entry.Handedness != EDGHandedness::Right
+                || Entry.MotionFamilyId != ExpectedFamilyId
+                || !IsRecommendedPowerRangeValid(Entry)
+                || AuthoritativeCommand.Power01 < Entry.RecommendedPowerMin
+                || AuthoritativeCommand.Power01 > Entry.RecommendedPowerMax
+                || Entry.Montage.IsNull())
+            {
+                continue;
+            }
+
+            UAnimMontage* Candidate = Entry.Montage.LoadSynchronous();
+            if (!IsUsableMontage(Candidate))
+            {
+                continue;
+            }
+
+            const float RangeWidth = FMath::Max(
+                Entry.RecommendedPowerMax - Entry.RecommendedPowerMin,
+                UE_KINDA_SMALL_NUMBER);
+            const float RangeMidpoint =
+                (Entry.RecommendedPowerMin + Entry.RecommendedPowerMax) * 0.5f;
+            const float SelectionScore =
+                FMath::Abs(AuthoritativeCommand.Power01 - RangeMidpoint) / RangeWidth;
+            if (SelectionScore < BestSelectionScore)
+            {
+                BestSelectionScore = SelectionScore;
+                BestLibraryMontage = Candidate;
+            }
+        }
+    }
+
+    if (BestLibraryMontage)
+    {
+        return BestLibraryMontage;
+    }
+
+    UAnimMontage* FallbackMontage = nullptr;
+    switch (AnimationFamily)
+    {
+        case EGolferAnimationFamily::Approach:
+            FallbackMontage = ProductionApproachMontage;
+            break;
+        case EGolferAnimationFamily::Putt:
+            FallbackMontage = ProductionPuttMontage;
+            break;
+        default:
+            FallbackMontage = ProductionDriveMontage;
+            break;
+    }
+    return IsUsableMontage(FallbackMontage) ? FallbackMontage : nullptr;
+}
+
+void ADiscGolferPawn::StopAndClearActiveRHBHMontage(float BlendOutSeconds)
+{
+    UAnimMontage* MontageToStop = ActiveRHBHThrowMontage;
+    ActiveRHBHThrowMontage = nullptr;
+    ActiveRHBHMontageAttemptSerial = 0;
+    if (!SkeletalMesh || !MontageToStop)
+    {
+        return;
+    }
+
+    if (UAnimInstance* AnimInstance = SkeletalMesh->GetAnimInstance();
+        AnimInstance && AnimInstance->Montage_IsPlaying(MontageToStop))
+    {
+        AnimInstance->Montage_Stop(FMath::Max(0.0f, BlendOutSeconds), MontageToStop);
+    }
+}
+
 bool ADiscGolferPawn::TryStartAnimatedRHBHThrow(const FThrowCommand& AuthoritativeCommand)
 {
+    if (!DiscGolfMath::IsThrowCommandValid(AuthoritativeCommand)
+        || AuthoritativeCommand.ThrowStyle != EThrowStyle::Backhand
+        || AuthoritativeCommand.Handedness != EDGHandedness::Right
+        || !RuntimeCharacterProfile
+        || RuntimeCharacterProfile->Handedness != EDGHandedness::Right
+        || !ThrowController
+        || ThrowController->GetShotContext() != AuthoritativeCommand.ShotContext
+        || !PresentationComponent)
+    {
+        return false;
+    }
+
+    const EGolferAnimationFamily AnimationFamily =
+        PresentationComponent->GetAnimationFamily();
+    if (!DiscGolfProductionMotion::IsFamilyCompatibleWithShotContext(
+            AuthoritativeCommand.ShotContext, AnimationFamily))
+    {
+        return false;
+    }
+
+    EndPreCommitThrowPresentation();
+
+    if (!bSession5PipelineValidationMontageActive)
+    {
+        RHBHThrowMontage = ResolveRHBHThrowMontage(
+            AuthoritativeCommand, AnimationFamily);
+    }
     if (!RHBHThrowAdapter || !RHBHThrowMontage || !SkeletalMesh)
     {
         return false;
     }
 
-    // Session 4 persists handedness but deliberately does not fabricate a
-    // mirrored LHBH montage. Left-handed players retain the legacy synchronous
-    // gameplay path until a separately authored animation is accepted.
-    if (FrameworkThrowComponent && FrameworkThrowComponent->CharacterProfile
-        && FrameworkThrowComponent->CharacterProfile->Handedness != EDGHandedness::Right)
+    if (bSession5PipelineValidationMontageActive
+        && !IsMontageLifecycleSafe(RHBHThrowMontage))
     {
         return false;
     }
@@ -969,15 +1719,35 @@ bool ADiscGolferPawn::TryStartAnimatedRHBHThrow(const FThrowCommand& Authoritati
         return false;
     }
 
-    const float PlayedDuration = AnimInstance->Montage_Play(RHBHThrowMontage, 1.0f);
+    const int64 AttemptSerial = RHBHThrowAdapter->GetAttemptSerial();
+    ActiveRHBHThrowMontage = RHBHThrowMontage;
+    ActiveRHBHMontageAttemptSerial = AttemptSerial;
+    const float PlayedDuration = AnimInstance->Montage_Play(
+        RHBHThrowMontage, ComputeThrowMontagePlayRate(AuthoritativeCommand));
     if (PlayedDuration <= 0.0f)
     {
         RHBHThrowAdapter->CancelBeforeRelease();
+        StopAndClearActiveRHBHMontage(0.0f);
+        return false;
+    }
+
+    const FAnimMontageInstance* MontageInstance =
+        AnimInstance->GetActiveInstanceForMontage(RHBHThrowMontage);
+    if (!MontageInstance
+        || !FrameworkThrowComponent
+        || !FrameworkThrowComponent->BindCommittedMontageInstance(
+            AttemptSerial, MontageInstance->GetInstanceID(), RHBHThrowMontage))
+    {
+        RHBHThrowAdapter->CancelBeforeRelease();
+        StopAndClearActiveRHBHMontage(0.0f);
         return false;
     }
 
     FOnMontageEnded EndDelegate;
-    EndDelegate.BindUObject(this, &ADiscGolferPawn::HandleRHBHMontageEnded);
+    EndDelegate.BindUObject(
+        this,
+        &ADiscGolferPawn::HandleRHBHMontageEnded,
+        AttemptSerial);
     AnimInstance->Montage_SetEndDelegate(EndDelegate, RHBHThrowMontage);
     return true;
 }
@@ -989,18 +1759,29 @@ bool ADiscGolferPawn::CancelAnimatedThrowBeforeRelease()
 
 void ADiscGolferPawn::CancelAnimatedThrow()
 {
-    if (!RHBHThrowAdapter || !RHBHThrowAdapter->IsThrowActive())
+    if (RHBHThrowAdapter && RHBHThrowAdapter->IsThrowActive())
     {
+        if (RHBHThrowAdapter->IsAwaitingRelease())
+        {
+            RHBHThrowAdapter->CancelBeforeRelease();
+        }
+        else
+        {
+            RHBHThrowAdapter->RecoverInterruptedThrow();
+        }
         return;
     }
 
-    if (RHBHThrowAdapter->IsAwaitingRelease())
+    // ThrowFinished releases gameplay/equipment ownership before the last
+    // recovery frames blend out. Explicit UI/reset cancellation may still
+    // retire that presentation tail without touching the released disc.
+    if (ActiveRHBHMontageAttemptSerial > 0)
     {
-        RHBHThrowAdapter->CancelBeforeRelease();
-    }
-    else
-    {
-        RHBHThrowAdapter->RecoverInterruptedThrow();
+        if (FrameworkThrowComponent)
+        {
+            FrameworkThrowComponent->CancelThrow();
+        }
+        StopAndClearActiveRHBHMontage(0.05f);
     }
 }
 
@@ -1013,38 +1794,74 @@ bool ADiscGolferPawn::HandleAnimatedRHBHRelease(
     return GameMode && GameMode->RequestThrowFromGrip(AuthoritativeCommand, GripWorldTransform);
 }
 
-void ADiscGolferPawn::HandleRHBHMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+void ADiscGolferPawn::HandleRHBHMontageEnded(
+    UAnimMontage* Montage,
+    bool bInterrupted,
+    int64 ExpectedAttemptSerial)
 {
-    if (Montage == RHBHThrowMontage && RHBHThrowAdapter && RHBHThrowAdapter->IsThrowActive())
+    (void)bInterrupted;
+    if (ExpectedAttemptSerial <= 0
+        || ExpectedAttemptSerial != ActiveRHBHMontageAttemptSerial
+        || Montage != ActiveRHBHThrowMontage
+        || !RHBHThrowAdapter
+        || RHBHThrowAdapter->GetAttemptSerial() != ExpectedAttemptSerial)
     {
-        RHBHThrowAdapter->RecoverInterruptedThrow();
+        return;
+    }
+
+    if (RHBHThrowAdapter->IsThrowActive())
+    {
+        // An interruption or a montage that reached its end without the
+        // required ThrowFinished notify must close the token-matched attempt.
+        if (!RHBHThrowAdapter->RecoverInterruptedThrow())
+        {
+            if (FrameworkThrowComponent)
+            {
+                FrameworkThrowComponent->CancelThrow();
+            }
+            StopAndClearActiveRHBHMontage(0.0f);
+        }
+        return;
+    }
+
+    ActiveRHBHThrowMontage = nullptr;
+    ActiveRHBHMontageAttemptSerial = 0;
+    if (FrameworkThrowComponent)
+    {
+        FrameworkThrowComponent->NotifyRecoveryComplete();
     }
 }
 
 void ADiscGolferPawn::HandleAnimatedThrowRecovered(int64 AttemptSerial, bool bDiscWasReleased)
 {
-    (void)AttemptSerial;
+    if (AttemptSerial <= 0 || AttemptSerial != ActiveRHBHMontageAttemptSerial)
+    {
+        return;
+    }
+
+    const bool bAuthoritativeLaunchAccepted = RHBHThrowAdapter
+        && RHBHThrowAdapter->WasLastAuthoritativeLaunchAccepted();
+    const bool bSuccessfulAuthoredFinish = RHBHThrowAdapter
+        && RHBHThrowAdapter->GetRecoveryReason()
+            == EDiscGolfRHBHThrowRecoveryReason::ThrowFinished
+        && bDiscWasReleased
+        && bAuthoritativeLaunchAccepted;
 
     // A pre-release cancellation (or a release-frame handoff rejected by the
     // gameplay authority) must also clear the legacy presentation/timing state.
     // Successful launches retain the existing release/follow-through feedback.
-    if (!bDiscWasReleased
-        || !RHBHThrowAdapter
-        || !RHBHThrowAdapter->WasLastAuthoritativeLaunchAccepted())
+    if (!bSuccessfulAuthoredFinish)
     {
         CancelThrowPresentation();
-    }
-
-    if (SkeletalMesh)
-    {
-        if (UAnimInstance* AnimInstance = SkeletalMesh->GetAnimInstance();
-            AnimInstance && RHBHThrowMontage && AnimInstance->Montage_IsPlaying(RHBHThrowMontage))
+        if (FrameworkThrowComponent)
         {
-            // Recovery must quiesce the old montage before a later throw begins;
-            // framework notifies do not carry a transaction token.
-            AnimInstance->Montage_Stop(0.05f, RHBHThrowMontage);
+            FrameworkThrowComponent->CancelThrow();
         }
+        StopAndClearActiveRHBHMontage(0.05f);
     }
+    // A successful ThrowFinished notify releases gameplay ownership but leaves
+    // the token and montage intact. The end delegate closes the presentation
+    // only after the authored recovery/blend-out has played naturally.
 }
 
 FString ADiscGolferPawn::GetGolferPresentationStatusText() const
@@ -1054,6 +1871,11 @@ FString ADiscGolferPawn::GetGolferPresentationStatusText() const
 
 void ADiscGolferPawn::InputAim(const FInputActionValue& ActionValue)
 {
+    if (!IsRouteAllowed(this, EDiscGolfInputRoute::AimThrow))
+    {
+        CancelThrowPresentation();
+        return;
+    }
     const float Value = ActionValue.Get<float>();
     if (FMath::IsNearlyZero(Value) || ThrowController->IsTimingActive() || IsAnimatedThrowActive()) return;
     const ADiscGolfTourGameMode* GameMode = GetWorld()
@@ -1065,27 +1887,50 @@ void ADiscGolferPawn::InputAim(const FInputActionValue& ActionValue)
 
 void ADiscGolferPawn::InputPower(const FInputActionValue& ActionValue)
 {
+    if (!IsRouteAllowed(this, EDiscGolfInputRoute::AimThrow))
+    {
+        CancelThrowPresentation();
+        return;
+    }
     if (IsAnimatedThrowActive()) return;
     ThrowController->AdjustPower(ActionValue.Get<float>(), GetWorld()->GetDeltaSeconds());
+    if (ThrowController->IsTimingActive()) RefreshPreCommitThrowPresentation();
 }
 
 void ADiscGolferPawn::InputHyzer(const FInputActionValue& ActionValue)
 {
+    if (!IsRouteAllowed(this, EDiscGolfInputRoute::AimThrow))
+    {
+        CancelThrowPresentation();
+        return;
+    }
     if (IsAnimatedThrowActive()) return;
     ThrowController->AdjustHyzer(ActionValue.Get<float>(), GetWorld()->GetDeltaSeconds());
+    if (ThrowController->IsTimingActive()) RefreshPreCommitThrowPresentation();
 }
 
 void ADiscGolferPawn::InputNose(const FInputActionValue& ActionValue)
 {
+    if (!IsRouteAllowed(this, EDiscGolfInputRoute::AimThrow))
+    {
+        CancelThrowPresentation();
+        return;
+    }
     if (IsAnimatedThrowActive()) return;
     const ADiscGolfTourGameMode* GameMode = GetWorld()
         ? GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>() : nullptr;
     const float Invert = GameMode && GameMode->GetPlayerSettings().bInvertY ? -1.0f : 1.0f;
     ThrowController->AdjustNose(ActionValue.Get<float>() * Invert, GetWorld()->GetDeltaSeconds());
+    if (ThrowController->IsTimingActive()) RefreshPreCommitThrowPresentation();
 }
 
 void ADiscGolferPawn::InputThrow()
 {
+    if (!IsRouteAllowed(this, EDiscGolfInputRoute::AimThrow))
+    {
+        CancelThrowPresentation();
+        return;
+    }
     if (IsAnimatedThrowActive()) return;
     ADiscGolfTourGameMode* GM = GetWorld() ? GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>() : nullptr;
     if (!GM || !GM->CanPlayerThrow())
@@ -1094,84 +1939,182 @@ void ADiscGolferPawn::InputThrow()
         return;
     }
 
+    const FDiscGolfPlayerSettings Settings = GM->GetPlayerSettings();
+    ThrowController->SetAccessibilityAssist(Settings.AimAssist01, Settings.TimingWindowScale);
+    const FVector AssistTargetDirection = GM->GetActiveHole()
+        ? (GM->GetActiveHole()->BasketLocation - GetActorLocation()).GetSafeNormal()
+        : GetActorForwardVector();
+
     FThrowCommand Command;
-    if (ThrowController->HandleThrowPress(DiscBag->GetSelectedMoldId(), DiscBag->GetSelectedPlastic(), GetActorForwardVector(), Command))
+    if (ThrowController->HandleThrowPress(
+        DiscBag->GetSelectedMoldId(), DiscBag->GetSelectedPlastic(),
+        GetActorForwardVector(), AssistTargetDirection, Command))
     {
+        // Snapshot player identity and stable equipment identity into the same
+        // immutable command that the animation adapter and launch path verify.
+        Command.Handedness = RuntimeCharacterProfile
+            ? RuntimeCharacterProfile->Handedness
+            : EDGHandedness::Right;
+        Command.DiscInstanceId = DiscBag->GetSelectedDiscInstanceId();
+        if (!RuntimeCharacterProfile
+            || !Command.DiscInstanceId.IsValid()
+            || !DiscGolfMath::IsThrowCommandValid(Command))
+        {
+            CancelThrowPresentation();
+            return;
+        }
+
+        // The first press owns only presentation. Retire that aim/waggle state
+        // before the adapter begins the tokenized committed transaction.
+        EndPreCommitThrowPresentation();
+
         if (Command.ThrowStyle != EThrowStyle::Backhand
-            || Command.ShotContext != EDiscShotContext::Drive
             || !TryStartAnimatedRHBHThrow(Command))
         {
-            // Non-RHBH/putting behavior stays synchronous. A missing Session 3
-            // presentation asset also degrades safely to the existing gameplay path.
-            GM->RequestThrow(Command);
+            // Forehand, left-handed, and missing-family routes remain on the
+            // calibrated synchronous path. Animation never becomes release
+            // authority.
+            if (!GM->RequestThrow(Command))
+            {
+                CancelThrowPresentation();
+            }
         }
     }
     else if (PresentationComponent)
     {
-        PresentationComponent->BeginTiming(ThrowController->GetThrowStyle());
+        if (ThrowController->IsTimingActive())
+        {
+            RefreshPreCommitThrowPresentation();
+            PresentationComponent->BeginTiming(ThrowController->GetThrowStyle());
+        }
+        else
+        {
+            CancelThrowPresentation();
+        }
     }
 }
 
 void ADiscGolferPawn::InputToggleThrowStyle()
 {
+    if (!IsRouteAllowed(this, EDiscGolfInputRoute::AimThrow))
+    {
+        CancelThrowPresentation();
+        return;
+    }
     if (IsAnimatedThrowActive()) return;
     ThrowController->ToggleThrowStyle();
+    if (ThrowController->IsTimingActive()) RefreshPreCommitThrowPresentation();
 }
 
 void ADiscGolferPawn::InputResetHole()
 {
+    if (!IsRouteAllowed(this, EDiscGolfInputRoute::Gameplay)) return;
     CancelAnimatedThrow();
+    CancelThrowPresentation();
     if (ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>())
     {
         GM->ResetHole();
     }
 }
 
-void ADiscGolferPawn::InputCyclePlastic() { if (!IsAnimatedThrowActive()) DiscBag->CyclePlastic(); }
+void ADiscGolferPawn::InputCyclePlastic()
+{
+    if (IsRouteAllowed(this, EDiscGolfInputRoute::Gameplay) && !IsAnimatedThrowActive())
+    {
+        DiscBag->CyclePlastic();
+    }
+}
 void ADiscGolferPawn::InputCycleRegressionPreset()
 {
+    if (!IsRouteAllowed(this, EDiscGolfInputRoute::Gameplay)) return;
     if (ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>()) GM->CyclePhysicsRegressionPreset();
 }
 void ADiscGolferPawn::InputRunRegressionPreset()
 {
+    if (!IsRouteAllowed(this, EDiscGolfInputRoute::Gameplay)) return;
     if (IsAnimatedThrowActive()) return;
     if (ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>()) GM->RunSelectedPhysicsRegression();
 }
 void ADiscGolferPawn::InputRunRegressionSuite()
 {
+    if (!IsRouteAllowed(this, EDiscGolfInputRoute::Gameplay)) return;
     if (IsAnimatedThrowActive()) return;
     if (ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>()) GM->RunPhysicsRegressionSuite();
 }
 void ADiscGolferPawn::InputToggleShotTracer()
 {
+    const EDiscGolfInputRoute Route = GetActiveInputRoute(this);
+    const EDiscGolfInputRoute ActionRoute = Route == EDiscGolfInputRoute::Replay
+        ? EDiscGolfInputRoute::Replay : EDiscGolfInputRoute::Gameplay;
+    if (!IsRouteAllowed(this, ActionRoute)) return;
     if (ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>()) GM->ToggleShotTracer();
 }
 void ADiscGolferPawn::InputInstantReplay()
 {
+    const EDiscGolfInputRoute Route = GetActiveInputRoute(this);
+    const EDiscGolfInputRoute ActionRoute = Route == EDiscGolfInputRoute::Replay
+        ? EDiscGolfInputRoute::Replay : EDiscGolfInputRoute::Gameplay;
+    if (!IsRouteAllowed(this, ActionRoute)) return;
     if (IsAnimatedThrowActive()) return;
     if (ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>()) GM->ToggleInstantReplay();
 }
 void ADiscGolferPawn::InputToggleCourse()
 {
+    if (!IsRouteAllowed(this, EDiscGolfInputRoute::Gameplay)) return;
     if (IsAnimatedThrowActive()) return;
     if (ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>()) GM->ToggleCourse();
 }
 void ADiscGolferPawn::InputCourseFlyover()
 {
+    ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>();
+    const bool bUiPresentation = GM && (GM->IsHoleIntroVisible() || GM->IsCourseFlyoverActive());
+    if (!IsRouteAllowed(this, bUiPresentation
+        ? EDiscGolfInputRoute::UI : EDiscGolfInputRoute::Gameplay)) return;
     if (IsAnimatedThrowActive()) return;
-    if (ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>()) GM->PreviewCourseFlyover();
+    if (GM) GM->PreviewCourseFlyover();
 }
 void ADiscGolferPawn::InputNextHole()
 {
-    if (ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>()) GM->AdvanceToNextHole();
+    TryAdvanceToNextHoleFromPlayerInput();
+}
+
+bool ADiscGolferPawn::TryAdvanceToNextHoleFromPlayerInput()
+{
+    ADiscGolfTourGameMode* GM = GetWorld()
+        ? GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>() : nullptr;
+    if (!GM)
+    {
+        return false;
+    }
+
+    // A visible completed-hole scorecard owns the UI route, including the
+    // advertised N / Right Trigger Next Hole or Restart Round action. Every
+    // other next-hole request remains isolated to ordinary gameplay input.
+    const bool bScorecardContinue = GM->IsScorecardVisible() && GM->IsHoleComplete();
+    const EDiscGolfInputRoute RequiredRoute = bScorecardContinue
+        ? EDiscGolfInputRoute::UI : EDiscGolfInputRoute::Gameplay;
+    if (!IsRouteAllowed(this, RequiredRoute))
+    {
+        return false;
+    }
+
+    ADiscGolfHoleActor* PreviousHole = GM->GetActiveHole();
+    const bool bWasRoundComplete = GM->IsRoundComplete();
+    GM->AdvanceToNextHole();
+    return GM->GetActiveHole() != PreviousHole
+        || (bWasRoundComplete && !GM->IsRoundComplete());
 }
 void ADiscGolferPawn::InputScorecard()
 {
+    ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>();
+    const bool bClosingScorecard = GM && GM->IsScorecardVisible();
+    if (!IsRouteAllowed(this, bClosingScorecard
+        ? EDiscGolfInputRoute::UI : EDiscGolfInputRoute::Gameplay)) return;
     if (IsAnimatedThrowActive()) return;
-    if (ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>()) GM->ToggleScorecard();
+    if (GM) GM->ToggleScorecard();
 }
-void ADiscGolferPawn::InputDisc1() { if (!IsAnimatedThrowActive()) DiscBag->SelectDiscIndex(0); }
-void ADiscGolferPawn::InputDisc2() { if (!IsAnimatedThrowActive()) DiscBag->SelectDiscIndex(1); }
-void ADiscGolferPawn::InputDisc3() { if (!IsAnimatedThrowActive()) DiscBag->SelectDiscIndex(2); }
-void ADiscGolferPawn::InputDisc4() { if (!IsAnimatedThrowActive()) DiscBag->SelectDiscIndex(3); }
-void ADiscGolferPawn::InputDisc5() { if (!IsAnimatedThrowActive()) DiscBag->SelectDiscIndex(4); }
+void ADiscGolferPawn::InputDisc1() { if (IsRouteAllowed(this, EDiscGolfInputRoute::Gameplay) && !IsAnimatedThrowActive()) DiscBag->SelectDiscIndex(0); }
+void ADiscGolferPawn::InputDisc2() { if (IsRouteAllowed(this, EDiscGolfInputRoute::Gameplay) && !IsAnimatedThrowActive()) DiscBag->SelectDiscIndex(1); }
+void ADiscGolferPawn::InputDisc3() { if (IsRouteAllowed(this, EDiscGolfInputRoute::Gameplay) && !IsAnimatedThrowActive()) DiscBag->SelectDiscIndex(2); }
+void ADiscGolferPawn::InputDisc4() { if (IsRouteAllowed(this, EDiscGolfInputRoute::Gameplay) && !IsAnimatedThrowActive()) DiscBag->SelectDiscIndex(3); }
+void ADiscGolferPawn::InputDisc5() { if (IsRouteAllowed(this, EDiscGolfInputRoute::Gameplay) && !IsAnimatedThrowActive()) DiscBag->SelectDiscIndex(4); }

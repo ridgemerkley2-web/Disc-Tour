@@ -1,0 +1,122 @@
+{
+  "schema": "DiscGolfTour.Session19ShippingPluginCapabilityPolicy.v3",
+  "schemaVersion": 3,
+  "session": 19,
+  "policyId": "ue58_shipping_plugin_dependency_closed_metadata_exclusion_v3",
+  "engineAssociation": "5.8",
+  "state": "IMPLEMENTED_PENDING_FRESH_WINDOWS_SHIPPING_CANDIDATE",
+  "exclusionAuthority": {
+    "path": "Config/DefaultPakFileRules.ini",
+    "section": "ExcludeDevelopmentOnlyContentForWindowsShipping",
+    "requiredMountPrefix": ".../"
+  },
+  "shippingConfigurationOnly": true,
+  "finalPayloadAuthority": {
+    "scope": "FINAL_WINDOWS_ARCHIVE_PAK_IOSTORE",
+    "containerExtensions": [".pak", ".utoc"],
+    "ioStoreCompanionExtension": ".ucas",
+    "stagingManifestAuthoritativeForDistribution": false,
+    "requireEveryContainerInventorySuccess": true,
+    "requireArchiveStableAcrossInventory": true
+  },
+  "restrictedModuleTypes": [
+    "Editor",
+    "EditorNoCommandlet",
+    "Developer",
+    "DeveloperTool",
+    "Program"
+  ],
+  "preserveRuntimeCapablePlugins": true,
+  "preserveContentOnlyPlugins": true,
+  "requiredPreservedFinalPayloadDescriptors": [
+    "Engine/Plugins/Animation/ControlRigModules/ControlRigModules.uplugin",
+    "Engine/Plugins/BaseMaterial/BaseMaterial.uplugin"
+  ],
+  "requiredAbsentFinalPayloadDescriptors": [
+    "Engine/Plugins/Editor/ConsoleVariablesEditor/ConsoleVariables.uplugin",
+    "Engine/Plugins/Editor/FacialAnimation/FacialAnimation.uplugin"
+  ],
+  "requiredDependencyClosureFinalPayloadDescriptors": [
+    "Engine/Plugins/Editor/BlueprintMaterialTextureNodes/BlueprintMaterialTextureNodes.uplugin",
+    "Engine/Plugins/ChaosClothAssetDataflowNodes/ChaosClothAssetDataflowNodes.uplugin",
+    "Engine/Plugins/ChaosClothAssetEditorCore/ChaosClothAssetEditorCore.uplugin",
+    "Engine/Plugins/Experimental/ChaosSolverPlugin/ChaosSolverPlugin.uplugin",
+    "Engine/Plugins/Editor/ContentBrowser/ContentBrowserAssetDataSource/ContentBrowserAssetDataSource.uplugin",
+    "Engine/Plugins/Editor/DataValidation/DataValidation.uplugin",
+    "Engine/Plugins/Experimental/EditorDataStorageFeatures/EditorDataStorageFeatures.uplugin",
+    "Engine/Plugins/Editor/EditorScriptingUtilities/EditorScriptingUtilities.uplugin",
+    "Engine/Plugins/Editor/EngineAssetDefinitions/EngineAssetDefinitions.uplugin",
+    "Engine/Plugins/Experimental/Landmass/Landmass.uplugin",
+    "Engine/Plugins/MovieScene/LevelSequenceEditor/LevelSequenceEditor.uplugin",
+    "Engine/Plugins/Animation/LiveLinkDevice/LiveLinkDevice.uplugin",
+    "Engine/Plugins/Developer/PluginUtils/PluginUtils.uplugin",
+    "Engine/Plugins/Editor/ProxyLODPlugin/ProxyLODPlugin.uplugin",
+    "Engine/Plugins/Enterprise/VariantManager/VariantManager.uplugin"
+  ],
+  "requireMandatoryFinalDescriptorDependencyClosure": true,
+  "allowOnlyReviewedMetadataDependencyEditorDeveloperDescriptorsInFinalPayload": true,
+  "reviewedMetadataOnlyDependencyDescriptors": [
+    {"name": "ChaosClothAssetDataflowNodes", "descriptor": "Engine/Plugins/ChaosClothAssetDataflowNodes/ChaosClothAssetDataflowNodes.uplugin"},
+    {"name": "ChaosClothAssetEditorCore", "descriptor": "Engine/Plugins/ChaosClothAssetEditorCore/ChaosClothAssetEditorCore.uplugin"},
+    {"name": "ChaosSolverPlugin", "descriptor": "Engine/Plugins/Experimental/ChaosSolverPlugin/ChaosSolverPlugin.uplugin"},
+    {"name": "ContentBrowserAssetDataSource", "descriptor": "Engine/Plugins/Editor/ContentBrowser/ContentBrowserAssetDataSource/ContentBrowserAssetDataSource.uplugin"},
+    {"name": "DataValidation", "descriptor": "Engine/Plugins/Editor/DataValidation/DataValidation.uplugin"},
+    {"name": "EditorDataStorageFeatures", "descriptor": "Engine/Plugins/Experimental/EditorDataStorageFeatures/EditorDataStorageFeatures.uplugin"},
+    {"name": "EditorScriptingUtilities", "descriptor": "Engine/Plugins/Editor/EditorScriptingUtilities/EditorScriptingUtilities.uplugin"},
+    {"name": "EngineAssetDefinitions", "descriptor": "Engine/Plugins/Editor/EngineAssetDefinitions/EngineAssetDefinitions.uplugin"},
+    {"name": "LevelSequenceEditor", "descriptor": "Engine/Plugins/MovieScene/LevelSequenceEditor/LevelSequenceEditor.uplugin"},
+    {"name": "LiveLinkDevice", "descriptor": "Engine/Plugins/Animation/LiveLinkDevice/LiveLinkDevice.uplugin"},
+    {"name": "PluginUtils", "descriptor": "Engine/Plugins/Developer/PluginUtils/PluginUtils.uplugin"},
+    {"name": "ProxyLODPlugin", "descriptor": "Engine/Plugins/Editor/ProxyLODPlugin/ProxyLODPlugin.uplugin"},
+    {"name": "VariantManager", "descriptor": "Engine/Plugins/Enterprise/VariantManager/VariantManager.uplugin"}
+  ],
+  "reviewedDisabledPlugins": [
+    {"name": "AlembicImporter", "descriptor": "Engine/Plugins/Importers/AlembicImporter/AlembicImporter.uplugin"},
+    {"name": "AnimatorKit", "descriptor": "Engine/Plugins/Animation/AnimatorKit/AnimatorKit.uplugin"},
+    {"name": "AutomatedPerfTestTools", "descriptor": "Engine/Plugins/Performance/AutomatedPerfTestTools/AutomatedPerfTestTools.uplugin"},
+    {"name": "BlueprintHeaderView", "descriptor": "Engine/Plugins/Editor/BlueprintHeaderView/BlueprintHeaderView.uplugin"},
+    {"name": "Bridge", "descriptor": "Engine/Plugins/Bridge/Bridge.uplugin"},
+    {"name": "CameraShakePreviewer", "descriptor": "Engine/Plugins/Cameras/CameraShakePreviewer/CameraShakePreviewer.uplugin"},
+    {"name": "Cascade", "descriptor": "Engine/Plugins/FX/Cascade/Cascade.uplugin"},
+    {"name": "ChaosEditor", "descriptor": "Engine/Plugins/Experimental/ChaosEditor/ChaosEditor.uplugin"},
+    {"name": "ColorGrading", "descriptor": "Engine/Plugins/Editor/ColorGrading/ColorGrading.uplugin"},
+    {"name": "CurveEditorTools", "descriptor": "Engine/Plugins/Editor/CurveEditorTools/CurveEditorTools.uplugin"},
+    {"name": "EaseCurveTool", "descriptor": "Engine/Plugins/Animation/EaseCurveTool/EaseCurveTool.uplugin"},
+    {"name": "EditorPerformance", "descriptor": "Engine/Plugins/Experimental/EditorPerformance/EditorPerformance.uplugin"},
+    {"name": "EditorTRSGizmo", "descriptor": "Engine/Plugins/Experimental/EditorTRSGizmo/EditorTRSGizmo.uplugin"},
+    {"name": "Fab", "descriptor": "Engine/Plugins/Fab/Fab.uplugin"},
+    {"name": "GeometryMode", "descriptor": "Engine/Plugins/Editor/GeometryMode/GeometryMode.uplugin"},
+    {"name": "GizmoFramework", "descriptor": "Engine/Plugins/Experimental/GizmoFramework/GizmoFramework.uplugin"},
+    {"name": "InterchangeEditor", "descriptor": "Engine/Plugins/Interchange/Editor/InterchangeEditor.uplugin"},
+    {"name": "InterchangeTests", "descriptor": "Engine/Plugins/Tests/InterchangeTests/InterchangeTests.uplugin"},
+    {"name": "LevelSequenceNavigatorBridge", "descriptor": "Engine/Plugins/Experimental/LevelSequenceNavigatorBridge/LevelSequenceNavigatorBridge.uplugin"},
+    {"name": "LightMixer", "descriptor": "Engine/Plugins/Editor/ObjectMixer/LightMixer/LightMixer.uplugin"},
+    {"name": "MaterialAssetWizard", "descriptor": "Engine/Plugins/Editor/MaterialAssetWizard/MaterialAssetWizard.uplugin"},
+    {"name": "MeshPainting", "descriptor": "Engine/Plugins/MeshPainting/MeshPainting.uplugin"},
+    {"name": "NiagaraPreviewContent", "descriptor": "Engine/Plugins/FX/NiagaraPreviewContent/NiagaraPreviewContent.uplugin"},
+    {"name": "ObjectMixer", "descriptor": "Engine/Plugins/Editor/ObjectMixer/ObjectMixer/ObjectMixer.uplugin"},
+    {"name": "ProjectLauncher", "descriptor": "Engine/Plugins/Developer/ProjectLauncher/ProjectLauncher.uplugin"},
+    {"name": "SequencerAnimTools", "descriptor": "Engine/Plugins/Editor/SequencerAnimTools/SequencerAnimTools.uplugin"},
+    {"name": "SequenceValidator", "descriptor": "Engine/Plugins/MovieScene/SequenceValidator/SequenceValidator.uplugin"},
+    {"name": "SpeedTreeImporter", "descriptor": "Engine/Plugins/Editor/SpeedTreeImporter/SpeedTreeImporter.uplugin"},
+    {"name": "ToolPresets", "descriptor": "Engine/Plugins/Experimental/ToolPresets/ToolPresets.uplugin"},
+    {"name": "UMGWidgetPreview", "descriptor": "Engine/Plugins/Editor/UMGWidgetPreview/UMGWidgetPreview.uplugin"},
+    {"name": "UVEditor", "descriptor": "Engine/Plugins/Editor/UVEditor/UVEditor.uplugin"}
+  ],
+  "reviewedResidualMetadataExclusions": [
+    "Engine/Plugins/ChaosClothAssetEditorCore/Config/DefaultChaosClothAssetEditorCore.ini",
+    "Engine/Plugins/Editor/EditorScriptingUtilities/Config/DefaultEditorScriptingUtilities.ini"
+  ],
+  "negativeFixture": {
+    "candidateId": "S19_WindowsShipping_20260825T032238Z_b969c38b32f5",
+    "expectedFinalPayloadEditorDeveloperOnlyDescriptorCount": 44,
+    "expectedReviewedMetadataOnlyDependencyDescriptorCount": 13,
+    "expectedUnreviewedEditorDeveloperOnlyDescriptorCount": 31,
+    "expectedResult": "REJECT",
+    "mayNeverSatisfyPositiveEvidence": true
+  },
+  "releaseBoundary": {
+    "releaseReady": false,
+    "blockerClosedWithoutFreshDependencyClosedReceipt": false
+  }
+}

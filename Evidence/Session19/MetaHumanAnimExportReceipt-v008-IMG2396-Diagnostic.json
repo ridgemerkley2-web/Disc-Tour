@@ -1,0 +1,25 @@
+{
+  "animation_asset": "/Game/DiscGolf/Animation/Authentic/v008/Diagnostic/AS_DG_RHBH_IMG2396_v008_DIAGNOSTIC_Performer",
+  "animation_object_path": "/Game/DiscGolf/Animation/Authentic/v008/Diagnostic/AS_DG_RHBH_IMG2396_v008_DIAGNOSTIC_Performer.AS_DG_RHBH_IMG2396_v008_DIAGNOSTIC_Performer",
+  "finished_at_utc": "2026-08-31T02:01:29.917810+00:00",
+  "performance_asset": "/Game/CaptureManager/Imports/Mono_Video_Ingest/2-IMG_2396_1/MHP_DG_RHBH_IMG2396_v008_DIAGNOSTIC",
+  "play_length_seconds": 17.066667556762695,
+  "promotion_authorized": false,
+  "rights_release_approved": false,
+  "run_id": "MetaHumanAnimExport-v008-20260831T020125Z-2a58727a-a7ae-4eb2-ba51-26217a463253",
+  "sampled_keys": null,
+  "schema": "DiscGolfTour.MetaHumanAnimExportReceipt.v1",
+  "settings": {
+    "auto_save_anim_sequence": true,
+    "body_unsolved_behavior": "LAST_VALID_FRAME",
+    "enable_head_movement": false,
+    "export_body": true,
+    "export_face": false,
+    "export_range": "WHOLE_SEQUENCE",
+    "export_skeleton": "PERFORMER_SKELETON",
+    "show_export_dialog": false
+  },
+  "skeleton_object_path": "/MetaHumanBodyTracker/metahuman_base_skel.metahuman_base_skel",
+  "started_at_utc": "2026-08-31T02:01:25.685333+00:00",
+  "status": "export_completed"
+}

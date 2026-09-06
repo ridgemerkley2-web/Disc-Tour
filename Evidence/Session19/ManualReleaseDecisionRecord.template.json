@@ -1,0 +1,23 @@
+{
+  "schema": "DiscGolfTour.Session19ManualReleaseDecisionRecord.v1",
+  "template": true,
+  "candidateBinding": {
+    "shippingArchiveReceiptPath": null,
+    "shippingArchiveManifestSha256": null,
+    "shippingExecutableSha256": null,
+    "captureSetManifestSha256": null
+  },
+  "gateDecisions": [
+    {"gateId": "PUBLIC_TITLE_CLEARANCE", "decision": "PENDING", "reviewers": [], "artifactIds": [], "exceptions": []},
+    {"gateId": "PUBLIC_DISPLAY_NAME_CLEARANCE", "decision": "PENDING", "reviewers": [], "artifactIds": [], "exceptions": []},
+    {"gateId": "LOGO_AND_TRADE_DRESS_REVIEW", "decision": "PENDING", "reviewers": [], "artifactIds": [], "exceptions": []},
+    {"gateId": "FINAL_VISUAL_PRODUCT_APPROVAL", "decision": "PENDING", "reviewers": [], "artifactIds": [], "exceptions": []},
+    {"gateId": "AUTHORED_AUDIO_LICENSE_COVERAGE_AND_MIX", "decision": "PENDING", "reviewers": [], "artifactIds": [], "exceptions": []},
+    {"gateId": "PRODUCTION_CHARACTER_MOTION_AND_VISUAL_APPROVAL", "decision": "PENDING", "reviewers": [], "artifactIds": [], "exceptions": []},
+    {"gateId": "PRODUCTION_ENVIRONMENT_ACCEPTANCE", "decision": "PENDING", "reviewers": [], "artifactIds": [], "exceptions": []},
+    {"gateId": "PHYSICS_CALIBRATION_AND_PLAY_FEEL_APPROVAL", "decision": "PENDING", "reviewers": [], "artifactIds": [], "exceptions": []}
+  ],
+  "releaseDecision": "PENDING",
+  "releaseDecisionReviewers": [],
+  "notes": "Template only. Blanket authorization, technical test success, or an unsigned copy does not satisfy any gate. Do not store confidential legal analysis or acquisition secrets here."
+}

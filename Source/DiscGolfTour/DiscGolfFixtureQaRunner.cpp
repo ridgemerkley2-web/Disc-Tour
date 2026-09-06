@@ -181,7 +181,18 @@ void ADiscGolfFixtureQaRunner::StartNextScenario()
         return;
     }
 
-    ActiveQaDisc->InitializeDisc(QaDiscDefinition, nullptr);
+    if (!ActiveQaDisc->InitializeDisc(QaDiscDefinition, nullptr))
+    {
+        FDiscGolfFixtureQaResult Result;
+        Result.Scenario = Scenario;
+        Result.FailureReason = TEXT("QA disc initialization was rejected by the solver boundary");
+        Results.Add(Result);
+        ActiveQaDisc->Destroy();
+        ActiveQaDisc = nullptr;
+        ++ScenarioIndex;
+        StartNextScenario();
+        return;
+    }
     FThrowRelease Release;
     Release.Grade = EReleaseGrade::Perfect;
     Release.Timing = EReleaseTiming::OnTime;
@@ -191,7 +202,18 @@ void ADiscGolfFixtureQaRunner::StartNextScenario()
     Release.Direction = Direction;
     Release.ThrowStyle = EThrowStyle::Backhand;
     Release.ShotContext = EDiscShotContext::Drive;
-    ActiveQaDisc->Throw(Release);
+    if (!ActiveQaDisc->Throw(Release))
+    {
+        FDiscGolfFixtureQaResult Result;
+        Result.Scenario = Scenario;
+        Result.FailureReason = TEXT("QA release was rejected by the solver boundary");
+        Results.Add(Result);
+        ActiveQaDisc->Destroy();
+        ActiveQaDisc = nullptr;
+        ++ScenarioIndex;
+        StartNextScenario();
+        return;
+    }
 
     GetWorldTimerManager().SetTimer(EvaluationTimer, this,
         &ADiscGolfFixtureQaRunner::EvaluateCurrentScenario, 0.65f, false);

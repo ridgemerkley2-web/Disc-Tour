@@ -41,7 +41,7 @@ const TCHAR* AnimBlueprintPath = TEXT("/Game/DiscGolf/Animation/ABP_DG_Player.AB
 const TCHAR* SkeletonPath = TEXT("/Game/DiscGolf/Characters/Meshes/SKEL_DG_Master.SKEL_DG_Master");
 const TCHAR* CreatorWidgetPath = TEXT("/Game/DiscGolf/UI/WBP_DG_CharacterCreator.WBP_DG_CharacterCreator");
 const TCHAR* CreatorWidgetParentPath = TEXT("/Script/DiscGolfTour.DiscGolfCharacterCreatorWidget");
-const TCHAR* AnimInstanceParentPath = TEXT("/Script/DiscGolfCharacterFramework.DiscGolfAnimInstance");
+const TCHAR* AnimInstanceParentPath = TEXT("/Script/DiscGolfRuntimeFoundation.DiscGolfAnimInstance");
 
 const TCHAR* LocalRefPoseClassPath = TEXT("/Script/AnimGraph.AnimGraphNode_LocalRefPose");
 const TCHAR* SlotClassPath = TEXT("/Script/AnimGraph.AnimGraphNode_Slot");
@@ -117,6 +117,7 @@ TArray<FVariableSpec> RequiredVariables()
     EDGHandedness Handedness = EDGHandedness::Right;
     EDGThrowPhase Phase = EDGThrowPhase::Idle;
     bool bThrowActive = false;
+    FDGThrowIntent ThrowIntent;
 
     FRigVMExternalVariable BodyExternal = FRigVMExternalVariable::Make(
         FGuid(), TEXT("BodyProfile"), Body);
@@ -128,6 +129,8 @@ TArray<FVariableSpec> RequiredVariables()
         FGuid(), TEXT("ThrowPhase"), Phase);
     FRigVMExternalVariable ActiveExternal = FRigVMExternalVariable::Make(
         FGuid(), TEXT("bThrowActive"), bThrowActive);
+    FRigVMExternalVariable IntentExternal = FRigVMExternalVariable::Make(
+        FGuid(), TEXT("ThrowIntent"), ThrowIntent);
 
     return {
         {TEXT("BodyProfile"), FGuid(0xD6154101u, 0xA11E0004u, 0x50000001u, 0x00000004u), BodyExternal.GetExtendedCPPType().ToString(),
@@ -140,6 +143,10 @@ TArray<FVariableSpec> RequiredVariables()
             PhaseExternal.GetCPPTypeObject(), TEXT("Idle"), FVector2D(-500.0, -50.0)},
         {TEXT("bThrowActive"), FGuid(0xD6154105u, 0xA11E0004u, 0x50000005u, 0x00000004u), ActiveExternal.GetExtendedCPPType().ToString(),
             ActiveExternal.GetCPPTypeObject(), TEXT("False"), FVector2D(-500.0, 100.0)},
+        {TEXT("ThrowIntent"), FGuid(0xD6154106u, 0xA11E0004u, 0x50000006u, 0x00000004u), IntentExternal.GetExtendedCPPType().ToString(),
+            IntentExternal.GetCPPTypeObject(),
+            TEXT("(ThrowType=Backhand,Power01=0.000000,HyzerDegrees=0.000000,NoseDegrees=0.000000,AimYawDegrees=0.000000)"),
+            FVector2D(-500.0, 250.0)},
     };
 }
 
@@ -1002,7 +1009,21 @@ bool ValidateRig(UControlRigBlueprint* Rig, TSharedPtr<FJsonObject>& Out, FStrin
             !CompactDefaultValue(Match->DefaultValue).Equals(
                 CompactDefaultValue(Spec.DefaultValue), ESearchCase::IgnoreCase))
         {
-            Error = FString::Printf(TEXT("Control Rig public variable mismatch: %s"), *Spec.Name.ToString());
+            Error = Match
+                ? FString::Printf(
+                    TEXT("Control Rig public variable mismatch: %s type=%s expected_type=%s object=%s expected_object=%s guid=%s expected_guid=%s public=%s default=%s expected_default=%s"),
+                    *Spec.Name.ToString(),
+                    *Match->CPPType,
+                    *Spec.CPPType,
+                    Match->CPPTypeObject ? *Match->CPPTypeObject->GetPathName() : TEXT("NONE"),
+                    Spec.CPPTypeObject ? *Spec.CPPTypeObject->GetPathName() : TEXT("NONE"),
+                    *Match->Guid.ToString(),
+                    *Spec.Guid.ToString(),
+                    Match->bPublic ? TEXT("true") : TEXT("false"),
+                    *CompactDefaultValue(Match->DefaultValue),
+                    *CompactDefaultValue(Spec.DefaultValue))
+                : FString::Printf(TEXT("Control Rig public variable missing: %s"),
+                    *Spec.Name.ToString());
             return false;
         }
         VariableJson.Add(MakeShared<FJsonValueString>(Spec.Name.ToString()));
@@ -1162,7 +1183,8 @@ FString BuildValidation(FString* OutError = nullptr)
     Root->SetObjectField(TEXT("animation_blueprint"), AnimJson);
     Root->SetObjectField(TEXT("creator_widget"), WidgetJson);
     Root->SetStringField(TEXT("skeleton_policy"), TEXT("ONE_UNCHANGED_SK_DG_MASTER"));
-    Root->SetStringField(TEXT("throw_style_authority"), TEXT("VISUAL_ONLY_FIXED_MONTAGE_TIMING"));
+    Root->SetStringField(TEXT("throw_style_authority"),
+        TEXT("VISUAL_ONLY_BOUNDED_MONTAGE_CADENCE"));
     if (OutError) OutError->Reset();
     return JsonString(Root);
 }
@@ -1225,7 +1247,7 @@ FString UDiscGolfSession4AssetUtility::AuthorSession4Assets()
         bRigChanged |= bVariablesChanged;
 
         // AddHostMemberVariableFromExternal only regenerates the skeleton class
-        // in UE 5.8. Synchronize the generated class exactly once after all five
+        // in UE 5.8. Synchronize the generated class exactly once after all six
         // variables exist and before authoring any RigVM variable getter nodes.
         if (bVariablesChanged && !CompileRigBlueprintAndValidateVariables(Rig, Error))
         {

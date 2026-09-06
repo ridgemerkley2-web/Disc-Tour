@@ -1,0 +1,107 @@
+{
+  "schema": "DiscGolfTour.Session19ProductionMotionV006BlendOutRepair.v1",
+  "schema_version": 1,
+  "status": "PASS_ADDITIVE_V006_MONTAGE_BLEND_OUT_REPAIR",
+  "generated_utc": "2026-08-30T03:41:30.635976+00:00",
+  "recipe_version": "v6",
+  "asset_revision": "v006",
+  "authority": "TECHNICAL_REPAIR_ONLY_NO_HUMAN_OR_RELEASE_APPROVAL",
+  "historical_authoring_evidence": {
+    "path": "Evidence/Session19/ProductionMotionCandidateAuthoringEvidence-v006.json",
+    "bytes": 44023,
+    "sha256": "A6BC2C3BA4B37718C4CD64004DD3123708939EA43519CB61CD8006EC5AE06DA6"
+  },
+  "repair_script": {
+    "path": "Scripts/repair_dg_session19_production_motion_v6_blend_out.py",
+    "bytes": 9102,
+    "sha256": "951071F08BC360053AF9CF8F6C44E11238B2F1379E4F235F40706E4AC7032CB1"
+  },
+  "source_commandlet_report": {
+    "run_id": "8eea9f24-0bc9-45d8-b0bd-5a41acee5b8b",
+    "external_relative_path": "Saved/ProductionMotion/V006BlendOutRepair.json",
+    "bytes": 21064,
+    "sha256": "39BEDA98E902CD3F2D446C1EB26E4353995246E2FDCA744D695717CEB3512F4A"
+  },
+  "operation": {
+    "type": "SET_ANIM_MONTAGE_BLEND_OUT_TRIGGER_TIME",
+    "property": "BlendOutTriggerTime",
+    "legacy_value_seconds": -1.0,
+    "requested_value_seconds": 0.1,
+    "observed_value_seconds": 0.10000000149011612,
+    "auto_blend_out_required": true,
+    "target_scope": "V006_PRODUCTION_MONTAGES_ONLY",
+    "target_count": 3
+  },
+  "targets": [
+    {
+      "asset_package": "/Game/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v006",
+      "file": "Content/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v006.uasset",
+      "changed": true,
+      "identity_before": {
+        "bytes": 22076,
+        "sha256": "B0D3831BFD984CED1875C03DD1F97216F25131745EDEE2A417AF2C204E40372E"
+      },
+      "identity_after": {
+        "bytes": 22133,
+        "sha256": "9220D00C6D82325603065B1F8BAE70F29520190777446FF351A6D3C5C472B759"
+      }
+    },
+    {
+      "asset_package": "/Game/DiscGolf/Animation/ProductionMotion/Approach/AM_DG_RHBH_Approach_Procedural_v006",
+      "file": "Content/DiscGolf/Animation/ProductionMotion/Approach/AM_DG_RHBH_Approach_Procedural_v006.uasset",
+      "changed": true,
+      "identity_before": {
+        "bytes": 22106,
+        "sha256": "ED971E2B7801228E6BFB01904B5B4FCD7000A4AD04365652FF6FFA08F563B897"
+      },
+      "identity_after": {
+        "bytes": 22163,
+        "sha256": "F10D9B1572AFC4AC5613EBF179299EDC41915F2605A36E639B2863298713D985"
+      }
+    },
+    {
+      "asset_package": "/Game/DiscGolf/Animation/ProductionMotion/Putt/AM_DG_RHBH_Putt_Procedural_v006",
+      "file": "Content/DiscGolf/Animation/ProductionMotion/Putt/AM_DG_RHBH_Putt_Procedural_v006.uasset",
+      "changed": true,
+      "identity_before": {
+        "bytes": 22066,
+        "sha256": "A26218034AB52791C5233DF1AA3840A7825406323EEB7326E3EC1E8147385257"
+      },
+      "identity_after": {
+        "bytes": 22123,
+        "sha256": "10FA1BD79CA5CCFEF0301336754642B8E19574E55C59F61CB3DF0C7D431FA8FA"
+      }
+    }
+  ],
+  "native_validation": {
+    "validator": "DiscGolfProductionMotionAuthoringUtility.validate_production_motion_assets_for_version",
+    "status": "PASS_PROJECT_AUTHORED_PROCEDURAL_CANDIDATES",
+    "schema": "DiscGolfTour.Session19ProductionMotionNativeReport.v6",
+    "recipe_id": "DG_PRODUCTION_PROCEDURAL_MOTION_V6",
+    "recipe_md5": "0DA722DE95232CB0375373DC453138EB",
+    "recipe_version": "v6",
+    "asset_revision": "v006",
+    "family_count": 3,
+    "sequence_count": 3,
+    "montage_count": 3,
+    "library_entry_count": 3,
+    "human_animation_approval": false,
+    "human_disc_contact_approval": false,
+    "release_ready": false
+  },
+  "unchanged_contract": {
+    "original_authoring_report_rewritten": false,
+    "recipe_rewritten": false,
+    "sequences_changed": false,
+    "production_library_changed": false,
+    "release_notifies_changed": false,
+    "gameplay_physics_changed": false,
+    "maps_or_save_data_changed": false
+  },
+  "claim_boundary": {
+    "recovery_checkpoint_full_weight_contract": true,
+    "human_animation_approval": false,
+    "human_disc_contact_approval": false,
+    "release_ready": false
+  }
+}

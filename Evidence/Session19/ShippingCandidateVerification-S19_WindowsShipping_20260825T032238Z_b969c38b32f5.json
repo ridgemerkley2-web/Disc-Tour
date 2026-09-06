@@ -1,0 +1,54 @@
+{
+  "schema": "DiscGolfTour.Session19ShippingCandidateVerificationReceipt.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "runId": "S19_WindowsShipping_20260825T032238Z_b969c38b32f5",
+  "verifiedUtc": "2026-08-25T03:35:18.1480821Z",
+  "state": "PASS_BUILD_ARCHIVE_VERIFIED_PROVENANCE_AND_ACCEPTANCE_PENDING",
+  "originalWrapperResult": {
+    "state": "BUILD_FAILED",
+    "reason": "POSTCONDITION_EXPECTED_INCORRECT_INNER_EXECUTABLE_FILENAME",
+    "exactExpectedPath": "DiscGolfTour/Binaries/Win64/DiscGolfTour.exe",
+    "uatExitCode": 0,
+    "originalReceipt": "Evidence/Session19/ShippingCandidate-S19_WindowsShipping_20260825T032238Z_b969c38b32f5.json",
+    "originalReceiptSha256": "10F44F525BC6DFC560317075963AAE9EF55571C7794A4AE589DCF3A74876A95B"
+  },
+  "correctedArchiveContract": {
+    "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260825T032238Z_b969c38b32f5/Windows",
+    "hostPathRecorded": false,
+    "requiredFiles": [
+      "DiscGolfTour.exe",
+      "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+      "Manifest_UFSFiles_Win64.txt",
+      "Manifest_NonUFSFiles_Win64.txt"
+    ],
+    "allRequiredFilesPresent": true,
+    "ufsManifestBytes": 284882,
+    "nonUfsManifestBytes": 1809
+  },
+  "innerShippingExecutable": {
+    "relativePath": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+    "bytes": 171347456,
+    "sha256": "C98F5D11E8C5290245021C4B7937AC5654C5DA2193FE9B1C9EBE7FCB75EE4977"
+  },
+  "buildLog": {
+    "path": "Evidence/Session19/ShippingBuildCookRun-S19_WindowsShipping_20260825T032238Z_b969c38b32f5.log",
+    "bytes": 111937,
+    "sha256": "879FE70EDC25C1AC866394A63157A202B5DD56F27E41412E76C23080B4563944",
+    "requiredMarkersPresent": true,
+    "forbiddenMarkersAbsent": true
+  },
+  "protectedProfile": {
+    "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+    "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14",
+    "preserved": true
+  },
+  "releaseExcludedProjectRootsAbsent": true,
+  "nextRequiredEvidence": [
+    "WHOLE_ARCHIVE_AND_CONTAINER_PROVENANCE",
+    "SHIPPING_BINARY_POLICY",
+    "FRESH_INSTALL_THREE_HOLE_ACCEPTANCE"
+  ],
+  "releaseReady": false,
+  "receiptPath": "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260825T032238Z_b969c38b32f5.json"
+}

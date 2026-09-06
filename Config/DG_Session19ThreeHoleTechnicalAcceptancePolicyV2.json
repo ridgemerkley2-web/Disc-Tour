@@ -1,0 +1,162 @@
+{
+  "schema": "DiscGolfTour.Session19ThreeHoleTechnicalAcceptancePolicy.v2",
+  "schemaVersion": 2,
+  "session": 19,
+  "policyId": "windows_shipping_v05_candidate_bound_three_hole_artifact_integrity_v2",
+  "candidateIdPattern": "^S19_WindowsShipping_[A-Za-z0-9_-]+$",
+  "target": {
+    "platform": "Windows",
+    "configuration": "Shipping",
+    "milestone": "v0.5",
+    "archiveLeaf": "Windows",
+    "shippingExecutablePath": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe"
+  },
+  "projectEvidence": [
+    {
+      "role": "SHIPPING_CANDIDATE_VERIFICATION",
+      "pathPattern": "Evidence/Session19/ShippingCandidateVerification-{candidateId}.json",
+      "schema": "DiscGolfTour.Session19ShippingCandidateVerificationReceipt.v2",
+      "state": "PASS_BUILD_ARCHIVE_VERIFIED_PROVENANCE_AND_ACCEPTANCE_PENDING"
+    },
+    {
+      "role": "CANDIDATE_CONTENT_AUDIT",
+      "pathPattern": "Evidence/Session19/CandidateContent-{candidateId}.json",
+      "schema": "DiscGolfTour.Session19CandidateContentAuditReceipt.v1",
+      "state": "PASS_BOUNDED_STAGED_CONTENT_AUDIT"
+    },
+    {
+      "role": "SHIPPING_BINARY_POLICY",
+      "pathPattern": "Evidence/Session19/ShippingBinary-{candidateId}.json",
+      "schema": "DiscGolfTour.Session19ShippingBinaryEvidence.v1",
+      "state": "PASS_BINARY_MARKER_POLICY_ONLY"
+    },
+    {
+      "role": "EXTERNAL_TECHNICAL_EVIDENCE_VALIDATION",
+      "pathPattern": "Evidence/Session19/ExternalTechnicalEvidence-{candidateId}.json",
+      "schema": "DiscGolfTour.Session19ExternalTechnicalEvidenceValidation.v1",
+      "state": "PASS_CANDIDATE_BOUND_EXTERNAL_TECHNICAL_EVIDENCE"
+    },
+    {
+      "role": "FRESH_USERDIR_VALIDATION",
+      "pathPattern": "Evidence/Session19/FreshUserDir-{candidateId}.json",
+      "schema": "DiscGolfTour.Session19FreshUserDirValidation.v1",
+      "state": "PASS_FRESH_SHIPPING_USERDIR_ALLOWLIST"
+    }
+  ],
+  "externalEvidence": {
+    "launchRecord": "launch-record.json",
+    "technicalManifest": "technical-evidence-manifest.json",
+    "technicalManifestSidecar": "technical-evidence-manifest.sha256",
+    "checkpointChain": "checkpoint-chain.json",
+    "runtimeJournalUserDirPath": "Saved/TechnicalEvidence/three-hole-runtime-journal-v1.jsonl",
+    "requiredScreenshotPaths": [
+      "Screenshots/001_front_end.png",
+      "Screenshots/002_hole1_tee.png",
+      "Screenshots/003_hole1_recovered_lie.png",
+      "Screenshots/004_hole1_complete.png",
+      "Screenshots/005_hole2_tee.png",
+      "Screenshots/006_hole2_recovered_lie.png",
+      "Screenshots/007_hole2_complete.png",
+      "Screenshots/008_hole3_tee.png",
+      "Screenshots/009_hole3_recovered_lie.png",
+      "Screenshots/010_final_scorecard.png"
+    ],
+    "minimumPngWidth": 640,
+    "minimumPngHeight": 360
+  },
+  "checkpointChain": {
+    "schema": "DiscGolfTour.Session19ThreeHoleCheckpointChain.v1",
+    "schemaVersion": 1,
+    "eventNames": [
+      "ROUND_STARTED",
+      "HOLE_1_TEE",
+      "HOLE_1_LIE",
+      "HOLE_1_COMPLETED",
+      "HOLE_2_TEE",
+      "HOLE_2_LIE",
+      "HOLE_2_COMPLETED",
+      "HOLE_3_TEE",
+      "HOLE_3_LIE",
+      "HOLE_3_COMPLETED",
+      "ROUND_COMPLETED",
+      "FINAL_SCORECARD"
+    ],
+    "completedHoles": [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3],
+    "holeNumbers": [null, 1, 1, 1, 2, 2, 2, 3, 3, 3, null, null],
+    "holePars": [3, 4, 4],
+    "firstSequence": 1
+  },
+  "runtimeJournal": {
+    "schema": "DiscGolfTour.Session19ThreeHoleRuntimeJournal.v1",
+    "schemaVersion": 1,
+    "headerRecordType": "HEADER",
+    "eventRecordType": "EVENT",
+    "userDirRelativePath": "Saved/TechnicalEvidence/three-hole-runtime-journal-v1.jsonl",
+    "manifestValidationState": "PASS_GAME_EMITTED_THREE_HOLE_RUNTIME_JOURNAL",
+    "eventNames": [
+      "ROUND_STARTED",
+      "HOLE_1_TEE",
+      "HOLE_1_LIE",
+      "HOLE_1_COMPLETED",
+      "HOLE_2_TEE",
+      "HOLE_2_LIE",
+      "HOLE_2_COMPLETED",
+      "HOLE_3_TEE",
+      "HOLE_3_LIE",
+      "HOLE_3_COMPLETED",
+      "ROUND_COMPLETED",
+      "FINAL_SCORECARD"
+    ],
+    "completedHoles": [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3],
+    "holeNumbers": [null, 1, 1, 1, 2, 2, 2, 3, 3, 3, null, null],
+    "holePars": [3, 4, 4],
+    "firstSequence": 1,
+    "expectedRecordCount": 13,
+    "maximumBytes": 262144,
+    "timestampToleranceSeconds": 5,
+    "canonicalJsonLines": {
+      "encoding": "UTF-8",
+      "bom": false,
+      "lineEnding": "LF",
+      "terminalLineFeed": true,
+      "sortKeys": true,
+      "ensureAscii": true,
+      "separators": [",", ":"]
+    }
+  },
+  "states": {
+    "screenshotSetIntegrity": "PASS_CANDIDATE_BOUND_SCREENSHOT_SET_INTEGRITY_SINGLE_ROUND_UNPROVEN",
+    "checkpointChainIntegrityOnly": "PASS_CANDIDATE_BOUND_CHECKPOINT_CHAIN_INTEGRITY_RUNTIME_PROVENANCE_UNPROVEN",
+    "runtimeJournalVerified": "PASS_CANDIDATE_BOUND_FRESH_INSTALL_THREE_HOLE_RUNTIME_JOURNAL_VERIFIED"
+  },
+  "promotionBoundary": {
+    "postRunJsonIsTrustedRuntimeEvidence": false,
+    "runtimeEmitterImplemented": true,
+    "captureWindowBindsRuntimeJournal": true,
+    "derivedCheckpointMayPromote": false,
+    "technicalAcceptanceMayBeTrue": true,
+    "evidenceTrustModel": "BOUNDED_OPERATIONAL_PROCESS_EVIDENCE_NOT_CRYPTOGRAPHIC_ATTESTATION",
+    "requiredFutureEvidence": "IMMUTABLE_GAME_EMITTED_EVENT_JOURNAL_BOUND_BY_LAUNCH_RECORD_AND_TECHNICAL_MANIFEST_DURING_CAPTURE"
+  },
+  "receiptSchema": "DiscGolfTour.Session19ThreeHoleTechnicalAcceptanceReceipt.v2",
+  "receiptPattern": "Evidence/Session19/ThreeHoleTechnicalAcceptance-{candidateId}.json",
+  "selfTestMinimumMutationCount": 72,
+  "claimBoundary": {
+    "visualQualityApproval": false,
+    "accessibilityApproval": false,
+    "humanPlayFeelApproval": false,
+    "manualGameplayAcceptance": false,
+    "productOwnerApproval": false,
+    "performanceAcceptance": false,
+    "soakAcceptance": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "releaseApproval": false,
+    "releaseReady": false,
+    "cryptographicProcessAttestation": false,
+    "tamperProofEvidence": false,
+    "hostileSameUserForgeryResistance": false,
+    "evidenceTrustModel": "BOUNDED_OPERATIONAL_PROCESS_EVIDENCE_NOT_CRYPTOGRAPHIC_ATTESTATION"
+  }
+}

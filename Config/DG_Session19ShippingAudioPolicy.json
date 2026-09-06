@@ -1,0 +1,73 @@
+{
+  "schema": "DiscGolfTour.Session19ShippingAudioCookPolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "policyId": "session19_original_audio_twelve_soundwave_shipping_cook_v1",
+  "state": "SOURCE_AND_IMPORTED_SOUNDWAVES_BOUND_FRESH_SHIPPING_COOK_PROOF_PENDING",
+  "receiptPattern": "Evidence/Session19/ShippingAudioCook-{candidateId}.json",
+  "selfTestMinimumMutationCount": 45,
+  "sourceBindings": [
+    {
+      "role": "ORIGINAL_AUDIO_CANDIDATE_PACK",
+      "path": "Config/DG_Session19OriginalAudioCandidatePack.json",
+      "bytes": 9875,
+      "sha256": "A21C72AB08E13D99CAA93731E3AFE4BDFDBF9E79A0FD4CE924A33189E7AD6B1A"
+    },
+    {
+      "role": "ORIGINAL_AUDIO_IMPORT_RECEIPT",
+      "path": "Evidence/Session19/OriginalAudioCandidateImport.json",
+      "bytes": 6363,
+      "sha256": "3FD33651C3CD0C660800E68548E6634C4A1E2160980778391C23D8FA4CBA55FA"
+    }
+  ],
+  "cookRoot": "/Game/Presentation/Audio/Generated",
+  "orderedCategories": [
+    "ThrowRelease",
+    "AirborneFlight",
+    "GroundContact",
+    "GroundState",
+    "BasketOutcome",
+    "Penalty",
+    "HoleStart",
+    "HoleCompletion",
+    "HoleTransition",
+    "RoundCompletion",
+    "Replay",
+    "Flyover"
+  ],
+  "archive": {
+    "leaf": "Windows",
+    "pak": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.pak",
+    "utoc": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.utoc",
+    "ucas": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.ucas",
+    "assetRegistry": "DiscGolfTour/AssetRegistry.bin",
+    "ioStoreContainerName": "DiscGolfTour-Windows",
+    "platform": "Windows"
+  },
+  "proofRequirements": {
+    "categoryCount": 12,
+    "exactGeneratedFolderInventory": true,
+    "ioStoreExportBundleRequired": true,
+    "packagedAssetRegistryClass": "/Script/Engine.SoundWave",
+    "extractedHeaderExportAndBulkRequired": true,
+    "extractedObjectNameMarkerRequired": true,
+    "extractedExportBundleSizeAgreementRequired": true,
+    "soundWaveClassProofSource": "PACKAGED_ASSET_REGISTRY_ONLY",
+    "sourceImportIdentityMustMatch": true
+  },
+  "resultBoundary": {
+    "allTwelveSerializedSoundWavesSourceBound": true,
+    "allTwelveSoundWavePackagesInIoStore": true,
+    "allTwelveSoundWaveObjectsInPackagedAssetRegistry": true,
+    "allTwelveCookedObjectsExtractedAndInspected": true,
+    "shippingCookProven": true,
+    "audibleRuntimePlaybackProven": false,
+    "humanMixApproved": false,
+    "finalQualityApproved": false,
+    "accessibilityApproved": false,
+    "legalApproved": false,
+    "productOwnerApproved": false,
+    "blockerClosed": false,
+    "releaseReady": false
+  }
+}

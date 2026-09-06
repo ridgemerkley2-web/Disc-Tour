@@ -1,0 +1,140 @@
+{
+  "schema": "DiscGolfTour.Session19ShippingCandidateVerificationReceipt.v2",
+  "schemaVersion": 2,
+  "session": 19,
+  "runId": "S19_WindowsShipping_ThrowPhysicsAudit_20260826T002500Z",
+  "verifiedUtc": "2026-08-26T00:44:41.8061445Z",
+  "state": "PASS_BUILD_ARCHIVE_VERIFIED_PROVENANCE_AND_ACCEPTANCE_PENDING",
+  "verificationMode": "DIRECT_BUILD_PASS",
+  "buildReceipt": {
+    "state": "BUILD_PASS_PROVENANCE_AND_ACCEPTANCE_PENDING",
+    "uatExitCode": 0,
+    "recoveryApplied": false,
+    "legacyRecoveryRestrictedToCandidate1": true,
+    "path": "Evidence/Session19/ShippingCandidate-S19_WindowsShipping_ThrowPhysicsAudit_20260826T002500Z.json",
+    "bytes": 5135,
+    "sha256": "BED2AB205B6D1DC86930572801CBE0304FC0A3F868DC6E04C5CAFA24A5CEF472"
+  },
+  "archiveContract": {
+    "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_ThrowPhysicsAudit_20260826T002500Z/Windows",
+    "hostPathRecorded": false,
+    "requiredFiles": [
+      "DiscGolfTour.exe",
+      "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+      "Manifest_UFSFiles_Win64.txt",
+      "Manifest_NonUFSFiles_Win64.txt",
+      "NOTICES.txt"
+    ],
+    "allRequiredFilesPresent": true,
+    "ufsManifestBytes": 274561,
+    "nonUfsManifestBytes": 1809
+  },
+  "innerShippingExecutable": {
+    "relativePath": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+    "bytes": 162526208,
+    "sha256": "31DCDA7BF5B6F4B0CFFAA829129DF16E5081D495AA1566C381FA944FB157455D"
+  },
+  "buildLog": {
+    "path": "Evidence/Session19/ShippingBuildCookRun-S19_WindowsShipping_ThrowPhysicsAudit_20260826T002500Z.log",
+    "bytes": 115078,
+    "sha256": "D6B31201EA51F03C9AA0CD478CE047D971C5D869AEB4A1E3D622EDE599554D01",
+    "requiredMarkersPresent": true,
+    "forbiddenMarkersAbsent": true
+  },
+  "thirdPartyRuntimeNotices": {
+    "path": "Evidence/Session19/ThirdPartyNoticeVerification-S19_WindowsShipping_ThrowPhysicsAudit_20260826T002500Z.json",
+    "bytes": 4821,
+    "sha256": "D8D41B076980500BACA9C84E7584C4F34B72A9EF071F5661D6AC4879286CFEC6",
+    "technicalCoveragePass": true,
+    "legalApproval": false,
+    "distributionClearance": false
+  },
+  "shippingPluginCapabilities": {
+    "path": "Evidence/Session19/ShippingPluginCapability-S19_WindowsShipping_ThrowPhysicsAudit_20260826T002500Z.json",
+    "bytes": 260173,
+    "sha256": "6A75D6A9427ADC62D07BC79781B96B6E79835D6094A4B60611D54760E1FF9CCD",
+    "reviewedDisabledPluginDescriptorCount": 31,
+    "reviewedMetadataOnlyDependencyPluginDescriptorCount": 13,
+    "reviewedMetadataOnlyDependencySurvivorCount": 13,
+    "unreviewedEditorDeveloperOnlySurvivorCount": 0,
+    "reviewedResidualMetadataExclusionCount": 2,
+    "requiredDependencyClosurePluginDescriptorCount": 15,
+    "missingRequiredDependencyClosurePluginDescriptorCount": 0,
+    "requiredDependencyClosurePayloadBindingCount": 15,
+    "requiredDependencyClosurePayloadMismatchCount": 0,
+    "mandatoryDependencyEdgeCount": 175,
+    "mandatoryDependencyGapCount": 0,
+    "dependencyClosureComplete": true,
+    "requiredPreservedRuntimeOrContentDescriptorCount": 2,
+    "requiredAbsentShippingDeniedDescriptorCount": 2,
+    "requiredAbsentShippingDeniedSurvivorCount": 0,
+    "finalPayloadDescriptorCount": 148,
+    "stagingManifestDiagnosticDescriptorCount": 178,
+    "stagingManifestAuthoritativeForDistribution": false,
+    "finalArchiveCanonicalManifestSha256": "72DBAD8DCD8ED63B1F24C6B46B3DA42A56420AB031652B57BB9412AB7C46E736",
+    "technicalGatePass": true,
+    "releaseReady": false
+  },
+  "bakedPcg": {
+    "path": "Evidence/Session19/BakedPcgCandidateVerification-S19_WindowsShipping_ThrowPhysicsAudit_20260826T002500Z.json",
+    "bytes": 4073,
+    "sha256": "32DD625ADCF35E4AEF21223470F7A6C4DD8322BE49D43D0FDBAC4DA0DA87FB5E",
+    "state": "PASS_CANDIDATE_BOUND_AUTHORED_DATA_AND_SHIPPING_PCG_ABSENCE_HUMAN_ACCEPTANCE_PENDING",
+    "archiveCanonicalManifestSha256": "72DBAD8DCD8ED63B1F24C6B46B3DA42A56420AB031652B57BB9412AB7C46E736",
+    "sourceClosurePrePostMatch": true,
+    "candidateBoundAuthoredDataPass": true,
+    "freshShippingCookPcgAbsenceProven": true,
+    "runtimeAuthoredSelectionProven": false,
+    "deterministicBakeSaveReopenProven": false,
+    "threeHoleCollisionVisualPerformanceAccepted": false,
+    "shippingPcgSeparationReceipt": {
+      "path": "Evidence/Session19/ShippingPcgSeparation-S19_WindowsShipping_ThrowPhysicsAudit_20260826T002500Z.json",
+      "bytes": 2621,
+      "sha256": "DD1B2C524CFDD913BB4115D75775D5DC7A6089E7CDDE88E8C444C80585365822",
+      "state": "PASS_FRESH_SHIPPING_COOK_PCG_ABSENCE_HUMAN_GATES_PENDING",
+      "containerIdentity": {
+        "pak": {
+          "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.pak",
+          "bytes": 10475605,
+          "sha256": "44D6270AB6EB0F135999A7B5783BD393ABCA5A667AA27E16ED9EB2B5926ED014"
+        },
+        "utoc": {
+          "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.utoc",
+          "bytes": 483322,
+          "sha256": "EAB9A3E7DAEFE6DD83FE6AA25752A237898AD071D919560549188BE8A3234D62"
+        },
+        "ucas": {
+          "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.ucas",
+          "bytes": 1008746016,
+          "sha256": "B7FA11DBCE2088BCC838F68E53162D9E5182BD27710363DAEE1002DBA32BF074"
+        },
+        "shippingBinary": {
+          "path": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+          "bytes": 162526208,
+          "sha256": "31DCDA7BF5B6F4B0CFFAA829129DF16E5081D495AA1566C381FA944FB157455D"
+        }
+      },
+      "sourceConfigSeparationProven": true,
+      "freshShippingCookAbsenceProven": true,
+      "unrealPcgBakeSaveReopenProven": false,
+      "humanGatesAccepted": false,
+      "releaseReady": false
+    },
+    "blockerClosed": false,
+    "releaseReady": false
+  },
+  "protectedProfile": {
+    "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+    "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14",
+    "preserved": true
+  },
+  "releaseExcludedProjectRootsAbsent": true,
+  "nextRequiredEvidence": [
+    "WHOLE_ARCHIVE_AND_CONTAINER_PROVENANCE",
+    "SHIPPING_BINARY_POLICY",
+    "SHIPPING_FEATURE_AND_FORBIDDEN_CONTENT_ABSENCE",
+    "FRESH_INSTALL_THREE_HOLE_ACCEPTANCE"
+  ],
+  "releaseReady": false,
+  "receiptPath": "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_ThrowPhysicsAudit_20260826T002500Z.json"
+}

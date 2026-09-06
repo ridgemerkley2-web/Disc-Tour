@@ -77,7 +77,35 @@ def main() -> int:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
         require(data.get("schema") == "disc_golf_trajectory", "wrong trajectory schema")
-        require(data.get("schema_version") == 3, "presentation requires trajectory schema v3")
+        require(data.get("schema_version") == 5, "presentation requires trajectory schema v5")
+        release = data.get("release")
+        require(isinstance(release, dict), "trajectory release is missing")
+        require(release.get("handedness") in {"Right", "Left"},
+                "trajectory release has invalid handedness")
+        summary = data.get("summary")
+        require(isinstance(summary, dict), "trajectory summary is missing")
+        require(summary.get("handedness") == release["handedness"],
+                "trajectory summary/release handedness disagree")
+        phase_origin_s = release.get("wind_phase_origin_s")
+        require(isinstance(phase_origin_s, (int, float))
+                and not isinstance(phase_origin_s, bool)
+                and math.isfinite(float(phase_origin_s))
+                and 0.0 <= float(phase_origin_s) < 4096.0,
+                "trajectory release has invalid deterministic wind phase origin")
+        require(isinstance(summary.get("wind_phase_origin_s"), (int, float))
+                and not isinstance(summary.get("wind_phase_origin_s"), bool)
+                and math.isfinite(float(summary["wind_phase_origin_s"]))
+                and math.isclose(
+                    float(summary["wind_phase_origin_s"]), float(phase_origin_s), abs_tol=1e-6),
+                "trajectory summary/release wind phase origins disagree")
+        final_telemetry = data.get("final_telemetry")
+        require(isinstance(final_telemetry, dict)
+                and isinstance(final_telemetry.get("wind_phase_origin_s"), (int, float))
+                and not isinstance(final_telemetry.get("wind_phase_origin_s"), bool)
+                and math.isfinite(float(final_telemetry["wind_phase_origin_s"]))
+                and math.isclose(
+                    float(final_telemetry["wind_phase_origin_s"]), float(phase_origin_s), abs_tol=1e-6),
+                "trajectory telemetry/release wind phase origins disagree")
         samples = data.get("samples")
         require(isinstance(samples, list) and len(samples) >= 2, "replay needs at least two samples")
 
@@ -87,7 +115,7 @@ def main() -> int:
         require(all(left <= right for left, right in zip(times, times[1:])), "sample time is not monotonic")
         duration = times[-1] - times[0]
         require(duration > 0.0, "capture duration must be positive")
-        require(abs(duration - float(data["summary"]["duration_s"])) <= 0.02,
+        require(abs(duration - float(summary["duration_s"])) <= 0.02,
                 "sample duration disagrees with summary")
         median_hz = 1.0 / statistics.median(deltas)
         require(220.0 <= median_hz <= 260.0, f"capture is not near the 240 Hz solver rate: {median_hz:.1f} Hz")

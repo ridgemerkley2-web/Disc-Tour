@@ -140,6 +140,8 @@ private:
         const FText& Label,
         EColorField Field,
         TConstArrayView<FLinearColor> Colors);
+    TSharedRef<SWidget> BuildBackendAwareProxyTab(
+        const TSharedRef<SWidget>& ProxyTab);
     void RebuildOutfitLists();
 
     float GetFieldValue(ECreatorField Field) const;
@@ -164,6 +166,7 @@ private:
     FReply HandleZoomIn();
     FReply HandleZoomOut();
     FReply HandleCreatorTab(int32 TabIndex);
+    FReply HandleBackendSelection(FName BackendId);
     FReply HandleOutfitSlot(EDGOutfitSlot OutfitSlot);
     FReply HandleOutfitItem(FName ItemId);
     FReply HandleOutfitVariant(FName VariantId);
@@ -179,6 +182,9 @@ private:
     FName GetSelectedCosmeticId(EDGCosmeticKind Kind) const;
 
     FText GetStatusText() const;
+    FText GetBackendStatusText() const;
+    FText GetMetaHumanBackendButtonText() const;
+    bool IsDGMasterBackendSelected() const;
     FText GetHandednessText() const;
     FText GetHandednessLimitationText() const;
     FSlateColor GetHandednessLimitationColor() const;

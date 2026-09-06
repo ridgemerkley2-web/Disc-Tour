@@ -1,0 +1,79 @@
+{
+  "schema": "disc_golf_motion_source_intake",
+  "schema_version": 1,
+  "source_id": "replace_with_lowercase_source_id",
+  "motion_id": "REPLACE-WITH-MOTION-ID",
+  "take_id": "replace_with_lowercase_take_id",
+  "asset_revision": "v001",
+  "handedness": "RIGHT",
+  "throw_type": "RHBH",
+  "classification": "PROJECT_OWNED_CAPTURE",
+  "source_file": {
+    "path": "SourceArt/DiscGolf/Mocap/REPLACE-WITH-MOTION-ID/throw.mov",
+    "bytes": 1,
+    "sha256": "REPLACE_WITH_64_UPPERCASE_HEX_CHARACTERS"
+  },
+  "rights_evidence_file": {
+    "path": "SourceArt/DiscGolf/Mocap/REPLACE-WITH-MOTION-ID/rights-evidence.pdf",
+    "bytes": 1,
+    "sha256": "REPLACE_WITH_64_UPPERCASE_HEX_CHARACTERS"
+  },
+  "provenance": {
+    "provider": "REPLACE_WITH_CANONICAL_PROVIDER",
+    "source_url": null,
+    "creator": "REPLACE_WITH_CREATOR",
+    "acquisition_method": "DIRECT_PROJECT_CAPTURE",
+    "acquired_on": "YYYY-MM-DD"
+  },
+  "permissions": {
+    "commercial_interactive_use": false,
+    "derivative_animation": false,
+    "solver_output_use": false
+  },
+  "performer_release": {
+    "performer_name": "REPLACE_WITH_PERFORMER",
+    "verified": false,
+    "evidence_file": {
+      "path": "SourceArt/DiscGolf/Mocap/REPLACE-WITH-MOTION-ID/performer-release.pdf",
+      "bytes": 1,
+      "sha256": "REPLACE_WITH_64_UPPERCASE_HEX_CHARACTERS"
+    }
+  },
+  "reviews": {
+    "rights": {
+      "reviewer": "REPLACE_WITH_RIGHTS_REVIEWER",
+      "disposition": "PENDING"
+    },
+    "throw_form": {
+      "reviewer": "REPLACE_WITH_THROW_FORM_REVIEWER",
+      "disposition": "PENDING"
+    }
+  },
+  "capture_assertions": {
+    "authentic_disc_golf_throw": false,
+    "full_body_visible": false,
+    "both_feet_visible": false,
+    "throwing_hand_visible": false,
+    "disc_visible": false,
+    "single_performer": false,
+    "continuous_take": false,
+    "no_cuts": false,
+    "stationary_camera": false
+  },
+  "technical": {
+    "frame_rate_fps": 0,
+    "frame_rate_mode": "CONSTANT",
+    "width_pixels": 0,
+    "height_pixels": 0,
+    "codec": "REPLACE_WITH_ACCEPTED_CODEC",
+    "duration_seconds": 0
+  },
+  "targets": {
+    "raw_asset_path": "/Game/DiscGolf/Animation/Mocap/Source/A_replace_with_lowercase_source_id_v001_RAW",
+    "retargeted_asset_path": "/Game/DiscGolf/Animation/Mocap/Retargeted/A_replace_with_lowercase_source_id_v001_RTG",
+    "cleaned_asset_path": null,
+    "production_asset_path": null
+  },
+  "runtime_authority": "DGMASTER",
+  "production_promotion_allowed": false
+}

@@ -49,6 +49,33 @@ namespace DiscGolfCourseRules
         const FVector& OutsideBoundaryCm,
         float ReliefDistanceCm = 100.0f);
 
+    /** A typed vertical probe must also support the raw point near ground. */
+    DISCGOLFTOUR_API bool IsSupportedSettledSurfaceProbe(
+        bool bSurfaceTraceHit,
+        const FVector& RawLocationCm,
+        const FVector& GroundLocationCm,
+        float MaximumVerticalSeparationCm = 100.0f);
+
+    /**
+     * Project only a restored playable lie's height onto supported course
+     * ground. Raw impact, relief, penalty, surface, and derived provenance are
+     * retained. Terminal hole checkpoints bypass this helper entirely.
+     * OutLieState is unchanged when the supporting probe is rejected.
+     */
+    DISCGOLFTOUR_API bool TryProjectRestoredLieToSupportedGround(
+        const FDiscGolfLieState& SavedLieState,
+        bool bSurfaceTraceHit,
+        const FVector& GroundLocationCm,
+        FDiscGolfLieState& OutLieState,
+        float MaximumVerticalSeparationCm = 100.0f);
+
+    /** A finite traced course projection is in bounds when it is not a penalty surface. */
+    DISCGOLFTOUR_API bool IsInBoundsSurfaceProbe(
+        bool bSurfaceTraceHit,
+        ECourseSurfaceType Surface,
+        const FVector& RawLocationCm,
+        const FVector& GroundLocationCm);
+
     DISCGOLFTOUR_API bool IsPenaltySurface(ECourseSurfaceType Surface);
     DISCGOLFTOUR_API FString SurfaceName(ECourseSurfaceType Surface);
     DISCGOLFTOUR_API FString PenaltyName(EDiscGolfPenaltyType Penalty);

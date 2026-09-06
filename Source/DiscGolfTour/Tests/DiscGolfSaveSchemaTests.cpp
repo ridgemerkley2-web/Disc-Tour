@@ -21,6 +21,9 @@ bool FDiscGolfDefaultSaveSchemaVersionTest::RunTest(const FString& Parameters)
         Save->SaveSchemaVersion, DiscGolfSaveSchema::CurrentVersion);
     TestTrue(TEXT("A default save is accepted by the exact-version gate"),
         DiscGolfSaveSchema::IsCurrent(Save->SaveSchemaVersion));
+    TestEqual(TEXT("A default save requests the DGMaster avatar backend"),
+        Save->CharacterCustomization.AvatarBackendId,
+        FName(TEXT("dg_master")));
     return true;
 }
 
@@ -30,8 +33,8 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfCurrentSaveSchemaAcceptanceTest,
 
 bool FDiscGolfCurrentSaveSchemaAcceptanceTest::RunTest(const FString& Parameters)
 {
-    TestEqual(TEXT("The current migration target is Session 7 schema 9"),
-        DiscGolfSaveSchema::CurrentVersion, 9);
+    TestEqual(TEXT("The current migration target is Session 8 schema 10"),
+        DiscGolfSaveSchema::CurrentVersion, 10);
     TestTrue(TEXT("The exact current schema is accepted"),
         DiscGolfSaveSchema::IsCurrent(DiscGolfSaveSchema::CurrentVersion));
     return true;

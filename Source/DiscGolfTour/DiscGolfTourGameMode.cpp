@@ -11,35 +11,27 @@
 #include "DiscGolfGameplayGate.h"
 #include "DiscGolfCourseRules.h"
 #include "DiscGolfCoursePresentationDefinition.h"
+#include "DiscGolfQualityAdapter.h"
 #include "DiscGolfSaveGame.h"
 #include "DiscBagComponent.h"
 #include "DiscGolfTourGameInstance.h"
 #include "DiscGolfPresentationMath.h"
+#include "DiscGolfPresentationAudioRouterComponent.h"
+#include "DiscGolfPlayabilityMonitorComponent.h"
 #include "DiscGolferPawn.h"
+#include "DiscGolfCharacterProfile.h"
 #include "DiscGolfRHBHThrowAdapterComponent.h"
 #include "DiscGolfTourPlayerController.h"
 #include "DiscTrajectorySubsystem.h"
 #include "DiscReplayActor.h"
 #include "DiscBroadcastCameraDirector.h"
 #include "DiscGolfFlyoverRouteActor.h"
-#include "DiscGolfLevelDesignReviewActor.h"
 #include "DiscGolfFoliagePresentationActor.h"
 #include "DiscGolfTerrainPresentationActor.h"
 #include "DiscGolfWaterPresentationActor.h"
 #include "DiscGolfCourseSurfaceActor.h"
 #include "DiscGolfFixturePresentationActor.h"
 #include "DiscGolfFixtureQaRunner.h"
-#include "DiscGolfSession3SmokeRunner.h"
-#include "DiscGolfSession3VisualCaptureRunner.h"
-#include "DiscGolfSession4VisualCaptureRunner.h"
-#include "DiscGolfSession5MocapSmokeRunner.h"
-#include "DiscGolfSession5MocapVisualCaptureRunner.h"
-#include "DiscGolfSession6OutfitSmokeRunner.h"
-#include "DiscGolfSession6OutfitVisualCaptureRunner.h"
-#include "DiscGolfSession7FullCharacterSmokeRunner.h"
-#include "DiscGolfSession7FullCharacterVisualCaptureRunner.h"
-#include "DiscGolfSession8CookClosureRunner.h"
-#include "DiscGolfEnvironmentController.h"
 #include "DiscGolfWorldFixtureActor.h"
 #include "ThrowControllerComponent.h"
 #include "WindDirector.h"
@@ -53,6 +45,7 @@
 #include "HAL/IConsoleManager.h"
 #include "HAL/PlatformMemory.h"
 #include "HAL/PlatformMisc.h"
+#include "HAL/PlatformTime.h"
 #include "HAL/FileManager.h"
 #include "DynamicRHI.h"
 #include "RHIGlobals.h"
@@ -74,12 +67,101 @@
 #include "Serialization/JsonSerializer.h"
 #include "Serialization/JsonWriter.h"
 
+namespace
+{
+bool IsCanonicalLowerUuidV4(const FString& Value)
+{
+    FGuid Parsed;
+    return Value.Len() == 36
+        && FGuid::ParseExact(Value, EGuidFormats::DigitsWithHyphensLower, Parsed)
+        && Parsed.IsValid()
+        && Parsed.ToString(EGuidFormats::DigitsWithHyphensLower) == Value
+        && Value[14] == TEXT('4')
+        && (Value[19] == TEXT('8') || Value[19] == TEXT('9')
+            || Value[19] == TEXT('a') || Value[19] == TEXT('b'));
+}
+
+FString NormalizedAbsoluteDirectory(const FString& Directory)
+{
+    FString Result = FPaths::ConvertRelativePathToFull(Directory);
+    FPaths::NormalizeDirectoryName(Result);
+    return Result;
+}
+
+bool IsSameAsOrUnderDirectory(const FString& Candidate, const FString& Parent)
+{
+    const FString NormalizedCandidate = NormalizedAbsoluteDirectory(Candidate);
+    FString NormalizedParent = NormalizedAbsoluteDirectory(Parent);
+    if (NormalizedCandidate.Equals(NormalizedParent, ESearchCase::IgnoreCase))
+    {
+        return true;
+    }
+    NormalizedParent += TEXT("/");
+    return NormalizedCandidate.StartsWith(NormalizedParent, ESearchCase::IgnoreCase);
+}
+
+bool InvalidateLatestPhysicsRegressionReport()
+{
+#if DG_WITH_DEVELOPMENT_CONTENT
+    IFileManager& FileManager = IFileManager::Get();
+    const FString LatestPath = FPaths::Combine(
+        FPaths::ProjectSavedDir(),
+        TEXT("PhysicsRegressionReports/LatestPhysicsRegression.json"));
+    if (FileManager.FileExists(*LatestPath))
+    {
+        FileManager.Delete(*LatestPath, false, true, true);
+    }
+    return !FileManager.FileExists(*LatestPath);
+#else
+    // Regression evidence is excluded from the release SKU. Keep the call sites
+    // harmless without compiling the diagnostic path marker into Shipping.
+    return true;
+#endif
+}
+
+bool TryBindAutomatedPlayerCommand(
+    ADiscGolferPawn* Golfer,
+    FThrowCommand& Command,
+    FString& OutError)
+{
+    OutError.Reset();
+    UDiscBagComponent* Bag = Golfer ? Golfer->GetDiscBag() : nullptr;
+    const UDiscGolfCharacterProfile* Profile = Golfer
+        ? Golfer->GetRuntimeCharacterProfile() : nullptr;
+    if (!Bag || !Profile)
+    {
+        OutError = TEXT("player equipment or character profile is unavailable");
+        return false;
+    }
+    if (!Bag->SelectEquipment(Command.MoldId, Command.Plastic))
+    {
+        OutError = TEXT("requested automated equipment could not be selected");
+        return false;
+    }
+    FDGDiscInstance Selected;
+    if (!Bag->GetSelectedDiscInstance(Selected)
+        || !Selected.InstanceId.IsValid()
+        || Selected.DiscDefinitionId != Command.MoldId)
+    {
+        OutError = TEXT("selected automated equipment has no stable matching instance");
+        return false;
+    }
+    Command.DiscInstanceId = Selected.InstanceId;
+    Command.Handedness = Profile->Handedness;
+    return true;
+}
+}
+
 ADiscGolfTourGameMode::ADiscGolfTourGameMode()
 {
     PrimaryActorTick.bCanEverTick = true;
     DefaultPawnClass = ADiscGolferPawn::StaticClass();
     PlayerControllerClass = ADiscGolfTourPlayerController::StaticClass();
     HUDClass = ADiscGolfHUD::StaticClass();
+    PresentationAudioRouter = CreateDefaultSubobject<UDiscGolfPresentationAudioRouterComponent>(
+        TEXT("PresentationAudioRouter"));
+    PlayabilityMonitor = CreateDefaultSubobject<UDiscGolfPlayabilityMonitorComponent>(
+        TEXT("PlayabilityMonitor"));
 }
 
 void ADiscGolfTourGameMode::Tick(float DeltaSeconds)
@@ -124,6 +206,18 @@ void ADiscGolfTourGameMode::RefreshPerformanceTelemetry()
 
 void ADiscGolfTourGameMode::ResetPerformanceTelemetry()
 {
+    if (!IsPublicPerformanceCaptureMutationAllowed(DG_WITH_DEVELOPMENT_CONTENT != 0))
+    {
+        PerformanceStatusText = TEXT("Shipping public performance telemetry reset rejected.");
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Shipping public performance telemetry reset rejected."));
+        return;
+    }
+    ResetPerformanceTelemetryInternal();
+}
+
+void ADiscGolfTourGameMode::ResetPerformanceTelemetryInternal()
+{
     PerformanceTracker.Reset();
     PerformanceSummary = FDiscGolfPerformanceSummary();
     PerformanceBudgetState = EDiscGolfPerformanceBudgetState::WarmingUp;
@@ -134,28 +228,177 @@ void ADiscGolfTourGameMode::ResetPerformanceTelemetry()
 
 void ADiscGolfTourGameMode::ApplyOmenPerformanceCaptureProfile()
 {
-    Scalability::FQualityLevels Quality = Scalability::GetQualityLevels();
-    Quality.ResolutionQuality = 100.0f;
-    Quality.ViewDistanceQuality = 2;
-    Quality.AntiAliasingQuality = 2;
-    Quality.ShadowQuality = 2;
-    Quality.GlobalIlluminationQuality = 2;
-    Quality.ReflectionQuality = 2;
-    Quality.PostProcessQuality = 2;
-    Quality.TextureQuality = 2;
-    Quality.EffectsQuality = 2;
-    // Keep the authored High presentation population while the rest of the
-    // gameplay preset uses the documented moderate Omen settings.
-    Quality.FoliageQuality = 3;
-    Quality.ShadingQuality = 2;
-    Scalability::SetQualityLevels(Quality, true);
-    PerformanceCaptureProfile = TEXT("OmenGameplay1080pHighFoliageV1");
+    const FDiscGolfResolvedQualityProfile QualityProfile =
+        DiscGolfQualityAdapter::MakeOmenCaptureProfile(
+            Scalability::GetQualityLevels());
+    Scalability::SetQualityLevels(QualityProfile.EngineQuality, true);
+    PerformanceCaptureProfile = QualityProfile.ProfileId.ToString();
     UE_LOG(LogDiscGolfTour, Display,
         TEXT("Performance profile applied: %s (resolution=100, quality=2, foliage=3)."),
         *PerformanceCaptureProfile);
 }
 
+FDiscGolfReleasePerformanceCaptureLaunchValidation
+ADiscGolfTourGameMode::ValidateReleasePerformanceCaptureLaunch(
+    const FString& CommandLine,
+    bool bIsUnattended,
+    const FString& ResolvedUserDir,
+    const FString& ProjectDirectory,
+    const FString& RootDirectory,
+    bool bCaptureDirectoryAlreadyExists,
+    bool bSaveGameDirectoryAlreadyExists)
+{
+    FDiscGolfReleasePerformanceCaptureLaunchValidation Result;
+    TArray<FString> Arguments;
+    const TCHAR* Cursor = *CommandLine;
+    FString Argument;
+    while (FParse::Token(Cursor, Argument, false))
+    {
+        Arguments.Add(Argument);
+    }
+
+    int32 CourseCount = 0;
+    int32 HoleCount = 0;
+    int32 DurationCount = 0;
+    int32 ResXCount = 0;
+    int32 ResYCount = 0;
+    int32 UserDirCount = 0;
+    int32 ForceResCount = 0;
+    int32 RenderOffscreenCount = 0;
+    int32 Dx12Count = 0;
+    int32 UnattendedCount = 0;
+    int32 NoLoadCount = 0;
+    int32 NoProfileWritesCount = 0;
+    bool bUnknownArgument = false;
+    FString CourseValue;
+    FString HoleValue;
+    FString DurationValue;
+    FString ResXValue;
+    FString ResYValue;
+    FString UserDirValue;
+
+    const auto CaptureValue = [](const FString& Token, const TCHAR* Prefix, int32& Count,
+                                  FString& OutValue) -> bool
+    {
+        const FString PrefixText(Prefix);
+        if (!Token.StartsWith(PrefixText, ESearchCase::CaseSensitive))
+        {
+            return false;
+        }
+        ++Count;
+        OutValue = Token.Mid(PrefixText.Len());
+        return true;
+    };
+
+    for (const FString& Token : Arguments)
+    {
+        if (Token.StartsWith(TEXT("-PerformanceCapture"), ESearchCase::IgnoreCase))
+        {
+            Result.bAttempted = true;
+        }
+        if (CaptureValue(Token, TEXT("-Course="), CourseCount, CourseValue)
+            || CaptureValue(Token, TEXT("-Hole="), HoleCount, HoleValue)
+            || CaptureValue(Token, TEXT("-PerformanceCaptureSeconds="), DurationCount, DurationValue)
+            || CaptureValue(Token, TEXT("-ResX="), ResXCount, ResXValue)
+            || CaptureValue(Token, TEXT("-ResY="), ResYCount, ResYValue)
+            || CaptureValue(Token, TEXT("-UserDir="), UserDirCount, UserDirValue))
+        {
+            continue;
+        }
+        if (Token.Equals(TEXT("-ForceRes"), ESearchCase::CaseSensitive))
+        {
+            ++ForceResCount;
+        }
+        else if (Token.Equals(TEXT("-RenderOffscreen"), ESearchCase::CaseSensitive))
+        {
+            ++RenderOffscreenCount;
+        }
+        else if (Token.Equals(TEXT("-dx12"), ESearchCase::CaseSensitive))
+        {
+            ++Dx12Count;
+        }
+        else if (Token.Equals(TEXT("-unattended"), ESearchCase::CaseSensitive))
+        {
+            ++UnattendedCount;
+        }
+        else if (Token.Equals(TEXT("-NoLoadExistingSave"), ESearchCase::CaseSensitive))
+        {
+            ++NoLoadCount;
+        }
+        else if (Token.Equals(TEXT("-DGNoProfileWrites"), ESearchCase::CaseSensitive))
+        {
+            ++NoProfileWritesCount;
+        }
+        else
+        {
+            bUnknownArgument = true;
+        }
+    }
+
+    if (!Result.bAttempted)
+    {
+        return Result;
+    }
+    if (!bIsUnattended || UnattendedCount != 1)
+    {
+        Result.Error = TEXT("release performance capture requires unattended mode and the -unattended flag");
+        return Result;
+    }
+    const bool bExactCaptureArguments = CourseCount == 1
+        && CourseValue.Equals(TEXT("PineRidge"), ESearchCase::CaseSensitive)
+        && HoleCount == 1 && (HoleValue == TEXT("1") || HoleValue == TEXT("2") || HoleValue == TEXT("3"))
+        && DurationCount == 1 && DurationValue == TEXT("30")
+        && ResXCount == 1 && ResXValue == TEXT("1920")
+        && ResYCount == 1 && ResYValue == TEXT("1080")
+        && ForceResCount == 1 && RenderOffscreenCount == 1 && Dx12Count == 1
+        && NoLoadCount == 1 && NoProfileWritesCount == 1
+        && Arguments.Num() == 12 && !bUnknownArgument;
+    if (!bExactCaptureArguments)
+    {
+        Result.Error = TEXT("release performance capture requires exact Pine Ridge hole, duration, resolution, offscreen, and D3D12 flags");
+        return Result;
+    }
+    if (UserDirCount != 1 || UserDirValue.IsEmpty() || FPaths::IsRelative(UserDirValue)
+        || UserDirValue.Contains(TEXT("../")) || UserDirValue.Contains(TEXT("..\\")))
+    {
+        Result.Error = TEXT("release performance capture requires a fresh external UUID UserDir");
+        return Result;
+    }
+
+    const FString NormalizedSuppliedUserDir = NormalizedAbsoluteDirectory(UserDirValue);
+    const FString NormalizedResolvedUserDir = NormalizedAbsoluteDirectory(ResolvedUserDir);
+    const FString UserDirToken = FPaths::GetCleanFilename(NormalizedResolvedUserDir);
+    if (!NormalizedSuppliedUserDir.Equals(NormalizedResolvedUserDir, ESearchCase::IgnoreCase)
+        || !IsCanonicalLowerUuidV4(UserDirToken)
+        || ProjectDirectory.IsEmpty() || RootDirectory.IsEmpty()
+        || IsSameAsOrUnderDirectory(NormalizedResolvedUserDir, ProjectDirectory)
+        || IsSameAsOrUnderDirectory(NormalizedResolvedUserDir, RootDirectory)
+        || bCaptureDirectoryAlreadyExists || bSaveGameDirectoryAlreadyExists)
+    {
+        Result.Error = TEXT("release performance capture requires a fresh external UUID UserDir");
+        return Result;
+    }
+
+    Result.bAccepted = true;
+    Result.HoleNumber = FCString::Atoi(*HoleValue);
+    Result.DurationSeconds = 30.0f;
+    Result.UserDirToken = UserDirToken;
+    return Result;
+}
+
 bool ADiscGolfTourGameMode::CapturePerformanceSnapshot()
+{
+    if (!IsPublicPerformanceCaptureMutationAllowed(DG_WITH_DEVELOPMENT_CONTENT != 0))
+    {
+        PerformanceStatusText = TEXT("Shipping public performance snapshot rejected.");
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Shipping public performance snapshot rejected."));
+        return false;
+    }
+    return CapturePerformanceSnapshotInternal();
+}
+
+bool ADiscGolfTourGameMode::CapturePerformanceSnapshotInternal()
 {
     RefreshPerformanceTelemetry();
     const FDiscGolfPerformanceBudget& Budget = PerformanceTracker.GetBudget();
@@ -204,6 +447,31 @@ bool ADiscGolfTourGameMode::CapturePerformanceSnapshot()
     QualityJson->SetNumberField(TEXT("foliage"), Quality.FoliageQuality);
     QualityJson->SetNumberField(TEXT("shading"), Quality.ShadingQuality);
     Root->SetObjectField(TEXT("quality"), QualityJson);
+
+    bPerformanceCaptureRuntimeContractValid = true;
+    if (bReleasePerformanceCapture)
+    {
+        const bool bQualityValid = FMath::IsNearlyEqual(Quality.ResolutionQuality, 100.0f, 0.01f)
+            && Quality.ViewDistanceQuality == 2 && Quality.AntiAliasingQuality == 2
+            && Quality.ShadowQuality == 2 && Quality.GlobalIlluminationQuality == 2
+            && Quality.ReflectionQuality == 2 && Quality.PostProcessQuality == 2
+            && Quality.TextureQuality == 2 && Quality.EffectsQuality == 2
+            && Quality.FoliageQuality == 3 && Quality.ShadingQuality == 2;
+        bPerformanceCaptureRuntimeContractValid = bRendered
+            && RhiName.Equals(TEXT("D3D12"), ESearchCase::IgnoreCase)
+            && !GRHIAdapterName.IsEmpty()
+            && ViewportSize == FIntPoint(1920, 1080)
+            && PerformanceCaptureProfile == TEXT("OmenGameplay1080pHighFoliageV1")
+            && FMath::IsNearlyEqual(PerformanceCaptureDurationSeconds, 30.0f)
+            && ActiveHole && ActiveHole->CourseId == TEXT("PineRidgeChampionship")
+            && ActiveHole->HoleNumber == PerformanceCaptureRequestedHoleNumber
+            && IsCourseFlyoverActive() && bQualityValid;
+        if (!bPerformanceCaptureRuntimeContractValid)
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("RELEASE PERFORMANCE CAPTURE REJECTED: actual RHI, GPU, viewport, course, flyover, duration, or quality state differs from the guarded launch contract."));
+        }
+    }
 
     TSharedRef<FJsonObject> BudgetJson = MakeShared<FJsonObject>();
     BudgetJson->SetNumberField(TEXT("target_frame_ms"), Budget.TargetFrameTimeMs);
@@ -255,8 +523,10 @@ bool ADiscGolfTourGameMode::CapturePerformanceSnapshot()
 void ADiscGolfTourGameMode::FinishPerformanceCapture()
 {
     bPerformanceCaptureActive = false;
-    const bool bSaved = CapturePerformanceSnapshot();
-    const bool bPassed = bSaved && PerformanceBudgetState == EDiscGolfPerformanceBudgetState::Pass;
+    const bool bSaved = CapturePerformanceSnapshotInternal();
+    const bool bPassed = bSaved
+        && PerformanceBudgetState == EDiscGolfPerformanceBudgetState::Pass
+        && (!bReleasePerformanceCapture || bPerformanceCaptureRuntimeContractValid);
     UE_LOG(LogDiscGolfTour, Display, TEXT("PERFORMANCE CAPTURE %s: %s"),
         bPassed ? TEXT("PASS") : TEXT("FAIL"), *PerformanceStatusText);
     FPlatformMisc::RequestExitWithStatus(false, bPassed ? 0 : 1);
@@ -265,7 +535,17 @@ void ADiscGolfTourGameMode::FinishPerformanceCapture()
 void ADiscGolfTourGameMode::StartPerformanceCaptureSamples()
 {
     if (!bPerformanceCaptureActive) return;
-    ResetPerformanceTelemetry();
+    if (bReleasePerformanceCapture
+        && (!IsCourseFlyoverActive() || !ActiveHole
+            || ActiveHole->HoleNumber != PerformanceCaptureRequestedHoleNumber))
+    {
+        bPerformanceCaptureActive = false;
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("RELEASE PERFORMANCE CAPTURE REJECTED: the authored flyover did not remain active through warm-up."));
+        FPlatformMisc::RequestExitWithStatus(false, 2);
+        return;
+    }
+    ResetPerformanceTelemetryInternal();
     FTimerHandle PerformanceCaptureTimer;
     GetWorldTimerManager().SetTimer(PerformanceCaptureTimer, FTimerDelegate::CreateUObject(
         this, &ADiscGolfTourGameMode::FinishPerformanceCapture),
@@ -275,15 +555,124 @@ void ADiscGolfTourGameMode::StartPerformanceCaptureSamples()
         PerformanceCaptureDurationSeconds);
 }
 
+bool ADiscGolfTourGameMode::BeginPerformanceCaptureSequence()
+{
+    ADiscGolfFlyoverRouteActor* Route = DevBootstrap ? DevBootstrap->GetFlyoverRoute() : nullptr;
+    if (bReleasePerformanceCapture && !Route)
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("RELEASE PERFORMANCE CAPTURE REJECTED: the authored flyover route is unavailable."));
+        FPlatformMisc::RequestExitWithStatus(false, 2);
+        return false;
+    }
+
+    bPerformanceCaptureActive = true;
+    if (Route)
+    {
+        Route->PreviewDurationSeconds = PerformanceCaptureDurationSeconds + 12.0f;
+    }
+    FTimerHandle PerformanceFlyoverTimer;
+    GetWorldTimerManager().SetTimer(PerformanceFlyoverTimer, FTimerDelegate::CreateUObject(
+        this, &ADiscGolfTourGameMode::PreviewCourseFlyover), 0.5f, false);
+    FTimerHandle PerformanceWarmupTimer;
+    GetWorldTimerManager().SetTimer(PerformanceWarmupTimer, FTimerDelegate::CreateUObject(
+        this, &ADiscGolfTourGameMode::StartPerformanceCaptureSamples), 10.0f, false);
+    UE_LOG(LogDiscGolfTour, Display,
+        TEXT("Performance capture warming authored flyover and asset residency for 10.0 seconds."));
+    return true;
+}
+
 void ADiscGolfTourGameMode::BeginPlay()
 {
     Super::BeginPlay();
 
+    if (PlayabilityMonitor)
+    {
+        PlayabilityMonitor->OnPlayabilityFailure.AddDynamic(
+            this, &ADiscGolfTourGameMode::HandlePlayabilityFailure);
+        PlayabilityMonitor->ResetMonitor();
+    }
+
+    bool bPerformanceCaptureRequested = false;
+    bool bDeveloperToolAutomated = false;
+    bool bDeveloperToolPineRidge = false;
+    bool bDeveloperToolPerformanceProfile = false;
+    bool bDeveloperToolExclusiveCapture = false;
+    bool bRouteTelemetrySmokeRequested = false;
+    bool bRouteTelemetryRequested = false;
+    bool bGalleryLakeWaterSmokeRequested = false;
+    bool bDenseForestSmokeRequested = false;
+    bool bGroundGrassSmokeRequested = false;
+    bool bHole1FlightRouteSmokeRequested = false;
+    bool bSession12PresentationSmokeRequested = false;
+    bool bSession16MainMenuSmokeRequested = false;
+    bool bSession17RoundFlowSmokeRequested = false;
+    bool bSession16RulesSmokeRequested = false;
+    bool bRegressionSuiteSmokeRequested = false;
+    bool bAutomatedLaunch = false;
+#if DG_WITH_RELEASE_PERFORMANCE_CAPTURE
+    const FString ReleaseCaptureCommandLine(FCommandLine::Get());
+    const bool bReleaseCaptureAttempted = ReleaseCaptureCommandLine.Contains(
+        TEXT("-PerformanceCapture"), ESearchCase::IgnoreCase);
+    if (bReleaseCaptureAttempted)
+    {
+        const FString CaptureDirectory = FPaths::Combine(
+            FPaths::ProjectSavedDir(), TEXT("PerformanceCaptures"));
+        const FString SaveGameDirectory = FPaths::Combine(
+            FPaths::ProjectSavedDir(), TEXT("SaveGames"));
+        const FDiscGolfReleasePerformanceCaptureLaunchValidation ReleaseCapture =
+            ValidateReleasePerformanceCaptureLaunch(
+                ReleaseCaptureCommandLine,
+                FApp::IsUnattended(),
+                FPaths::ProjectUserDir(),
+                FPaths::ProjectDir(),
+                FPaths::RootDir(),
+                IFileManager::Get().DirectoryExists(*CaptureDirectory),
+                IFileManager::Get().DirectoryExists(*SaveGameDirectory));
+        if (!ReleaseCapture.bAccepted)
+        {
+            PerformanceStatusText = FString::Printf(
+                TEXT("RELEASE PERFORMANCE CAPTURE REJECTED: %s"), *ReleaseCapture.Error);
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("RELEASE PERFORMANCE CAPTURE REJECTED: %s"), *ReleaseCapture.Error);
+            FPlatformMisc::RequestExitWithStatus(false, 2);
+            return;
+        }
+        if (!IFileManager::Get().MakeDirectory(*CaptureDirectory, true))
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("RELEASE PERFORMANCE CAPTURE REJECTED: fresh capture namespace could not be created."));
+            FPlatformMisc::RequestExitWithStatus(false, 2);
+            return;
+        }
+        TUniquePtr<FArchive> GuardWriter;
+        FString GuardError;
+        const FString GuardPath = FPaths::Combine(
+            CaptureDirectory, TEXT("ReleasePerformanceCapture.guard"));
+        if (!DiscGolfRuntimeCheckpointJournal::TryCreateExclusiveJournalWriter(
+                GuardPath, GuardWriter, GuardError)
+            || !GuardWriter || !GuardWriter->Close())
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("RELEASE PERFORMANCE CAPTURE REJECTED: exclusive capture namespace claim failed."));
+            FPlatformMisc::RequestExitWithStatus(false, 2);
+            return;
+        }
+        bReleasePerformanceCapture = true;
+        bPerformanceCaptureRequested = true;
+        bPerformanceCaptureRuntimeContractValid = false;
+        PerformanceCaptureDurationSeconds = ReleaseCapture.DurationSeconds;
+        PerformanceCaptureRequestedHoleNumber = ReleaseCapture.HoleNumber;
+        ApplyOmenPerformanceCaptureProfile();
+        bAutomatedLaunch = true;
+    }
+#endif
+#if DG_WITH_DEVELOPMENT_CONTENT
     bDeveloperHudVisible = FParse::Param(FCommandLine::Get(), TEXT("DeveloperHUD"));
     bShotTracerEnabled = bDeveloperHudVisible
         || FParse::Param(FCommandLine::Get(), TEXT("ShotTracer"));
     float RequestedPerformanceCaptureSeconds = 0.0f;
-    const bool bPerformanceCaptureRequested = FParse::Value(
+    bPerformanceCaptureRequested = FParse::Value(
         FCommandLine::Get(), TEXT("PerformanceCaptureSeconds="), RequestedPerformanceCaptureSeconds);
     if (bPerformanceCaptureRequested)
     {
@@ -291,48 +680,103 @@ void ADiscGolfTourGameMode::BeginPlay()
             RequestedPerformanceCaptureSeconds, 5.0f, 300.0f);
         ApplyOmenPerformanceCaptureProfile();
     }
+    bDeveloperToolAutomated = FParse::Param(
+        FCommandLine::Get(), TEXT("DGDeveloperToolAutomation"));
+    bDeveloperToolPineRidge = FParse::Param(
+        FCommandLine::Get(), TEXT("DGDeveloperToolPineRidge"));
+    bDeveloperToolPerformanceProfile = FParse::Param(
+        FCommandLine::Get(), TEXT("DGDeveloperToolPerformanceProfile"));
+    bDeveloperToolExclusiveCapture = FParse::Param(
+        FCommandLine::Get(), TEXT("DGDeveloperToolExclusiveCapture"));
+    if (bDeveloperToolPerformanceProfile)
+    {
+        ApplyOmenPerformanceCaptureProfile();
+    }
+    bRouteTelemetrySmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("NeedleGateRouteTelemetrySmokeTest"));
+    bRouteTelemetryRequested = bRouteTelemetrySmokeRequested || FParse::Param(
+        FCommandLine::Get(), TEXT("NeedleGateRouteTelemetry"));
+    bGalleryLakeWaterSmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("GalleryLakeWaterSmokeTest"));
+    bDenseForestSmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("DenseForestSmokeTest"));
+    bGroundGrassSmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("GroundGrassSmokeTest"));
+    bHole1FlightRouteSmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Hole1FlightRouteSmokeTest"));
+    bSession12PresentationSmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Session12PresentationSmokeTest"));
+    bSession16MainMenuSmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Session16MainMenuSmokeTest"));
+    bSession17RoundFlowSmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("Session17RoundFlowSmokeTest"));
+    bSession16RulesSmokeRequested = FParse::Value(
+        FCommandLine::Get(), TEXT("Session16RulesSmokeTest="), Session16RulesSmokeScenario);
+    bRegressionSuiteSmokeRequested = FParse::Param(
+        FCommandLine::Get(), TEXT("RegressionSuiteSmokeTest"));
+    FString IgnoredVisualQAName;
+    bAutomatedLaunch = FApp::IsUnattended()
+        || FParse::Param(FCommandLine::Get(), TEXT("ThreeHoleRoundSmokeTest"))
+        || FParse::Param(FCommandLine::Get(), TEXT("CourseSmokeTest"))
+        || bRegressionSuiteSmokeRequested
+        || FParse::Param(FCommandLine::Get(), TEXT("PineRidgePlaySmokeTest"))
+        || bDeveloperToolAutomated
+        || bSession12PresentationSmokeRequested
+        || bHole1FlightRouteSmokeRequested
+        || bSession16MainMenuSmokeRequested
+        || bSession17RoundFlowSmokeRequested
+        || bSession16RulesSmokeRequested
+        || FParse::Param(FCommandLine::Get(), TEXT("FixtureCollisionSmokeTest"))
+        || bGalleryLakeWaterSmokeRequested
+        || bDenseForestSmokeRequested
+        || bGroundGrassSmokeRequested
+        || bRouteTelemetryRequested
+        || FParse::Value(FCommandLine::Get(), TEXT("VisualQAScreenshot="), IgnoredVisualQAName)
+        || bPerformanceCaptureRequested;
+#endif
+
+    // This opt-in must own its exclusive file and round UUID before LoadCourse
+    // reaches the initial StartHole. Normal play has none of these variables
+    // and pays no journal I/O cost.
+    InitializeRuntimeCheckpointJournal();
+
+    // A regression-smoke process owns Latest from the moment its launch flag is
+    // parsed. Publish the fail-closed marker before world/course bootstrap or
+    // any competing automation branch can return, so a prior PASS can never be
+    // mistaken for evidence from this process.
+    if (bRegressionSuiteSmokeRequested)
+    {
+        bRegressionSuiteSmokeTestActive = true;
+        if (UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem())
+        {
+            FString MarkerError;
+            LastRegressionReportPath.Reset();
+            if (!Trajectories->BeginRegressionSuiteReport(
+                    LastRegressionReportPath, MarkerError))
+            {
+                const FString Failure = FString::Printf(
+                    TEXT("Regression report startup marker failed: %s"), *MarkerError);
+                FailRegressionSuiteSmoke(Failure);
+                return;
+            }
+        }
+        else
+        {
+            FailRegressionSuiteSmoke(
+                TEXT("Trajectory subsystem is unavailable at smoke startup"));
+            return;
+        }
+    }
+
     WindDirector = GetWorld()->SpawnActor<AWindDirector>();
     DevBootstrap = GetWorld()->SpawnActor<ADevCourseBootstrap>();
-    const bool bRouteTelemetrySmokeRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("NeedleGateRouteTelemetrySmokeTest"));
-    const bool bRouteTelemetryRequested = bRouteTelemetrySmokeRequested || FParse::Param(
-        FCommandLine::Get(), TEXT("NeedleGateRouteTelemetry"));
-    const bool bGalleryLakeWaterSmokeRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("GalleryLakeWaterSmokeTest"));
-    const bool bDenseForestSmokeRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("DenseForestSmokeTest"));
-    const bool bGroundGrassSmokeRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("GroundGrassSmokeTest"));
-    const bool bHole1FlightRouteSmokeRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("Hole1FlightRouteSmokeTest"));
-    const bool bSession3OneThrowSmokeRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("Session3OneThrowSmokeTest"));
-    const bool bSession3VisualCaptureRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("Session3VisualCapture"));
-    const bool bSession4VisualCaptureRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("Session4VisualCapture"));
-    const bool bSession5MocapSmokeRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("Session5MocapPipelineSmokeTest"));
-    const bool bSession5MocapVisualCaptureRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("Session5MocapVisualCapture"));
-    const bool bSession6OutfitSmokeRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("Session6OutfitThrowSmokeTest"));
-    const bool bSession6OutfitVisualCaptureRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("Session6OutfitVisualCapture"));
-    const bool bSession7FullCharacterSmokeRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("Session7FullCharacterThrowSmokeTest"));
-    const bool bSession7FullCharacterVisualCaptureRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("Session7FullCharacterVisualCapture"));
-    const bool bSession8CookClosureSmokeRequested = FParse::Param(
-        FCommandLine::Get(), TEXT("Session8CookClosureSmokeTest"));
     FString InitialCourse = (bRouteTelemetryRequested || bGalleryLakeWaterSmokeRequested
         || bDenseForestSmokeRequested || bGroundGrassSmokeRequested
-        || bHole1FlightRouteSmokeRequested || bSession3OneThrowSmokeRequested
-        || bSession3VisualCaptureRequested || bSession4VisualCaptureRequested
-        || bSession5MocapSmokeRequested || bSession5MocapVisualCaptureRequested
-        || bSession6OutfitSmokeRequested || bSession6OutfitVisualCaptureRequested
-        || bSession7FullCharacterSmokeRequested
-        || bSession7FullCharacterVisualCaptureRequested)
+        || bHole1FlightRouteSmokeRequested || bDeveloperToolPineRidge
+        || bSession12PresentationSmokeRequested
+        || bSession16MainMenuSmokeRequested
+        || bSession17RoundFlowSmokeRequested
+        || !bAutomatedLaunch)
         ? TEXT("PineRidge") : TEXT("Regression");
     const bool bCourseOverridden = FParse::Value(FCommandLine::Get(), TEXT("Course="), InitialCourse);
     if (!LoadCourse(InitialCourse))
@@ -347,74 +791,55 @@ void ADiscGolfTourGameMode::BeginPlay()
     {
         LoadRoundHole(InitialHoleNumber);
     }
-    if (FParse::Param(FCommandLine::Get(), TEXT("LevelDesignReview")))
-    {
-        ToggleLevelDesignReview();
-    }
+#if DG_WITH_DEVELOPMENT_CONTENT
     if (FParse::Param(FCommandLine::Get(), TEXT("FixturePresentationGallery")))
     {
         SpawnFixturePresentationGallery();
     }
+#endif
 
-    FString IgnoredVisualQAName;
-    const bool bAutomatedLaunch = FApp::IsUnattended()
-        || FParse::Param(FCommandLine::Get(), TEXT("ThreeHoleRoundSmokeTest"))
-        || FParse::Param(FCommandLine::Get(), TEXT("CourseSmokeTest"))
-        || FParse::Param(FCommandLine::Get(), TEXT("RegressionSuiteSmokeTest"))
-        || FParse::Param(FCommandLine::Get(), TEXT("PineRidgePlaySmokeTest"))
-        || bHole1FlightRouteSmokeRequested
-        || bSession3OneThrowSmokeRequested
-        || bSession3VisualCaptureRequested
-        || bSession4VisualCaptureRequested
-        || bSession5MocapSmokeRequested
-        || bSession5MocapVisualCaptureRequested
-        || bSession6OutfitSmokeRequested
-        || bSession6OutfitVisualCaptureRequested
-        || bSession7FullCharacterSmokeRequested
-        || bSession7FullCharacterVisualCaptureRequested
-        || bSession8CookClosureSmokeRequested
-        || FParse::Param(FCommandLine::Get(), TEXT("FixtureCollisionSmokeTest"))
-        || bGalleryLakeWaterSmokeRequested
-        || bDenseForestSmokeRequested
-        || bGroundGrassSmokeRequested
-        || bRouteTelemetryRequested
-        || FParse::Value(FCommandLine::Get(), TEXT("VisualQAScreenshot="), IgnoredVisualQAName)
-        || bPerformanceCaptureRequested;
     if (!bCourseOverridden && !bHoleOverridden && !bAutomatedLaunch)
     {
         RestorePracticeRoundSnapshot();
     }
+    if (bSession16MainMenuSmokeRequested || bSession17RoundFlowSmokeRequested
+        || !bAutomatedLaunch)
+    {
+        ShowMainMenu();
+    }
 
     if (UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem())
     {
+#if DG_WITH_DEVELOPMENT_CONTENT
         TrajectoryStatusText = FString::Printf(TEXT("AUTO EXPORT READY - %d regression presets"),
             Trajectories->GetRegressionPresets().Num());
+#else
+        TrajectoryStatusText = TEXT("IN-MEMORY TRAJECTORY SUMMARY READY");
+#endif
     }
+#if DG_WITH_RELEASE_PERFORMANCE_CAPTURE
+    if (bPerformanceCaptureRequested)
+    {
+        BeginPerformanceCaptureSequence();
+        return;
+    }
+#endif
+#if DG_WITH_DEVELOPMENT_CONTENT
     if (bRouteTelemetryRequested && !bRouteTelemetrySmokeRequested)
     {
         StartNeedleGateRouteTelemetry(false);
     }
 
-    if (bPerformanceCaptureRequested)
+    if (bPerformanceCaptureRequested && !bDeveloperToolExclusiveCapture)
     {
-        bPerformanceCaptureActive = true;
-        if (ADiscGolfFlyoverRouteActor* Route = DevBootstrap ? DevBootstrap->GetFlyoverRoute() : nullptr)
-        {
-            Route->PreviewDurationSeconds = PerformanceCaptureDurationSeconds + 12.0f;
-        }
-        FTimerHandle PerformanceFlyoverTimer;
-        GetWorldTimerManager().SetTimer(PerformanceFlyoverTimer, FTimerDelegate::CreateUObject(
-            this, &ADiscGolfTourGameMode::PreviewCourseFlyover), 0.5f, false);
-        FTimerHandle PerformanceWarmupTimer;
-        GetWorldTimerManager().SetTimer(PerformanceWarmupTimer, FTimerDelegate::CreateUObject(
-            this, &ADiscGolfTourGameMode::StartPerformanceCaptureSamples), 10.0f, false);
-        UE_LOG(LogDiscGolfTour, Display,
-            TEXT("Performance capture warming authored flyover and asset residency for 10.0 seconds."));
+        BeginPerformanceCaptureSequence();
         return;
     }
 
     FString VisualQAName;
-    if (FParse::Value(FCommandLine::Get(), TEXT("VisualQAScreenshot="), VisualQAName))
+    if (!bDeveloperToolExclusiveCapture
+        && FParse::Value(
+            FCommandLine::Get(), TEXT("VisualQAScreenshot="), VisualQAName))
     {
         VisualQAName.ReplaceInline(TEXT("/"), TEXT("_"));
         VisualQAName.ReplaceInline(TEXT("\\"), TEXT("_"));
@@ -455,202 +880,7 @@ void ADiscGolfTourGameMode::BeginPlay()
         return;
     }
 
-    if (bSession8CookClosureSmokeRequested)
-    {
-        Session8CookClosureRunner =
-            GetWorld()->SpawnActor<ADiscGolfSession8CookClosureRunner>();
-        if (!Session8CookClosureRunner)
-        {
-            UE_LOG(LogDiscGolfTour, Error,
-                TEXT("DG_SESSION8_COOK_CLOSURE_SMOKE: FAIL reason=runner could not spawn"));
-            FPlatformMisc::RequestExitWithStatus(false, 1);
-            return;
-        }
-        FTimerHandle Session8CookClosureTimer;
-        GetWorldTimerManager().SetTimer(
-            Session8CookClosureTimer,
-            FTimerDelegate::CreateUObject(
-                Session8CookClosureRunner,
-                &ADiscGolfSession8CookClosureRunner::Start),
-            0.5f,
-            false);
-    }
-    else if (bSession7FullCharacterVisualCaptureRequested)
-    {
-        Session7FullCharacterVisualCaptureRunner =
-            GetWorld()->SpawnActor<ADiscGolfSession7FullCharacterVisualCaptureRunner>();
-        if (!Session7FullCharacterVisualCaptureRunner)
-        {
-            UE_LOG(LogDiscGolfTour, Error,
-                TEXT("DG_SESSION7_FULL_CHARACTER_VISUAL_CAPTURE: FAIL runner could not spawn."));
-            FPlatformMisc::RequestExitWithStatus(false, 1);
-            return;
-        }
-        FTimerHandle Session7VisualTimer;
-        GetWorldTimerManager().SetTimer(
-            Session7VisualTimer,
-            FTimerDelegate::CreateUObject(
-                Session7FullCharacterVisualCaptureRunner,
-                &ADiscGolfSession7FullCharacterVisualCaptureRunner::Start),
-            0.5f,
-            false);
-    }
-    else if (bSession7FullCharacterSmokeRequested)
-    {
-        Session7FullCharacterSmokeRunner =
-            GetWorld()->SpawnActor<ADiscGolfSession7FullCharacterSmokeRunner>();
-        if (!Session7FullCharacterSmokeRunner)
-        {
-            UE_LOG(LogDiscGolfTour, Error,
-                TEXT("SESSION 7 FULL CHARACTER THROW SMOKE FAIL: runner could not spawn."));
-            FPlatformMisc::RequestExitWithStatus(false, 1);
-            return;
-        }
-        FTimerHandle Session7SmokeTimer;
-        GetWorldTimerManager().SetTimer(
-            Session7SmokeTimer,
-            FTimerDelegate::CreateUObject(
-                Session7FullCharacterSmokeRunner,
-                &ADiscGolfSession7FullCharacterSmokeRunner::Start),
-            0.5f,
-            false);
-    }
-    else if (bSession6OutfitVisualCaptureRequested)
-    {
-        Session6OutfitVisualCaptureRunner =
-            GetWorld()->SpawnActor<ADiscGolfSession6OutfitVisualCaptureRunner>();
-        if (!Session6OutfitVisualCaptureRunner)
-        {
-            UE_LOG(LogDiscGolfTour, Error,
-                TEXT("DG_SESSION6_OUTFIT_VISUAL_CAPTURE: FAIL runner could not spawn."));
-            FPlatformMisc::RequestExitWithStatus(false, 1);
-            return;
-        }
-        FTimerHandle Session6VisualTimer;
-        GetWorldTimerManager().SetTimer(
-            Session6VisualTimer,
-            FTimerDelegate::CreateUObject(
-                Session6OutfitVisualCaptureRunner,
-                &ADiscGolfSession6OutfitVisualCaptureRunner::Start),
-            0.5f,
-            false);
-    }
-    else if (bSession6OutfitSmokeRequested)
-    {
-        Session6OutfitSmokeRunner =
-            GetWorld()->SpawnActor<ADiscGolfSession6OutfitSmokeRunner>();
-        if (!Session6OutfitSmokeRunner)
-        {
-            UE_LOG(LogDiscGolfTour, Error,
-                TEXT("SESSION 6 OUTFIT THROW SMOKE FAIL: runner could not spawn."));
-            FPlatformMisc::RequestExitWithStatus(false, 1);
-            return;
-        }
-        FTimerHandle Session6SmokeTimer;
-        GetWorldTimerManager().SetTimer(
-            Session6SmokeTimer,
-            FTimerDelegate::CreateUObject(
-                Session6OutfitSmokeRunner,
-                &ADiscGolfSession6OutfitSmokeRunner::Start),
-            0.5f,
-            false);
-    }
-    else if (bSession5MocapVisualCaptureRequested)
-    {
-        Session5MocapVisualCaptureRunner =
-            GetWorld()->SpawnActor<ADiscGolfSession5MocapVisualCaptureRunner>();
-        if (!Session5MocapVisualCaptureRunner)
-        {
-            UE_LOG(LogDiscGolfTour, Error,
-                TEXT("DG_SESSION5_MOCAP_VISUAL_CAPTURE: FAIL runner could not spawn."));
-            FPlatformMisc::RequestExitWithStatus(false, 1);
-            return;
-        }
-        FTimerHandle Session5MocapVisualTimer;
-        GetWorldTimerManager().SetTimer(
-            Session5MocapVisualTimer,
-            FTimerDelegate::CreateUObject(
-                Session5MocapVisualCaptureRunner,
-                &ADiscGolfSession5MocapVisualCaptureRunner::Start),
-            0.5f,
-            false);
-    }
-    else if (bSession5MocapSmokeRequested)
-    {
-        Session5MocapSmokeRunner =
-            GetWorld()->SpawnActor<ADiscGolfSession5MocapSmokeRunner>();
-        if (!Session5MocapSmokeRunner)
-        {
-            UE_LOG(LogDiscGolfTour, Error,
-                TEXT("SESSION 5 MOCAP PIPELINE SMOKE FAIL: runner could not spawn."));
-            FPlatformMisc::RequestExitWithStatus(false, 1);
-            return;
-        }
-        FTimerHandle Session5MocapSmokeTimer;
-        GetWorldTimerManager().SetTimer(
-            Session5MocapSmokeTimer,
-            FTimerDelegate::CreateUObject(
-                Session5MocapSmokeRunner,
-                &ADiscGolfSession5MocapSmokeRunner::Start),
-            0.5f,
-            false);
-    }
-    else if (bSession4VisualCaptureRequested)
-    {
-        Session4VisualCaptureRunner = GetWorld()->SpawnActor<ADiscGolfSession4VisualCaptureRunner>();
-        if (!Session4VisualCaptureRunner)
-        {
-            UE_LOG(LogDiscGolfTour, Error,
-                TEXT("DG_SESSION4_VISUAL_CAPTURE: FAIL runner could not spawn."));
-            FPlatformMisc::RequestExitWithStatus(false, 1);
-            return;
-        }
-        FTimerHandle Session4VisualCaptureTimer;
-        GetWorldTimerManager().SetTimer(
-            Session4VisualCaptureTimer,
-            FTimerDelegate::CreateUObject(
-                Session4VisualCaptureRunner,
-                &ADiscGolfSession4VisualCaptureRunner::Start),
-            0.5f,
-            false);
-    }
-    else if (bSession3VisualCaptureRequested)
-    {
-        Session3VisualCaptureRunner = GetWorld()->SpawnActor<ADiscGolfSession3VisualCaptureRunner>();
-        if (!Session3VisualCaptureRunner)
-        {
-            UE_LOG(LogDiscGolfTour, Error,
-                TEXT("DG_SESSION3_VISUAL_CAPTURE: FAIL runner could not spawn."));
-            FPlatformMisc::RequestExitWithStatus(false, 1);
-            return;
-        }
-        FTimerHandle Session3VisualCaptureTimer;
-        GetWorldTimerManager().SetTimer(
-            Session3VisualCaptureTimer,
-            FTimerDelegate::CreateUObject(
-                Session3VisualCaptureRunner,
-                &ADiscGolfSession3VisualCaptureRunner::Start),
-            0.5f,
-            false);
-    }
-    else if (bSession3OneThrowSmokeRequested)
-    {
-        Session3SmokeRunner = GetWorld()->SpawnActor<ADiscGolfSession3SmokeRunner>();
-        if (!Session3SmokeRunner)
-        {
-            UE_LOG(LogDiscGolfTour, Error,
-                TEXT("SESSION 3 ONE-THROW SMOKE FAIL: runner could not spawn."));
-            FPlatformMisc::RequestExitWithStatus(false, 1);
-            return;
-        }
-        FTimerHandle Session3SmokeTimer;
-        GetWorldTimerManager().SetTimer(
-            Session3SmokeTimer,
-            FTimerDelegate::CreateUObject(Session3SmokeRunner, &ADiscGolfSession3SmokeRunner::Start),
-            0.5f,
-            false);
-    }
-    else if (bGroundGrassSmokeRequested)
+    if (bGroundGrassSmokeRequested)
     {
         FTimerHandle GroundGrassSmokeTimer;
         GetWorldTimerManager().SetTimer(GroundGrassSmokeTimer, FTimerDelegate::CreateUObject(
@@ -667,6 +897,24 @@ void ADiscGolfTourGameMode::BeginPlay()
         FTimerHandle WaterSmokeTimer;
         GetWorldTimerManager().SetTimer(WaterSmokeTimer, FTimerDelegate::CreateUObject(
             this, &ADiscGolfTourGameMode::FinishGalleryLakeWaterSmokeTest), 0.75f, false);
+    }
+    else if (bSession17RoundFlowSmokeRequested)
+    {
+        FTimerHandle RoundFlowSmokeTimer;
+        GetWorldTimerManager().SetTimer(RoundFlowSmokeTimer, FTimerDelegate::CreateUObject(
+            this, &ADiscGolfTourGameMode::RunSession17RoundFlowSmokeTest), 0.5f, false);
+    }
+    else if (bSession16MainMenuSmokeRequested)
+    {
+        FTimerHandle MainMenuSmokeTimer;
+        GetWorldTimerManager().SetTimer(MainMenuSmokeTimer, FTimerDelegate::CreateUObject(
+            this, &ADiscGolfTourGameMode::RunSession16MainMenuSmokeTest), 0.5f, false);
+    }
+    else if (bSession16RulesSmokeRequested)
+    {
+        FTimerHandle Session16RulesTimer;
+        GetWorldTimerManager().SetTimer(Session16RulesTimer, FTimerDelegate::CreateUObject(
+            this, &ADiscGolfTourGameMode::StartSession16RulesSmokeTest), 0.5f, false);
     }
     else if (FParse::Param(FCommandLine::Get(), TEXT("ThreeHoleRoundSmokeTest")))
     {
@@ -685,16 +933,17 @@ void ADiscGolfTourGameMode::BeginPlay()
         GetWorldTimerManager().SetTimer(FinishTimer, FTimerDelegate::CreateUObject(
             this, &ADiscGolfTourGameMode::FinishCourseSmokeTest), 10.5f, false);
     }
-    else if (FParse::Param(FCommandLine::Get(), TEXT("RegressionSuiteSmokeTest")))
+    else if (bRegressionSuiteSmokeRequested)
     {
-        bRegressionSuiteSmokeTestActive = true;
         FTimerHandle SuiteTimer;
         GetWorldTimerManager().SetTimer(SuiteTimer, FTimerDelegate::CreateUObject(
             this, &ADiscGolfTourGameMode::RunPhysicsRegressionSuite), 0.5f, false);
     }
-    else if (FParse::Param(FCommandLine::Get(), TEXT("PineRidgePlaySmokeTest")))
+    else if (FParse::Param(FCommandLine::Get(), TEXT("PineRidgePlaySmokeTest"))
+        || bSession12PresentationSmokeRequested)
     {
         bPineRidgePlaySmokeTestActive = true;
+        bSession12PresentationSmokeTestActive = bSession12PresentationSmokeRequested;
         FTimerHandle PlayTimer;
         GetWorldTimerManager().SetTimer(PlayTimer, FTimerDelegate::CreateUObject(
             this, &ADiscGolfTourGameMode::StartPineRidgePlaySmokeTest), 0.5f, false);
@@ -737,6 +986,7 @@ void ADiscGolfTourGameMode::BeginPlay()
                 this, &ADiscGolfTourGameMode::FinishRouteTelemetrySmokeTest), 0.25f, false);
         }
     }
+#endif
 }
 
 void ADiscGolfTourGameMode::FinishRouteTelemetrySmokeTest()
@@ -749,7 +999,6 @@ void ADiscGolfTourGameMode::FinishRouteTelemetrySmokeTest()
         && RouteTelemetrySession.Attempts.IsEmpty()
         && RouteTelemetrySession.TargetAttemptsPerRoute == 20
         && RouteTelemetrySession.CollisionProfileId == TEXT("PineRidgeCompetitiveV2_Fixtures")
-        && IsLevelDesignReviewVisible()
         && ReportSize > 0;
     if (bPassed)
     {
@@ -760,12 +1009,11 @@ void ADiscGolfTourGameMode::FinishRouteTelemetrySmokeTest()
     else
     {
         UE_LOG(LogDiscGolfTour, Error,
-            TEXT("NEEDLE GATE ROUTE TELEMETRY SMOKE FAIL: active=%d hole=%d routes=%d zones=%d attempts=%d target=%d profile=%s review=%d report=%lld."),
+            TEXT("NEEDLE GATE ROUTE TELEMETRY SMOKE FAIL: active=%d hole=%d routes=%d zones=%d attempts=%d target=%d profile=%s report=%lld."),
             bRouteTelemetryActive ? 1 : 0, ActiveHole ? ActiveHole->HoleNumber : -1,
             RouteTelemetrySession.Routes.Num(), RouteTelemetrySession.LandingZones.Num(),
             RouteTelemetrySession.Attempts.Num(), RouteTelemetrySession.TargetAttemptsPerRoute,
-            *RouteTelemetrySession.CollisionProfileId.ToString(), IsLevelDesignReviewVisible() ? 1 : 0,
-            ReportSize);
+            *RouteTelemetrySession.CollisionProfileId.ToString(), ReportSize);
     }
     FPlatformMisc::RequestExitWithStatus(false, bPassed ? 0 : 1);
 }
@@ -840,15 +1088,6 @@ bool ADiscGolfTourGameMode::StartNeedleGateRouteTelemetry(bool bResetExisting)
     LastRouteTelemetryAttemptIndex = RouteTelemetrySession.Attempts.IsEmpty()
         ? INDEX_NONE : RouteTelemetrySession.Attempts.Num() - 1;
     RouteTelemetryAttemptAwaitingScoreIndex = INDEX_NONE;
-    bLevelDesignReviewRequested = true;
-    if (DevBootstrap)
-    {
-        if (ADiscGolfLevelDesignReviewActor* Review = DevBootstrap->GetLevelDesignReview())
-        {
-            Review->SetReviewVisible(true);
-            Review->SetFocusedRoute(RouteTelemetrySession.ActiveRouteId);
-        }
-    }
     RouteTelemetryLastResultText = bResumed
         ? FString::Printf(TEXT("Resumed %d recorded attempts"), RouteTelemetrySession.Attempts.Num())
         : TEXT("New session ready; rate tradeoff before the tee shot");
@@ -871,13 +1110,6 @@ bool ADiscGolfTourGameMode::SelectRouteTelemetry(const FString& RouteId)
         return false;
     }
     RouteTelemetrySession.ActiveRouteId = Route->RouteId;
-    if (DevBootstrap)
-    {
-        if (ADiscGolfLevelDesignReviewActor* Review = DevBootstrap->GetLevelDesignReview())
-        {
-            Review->SetFocusedRoute(Route->RouteId);
-        }
-    }
     PendingRouteTradeoffUnderstood = -1;
     RouteTelemetryLastResultText = TEXT("Route selected; set tradeoff rating, then throw from the tee");
     RefreshRouteTelemetryStatus();
@@ -929,13 +1161,6 @@ void ADiscGolfTourGameMode::StopRouteTelemetry()
     RouteTelemetryRouteLabel = TEXT("ROUTE TELEMETRY OFF");
     RouteTelemetryProgressText.Reset();
     RouteTelemetryIntentText.Reset();
-    if (DevBootstrap)
-    {
-        if (ADiscGolfLevelDesignReviewActor* Review = DevBootstrap->GetLevelDesignReview())
-        {
-            Review->SetFocusedRoute(NAME_None);
-        }
-    }
 }
 
 void ADiscGolfTourGameMode::RefreshRouteTelemetryStatus()
@@ -1053,13 +1278,6 @@ void ADiscGolfTourGameMode::CaptureRouteTelemetryAttempt(ADiscActor* Disc, bool 
         if (Next)
         {
             RouteTelemetrySession.ActiveRouteId = Next->RouteId;
-            if (DevBootstrap)
-            {
-                if (ADiscGolfLevelDesignReviewActor* Review = DevBootstrap->GetLevelDesignReview())
-                {
-                    Review->SetFocusedRoute(Next->RouteId);
-                }
-            }
         }
     }
     RefreshRouteTelemetryStatus();
@@ -1279,27 +1497,491 @@ void ADiscGolfTourGameMode::EnsurePlayerPawn()
     }
 }
 
+void ADiscGolfTourGameMode::ShowMainMenu()
+{
+    if (!GetWorld() || !ActiveHole)
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Native main menu could not open before course bootstrap completed."));
+        return;
+    }
+
+    bMainMenuVisible = true;
+    bScorecardVisible = false;
+    if (ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+            UGameplayStatics::GetPlayerPawn(this, 0)))
+    {
+        Golfer->CancelAnimatedThrow();
+        Golfer->CancelThrowPresentation();
+    }
+    if (ADiscGolfTourPlayerController* PlayerController =
+            Cast<ADiscGolfTourPlayerController>(
+                UGameplayStatics::GetPlayerController(this, 0)))
+    {
+        PlayerController->ApplyMainMenuInputMode(true);
+    }
+}
+
+bool ADiscGolfTourGameMode::StartOrContinueFromMainMenu()
+{
+    if (!bMainMenuVisible || ActiveDisc || bRegressionActive || ReplayActor
+        || IsCourseFlyoverActive() || bLieTransitionActive)
+    {
+        return false;
+    }
+
+    bScorecardVisible = false;
+    if (!HasAuthoredRound())
+    {
+        if (!LoadCourse(TEXT("PineRidge")))
+        {
+            ShowMainMenu();
+            return false;
+        }
+    }
+    else if (bHoleComplete)
+    {
+        if (RoundState.bRoundComplete)
+        {
+            RestartRound();
+        }
+        else
+        {
+            AdvanceToNextHole();
+        }
+    }
+
+    EnsurePlayerPawn();
+    ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+        UGameplayStatics::GetPlayerPawn(this, 0));
+    UDiscBagComponent* Bag = Golfer ? Golfer->GetDiscBag() : nullptr;
+    FDGDiscInstance SelectedDisc;
+    if (!HasAuthoredRound() || !ActiveHole || !Golfer || !Bag
+        || !Bag->GetSelectedDiscInstance(SelectedDisc))
+    {
+        ShowMainMenu();
+        return false;
+    }
+
+    FinishHoleIntroduction();
+    bMainMenuVisible = false;
+    ReturnCameraToPlayer();
+    if (ADiscGolfTourPlayerController* PlayerController =
+            Cast<ADiscGolfTourPlayerController>(
+                UGameplayStatics::GetPlayerController(this, 0)))
+    {
+        PlayerController->ApplyMainMenuInputMode(false);
+    }
+
+    if (!CanPlayerThrow())
+    {
+        ShowMainMenu();
+        return false;
+    }
+    return true;
+}
+
+bool ADiscGolfTourGameMode::ReturnToMainMenu()
+{
+    if (bMainMenuVisible || ActiveDisc || bRegressionActive || ReplayActor
+        || IsCourseFlyoverActive() || bHoleIntroActive || bLieTransitionActive)
+    {
+        return false;
+    }
+
+    bScorecardVisible = false;
+    if (ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+            UGameplayStatics::GetPlayerPawn(this, 0)))
+    {
+        Golfer->CancelThrowPresentation();
+    }
+    ReturnCameraToPlayer();
+    ShowMainMenu();
+    return bMainMenuVisible;
+}
+
+void ADiscGolfTourGameMode::RunSession16MainMenuSmokeTest()
+{
+    const auto Fail = [](const FString& Reason)
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("DG_SESSION16_MAIN_MENU: FAIL reason=%s"), *Reason);
+        FPlatformMisc::RequestExitWithStatus(false, 1);
+    };
+
+    if (!bMainMenuVisible)
+    {
+        Fail(TEXT("native front end was not visible after bootstrap"));
+        return;
+    }
+    if (CanPlayerThrow())
+    {
+        Fail(TEXT("throw gate remained open while native front end was visible"));
+        return;
+    }
+    ADiscGolfTourPlayerController* PlayerController =
+        Cast<ADiscGolfTourPlayerController>(
+            UGameplayStatics::GetPlayerController(this, 0));
+    if (!PlayerController || !PlayerController->bShowMouseCursor
+        || PlayerController->GetActiveInputRoute() != EDiscGolfInputRoute::UI)
+    {
+        Fail(TEXT("native front end did not own local UI input before Continue"));
+        return;
+    }
+    if (!StartOrContinueFromMainMenu())
+    {
+        Fail(TEXT("native Start or Continue action did not enter gameplay"));
+        return;
+    }
+
+    int32 GolferCount = 0;
+    ADiscGolferPawn* Golfer = nullptr;
+    for (TActorIterator<ADiscGolferPawn> It(GetWorld()); It; ++It)
+    {
+        if (IsValid(*It))
+        {
+            ++GolferCount;
+            Golfer = *It;
+        }
+    }
+    UDiscBagComponent* Bag = Golfer ? Golfer->GetDiscBag() : nullptr;
+    FDGDiscInstance SelectedDisc;
+    const bool bCourseReady = ActiveCourseManifest.CourseId == TEXT("PineRidgeChampionship")
+        && HasAuthoredRound() && ActiveHole != nullptr;
+    const bool bTeeReady = bCourseReady && CurrentLieType == ELieType::Tee
+        && CurrentLieState.LieType == ELieType::Tee
+        && CurrentLieState.LieLocationCm.Equals(ActiveHole->TeeLocation, 1.0f);
+    const bool bBagReady = Bag && Bag->GetSelectedDiscInstance(SelectedDisc)
+        && !Bag->GetSelectedMoldId().IsNone();
+    const bool bThrowReady = !bMainMenuVisible && CanPlayerThrow();
+    const bool bGameplayInputReady = !PlayerController->bShowMouseCursor
+        && PlayerController->GetActiveInputRoute() == EDiscGolfInputRoute::Gameplay;
+    if (GolferCount != 1 || !bCourseReady || !bTeeReady || !bBagReady
+        || !bThrowReady || !bGameplayInputReady)
+    {
+        Fail(FString::Printf(
+            TEXT("player=%d course=%s tee=%s bag=%s throw_ready=%s input=%s"),
+            GolferCount,
+            bCourseReady ? TEXT("ready") : TEXT("invalid"),
+            bTeeReady ? TEXT("ready") : TEXT("invalid"),
+            bBagReady ? TEXT("ready") : TEXT("invalid"),
+            bThrowReady ? TEXT("yes") : TEXT("no"),
+            bGameplayInputReady ? TEXT("gameplay") : TEXT("invalid")));
+        return;
+    }
+
+    UE_LOG(LogDiscGolfTour, Display, TEXT("DG_SESSION16_MAIN_MENU: PASS"));
+    FPlatformMisc::RequestExitWithStatus(false, 0);
+}
+
+void ADiscGolfTourGameMode::RunSession17RoundFlowSmokeTest()
+{
+    const auto Fail = [](const FString& Reason)
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("DG_SESSION17_ROUND_FLOW_FRONT_END: FAIL reason=%s"), *Reason);
+        FPlatformMisc::RequestExitWithStatus(false, 1);
+    };
+
+    ADiscGolfTourPlayerController* PlayerController =
+        Cast<ADiscGolfTourPlayerController>(
+            UGameplayStatics::GetPlayerController(this, 0));
+    if (!PlayerController || !bMainMenuVisible || CanPlayerThrow())
+    {
+        Fail(TEXT("front-end authority was unavailable or its throw gate was open"));
+        return;
+    }
+
+    PlayerController->RefreshRoundFlowPresentation();
+    const bool bFrontEndInteractive = PlayerController->HasInteractiveRoundFlowWidget()
+        && PlayerController->bShowMouseCursor
+        && PlayerController->GetActiveInputRoute() == EDiscGolfInputRoute::UI;
+    if (!bFrontEndInteractive)
+    {
+        Fail(TEXT("front end did not expose a focusable native widget with UI input ownership"));
+        return;
+    }
+
+    FString SettingsRecoveryError;
+    if (!PlayerController->RunRoundFlowSettingsRecoveryProbe(SettingsRecoveryError))
+    {
+        Fail(FString::Printf(TEXT("settings-origin recovery failed: %s"),
+            *SettingsRecoveryError));
+        return;
+    }
+
+    if (!PlayerController->HandleRoundFlowAction(
+            EDGRoundFlowAction::StartOrContinue))
+    {
+        Fail(TEXT("validated Start or Continue action did not enter gameplay"));
+        return;
+    }
+
+    int32 GolferCount = 0;
+    ADiscGolferPawn* Golfer = nullptr;
+    for (TActorIterator<ADiscGolferPawn> It(GetWorld()); It; ++It)
+    {
+        if (IsValid(*It))
+        {
+            ++GolferCount;
+            Golfer = *It;
+        }
+    }
+    UDiscBagComponent* Bag = Golfer ? Golfer->GetDiscBag() : nullptr;
+    FDGDiscInstance SelectedDisc;
+    const bool bCourseReady = ActiveCourseManifest.CourseId
+            == TEXT("PineRidgeChampionship")
+        && HasAuthoredRound() && ActiveHole != nullptr;
+    const bool bTeeReady = bCourseReady && CurrentLieType == ELieType::Tee
+        && CurrentLieState.LieType == ELieType::Tee
+        && CurrentLieState.LieLocationCm.Equals(ActiveHole->TeeLocation, 1.0f);
+    const bool bBagReady = Bag && Bag->GetSelectedDiscInstance(SelectedDisc)
+        && !Bag->GetSelectedMoldId().IsNone();
+    const bool bGameplayRecovered = !bMainMenuVisible && CanPlayerThrow()
+        && !PlayerController->HasInteractiveRoundFlowWidget()
+        && !PlayerController->bShowMouseCursor
+        && PlayerController->GetActiveInputRoute() == EDiscGolfInputRoute::Gameplay;
+    const bool bDuplicateActionRejected = !PlayerController->HandleRoundFlowAction(
+        EDGRoundFlowAction::StartOrContinue);
+
+    int32 GolferCountAfterDuplicate = 0;
+    for (TActorIterator<ADiscGolferPawn> It(GetWorld()); It; ++It)
+    {
+        if (IsValid(*It))
+        {
+            ++GolferCountAfterDuplicate;
+        }
+    }
+    if (GolferCount != 1 || GolferCountAfterDuplicate != 1 || !bCourseReady
+        || !bTeeReady || !bBagReady || !bGameplayRecovered
+        || !bDuplicateActionRejected)
+    {
+        Fail(FString::Printf(
+            TEXT("player=%d duplicate_player=%d course=%s tee=%s bag=%s gameplay=%s duplicate_action=%s"),
+            GolferCount, GolferCountAfterDuplicate,
+            bCourseReady ? TEXT("ready") : TEXT("invalid"),
+            bTeeReady ? TEXT("ready") : TEXT("invalid"),
+            bBagReady ? TEXT("ready") : TEXT("invalid"),
+            bGameplayRecovered ? TEXT("recovered") : TEXT("invalid"),
+            bDuplicateActionRejected ? TEXT("rejected") : TEXT("accepted")));
+        return;
+    }
+
+    UE_LOG(LogDiscGolfTour, Display,
+        TEXT("DG_SESSION17_ROUND_FLOW_FRONT_END: PASS widget=interactive focus=valid settings=restored continue=gameplay duplicate=rejected"));
+    FPlatformMisc::RequestExitWithStatus(false, 0);
+}
+
+void ADiscGolfTourGameMode::StartSession16RulesSmokeTest()
+{
+    const bool bOutOfBounds = Session16RulesSmokeScenario.Equals(
+        TEXT("OB"), ESearchCase::IgnoreCase);
+    const bool bWater = Session16RulesSmokeScenario.Equals(
+        TEXT("Water"), ESearchCase::IgnoreCase);
+    if (!bOutOfBounds && !bWater)
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("DG_SESSION16_RULES: FAIL reason=scenario must be OB or Water"));
+        FPlatformMisc::RequestExitWithStatus(false, 1);
+        return;
+    }
+
+    bSession16RulesSmokeTestActive = true;
+    RunCourseRulesFixture(bOutOfBounds ? TEXT("OB") : TEXT("Water"));
+    if (!ActiveDisc)
+    {
+        bSession16RulesSmokeTestActive = false;
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("DG_SESSION16_RULES_%s: FAIL reason=authoritative fixture throw did not launch"),
+            bOutOfBounds ? TEXT("OB") : TEXT("WATER"));
+        FPlatformMisc::RequestExitWithStatus(false, 1);
+    }
+}
+
+void ADiscGolfTourGameMode::FinishSession16RulesSmokeTest()
+{
+    if (!bSession16RulesSmokeTestActive)
+    {
+        return;
+    }
+    bSession16RulesSmokeTestActive = false;
+
+    const bool bOutOfBounds = Session16RulesSmokeScenario.Equals(
+        TEXT("OB"), ESearchCase::IgnoreCase);
+    const EDiscGolfPenaltyType ExpectedPenalty = bOutOfBounds
+        ? EDiscGolfPenaltyType::OutOfBounds
+        : EDiscGolfPenaltyType::Hazard;
+    const bool bExpectedSurfaceAndRelief = bOutOfBounds
+        ? CurrentLieState.SurfaceAtRest == ECourseSurfaceType::OutOfBounds
+            && CurrentLieState.PlayingSurface == ECourseSurfaceType::Fairway
+            && CurrentLieState.ReliefRule == EDiscGolfReliefRule::LastInBounds
+            && !CurrentLieState.RawDiscLocationCm.Equals(
+                CurrentLieState.LieLocationCm, 1.0f)
+        : ActiveCourseManifest.CourseId == TEXT("PineRidgeChampionship")
+            && ActiveHole && ActiveHole->HoleNumber == 3
+            && CurrentLieState.SurfaceAtRest == ECourseSurfaceType::Hazard
+            && CurrentLieState.PlayingSurface == ECourseSurfaceType::Hazard
+            && CurrentLieState.ReliefRule == EDiscGolfReliefRule::PlayFromResult
+            && CurrentLieState.RawDiscLocationCm.Equals(
+                CurrentLieState.LieLocationCm, 1.0f)
+            && ResolvePresentationSurfaceMaterialAtLocation(
+                CurrentLieState.RawDiscLocationCm) == TEXT("Water");
+    const bool bPassed = CurrentLieState.PenaltyType == ExpectedPenalty
+        && bExpectedSurfaceAndRelief
+        && CurrentLieState.PenaltyStrokes == 1
+        && PenaltyStrokes == 1
+        && Strokes == 2
+        && !CurrentLieState.LieLocationCm.ContainsNaN()
+        && FMath::IsFinite(CurrentLieState.DistanceToBasketMeters)
+        && ActiveDisc == nullptr
+        && CanPlayerThrow();
+    if (bPassed)
+    {
+        UE_LOG(LogDiscGolfTour, Display,
+            TEXT("DG_SESSION16_RULES_%s: PASS penalty=%s surface=%s relief=%d strokes=%d penalty_strokes=%d next_throw=1"),
+            bOutOfBounds ? TEXT("OB") : TEXT("WATER"),
+            *DiscGolfCourseRules::PenaltyName(CurrentLieState.PenaltyType),
+            *DiscGolfCourseRules::SurfaceName(CurrentLieState.SurfaceAtRest),
+            static_cast<int32>(CurrentLieState.ReliefRule), Strokes, PenaltyStrokes);
+    }
+    else
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("DG_SESSION16_RULES_%s: FAIL penalty=%s surface=%s relief=%d provenance=%s lie_penalty=%d strokes=%d penalty_strokes=%d next_throw=%d"),
+            bOutOfBounds ? TEXT("OB") : TEXT("WATER"),
+            *DiscGolfCourseRules::PenaltyName(CurrentLieState.PenaltyType),
+            *DiscGolfCourseRules::SurfaceName(CurrentLieState.SurfaceAtRest),
+            static_cast<int32>(CurrentLieState.ReliefRule),
+            *ResolvePresentationSurfaceMaterialAtLocation(
+                CurrentLieState.RawDiscLocationCm).ToString(),
+            CurrentLieState.PenaltyStrokes, Strokes, PenaltyStrokes,
+            CanPlayerThrow() ? 1 : 0);
+    }
+    FPlatformMisc::RequestExitWithStatus(false, bPassed ? 0 : 1);
+}
+
 bool ADiscGolfTourGameMode::CanPlayerThrow() const
 {
     const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
         UGameplayStatics::GetPlayerPawn(this, 0));
-    return DiscGolfGameplayGate::CanLaunchThrow(
+    const ADiscGolfTourPlayerController* PlayerController =
+        Cast<ADiscGolfTourPlayerController>(
+            UGameplayStatics::GetPlayerController(this, 0));
+    const bool bBaseLaunchAllowed = DiscGolfGameplayGate::CanLaunchThrow(
         ActiveHole != nullptr, ActiveDisc != nullptr, ReplayActor != nullptr,
-        IsCourseFlyoverActive(), bHoleComplete, bScorecardVisible, bHoleIntroActive)
-        && !bRegressionActive && !bLieTransitionActive
+        IsCourseFlyoverActive(), bHoleComplete, bScorecardVisible, bHoleIntroActive);
+    return DiscGolfGameplayGate::CanCommitPlayerRelease(
+            bBaseLaunchAllowed,
+            bMainMenuVisible,
+            bRegressionActive,
+            bLieTransitionActive,
+            PlayerController != nullptr,
+            PlayerController && PlayerController->IsPresentationDismissReleasePending(),
+            PlayerController && PlayerController->IsFreshThrowDownRequiredAfterPresentation(),
+            PlayerController && PlayerController->IsControlsMenuOpen(),
+            PlayerController && PlayerController->IsCharacterCreatorOpen(),
+            GetWorld() && GetWorld()->IsPaused())
         && (!Golfer || !Golfer->IsAnimatedThrowActive());
+}
+
+bool ADiscGolfTourGameMode::IsPlayerThrowProvenanceValid(
+    const FThrowCommand& Command,
+    EDGHandedness ActiveProfileHandedness,
+    EDiscShotContext AuthoritativeShotContext,
+    const FDGDiscInstance& SelectedInstance)
+{
+    FName ExpectedPlasticId = NAME_None;
+    switch (Command.Plastic)
+    {
+        case EDiscPlastic::Base: ExpectedPlasticId = TEXT("Base"); break;
+        case EDiscPlastic::Tour: ExpectedPlasticId = TEXT("Tour"); break;
+        case EDiscPlastic::Crystal: ExpectedPlasticId = TEXT("Crystal"); break;
+        default: return false;
+    }
+    return Command.DiscInstanceId.IsValid()
+        && SelectedInstance.InstanceId == Command.DiscInstanceId
+        && SelectedInstance.DiscDefinitionId == Command.MoldId
+        && SelectedInstance.PlasticId == ExpectedPlasticId
+        && Command.Handedness == ActiveProfileHandedness
+        && Command.ShotContext == AuthoritativeShotContext;
+}
+
+bool ADiscGolfTourGameMode::TryPrepareReleaseForOriginOverride(
+    const FVector* ReleaseLocationOverrideCm,
+    const FVector& AimLineOriginCm,
+    float AimReferenceDistanceCm,
+    FThrowRelease& InOutRelease,
+    FString& OutError)
+{
+    if (!ReleaseLocationOverrideCm)
+    {
+        OutError.Reset();
+        return true;
+    }
+
+    const auto Reject = [&OutError](const TCHAR* Error)
+    {
+        OutError = Error;
+        return false;
+    };
+    const auto IsFiniteVector = [](const FVector& Value)
+    {
+        return FMath::IsFinite(Value.X)
+            && FMath::IsFinite(Value.Y)
+            && FMath::IsFinite(Value.Z);
+    };
+    if (!IsFiniteVector(AimLineOriginCm)
+        || !IsFiniteVector(*ReleaseLocationOverrideCm))
+    {
+        return Reject(TEXT("Animated release origins must be finite"));
+    }
+
+    constexpr double MaximumOriginDistanceCm =
+        static_cast<double>(MaximumAnimatedGripOriginDistanceCm);
+    const double OriginDistanceSquared = FVector::DistSquared(
+        AimLineOriginCm, *ReleaseLocationOverrideCm);
+    if (!FMath::IsFinite(OriginDistanceSquared)
+        || OriginDistanceSquared
+            > MaximumOriginDistanceCm * MaximumOriginDistanceCm)
+    {
+        return Reject(TEXT("Animated grip origin is outside the authoritative lie bound"));
+    }
+    if (!FMath::IsFinite(AimReferenceDistanceCm)
+        || AimReferenceDistanceCm <= SMALL_NUMBER)
+    {
+        return Reject(TEXT("Animated aim range must be finite and positive"));
+    }
+
+    FVector AimPreservingDirection;
+    if (!DiscGolfMath::TryRebaseReleaseDirectionToPreserveAimPoint(
+        AimLineOriginCm,
+        *ReleaseLocationOverrideCm,
+        AimReferenceDistanceCm,
+        InOutRelease.Direction,
+        InOutRelease.AimOffsetDeg,
+        AimPreservingDirection,
+        OutError))
+    {
+        return false;
+    }
+
+    InOutRelease.Direction = AimPreservingDirection;
+    OutError.Reset();
+    return true;
 }
 
 bool ADiscGolfTourGameMode::CanOpenCharacterCreator() const
 {
     const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
         UGameplayStatics::GetPlayerPawn(this, 0));
-    return ActiveDisc == nullptr
+    return !bMainMenuVisible
+        && ActiveDisc == nullptr
         && ReplayActor == nullptr
         && !IsCourseFlyoverActive()
         && !bRegressionActive
         && !bLieTransitionActive
         && !bHoleIntroActive
+        && !bScorecardVisible
         && (!Golfer || !Golfer->IsAnimatedThrowActive());
 }
 
@@ -1344,7 +2026,19 @@ bool ADiscGolfTourGameMode::LoadCourse(const FString& CourseName)
 
     StopInstantReplay(false);
     StopBroadcastCamera(false);
-    if (ADiscGolfFlyoverRouteActor* Route = DevBootstrap->GetFlyoverRoute()) Route->StopPreview();
+    if (ADiscGolfFlyoverRouteActor* Route = DevBootstrap->GetFlyoverRoute())
+    {
+        Route->OnFlyoverFinished.RemoveDynamic(this, &ADiscGolfTourGameMode::HandleFlyoverFinished);
+        Route->StopPreview();
+    }
+    ActiveFlyoverRoute = nullptr;
+    if (FlyoverCameraViewToken.IsValid())
+    {
+        FString ReleaseError;
+        DiscGolfCameraViewContract::TryRelease(CameraViewState, FlyoverCameraViewToken, ReleaseError);
+        FlyoverCameraViewToken = FDiscGolfCameraViewToken();
+    }
+    ReturnCameraToPlayer();
 
     ActiveCourseManifest = FDiscGolfCourseManifestDefinition();
     ActiveHoleDefinitions.Reset();
@@ -1380,7 +2074,12 @@ bool ADiscGolfTourGameMode::LoadCourse(const FString& CourseName)
             CoursePresentationStatusText = TEXT("ART CONTRACT INVALID // BLOCKOUT ACTIVE");
             UE_LOG(LogDiscGolfTour, Warning, TEXT("Course presentation contract invalid: %s"), *PresentationError);
         }
-        NewHole = DevBootstrap->BuildPersistentPineRidgeCourse(ActiveHoleDefinitions, Error);
+        const FDiscGolfResolvedQualityProfile QualityProfile =
+            DiscGolfQualityAdapter::ResolveCurrent(Scalability::GetQualityLevels());
+        NewHole = DevBootstrap->BuildPersistentPineRidgeCourse(
+            ActiveHoleDefinitions,
+            QualityProfile,
+            Error);
     }
     else
     {
@@ -1395,14 +2094,10 @@ bool ADiscGolfTourGameMode::LoadCourse(const FString& CourseName)
     ActiveHole = NewHole;
     if (WindDirector)
     {
-        if (ADiscGolfEnvironmentController* Environment =
-            DevBootstrap->GetEnvironmentController())
-        {
-            Environment->SynchronizeWindDirector(WindDirector);
-        }
         WindDirector->RefreshCourseZones();
     }
     EnsurePlayerPawn();
+    BeginRuntimeCheckpointRound();
     StartHole();
     UpdateCourseStatus();
     UE_LOG(LogDiscGolfTour, Display, TEXT("Course loaded: %s"), *CourseStatusText);
@@ -1452,15 +2147,34 @@ bool ADiscGolfTourGameMode::LoadRoundHoleByIndex(int32 HoleIndex, FString& OutEr
         OutError = TEXT("round hole index is invalid");
         return false;
     }
+    if (ActiveDisc || bRegressionActive)
+    {
+        OutError = TEXT("an active disc or regression owns the round state");
+        return false;
+    }
+    if (const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+            UGameplayStatics::GetPlayerPawn(this, 0));
+        Golfer && Golfer->IsAnimatedThrowActive())
+    {
+        OutError = TEXT("finish or cancel the active character throw before changing holes");
+        return false;
+    }
     const int32 PreviousHoleNumber = ActiveHole ? ActiveHole->HoleNumber : 0;
     StopInstantReplay(false);
     StopBroadcastCamera(false);
-    if (ADiscGolfFlyoverRouteActor* Route = DevBootstrap->GetFlyoverRoute()) Route->StopPreview();
-    if (ActiveDisc)
+    if (ADiscGolfFlyoverRouteActor* Route = DevBootstrap->GetFlyoverRoute())
     {
-        ActiveDisc->Destroy();
-        ActiveDisc = nullptr;
+        Route->OnFlyoverFinished.RemoveDynamic(this, &ADiscGolfTourGameMode::HandleFlyoverFinished);
+        Route->StopPreview();
     }
+    ActiveFlyoverRoute = nullptr;
+    if (FlyoverCameraViewToken.IsValid())
+    {
+        FString ReleaseError;
+        DiscGolfCameraViewContract::TryRelease(CameraViewState, FlyoverCameraViewToken, ReleaseError);
+        FlyoverCameraViewToken = FDiscGolfCameraViewToken();
+    }
+    ReturnCameraToPlayer();
     if (!DevBootstrap->ActivatePineRidgeHole(
         ActiveHoleDefinitions[HoleIndex].HoleNumber, OutError)) return false;
     ADiscGolfHoleActor* NewHole = DevBootstrap->GetHole();
@@ -1484,6 +2198,12 @@ bool ADiscGolfTourGameMode::LoadRoundHoleByIndex(int32 HoleIndex, FString& OutEr
 
 bool ADiscGolfTourGameMode::LoadRoundHole(int32 HoleNumber)
 {
+    if (ActiveDisc || bRegressionActive || ReplayActor || IsCourseFlyoverActive()
+        || bLieTransitionActive)
+    {
+        CourseStatusText = TEXT("HOLE LOAD BLOCKED - FINISH ACTIVE PLAYBACK OR SHOT");
+        return false;
+    }
     if (ActiveHoleDefinitions.IsEmpty())
     {
         CourseStatusText = TEXT("HOLE SELECTION REQUIRES THE PINE RIDGE ROUND");
@@ -1508,17 +2228,6 @@ bool ADiscGolfTourGameMode::LoadRoundHole(int32 HoleNumber)
 void ADiscGolfTourGameMode::UpdateCourseStatus()
 {
     if (!ActiveHole) return;
-    if (bLevelDesignReviewRequested && DevBootstrap)
-    {
-        if (ADiscGolfLevelDesignReviewActor* Review = DevBootstrap->GetLevelDesignReview())
-        {
-            Review->SetReviewVisible(true);
-            if (bRouteTelemetryActive && ActiveHole->HoleNumber == 2)
-            {
-                Review->SetFocusedRoute(RouteTelemetrySession.ActiveRouteId);
-            }
-        }
-    }
     const int32 FlyoverPointCount = ActiveHole->FlyoverRoute
         ? ActiveHole->FlyoverRoute->GetPointCount() : 0;
     const FString RoundText = HasAuthoredRound()
@@ -1542,6 +2251,13 @@ void ADiscGolfTourGameMode::AdvanceToNextHole()
         CourseStatusText = TEXT("NEXT HOLE BLOCKED - FINISH ACTIVE PLAYBACK OR SHOT");
         return;
     }
+    if (const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+            UGameplayStatics::GetPlayerPawn(this, 0));
+        Golfer && Golfer->IsAnimatedThrowActive())
+    {
+        CourseStatusText = TEXT("NEXT HOLE BLOCKED - FINISH OR CANCEL CHARACTER THROW");
+        return;
+    }
     if (!bHoleComplete)
     {
         CourseStatusText = TEXT("NEXT HOLE BLOCKED - COMPLETE THE CURRENT HOLE");
@@ -1562,11 +2278,33 @@ void ADiscGolfTourGameMode::AdvanceToNextHole()
         return;
     }
     bScorecardVisible = false;
+    if (ADiscGolfTourPlayerController* PlayerController =
+            Cast<ADiscGolfTourPlayerController>(UGameplayStatics::GetPlayerController(this, 0)))
+    {
+        PlayerController->RefreshRoundFlowPresentation();
+    }
 }
 
 void ADiscGolfTourGameMode::RestartRound()
 {
     if (ActiveHoleDefinitions.IsEmpty() || ActiveCourseManifest.CourseId.IsNone()) return;
+    if (ActiveDisc || bRegressionActive || ReplayActor || IsCourseFlyoverActive()
+        || bLieTransitionActive)
+    {
+        CourseStatusText = TEXT("ROUND RESTART BLOCKED - FINISH ACTIVE PLAYBACK OR SHOT");
+        return;
+    }
+    if (const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+            UGameplayStatics::GetPlayerPawn(this, 0));
+        Golfer && Golfer->IsAnimatedThrowActive())
+    {
+        CourseStatusText = TEXT("ROUND RESTART BLOCKED - FINISH OR CANCEL CHARACTER THROW");
+        return;
+    }
+    if (RuntimeCheckpointJournalWriter && bRuntimeCheckpointRoundStarted)
+    {
+        AbortRuntimeCheckpointJournal(TEXT("the captured round was restarted"));
+    }
     FString Error;
     if (!DiscGolfRound::Initialize(RoundState, ActiveCourseManifest.CourseId,
         ActiveCourseManifest.LayoutId, ActiveCourseManifest.DisplayName, ActiveHoleDefinitions, Error)
@@ -1576,6 +2314,11 @@ void ADiscGolfTourGameMode::RestartRound()
         return;
     }
     bScorecardVisible = false;
+    if (ADiscGolfTourPlayerController* PlayerController =
+            Cast<ADiscGolfTourPlayerController>(UGameplayStatics::GetPlayerController(this, 0)))
+    {
+        PlayerController->RefreshRoundFlowPresentation();
+    }
 }
 
 void ADiscGolfTourGameMode::ToggleScorecard()
@@ -1585,13 +2328,35 @@ void ADiscGolfTourGameMode::ToggleScorecard()
         CourseStatusText = TEXT("SCORECARD IS AVAILABLE IN THE PINE RIDGE ROUND");
         return;
     }
+    if (!bScorecardVisible)
+    {
+        const ADiscGolfTourPlayerController* TourPC = Cast<ADiscGolfTourPlayerController>(
+            UGameplayStatics::GetPlayerController(this, 0));
+        if (bMainMenuVisible || ActiveDisc || bRegressionActive || ReplayActor || IsCourseFlyoverActive()
+            || bHoleIntroActive || bLieTransitionActive
+            || (TourPC && (TourPC->IsCharacterCreatorOpen() || TourPC->IsControlsMenuOpen())))
+        {
+            CourseStatusText = TEXT("SCORECARD BLOCKED - CLOSE THE ACTIVE PRESENTATION");
+            return;
+        }
+    }
     bScorecardVisible = !bScorecardVisible;
     if (bScorecardVisible)
     {
         if (ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(UGameplayStatics::GetPlayerPawn(this, 0)))
         {
+            Golfer->CancelAnimatedThrow();
             Golfer->CancelThrowPresentation();
         }
+        if (RoundState.bRoundComplete)
+        {
+            RecordRuntimeCheckpointFinalScorecard();
+        }
+    }
+    if (ADiscGolfTourPlayerController* PlayerController =
+            Cast<ADiscGolfTourPlayerController>(UGameplayStatics::GetPlayerController(this, 0)))
+    {
+        PlayerController->RefreshRoundFlowPresentation();
     }
 }
 
@@ -1602,50 +2367,212 @@ void ADiscGolfTourGameMode::ToggleDeveloperHud()
         bDeveloperHudVisible ? TEXT("enabled") : TEXT("hidden"));
 }
 
+#if 0 // Retired from the game-mode surface; Throw Lab remains a direct development/test subsystem.
+void ADiscGolfTourGameMode::ToggleThrowLab()
+{
+#if !DG_WITH_THROW_LAB
+    bThrowLabActive = false;
+    ThrowLabStatusText = TEXT("THROW LAB NOT INCLUDED IN THIS SHIPPING SKU");
+#else
+    bThrowLabActive = !bThrowLabActive;
+    if (bThrowLabActive)
+    {
+        bDeveloperHudVisible = true;
+        const UDiscThrowLabSubsystem* Lab = GetThrowLabSubsystem();
+        ThrowLabStatusText = Lab
+            ? FString::Printf(TEXT("THROW LAB ARMED | %d RECORDS"), Lab->GetRecordCount())
+            : TEXT("THROW LAB UNAVAILABLE");
+    }
+    else
+    {
+        ThrowLabStatusText = TEXT("THROW LAB OFF");
+    }
+    UE_LOG(LogDiscGolfTour, Display, TEXT("%s"), *ThrowLabStatusText);
+#endif
+}
+
+int32 ADiscGolfTourGameMode::GetThrowLabRecordCount() const
+{
+    const UDiscThrowLabSubsystem* Lab = GetThrowLabSubsystem();
+    return Lab ? Lab->GetRecordCount() : 0;
+}
+
+FString ADiscGolfTourGameMode::GetThrowLabStatusText() const
+{
+    if (!bThrowLabActive)
+    {
+        return ThrowLabStatusText;
+    }
+    const UDiscThrowLabSubsystem* Lab = GetThrowLabSubsystem();
+    return Lab
+        ? FString::Printf(TEXT("%s | %s"), *ThrowLabStatusText, *Lab->GetStatusText())
+        : TEXT("THROW LAB UNAVAILABLE");
+}
+
+FString ADiscGolfTourGameMode::GetThrowLabComparisonText() const
+{
+    if (!bThrowLabActive)
+    {
+        return TEXT("Comparison inactive");
+    }
+    const UDiscThrowLabSubsystem* Lab = GetThrowLabSubsystem();
+    return Lab ? Lab->GetComparisonText() : TEXT("Comparison unavailable");
+}
+
+void ADiscGolfTourGameMode::SelectThrowLabRecord(int32 Offset)
+{
+    UDiscThrowLabSubsystem* Lab = bThrowLabActive ? GetThrowLabSubsystem() : nullptr;
+    FString Error;
+    if (!Lab || !Lab->SelectRecordByOffset(Offset, Error))
+    {
+        ThrowLabStatusText = Lab ? Error : TEXT("Throw Lab is not active");
+    }
+}
+
+void ADiscGolfTourGameMode::ToggleThrowLabSelectedPinned()
+{
+    UDiscThrowLabSubsystem* Lab = bThrowLabActive ? GetThrowLabSubsystem() : nullptr;
+    bool bPinned = false;
+    FString Error;
+    if (!Lab || !Lab->ToggleSelectedPinned(bPinned, Error))
+    {
+        ThrowLabStatusText = Lab ? Error : TEXT("Throw Lab is not active");
+        return;
+    }
+    ThrowLabStatusText = bPinned ? TEXT("Selected record pinned") : TEXT("Selected record unpinned");
+}
+
+void ADiscGolfTourGameMode::DeleteThrowLabSelected()
+{
+    UDiscThrowLabSubsystem* Lab = bThrowLabActive ? GetThrowLabSubsystem() : nullptr;
+    FString Error;
+    if (!Lab || !Lab->DeleteSelected(Error))
+    {
+        ThrowLabStatusText = Lab ? Error : TEXT("Throw Lab is not active");
+        return;
+    }
+    ThrowLabStatusText = TEXT("Selected Throw Lab record deleted");
+}
+
+void ADiscGolfTourGameMode::CompareThrowLabLatestPair()
+{
+    UDiscThrowLabSubsystem* Lab = bThrowLabActive ? GetThrowLabSubsystem() : nullptr;
+    FString Error;
+    const int32 Count = Lab ? Lab->GetRecordCount() : 0;
+    if (!Lab || Count < 2 || !Lab->SetComparisonByIndices(Count - 2, Count - 1, Error))
+    {
+        ThrowLabStatusText = !Lab ? TEXT("Throw Lab is not active")
+            : Count < 2 ? TEXT("Complete two throws before comparing") : Error;
+        return;
+    }
+    ThrowLabStatusText = TEXT("Comparing the latest two completed throws");
+}
+
+void ADiscGolfTourGameMode::ReplayThrowLabSelected()
+{
+    UDiscThrowLabSubsystem* Lab = bThrowLabActive ? GetThrowLabSubsystem() : nullptr;
+    const FDiscThrowLabRecord* Record = Lab ? Lab->GetSelectedRecord() : nullptr;
+    if (!Record || Record->ReplaySamples.Num() < 2)
+    {
+        ThrowLabStatusText = TEXT("Selected Throw Lab record has no replayable trajectory");
+        return;
+    }
+    const ADiscGolfTourPlayerController* TourPC = Cast<ADiscGolfTourPlayerController>(
+        UGameplayStatics::GetPlayerController(this, 0));
+    if (ActiveDisc || bRegressionActive || ReplayActor || bLieTransitionActive
+        || bScorecardVisible || bHoleIntroActive || IsCourseFlyoverActive()
+        || BroadcastCameraDirector
+        || (TourPC && (TourPC->IsCharacterCreatorOpen() || TourPC->IsControlsMenuOpen())))
+    {
+        ThrowLabStatusText = TEXT("Throw Lab replay unavailable while another gameplay view is active");
+        return;
+    }
+
+    LastReplaySamples = Record->ReplaySamples;
+    LastReplayDisc = Record->Disc;
+    LastReplayRelease = Record->Release;
+    ReplayStatusText = FString::Printf(TEXT("Throw Lab replay ready - %s - %d actual samples"),
+        *Record->RecordId, LastReplaySamples.Num());
+    ToggleInstantReplay();
+}
+
+void ADiscGolfTourGameMode::SaveThrowLab()
+{
+    UDiscThrowLabSubsystem* Lab = bThrowLabActive ? GetThrowLabSubsystem() : nullptr;
+    FString Error;
+    if (!Lab || !Lab->SaveLab(Error))
+    {
+        ThrowLabStatusText = Lab ? Error : TEXT("Throw Lab is not active");
+        return;
+    }
+    ThrowLabStatusText = TEXT("Throw Lab records saved to the separate development slot");
+}
+
+void ADiscGolfTourGameMode::LoadThrowLab()
+{
+    UDiscThrowLabSubsystem* Lab = bThrowLabActive ? GetThrowLabSubsystem() : nullptr;
+    FString Error;
+    if (!Lab || !Lab->LoadLab(Error))
+    {
+        ThrowLabStatusText = Lab ? Error : TEXT("Throw Lab is not active");
+        return;
+    }
+    ThrowLabStatusText = FString::Printf(TEXT("Loaded %d Throw Lab records"), Lab->GetRecordCount());
+}
+#endif
+
+void ADiscGolfTourGameMode::ToggleSelectedDiscFavorite()
+{
+    if (!CanPlayerThrow())
+    {
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Disc favorite can only change before a legal throw"));
+        return;
+    }
+    ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(UGameplayStatics::GetPlayerPawn(this, 0));
+    UDiscBagComponent* Bag = Golfer ? Golfer->GetDiscBag() : nullptr;
+    if (!Bag || !Bag->ToggleSelectedFavorite())
+    {
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Selected disc favorite could not be changed"));
+        return;
+    }
+    FString SaveError;
+    const FString EquipmentStatus = Bag->SaveEquipment(SaveError)
+        ? Bag->GetSelectedEquipmentStatusText()
+        : FString::Printf(TEXT("Favorite changed in memory; save failed - %s"), *SaveError);
+    UE_LOG(LogDiscGolfTour, Display, TEXT("%s"), *EquipmentStatus);
+}
+
 void ADiscGolfTourGameMode::SkipCurrentPresentation()
 {
     if (bHoleIntroActive)
     {
-        FinishHoleIntroduction();
+        // Space and gamepad South also drive the Enhanced Input throw action.
+        // Keep the intro gate closed until the current input evaluation is over,
+        // so the dismissal press cannot become the first half of a throw.
+        GetWorldTimerManager().SetTimerForNextTick(FTimerDelegate::CreateUObject(
+            this, &ADiscGolfTourGameMode::FinishHoleIntroduction));
         return;
     }
 
-    if (ADiscGolfFlyoverRouteActor* Route = DevBootstrap ? DevBootstrap->GetFlyoverRoute() : nullptr;
+    if (ADiscGolfFlyoverRouteActor* Route = ActiveFlyoverRoute;
         IsValid(Route) && Route->IsPreviewing())
     {
-        Route->StopPreview();
         Route->OnFlyoverFinished.RemoveDynamic(this, &ADiscGolfTourGameMode::HandleFlyoverFinished);
-        ReturnCameraToPlayer();
+        Route->StopPreview();
+        FString ReleaseError;
+        const bool bReleased = DiscGolfCameraViewContract::TryRelease(
+            CameraViewState, FlyoverCameraViewToken, ReleaseError);
+        FlyoverCameraViewToken = FDiscGolfCameraViewToken();
+        ActiveFlyoverRoute = nullptr;
+        if (bReleased) ReturnCameraToPlayer();
         CourseStatusText = ActiveHole
             ? FString::Printf(TEXT("%s | FLYOVER SKIPPED"), *ActiveHole->GetCourseSummary())
             : TEXT("FLYOVER SKIPPED");
         RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveFlyover(false),
             ActiveHole ? ActiveHole->BasketLocation : FVector::ZeroVector);
     }
-}
-
-void ADiscGolfTourGameMode::ToggleLevelDesignReview()
-{
-    ADiscGolfLevelDesignReviewActor* Review = DevBootstrap
-        ? DevBootstrap->GetLevelDesignReview() : nullptr;
-    if (!Review)
-    {
-        CourseStatusText = TEXT("LEVEL DESIGN REVIEW IS AVAILABLE ON AUTHORED HOLES");
-        return;
-    }
-    bLevelDesignReviewRequested = !Review->IsReviewVisible();
-    Review->SetReviewVisible(bLevelDesignReviewRequested);
-    CourseStatusText = FString::Printf(TEXT("LEVEL DESIGN REVIEW %s // %d STRATEGY ROUTES"),
-        Review->IsReviewVisible() ? TEXT("ON") : TEXT("OFF"), Review->GetRouteCount());
-    UE_LOG(LogDiscGolfTour, Display, TEXT("Level-design review %s with %d authored routes."),
-        Review->IsReviewVisible() ? TEXT("enabled") : TEXT("hidden"), Review->GetRouteCount());
-}
-
-bool ADiscGolfTourGameMode::IsLevelDesignReviewVisible() const
-{
-    const ADiscGolfLevelDesignReviewActor* Review = DevBootstrap
-        ? DevBootstrap->GetLevelDesignReview() : nullptr;
-    return IsValid(Review) && Review->IsReviewVisible();
 }
 
 bool ADiscGolfTourGameMode::IsCourseFlyoverActive() const
@@ -1662,9 +2589,19 @@ void ADiscGolfTourGameMode::ToggleCourse()
 
 void ADiscGolfTourGameMode::PreviewCourseFlyover()
 {
-    if (ActiveDisc || bRegressionActive || ReplayActor)
+    const ADiscGolfTourPlayerController* TourPC = Cast<ADiscGolfTourPlayerController>(
+        UGameplayStatics::GetPlayerController(this, 0));
+    if (bMainMenuVisible || ActiveDisc || bRegressionActive || ReplayActor || bLieTransitionActive || bScorecardVisible
+        || (TourPC && (TourPC->IsCharacterCreatorOpen() || TourPC->IsControlsMenuOpen())))
     {
         CourseStatusText = TEXT("FLYOVER BLOCKED - WAIT FOR CURRENT PRESENTATION");
+        return;
+    }
+    if (const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+            UGameplayStatics::GetPlayerPawn(this, 0));
+        Golfer && Golfer->IsAnimatedThrowActive())
+    {
+        CourseStatusText = TEXT("FLYOVER BLOCKED - FINISH OR CANCEL CHARACTER THROW");
         return;
     }
     ADiscGolfFlyoverRouteActor* Route = DevBootstrap ? DevBootstrap->GetFlyoverRoute() : nullptr;
@@ -1679,12 +2616,24 @@ void ADiscGolfTourGameMode::PreviewCourseFlyover()
         SkipCurrentPresentation();
         return;
     }
+    FString AcquireError;
+    if (!DiscGolfCameraViewContract::TryAcquire(
+        CameraViewState,
+        EDiscGolfCameraViewOwner::CourseFlyover,
+        EDiscGolfCameraViewMode::CourseFlyover,
+        FlyoverCameraViewToken,
+        AcquireError))
+    {
+        CourseStatusText = FString::Printf(TEXT("FLYOVER BLOCKED - %s"), *AcquireError);
+        return;
+    }
     FinishHoleIntroduction();
     StopBroadcastCamera(false);
     Route->OnFlyoverFinished.RemoveDynamic(this, &ADiscGolfTourGameMode::HandleFlyoverFinished);
     Route->OnFlyoverFinished.AddDynamic(this, &ADiscGolfTourGameMode::HandleFlyoverFinished);
     if (Route->StartPreview(PC))
     {
+        ActiveFlyoverRoute = Route;
         CourseStatusText = FString::Printf(TEXT("COURSE FLYOVER | %d POINTS | %.0f M ROUTE"),
             Route->GetPointCount(), Route->GetRouteLengthCm() / 100.0f);
         RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveFlyover(true),
@@ -1692,6 +2641,10 @@ void ADiscGolfTourGameMode::PreviewCourseFlyover()
     }
     else
     {
+        ActiveFlyoverRoute = nullptr;
+        FString ReleaseError;
+        DiscGolfCameraViewContract::TryRelease(CameraViewState, FlyoverCameraViewToken, ReleaseError);
+        FlyoverCameraViewToken = FDiscGolfCameraViewToken();
         CourseStatusText = TEXT("FLYOVER FAILED TO START");
     }
 }
@@ -1700,6 +2653,24 @@ void ADiscGolfTourGameMode::HandleFlyoverFinished(ADiscGolfFlyoverRouteActor* Fi
 {
     if (FinishedRoute) FinishedRoute->OnFlyoverFinished.RemoveDynamic(
         this, &ADiscGolfTourGameMode::HandleFlyoverFinished);
+    if (FinishedRoute != ActiveFlyoverRoute
+        || !DiscGolfCameraViewContract::IsCurrent(CameraViewState, FlyoverCameraViewToken))
+    {
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Ignored stale flyover completion from a prior route or camera generation."));
+        return;
+    }
+    ActiveFlyoverRoute = nullptr;
+    FString ReleaseError;
+    const bool bReleased = DiscGolfCameraViewContract::TryRelease(
+        CameraViewState, FlyoverCameraViewToken, ReleaseError);
+    FlyoverCameraViewToken = FDiscGolfCameraViewToken();
+    if (!bReleased)
+    {
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Ignored stale flyover camera completion: %s"), *ReleaseError);
+        return;
+    }
     ReturnCameraToPlayer();
     CourseStatusText = ActiveHole
         ? FString::Printf(TEXT("%s | FLYOVER COMPLETE"), *ActiveHole->GetCourseSummary())
@@ -1713,7 +2684,6 @@ void ADiscGolfTourGameMode::FinishCourseSmokeTest()
     if (!bCourseSmokeTestActive) return;
     bCourseSmokeTestActive = false;
     const ADiscGolfFlyoverRouteActor* Route = DevBootstrap ? DevBootstrap->GetFlyoverRoute() : nullptr;
-    const ADiscGolfLevelDesignReviewActor* Review = DevBootstrap ? DevBootstrap->GetLevelDesignReview() : nullptr;
     const ADiscGolfTerrainPresentationActor* Ground = DevBootstrap
         ? DevBootstrap->GetCourseTerrainPresentation() : nullptr;
     int32 FixtureCount = 0;
@@ -1802,7 +2772,6 @@ void ADiscGolfTourGameMode::FinishCourseSmokeTest()
         && ActiveHole->WindZoneCount == 2
         && WindDirector && WindDirector->GetCourseZoneCount() == 6
         && Route && Route->GetPointCount() == 6
-        && Review && Review->GetRouteCount() == 3 && Review->IsCollisionInvariant()
         && !Route->IsPreviewing()
         && CourseStatusText.Contains(TEXT("FLYOVER COMPLETE"));
     if (bPassed)
@@ -1815,14 +2784,12 @@ void ADiscGolfTourGameMode::FinishCourseSmokeTest()
     else
     {
         UE_LOG(LogDiscGolfTour, Error,
-            TEXT("PINE RIDGE COURSE SMOKE FAIL: %s | world fixtures=%d grass=%d rock=%d sign=%d contracts=%s | visuals=%d/%d brush=%d invariant=%s | route=%d review=%d invariant=%s previewing=%s"),
+            TEXT("PINE RIDGE COURSE SMOKE FAIL: %s | world fixtures=%d grass=%d rock=%d sign=%d contracts=%s | visuals=%d/%d brush=%d invariant=%s | route=%d previewing=%s"),
             *CourseStatusText, FixtureCount, GrassCount, RockCount, SignCount,
             bFixtureContractsValid ? TEXT("valid") : TEXT("invalid"),
             FixtureVisualCount, 3, BrushVisualInstanceCount,
             bFixtureVisualContractsValid ? TEXT("true") : TEXT("false"),
             Route ? Route->GetPointCount() : -1,
-            Review ? Review->GetRouteCount() : -1,
-            Review && Review->IsCollisionInvariant() ? TEXT("true") : TEXT("false"),
             Route && Route->IsPreviewing() ? TEXT("true") : TEXT("false"));
     }
     FPlatformMisc::RequestExit(false);
@@ -1837,6 +2804,48 @@ void ADiscGolfTourGameMode::FinishGroundGrassSmokeTest()
     {
         ++GroundActorCount;
     }
+    const bool bHole3Ready = HasAuthoredRound()
+        && ((ActiveHole && ActiveHole->HoleNumber == 3) || LoadRoundHole(3));
+    const FVector HistoricalBlockerProbe(45026.8467f, 6052.3681f, -655.0f);
+    bool bTerrainCollisionHit = false;
+    FHitResult TerrainCollisionHit;
+    if (GetWorld() && Ground)
+    {
+        FCollisionQueryParams Params(SCENE_QUERY_STAT(DiscGolfTerrainCollisionSmoke), false);
+        Params.bReturnFaceIndex = true;
+        if (ActiveDisc) Params.AddIgnoredActor(ActiveDisc);
+        const FVector Start(HistoricalBlockerProbe.X, HistoricalBlockerProbe.Y, 5000.0f);
+        const FVector End(HistoricalBlockerProbe.X, HistoricalBlockerProbe.Y, -1000.0f);
+        for (int32 Attempt = 0; Attempt < 16; ++Attempt)
+        {
+            FHitResult Hit;
+            if (!GetWorld()->LineTraceSingleByChannel(
+                Hit, Start, End, ECC_Visibility, Params))
+            {
+                break;
+            }
+            AActor* HitActor = Hit.GetActor();
+            if (HitActor && HitActor->ActorHasTag(TEXT("Presentation.CourseTerrain")))
+            {
+                TerrainCollisionHit = Hit;
+                bTerrainCollisionHit = true;
+                break;
+            }
+            if (!HitActor) break;
+            Params.AddIgnoredActor(HitActor);
+        }
+    }
+    ECourseSurfaceType BlockerSurface = ECourseSurfaceType::Fairway;
+    FVector BlockerGround = HistoricalBlockerProbe;
+    const bool bCombinedProbe = bHole3Ready && TraceCourseSurfaceAtLocation(
+        HistoricalBlockerProbe, BlockerSurface, BlockerGround);
+    const bool bHistoricalBlockerFixed = bTerrainCollisionHit && bCombinedProbe
+        && Ground && Ground->IsBaseTerrainCollisionFace(TerrainCollisionHit.FaceIndex)
+        && BlockerSurface == ECourseSurfaceType::DeepRough
+        && FMath::IsNearlyEqual(TerrainCollisionHit.ImpactPoint.Z, -219.0f, 12.0f)
+        && FMath::IsNearlyEqual(BlockerGround.Z, TerrainCollisionHit.ImpactPoint.Z, 2.0f)
+        && BlockerGround.Z > HistoricalBlockerProbe.Z + 400.0f;
+
     const bool bPassed = ActiveHole && DevBootstrap
         && DevBootstrap->GetPersistentHoleCount() == 3
         && GroundActorCount == 1 && Ground && Ground->IsReady()
@@ -1866,11 +2875,12 @@ void ADiscGolfTourGameMode::FinishGroundGrassSmokeTest()
         && Ground->GetShoreDeadfallInstanceCount() == 14
         && Ground->GetShoreAccentVariantCount() == 3
         && Ground->GetMinShorelineAccentRouteClearanceCm() >= 1050.0f
-        && Ground->IsCollisionInvariant();
+        && Ground->IsCollisionInvariant()
+        && bHistoricalBlockerFixed;
     if (bPassed)
     {
         UE_LOG(LogDiscGolfTour, Display,
-            TEXT("GROUND COVER SMOKE PASS: one persistent %d-triangle course ground, macro span=%d, 1152 feathered fairway, 512 feathered connector plus 36 wear patches/288 triangles, 576 shoreline triangles with %.0fcm erosion variation and 42 rock/96 reed-cluster/384 textured reed-stem/14 deadfall accents at %.0fcm minimum route clearance, %d slope-aligned grass clusters/%d HISM cards/%d logical triangles across 3 wind-reactive species, %d litter clusters/%d triangles across 2 slope/height-aware HISM variants, cull=%d-%dcm max_slope=%.2fdeg, 3 holes, collision invariant."),
+            TEXT("GROUND COVER SMOKE PASS: one persistent %d-triangle course ground, macro span=%d, 1152 feathered fairway, 512 feathered connector plus 36 wear patches/288 triangles, 576 shoreline triangles with %.0fcm erosion variation and 42 rock/96 reed-cluster/384 textured reed-stem/14 deadfall accents at %.0fcm minimum route clearance, %d slope-aligned grass clusters/%d HISM cards/%d logical triangles across 3 wind-reactive species, %d litter clusters/%d triangles across 2 slope/height-aware HISM variants, cull=%d-%dcm max_slope=%.2fdeg, 3 holes, deterministic base collision; historical Hole 3 blocker now resolves DeepRough at visible Z=%.1fcm."),
             Ground->GetTriangleCount(), Ground->GetGroundMacroVariationSpan(),
             Ground->GetMaxShorelineErosionOffsetCm(),
             Ground->GetMinShorelineAccentRouteClearanceCm(),
@@ -1879,12 +2889,12 @@ void ADiscGolfTourGameMode::FinishGroundGrassSmokeTest()
             Ground->GetLitterClusterCount(), Ground->GetLitterTriangleCount(),
             Ground->GetGroundCoverCullStartDistanceCm(),
             Ground->GetGroundCoverCullEndDistanceCm(),
-            Ground->GetMaxGroundCoverSlopeDegrees());
+            Ground->GetMaxGroundCoverSlopeDegrees(), BlockerGround.Z);
     }
     else
     {
         UE_LOG(LogDiscGolfTour, Error,
-            TEXT("GROUND COVER SMOKE FAIL: actors=%d ground=%s ready=%s holes=%d terrain=%d macro=%d erosion=%.0fcm fairway=%d connectors=%d shoreline=%d grass=%d clusters/%d cards/%d triangles species=%d litter=%d/%d variants=%d cull=%d-%d slope=%.2f invariant=%s."),
+            TEXT("GROUND COVER SMOKE FAIL: actors=%d ground=%s ready=%s holes=%d terrain=%d macro=%d erosion=%.0fcm fairway=%d connectors=%d shoreline=%d grass=%d clusters/%d cards/%d triangles species=%d litter=%d/%d variants=%d cull=%d-%d slope=%.2f invariant=%s blocker_hit=%s combined=%s surface=%d collision_z=%.1f resolved_z=%.1f fixed=%s."),
             GroundActorCount, Ground ? TEXT("yes") : TEXT("no"),
             Ground && Ground->IsReady() ? TEXT("true") : TEXT("false"),
             Ground ? Ground->GetCourseHoleCount() : 0,
@@ -1904,7 +2914,13 @@ void ADiscGolfTourGameMode::FinishGroundGrassSmokeTest()
             Ground ? Ground->GetGroundCoverCullStartDistanceCm() : 0,
             Ground ? Ground->GetGroundCoverCullEndDistanceCm() : 0,
             Ground ? Ground->GetMaxGroundCoverSlopeDegrees() : 0.0f,
-            Ground && Ground->IsCollisionInvariant() ? TEXT("true") : TEXT("false"));
+            Ground && Ground->IsCollisionInvariant() ? TEXT("true") : TEXT("false"),
+            bTerrainCollisionHit ? TEXT("true") : TEXT("false"),
+            bCombinedProbe ? TEXT("true") : TEXT("false"),
+            static_cast<int32>(BlockerSurface),
+            bTerrainCollisionHit ? TerrainCollisionHit.ImpactPoint.Z : 0.0f,
+            BlockerGround.Z,
+            bHistoricalBlockerFixed ? TEXT("true") : TEXT("false"));
     }
     FPlatformMisc::RequestExitWithStatus(false, bPassed ? 0 : 1);
 }
@@ -2068,7 +3084,15 @@ void ADiscGolfTourGameMode::StartPineRidgePlaySmokeTest()
     Command.NoseAngleDeg = 1.0f;
     Command.LaunchAngleDeg = 7.0f;
     Command.TimingError = 0.0f;
-    RequestThrow(Command);
+    FString CommandError;
+    if (!TryBindAutomatedPlayerCommand(Golfer, Command, CommandError)
+        || !RequestThrow(Command))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("PINE RIDGE PLAY SMOKE FAIL: throw ingress rejected (%s)."),
+            CommandError.IsEmpty() ? TEXT("authoritative launch failed") : *CommandError);
+        FPlatformMisc::RequestExitWithStatus(false, 1);
+    }
 }
 
 void ADiscGolfTourGameMode::FinishPineRidgePlaySmokeTest(bool bHoledOut)
@@ -2076,6 +3100,11 @@ void ADiscGolfTourGameMode::FinishPineRidgePlaySmokeTest(bool bHoledOut)
     if (!bPineRidgePlaySmokeTestActive) return;
     bPineRidgePlaySmokeTestActive = false;
     const FDiscTrajectorySummary Summary = GetLastTrajectorySummary();
+    int32 ExpectedWindZoneCount = 0;
+    for (const FDiscGolfHoleBlockoutDefinition& Definition : ActiveHoleDefinitions)
+    {
+        ExpectedWindZoneCount += Definition.WindZones.Num();
+    }
     const bool bPassed = ActiveHole && ActiveHole->IsAuthoredBlockout()
         && Strokes == 1 && bHasLastFlightTelemetry
         && Summary.SampleCount >= 100
@@ -2084,7 +3113,8 @@ void ADiscGolfTourGameMode::FinishPineRidgePlaySmokeTest(bool bHoledOut)
         && Summary.FinalWorldLocationCm.Z > -200.0f
         && bPineRidgeSmokeSawAuthoredCamera
         && bPineRidgeSmokeEnteredWindZone
-        && WindDirector && WindDirector->GetCourseZoneCount() == 2;
+        && ExpectedWindZoneCount > 0
+        && WindDirector && WindDirector->GetCourseZoneCount() == ExpectedWindZoneCount;
     if (bPassed)
     {
         UE_LOG(LogDiscGolfTour, Display,
@@ -2095,13 +3125,159 @@ void ADiscGolfTourGameMode::FinishPineRidgePlaySmokeTest(bool bHoledOut)
     else
     {
         UE_LOG(LogDiscGolfTour, Error,
-            TEXT("PINE RIDGE PLAY SMOKE FAIL: samples=%d duration=%.2f contacts=%d final_z=%.1f camera=%d wind_entered=%d wind_zones=%d."),
+            TEXT("PINE RIDGE PLAY SMOKE FAIL: samples=%d duration=%.2f contacts=%d final_z=%.1f camera=%d wind_entered=%d wind_zones=%d expected=%d."),
             Summary.SampleCount, Summary.DurationSeconds, Summary.GroundContactCount,
             Summary.FinalWorldLocationCm.Z, bPineRidgeSmokeSawAuthoredCamera ? 1 : 0,
             bPineRidgeSmokeEnteredWindZone ? 1 : 0,
-            WindDirector ? WindDirector->GetCourseZoneCount() : -1);
+            WindDirector ? WindDirector->GetCourseZoneCount() : -1, ExpectedWindZoneCount);
     }
-    FPlatformMisc::RequestExit(false);
+    if (!bSession12PresentationSmokeTestActive)
+    {
+        FPlatformMisc::RequestExitWithStatus(false, bPassed ? 0 : 1);
+        return;
+    }
+
+    bSession12BaseSmokePassed = bPassed;
+    if (!bPassed)
+    {
+        bSession12PresentationSmokeTestActive = false;
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("SESSION 12 PRESENTATION SMOKE FAIL: base Pine Ridge throw failed."));
+        FPlatformMisc::RequestExitWithStatus(false, 1);
+        return;
+    }
+
+    ToggleInstantReplay();
+    if (!ReplayActor)
+    {
+        bSession12PresentationSmokeTestActive = false;
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("SESSION 12 PRESENTATION SMOKE FAIL: strict actual-sample replay did not start."));
+        FPlatformMisc::RequestExitWithStatus(false, 1);
+        return;
+    }
+    const float InitialReplayRate = ReplayActor->GetPlaybackRate();
+    const EDiscReplayCameraMode InitialReplayCamera = ReplayActor->GetCameraMode();
+    ToggleReplayPause();
+    const bool bPauseWorked = ReplayActor->IsReplayPaused();
+    const float SeekTarget = FMath::Min(0.25f, ReplayActor->GetDurationSeconds() * 0.25f);
+    Session12ReplaySeekTargetSeconds = SeekTarget;
+    SeekReplayRelative(SeekTarget);
+    const bool bSeekWorked = FMath::IsNearlyEqual(
+        ReplayActor->GetPlaybackTimeSeconds(), SeekTarget, KINDA_SMALL_NUMBER);
+    CycleReplayPlaybackRate();
+    const bool bRateWorked = !FMath::IsNearlyEqual(
+        ReplayActor->GetPlaybackRate(), InitialReplayRate, KINDA_SMALL_NUMBER);
+    CycleReplayCamera();
+    const bool bCameraWorked = ReplayActor->GetCameraMode() != InitialReplayCamera;
+    ToggleReplayPause();
+    bSession12ReplayControlsPassed = bPauseWorked && bSeekWorked && bRateWorked
+        && bCameraWorked && ReplayActor->IsReplayPlaying();
+
+    FTimerHandle PresentationSmokeTimer;
+    GetWorldTimerManager().SetTimer(PresentationSmokeTimer, FTimerDelegate::CreateUObject(
+        this, &ADiscGolfTourGameMode::FinishSession12PresentationSmokeTest), 0.75f, false);
+}
+
+void ADiscGolfTourGameMode::FinishSession12PresentationSmokeTest()
+{
+    if (!bSession12PresentationSmokeTestActive) return;
+    bSession12PresentationSmokeTestActive = false;
+
+    FString ReplayValidationError;
+    const bool bReplayCaptureValid = ADiscReplayActor::ValidateReplayInput(
+        LastReplaySamples, ReplayValidationError);
+    const bool bReplayAdvanced = ReplayActor
+        && ReplayActor->GetPlaybackTimeSeconds()
+            > Session12ReplaySeekTargetSeconds + 0.01f;
+    const bool bReplayOwned = ReplayActor
+        && DiscGolfCameraViewContract::IsCurrent(CameraViewState, ReplayCameraViewToken);
+    const bool bAudioRouted = PresentationAudioRouter
+        && PresentationAudioRouter->GetRouteTraceCount() > 0;
+    const bool bPassed = bSession12BaseSmokePassed && bReplayCaptureValid
+        && LastReplaySamples.Num() >= 2
+        && LastReplaySamples.Num() <= ADiscReplayActor::MaxReplayInputSamples
+        && bReplayAdvanced && bReplayOwned && bAudioRouted
+        && bSession12ReplayControlsPassed
+        && bLastReplayCaptureActualSampleProvenanceValid
+        && bLastReplayCaptureNominalRateValid;
+
+    const int32 ReplaySampleCount = LastReplaySamples.Num();
+    const float ReplayProgress = ReplayActor ? ReplayActor->GetProgress01() : 0.0f;
+    const int32 AudioRouteCount = PresentationAudioRouter
+        ? PresentationAudioRouter->GetRouteTraceCount() : 0;
+    StopInstantReplay(true);
+
+    if (bPassed)
+    {
+        UE_LOG(LogDiscGolfTour, Display,
+            TEXT("SESSION 12 PRESENTATION SMOKE PASS: %d bounded actual samples, replay progress %.3f, exclusive view ownership, pause/seek/rate/camera controls, and %d sanitized audio routes."),
+            ReplaySampleCount, ReplayProgress, AudioRouteCount);
+    }
+    else
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("SESSION 12 PRESENTATION SMOKE FAIL: samples=%d replay_valid=%d replay_progress=%.3f replay_owned=%d controls=%d provenance=%d rate_bound=%d audio_routes=%d error=%s."),
+            ReplaySampleCount, bReplayCaptureValid ? 1 : 0, ReplayProgress,
+            bReplayOwned ? 1 : 0, bSession12ReplayControlsPassed ? 1 : 0,
+            bLastReplayCaptureActualSampleProvenanceValid ? 1 : 0,
+            bLastReplayCaptureNominalRateValid ? 1 : 0,
+            AudioRouteCount, *ReplayValidationError);
+    }
+#if DG_WITH_DEVELOPMENT_CONTENT
+    if (bPassed && FParse::Param(
+        FCommandLine::Get(), TEXT("Session16CorePlayabilityGate")))
+    {
+        bSession16TemporaryStateBasePassed = true;
+        FTimerHandle Session16TemporaryStateTimer;
+        GetWorldTimerManager().SetTimer(
+            Session16TemporaryStateTimer,
+            FTimerDelegate::CreateUObject(
+                this, &ADiscGolfTourGameMode::FinishSession16TemporaryStateSmokeTest),
+            0.75f,
+            false);
+        return;
+    }
+#endif
+    FPlatformMisc::RequestExitWithStatus(false, bPassed ? 0 : 1);
+}
+
+void ADiscGolfTourGameMode::FinishSession16TemporaryStateSmokeTest()
+{
+    const bool bBasePassed = bSession16TemporaryStateBasePassed;
+    ADiscGolfTourPlayerController* PlayerController = Cast<ADiscGolfTourPlayerController>(
+        UGameplayStatics::GetPlayerController(this, 0));
+    APawn* PlayerPawn = PlayerController ? PlayerController->GetPawn() : nullptr;
+    const bool bReplayRecovered = ReplayActor == nullptr && !CameraViewState.bActive;
+    const bool bCameraRecovered = PlayerController && PlayerPawn
+        && PlayerController->GetViewTarget() == PlayerPawn;
+    FString InputRecoveryError;
+    const bool bPauseAndInputRecovered = PlayerController
+        && PlayerController->RunPlayabilityPauseResumeProbe(InputRecoveryError);
+    const bool bPassed = bBasePassed
+        && bReplayRecovered
+        && bCameraRecovered
+        && bPauseAndInputRecovered
+        && PlayabilityFailureCount == 0;
+    bSession16TemporaryStateBasePassed = false;
+
+    if (bPassed)
+    {
+        UE_LOG(LogDiscGolfTour, Display,
+            TEXT("DG_SESSION16_TEMPORARY_STATE_RECOVERY: PASS pause_resume=1 replay_exit=1 camera_owner=player input_route=gameplay"));
+    }
+    else
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("DG_SESSION16_TEMPORARY_STATE_RECOVERY: FAIL base=%d replay=%d camera=%d input=%d playability_failures=%d reason=%s"),
+            bBasePassed ? 1 : 0,
+            bReplayRecovered ? 1 : 0,
+            bCameraRecovered ? 1 : 0,
+            bPauseAndInputRecovered ? 1 : 0,
+            PlayabilityFailureCount,
+            *InputRecoveryError);
+    }
+    FPlatformMisc::RequestExitWithStatus(false, bPassed ? 0 : 1);
 }
 
 void ADiscGolfTourGameMode::StartHole1FlightRouteSmokeTest()
@@ -2198,7 +3374,15 @@ void ADiscGolfTourGameMode::StartNextHole1FlightRouteThrow()
     Command.TimingError = 0.0f;
     UE_LOG(LogDiscGolfTour, Display, TEXT("HOLE 1 FLIGHT ROUTE %d/4: %s via %s"),
         Hole1FlightRouteIndex + 1, Scenario.Name, *Scenario.RouteId.ToString());
-    RequestThrow(Command);
+    FString CommandError;
+    if (!TryBindAutomatedPlayerCommand(Golfer, Command, CommandError)
+        || !RequestThrow(Command))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("HOLE 1 FLIGHT ROUTE FAIL: throw ingress rejected (%s)."),
+            CommandError.IsEmpty() ? TEXT("authoritative launch failed") : *CommandError);
+        FinishHole1FlightRouteSmokeTest();
+    }
 }
 
 void ADiscGolfTourGameMode::RecordHole1FlightRouteResult(bool bHoledOut)
@@ -2258,6 +3442,12 @@ void ADiscGolfTourGameMode::RecordHole1FlightRouteResult(bool bHoledOut)
 
 void ADiscGolfTourGameMode::FinishHole1FlightRouteSmokeTest()
 {
+#if DG_RELEASE_V05_SCOPE
+    // This command-driven report is development evidence. It must not create an
+    // diagnostic artifact even if an internal caller reaches the seam.
+    bHole1FlightRouteSmokeTestActive = false;
+    return;
+#else
     if (!bHole1FlightRouteSmokeTestActive) return;
     bHole1FlightRouteSmokeTestActive = false;
     const bool bPassed = Hole1FlightRouteResults.Num() == 4
@@ -2309,6 +3499,7 @@ void ADiscGolfTourGameMode::FinishHole1FlightRouteSmokeTest()
             TEXT("HOLE 1 FLIGHT ROUTES FAIL: %d/4 passed; report %s"), PassedCount, *Path);
     }
     FPlatformMisc::RequestExitWithStatus(false, bPassed && bWrote ? 0 : 1);
+#endif
 }
 
 void ADiscGolfTourGameMode::StartThreeHoleRoundSmokeTest()
@@ -2333,8 +3524,14 @@ void ADiscGolfTourGameMode::StartThreeHoleRoundSmokeTest()
     }
     if (WindDirector)
     {
-        WindDirector->BaseWindMps = FVector::ZeroVector;
-        WindDirector->GustAmplitudeMps = 0.0f;
+        FString WindError;
+        if (!WindDirector->TryConfigurePhysicsWind(
+            FVector::ZeroVector, 0.0f, WindDirector->GustFrequencyHz, WindError))
+        {
+            FinishThreeHoleRoundSmokeTest(false,
+                FString::Printf(TEXT("calm wind setup failed: %s"), *WindError));
+            return;
+        }
     }
     StartRoundSmokePutt();
 }
@@ -2370,10 +3567,15 @@ void ADiscGolfTourGameMode::StartRoundSmokePutt()
     UpdateLieType();
     Golfer->FaceLocation(ActiveHole->BasketLocation);
     TrajectoryStatusText = FString::Printf(TEXT("THREE-HOLE SMOKE - HOLE %d CENTER-CHAIN PUTT"), ActiveHole->HoleNumber);
-    RequestThrow(PuttPreset->MakeCommand(Golfer->GetActorForwardVector()));
-    if (!ActiveDisc)
+    FThrowCommand Command = PuttPreset->MakeCommand(Golfer->GetActorForwardVector());
+    FString CommandError;
+    if (!TryBindAutomatedPlayerCommand(Golfer, Command, CommandError)
+        || !RequestThrow(Command)
+        || !ActiveDisc)
     {
-        FinishThreeHoleRoundSmokeTest(false, TEXT("smoke putt could not launch"));
+        FinishThreeHoleRoundSmokeTest(false, FString::Printf(
+            TEXT("smoke putt could not launch: %s"),
+            CommandError.IsEmpty() ? TEXT("authoritative launch failed") : *CommandError));
     }
 }
 
@@ -2481,6 +3683,109 @@ void ADiscGolfTourGameMode::FinishThreeHoleRoundSmokeTest(bool bPassed, const FS
                 bSawBasket ? TEXT("yes") : TEXT("no"), bSawRoundCompletion ? TEXT("yes") : TEXT("no"));
         }
     }
+#if DG_WITH_DEVELOPMENT_CONTENT
+    if (bPassed && FParse::Param(FCommandLine::Get(), TEXT("Session17RoundFlowGate")))
+    {
+        if (!bScorecardVisible)
+        {
+            ToggleScorecard();
+        }
+        ADiscGolfTourPlayerController* PlayerController =
+            Cast<ADiscGolfTourPlayerController>(
+                UGameplayStatics::GetPlayerController(this, 0));
+        if (PlayerController)
+        {
+            PlayerController->RefreshRoundFlowPresentation();
+        }
+        const bool bResultsReachable = PlayerController
+            && bScorecardVisible
+            && RoundState.bRoundComplete
+            && DiscGolfRound::CompletedHoleCount(RoundState) == 3
+            && PlayerController->HasInteractiveRoundFlowWidget()
+            && PlayerController->bShowMouseCursor
+            && PlayerController->GetActiveInputRoute() == EDiscGolfInputRoute::UI;
+        FString SettingsRecoveryError;
+        const bool bSettingsRecovered = bResultsReachable
+            && PlayerController->RunRoundFlowSettingsRecoveryProbe(
+                SettingsRecoveryError);
+        const bool bContinueActionAccepted = bSettingsRecovered
+            && PlayerController->HandleRoundFlowAction(
+                EDGRoundFlowAction::AdvanceOrRestart);
+        const bool bContinueRecovered = ActiveHole
+            && ActiveHole->HoleNumber == 1
+            && !RoundState.bRoundComplete
+            && DiscGolfRound::CompletedHoleCount(RoundState) == 0
+            && !bScorecardVisible
+            && CanPlayerThrow()
+            && !PlayerController->HasInteractiveRoundFlowWidget()
+            && !PlayerController->bShowMouseCursor
+            && PlayerController->GetActiveInputRoute() == EDiscGolfInputRoute::Gameplay;
+        const bool bDuplicateActionRejected = bContinueRecovered
+            && !PlayerController->HandleRoundFlowAction(
+                EDGRoundFlowAction::AdvanceOrRestart);
+        bPassed = bResultsReachable && bSettingsRecovered
+            && bContinueActionAccepted && bContinueRecovered
+            && bDuplicateActionRejected;
+        if (bPassed)
+        {
+            UE_LOG(LogDiscGolfTour, Display,
+                TEXT("DG_SESSION17_ROUND_FLOW_RESULTS: PASS widget=interactive focus=valid settings=restored continue=restart_round hole=1 playable=1 duplicate=rejected"));
+        }
+        else
+        {
+            FinalReason = FString::Printf(
+                TEXT("Session 17 round-flow results recovery failed (results=%s settings=%s action=%s continue=%s duplicate=%s error=%s)"),
+                bResultsReachable ? TEXT("yes") : TEXT("no"),
+                bSettingsRecovered ? TEXT("yes") : TEXT("no"),
+                bContinueActionAccepted ? TEXT("accepted") : TEXT("rejected"),
+                bContinueRecovered ? TEXT("yes") : TEXT("no"),
+                bDuplicateActionRejected ? TEXT("rejected") : TEXT("accepted"),
+                SettingsRecoveryError.IsEmpty() ? TEXT("none") : *SettingsRecoveryError);
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("DG_SESSION17_ROUND_FLOW_RESULTS: FAIL reason=%s"),
+                *FinalReason);
+        }
+    }
+    if (bPassed && FParse::Param(FCommandLine::Get(), TEXT("Session16CorePlayabilityGate")))
+    {
+        // Session 16 observes the real terminal round state and then exercises
+        // the existing completed-round Continue action. This does not add a
+        // second results or progression authority: the native scorecard and
+        // AdvanceToNextHole -> RestartRound path remain the implementation.
+        if (!bScorecardVisible)
+        {
+            ToggleScorecard();
+        }
+        const bool bResultsReachable = bScorecardVisible
+            && RoundState.bRoundComplete
+            && DiscGolfRound::CompletedHoleCount(RoundState) == 3;
+        ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+            UGameplayStatics::GetPlayerPawn(this, 0));
+        const bool bContinueActionAccepted = Golfer
+            && Golfer->TryAdvanceToNextHoleFromPlayerInput();
+        const bool bContinueRecovered = ActiveHole
+            && ActiveHole->HoleNumber == 1
+            && !RoundState.bRoundComplete
+            && DiscGolfRound::CompletedHoleCount(RoundState) == 0
+            && !bScorecardVisible
+            && CanPlayerThrow();
+        bPassed = bResultsReachable && bContinueActionAccepted && bContinueRecovered;
+        if (bPassed)
+        {
+            UE_LOG(LogDiscGolfTour, Display,
+                TEXT("DG_SESSION16_RESULTS_CONTINUE: PASS results=scorecard round_complete=1 continue=restart_round hole=1 playable=1"));
+        }
+        else
+        {
+            FinalReason = FString::Printf(
+                TEXT("Session 16 results/continue recovery failed (results=%s action=%s continue=%s)"),
+                bResultsReachable ? TEXT("yes") : TEXT("no"),
+                bContinueActionAccepted ? TEXT("accepted") : TEXT("rejected"),
+                bContinueRecovered ? TEXT("yes") : TEXT("no"));
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("DG_SESSION16_RESULTS_CONTINUE: FAIL reason=%s"), *FinalReason);
+        }
+    }
     bThreeHoleRoundSmokeTestActive = false;
     if (bPassed)
     {
@@ -2503,12 +3808,346 @@ void ADiscGolfTourGameMode::FinishThreeHoleRoundSmokeTest(bool bPassed, const FS
             this, &ADiscGolfTourGameMode::FinishVisualQAScreenshot), 1.5f, false);
         return;
     }
+#endif
     FPlatformMisc::RequestExitWithStatus(false, bPassed ? 0 : 1);
+}
+
+void ADiscGolfTourGameMode::InitializeRuntimeCheckpointJournal()
+{
+    using namespace DiscGolfRuntimeCheckpointJournal;
+
+    FCaptureBinding Binding;
+    Binding.CandidateId = FPlatformMisc::GetEnvironmentVariable(
+        TEXT("DGT_S19_CAPTURE_CANDIDATE_ID"));
+    Binding.UserDirToken = FPlatformMisc::GetEnvironmentVariable(
+        TEXT("DGT_S19_CAPTURE_USERDIR_TOKEN"));
+    Binding.ExecutableSha256 = FPlatformMisc::GetEnvironmentVariable(
+        TEXT("DGT_S19_CAPTURE_EXE_SHA256"));
+    Binding.ArchiveManifestSha256 = FPlatformMisc::GetEnvironmentVariable(
+        TEXT("DGT_S19_CAPTURE_ARCHIVE_MANIFEST_SHA256"));
+    Binding.CaptureNonce = FPlatformMisc::GetEnvironmentVariable(
+        TEXT("DGT_S19_CAPTURE_NONCE"));
+
+    const bool bAnyBindingValue = !Binding.CandidateId.IsEmpty()
+        || !Binding.UserDirToken.IsEmpty()
+        || !Binding.ExecutableSha256.IsEmpty()
+        || !Binding.ArchiveManifestSha256.IsEmpty()
+        || !Binding.CaptureNonce.IsEmpty();
+    if (!bAnyBindingValue)
+    {
+        return;
+    }
+    bRuntimeCheckpointJournalRequested = true;
+
+    const FString LowerCommandLine = FString(FCommandLine::Get()).ToLower();
+    if (FApp::IsUnattended()
+        || LowerCommandLine.Contains(TEXT("smoketest"))
+        || LowerCommandLine.Contains(TEXT("automation"))
+        || LowerCommandLine.Contains(TEXT("-testexit")))
+    {
+        AbortRuntimeCheckpointJournal(
+            TEXT("unattended, smoke, and automation launches cannot emit gameplay evidence"));
+        return;
+    }
+
+    FString BindingError;
+    const FString RedirectedUserDir = FPaths::ProjectUserDir();
+    if (!TryValidateCaptureBinding(Binding, RedirectedUserDir, BindingError))
+    {
+        AbortRuntimeCheckpointJournal(BindingError);
+        return;
+    }
+
+    RuntimeCheckpointRoundId = NewCanonicalUuidV4();
+    RuntimeCheckpointStartedSeconds = FPlatformTime::Seconds();
+    RuntimeCheckpointLastMonotonicMs = 0;
+    RuntimeCheckpointNextSequence = 1;
+    RuntimeCheckpointFirstLieMask = 0;
+    RuntimeCheckpointCaptureBinding = Binding;
+
+    const FString JournalPath = FPaths::Combine(
+        RedirectedUserDir, UserDirRelativePath);
+    const FString JournalDirectory = FPaths::GetPath(JournalPath);
+    IFileManager& FileManager = IFileManager::Get();
+    if (!FileManager.MakeDirectory(*JournalDirectory, true))
+    {
+        AbortRuntimeCheckpointJournal(
+            TEXT("journal directory could not be created"));
+        return;
+    }
+    FString CreateError;
+    if (!TryCreateExclusiveJournalWriter(
+            JournalPath, RuntimeCheckpointJournalWriter, CreateError))
+    {
+        AbortRuntimeCheckpointJournal(CreateError);
+        return;
+    }
+
+    FString HeaderLine;
+    FString HeaderError;
+    if (!TrySerializeHeaderLine(
+            Binding,
+            RuntimeCheckpointRoundId,
+            FDateTime::UtcNow().ToIso8601(),
+            HeaderLine,
+            HeaderError))
+    {
+        AbortRuntimeCheckpointJournal(HeaderError);
+        return;
+    }
+    FTCHARToUTF8 EncodedHeader(*HeaderLine);
+    RuntimeCheckpointJournalWriter->Serialize(
+        const_cast<ANSICHAR*>(EncodedHeader.Get()), EncodedHeader.Length());
+    RuntimeCheckpointJournalWriter->Flush();
+    if (RuntimeCheckpointJournalWriter->IsError())
+    {
+        AbortRuntimeCheckpointJournal(TEXT("journal header write failed"));
+        return;
+    }
+    UE_LOG(LogDiscGolfTour, Display,
+        TEXT("Runtime checkpoint journal armed for candidate %s and round %s."),
+        *Binding.CandidateId, *RuntimeCheckpointRoundId);
+}
+
+void ADiscGolfTourGameMode::BeginRuntimeCheckpointRound()
+{
+    if (!RuntimeCheckpointJournalWriter || bRuntimeCheckpointJournalTerminal
+        || bRuntimeCheckpointRoundStarted)
+    {
+        return;
+    }
+    if (!ActiveHole || ActiveHole->CourseId != TEXT("PineRidgeChampionship")
+        || RoundState.CurrentHoleIndex != 0 || RoundState.HoleScores.Num() != 3
+        || RoundState.bRoundComplete
+        || RoundState.HoleScores[0].HoleNumber != 1 || RoundState.HoleScores[0].Par != 3
+        || RoundState.HoleScores[1].HoleNumber != 2 || RoundState.HoleScores[1].Par != 4
+        || RoundState.HoleScores[2].HoleNumber != 3 || RoundState.HoleScores[2].Par != 4
+        || DiscGolfRound::CompletedHoleCount(RoundState) != 0
+        || DiscGolfRound::TotalStrokes(RoundState) != 0
+        || DiscGolfRound::TotalPenaltyStrokes(RoundState) != 0)
+    {
+        AbortRuntimeCheckpointJournal(
+            TEXT("initial authored three-hole round state is invalid"));
+        return;
+    }
+    bRuntimeCheckpointRoundStarted = WriteRuntimeCheckpointEvent(
+        TEXT("ROUND_STARTED"), TOptional<int32>(), false);
+}
+
+void ADiscGolfTourGameMode::GetRuntimeCheckpointCumulativeScore(
+    int32& OutStrokes,
+    int32& OutPenalties) const
+{
+    OutStrokes = DiscGolfRound::TotalStrokes(RoundState);
+    OutPenalties = DiscGolfRound::TotalPenaltyStrokes(RoundState);
+    if (RoundState.HoleScores.IsValidIndex(RoundState.CurrentHoleIndex)
+        && !RoundState.HoleScores[RoundState.CurrentHoleIndex].bCompleted)
+    {
+        OutStrokes += Strokes;
+        OutPenalties += PenaltyStrokes;
+    }
+}
+
+bool ADiscGolfTourGameMode::WriteRuntimeCheckpointEvent(
+    const FString& EventName,
+    const TOptional<int32>& HoleNumber,
+    bool bIncludeFinalScore)
+{
+    using namespace DiscGolfRuntimeCheckpointJournal;
+
+    static const TCHAR* ExpectedNames[] = {
+        TEXT("ROUND_STARTED"),
+        TEXT("HOLE_1_TEE"), TEXT("HOLE_1_LIE"), TEXT("HOLE_1_COMPLETED"),
+        TEXT("HOLE_2_TEE"), TEXT("HOLE_2_LIE"), TEXT("HOLE_2_COMPLETED"),
+        TEXT("HOLE_3_TEE"), TEXT("HOLE_3_LIE"), TEXT("HOLE_3_COMPLETED"),
+        TEXT("ROUND_COMPLETED"), TEXT("FINAL_SCORECARD"),
+    };
+    static const int32 ExpectedHoles[] = {
+        0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 0, 0,
+    };
+    static const int32 ExpectedCompletedHoles[] = {
+        0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3,
+    };
+
+    if (!RuntimeCheckpointJournalWriter || bRuntimeCheckpointJournalTerminal)
+    {
+        return false;
+    }
+    const int32 EventIndex = RuntimeCheckpointNextSequence - 1;
+    const int32 ActualCompletedHoles = DiscGolfRound::CompletedHoleCount(RoundState);
+    const bool bExpectedHoleSet = EventIndex >= 0
+        && EventIndex < UE_ARRAY_COUNT(ExpectedHoles)
+        && ExpectedHoles[EventIndex] != 0;
+    if (EventIndex < 0 || EventIndex >= UE_ARRAY_COUNT(ExpectedNames)
+        || EventName != ExpectedNames[EventIndex]
+        || HoleNumber.IsSet() != bExpectedHoleSet
+        || (bExpectedHoleSet && HoleNumber.GetValue() != ExpectedHoles[EventIndex])
+        || ActualCompletedHoles != ExpectedCompletedHoles[EventIndex]
+        || bIncludeFinalScore != (EventName == TEXT("FINAL_SCORECARD")))
+    {
+        AbortRuntimeCheckpointJournal(
+            TEXT("runtime gameplay checkpoint sequence diverged"));
+        return false;
+    }
+
+    int32 TotalStrokes = 0;
+    int32 TotalPenalties = 0;
+    GetRuntimeCheckpointCumulativeScore(TotalStrokes, TotalPenalties);
+    const int64 ElapsedMs = FMath::Max<int64>(
+        RuntimeCheckpointLastMonotonicMs + 1,
+        FMath::Max<int64>(0, static_cast<int64>(
+            (FPlatformTime::Seconds() - RuntimeCheckpointStartedSeconds) * 1000.0)));
+
+    FCheckpointEvent Event;
+    Event.Sequence = RuntimeCheckpointNextSequence;
+    Event.MonotonicMs = ElapsedMs;
+    Event.Event = EventName;
+    Event.RoundId = RuntimeCheckpointRoundId;
+    Event.HoleNumber = HoleNumber;
+    Event.CompletedHoles = ActualCompletedHoles;
+    Event.TotalStrokes = TotalStrokes;
+    Event.TotalPenalties = TotalPenalties;
+    if (bIncludeFinalScore)
+    {
+        for (const FDiscGolfRoundHoleScore& Score : RoundState.HoleScores)
+        {
+            Event.FinalScoreRows.Add({
+                Score.HoleNumber,
+                Score.Par,
+                Score.Strokes,
+                Score.PenaltyStrokes,
+            });
+        }
+    }
+
+    FString Line;
+    FString SerializationError;
+    if (!TrySerializeEventLine(Event, Line, SerializationError))
+    {
+        AbortRuntimeCheckpointJournal(SerializationError);
+        return false;
+    }
+    FTCHARToUTF8 EncodedLine(*Line);
+    RuntimeCheckpointJournalWriter->Serialize(
+        const_cast<ANSICHAR*>(EncodedLine.Get()), EncodedLine.Length());
+    RuntimeCheckpointJournalWriter->Flush();
+    if (RuntimeCheckpointJournalWriter->IsError())
+    {
+        AbortRuntimeCheckpointJournal(TEXT("runtime checkpoint append failed"));
+        return false;
+    }
+
+    RuntimeCheckpointLastMonotonicMs = ElapsedMs;
+    ++RuntimeCheckpointNextSequence;
+    if (bIncludeFinalScore)
+    {
+        if (!RuntimeCheckpointJournalWriter->Close()
+            || RuntimeCheckpointJournalWriter->IsError())
+        {
+            AbortRuntimeCheckpointJournal(
+                TEXT("runtime checkpoint final close failed"));
+            return false;
+        }
+        bRuntimeCheckpointJournalTerminal = true;
+        RuntimeCheckpointJournalWriter.Reset();
+    }
+    return true;
+}
+
+void ADiscGolfTourGameMode::RecordRuntimeCheckpointTee()
+{
+    if (!RuntimeCheckpointJournalWriter || !bRuntimeCheckpointRoundStarted
+        || bRuntimeCheckpointJournalTerminal || !ActiveHole)
+    {
+        return;
+    }
+    WriteRuntimeCheckpointEvent(
+        FString::Printf(TEXT("HOLE_%d_TEE"), ActiveHole->HoleNumber),
+        TOptional<int32>(ActiveHole->HoleNumber),
+        false);
+}
+
+void ADiscGolfTourGameMode::RecordRuntimeCheckpointFirstLie()
+{
+    if (!RuntimeCheckpointJournalWriter || !bRuntimeCheckpointRoundStarted
+        || bRuntimeCheckpointJournalTerminal || !ActiveHole)
+    {
+        return;
+    }
+    const int32 HoleNumber = ActiveHole->HoleNumber;
+    if (HoleNumber < 1 || HoleNumber > 3)
+    {
+        AbortRuntimeCheckpointJournal(TEXT("lie checkpoint hole is out of range"));
+        return;
+    }
+    const int32 HoleBit = 1 << (HoleNumber - 1);
+    if ((RuntimeCheckpointFirstLieMask & HoleBit) != 0)
+    {
+        return;
+    }
+    if (WriteRuntimeCheckpointEvent(
+            FString::Printf(TEXT("HOLE_%d_LIE"), HoleNumber),
+            TOptional<int32>(HoleNumber),
+            false))
+    {
+        RuntimeCheckpointFirstLieMask |= HoleBit;
+    }
+}
+
+void ADiscGolfTourGameMode::RecordRuntimeCheckpointHoleCompleted()
+{
+    if (!RuntimeCheckpointJournalWriter || !bRuntimeCheckpointRoundStarted
+        || bRuntimeCheckpointJournalTerminal || !ActiveHole)
+    {
+        return;
+    }
+    const int32 HoleNumber = ActiveHole->HoleNumber;
+    if (!WriteRuntimeCheckpointEvent(
+            FString::Printf(TEXT("HOLE_%d_COMPLETED"), HoleNumber),
+            TOptional<int32>(HoleNumber),
+            false))
+    {
+        return;
+    }
+    if (RoundState.bRoundComplete)
+    {
+        WriteRuntimeCheckpointEvent(
+            TEXT("ROUND_COMPLETED"), TOptional<int32>(), false);
+    }
+}
+
+void ADiscGolfTourGameMode::RecordRuntimeCheckpointFinalScorecard()
+{
+    if (!RuntimeCheckpointJournalWriter || !bRuntimeCheckpointRoundStarted
+        || bRuntimeCheckpointJournalTerminal || !RoundState.bRoundComplete)
+    {
+        return;
+    }
+    WriteRuntimeCheckpointEvent(
+        TEXT("FINAL_SCORECARD"), TOptional<int32>(), true);
+}
+
+void ADiscGolfTourGameMode::AbortRuntimeCheckpointJournal(const FString& Reason)
+{
+    if (RuntimeCheckpointJournalWriter)
+    {
+        RuntimeCheckpointJournalWriter->Flush();
+        RuntimeCheckpointJournalWriter->Close();
+        RuntimeCheckpointJournalWriter.Reset();
+    }
+    bRuntimeCheckpointJournalTerminal = true;
+    UE_LOG(LogDiscGolfTour, Error,
+        TEXT("Runtime checkpoint journal failed closed: %s"), *Reason);
 }
 
 void ADiscGolfTourGameMode::StartHole()
 {
     if (!ActiveHole) return;
+
+    if (PlayabilityMonitor)
+    {
+        PlayabilityMonitor->StopMonitoring(TEXT("AtTee"));
+    }
 
     EnsurePlayerPawn();
     Strokes = 0;
@@ -2557,6 +4196,7 @@ void ADiscGolfTourGameMode::StartHole()
     const int32 TotalHoleCount = HasAuthoredRound() ? RoundState.HoleScores.Num() : 1;
     RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveHoleStart(
         ActiveHole->HoleNumber, TotalHoleCount, ActiveHole->Par), ActiveHole->TeeLocation);
+    RecordRuntimeCheckpointTee();
 }
 
 void ADiscGolfTourGameMode::FinishHoleIntroduction()
@@ -2650,6 +4290,76 @@ float ADiscGolfTourGameMode::GetLastReleaseAgeSeconds() const
     return FMath::Max(0.0f, GetWorld()->GetTimeSeconds() - LastReleaseWorldSeconds);
 }
 
+bool ADiscGolfTourGameMode::TryGetAuthoritativeHudWindSample(
+    const FVector& PreThrowSampleLocationCm,
+    FVector& OutSampleLocationCm,
+    FVector& OutWindMps,
+    FString& OutError) const
+{
+    OutSampleLocationCm = PreThrowSampleLocationCm;
+    OutWindMps = FVector::ZeroVector;
+
+    if (const ADiscActor* Disc = ActiveDisc)
+    {
+        const UDiscFlightComponent* Flight = Disc->GetFlightComponent();
+        if (Flight && Flight->IsFlying())
+        {
+            const TArray<FDiscTrajectorySample>& Samples = Flight->GetTrajectorySamples();
+            if (Samples.IsEmpty())
+            {
+                OutError = TEXT("Active flight has no authoritative wind sample");
+                return false;
+            }
+            const FDiscTrajectorySample& Sample = Samples.Last();
+            const bool bWindFinite = FMath::IsFinite(Sample.WindMps.X)
+                && FMath::IsFinite(Sample.WindMps.Y)
+                && FMath::IsFinite(Sample.WindMps.Z);
+            if (!bWindFinite)
+            {
+                OutError = TEXT("Active flight's authoritative wind sample is non-finite");
+                return false;
+            }
+            OutSampleLocationCm = Sample.WorldLocationCm;
+            OutWindMps = Sample.WindMps;
+            OutError.Reset();
+            return true;
+        }
+    }
+
+    if (PresentationShotSequence < 0 || PresentationShotSequence >= MAX_int32)
+    {
+        OutError = TEXT("Next accepted-shot wind sequence is exhausted");
+        return false;
+    }
+    float PhaseOriginSeconds = 0.0f;
+    if (!TrySampleWindForAcceptedShot(
+        WindDirector, PresentationShotSequence + 1,
+        PreThrowSampleLocationCm, PhaseOriginSeconds, OutWindMps, OutError))
+    {
+        OutWindMps = FVector::ZeroVector;
+        return false;
+    }
+    OutError.Reset();
+    return true;
+}
+
+bool ADiscGolfTourGameMode::TrySampleWindForAcceptedShot(
+    const AWindDirector* InWindDirector,
+    int32 AcceptedShotSequence,
+    const FVector& SampleLocationCm,
+    float& OutPhaseOriginSeconds,
+    FVector& OutWindMps,
+    FString& OutError)
+{
+    OutPhaseOriginSeconds = 0.0f;
+    OutWindMps = FVector::ZeroVector;
+    return AWindDirector::TryBuildDeterministicShotPhaseOrigin(
+            AcceptedShotSequence, OutPhaseOriginSeconds, OutError)
+        && UDiscFlightComponent::TrySampleWindForFixedStep(
+            InWindDirector, SampleLocationCm, OutPhaseOriginSeconds,
+            OutWindMps, OutError);
+}
+
 float ADiscGolfTourGameMode::GetAimErrorAtBasketCm() const
 {
     if (!ActiveHole || !GetWorld()) return 0.0f;
@@ -2668,10 +4378,10 @@ void ADiscGolfTourGameMode::ApplyShotContextToGolfer()
     Golfer->SetPresentationShotContext(GetCurrentShotContext(), GetBasketDistanceMeters());
 }
 
-void ADiscGolfTourGameMode::RequestThrow(const FThrowCommand& Command)
+bool ADiscGolfTourGameMode::RequestThrow(const FThrowCommand& Command)
 {
-    if (!CanPlayerThrow()) return;
-    LaunchThrow(Command);
+    if (!CanPlayerThrow()) return false;
+    return LaunchThrow(Command);
 }
 
 bool ADiscGolfTourGameMode::RequestThrowFromGrip(
@@ -2681,10 +4391,26 @@ bool ADiscGolfTourGameMode::RequestThrowFromGrip(
     // This C++-only seam may bypass CanPlayerThrow solely because the adapter's
     // committed release keeps that normal gate closed until the montage recovers.
     // Every other lifecycle authority remains mandatory.
-    if (bRegressionActive || bLieTransitionActive)
+    const ADiscGolfTourPlayerController* PlayerController =
+        Cast<ADiscGolfTourPlayerController>(
+            UGameplayStatics::GetPlayerController(this, 0));
+    const bool bBaseLaunchAllowed = DiscGolfGameplayGate::CanLaunchThrow(
+        ActiveHole != nullptr, ActiveDisc != nullptr, ReplayActor != nullptr,
+        IsCourseFlyoverActive(), bHoleComplete, bScorecardVisible, bHoleIntroActive);
+    if (!DiscGolfGameplayGate::CanCommitPlayerRelease(
+            bBaseLaunchAllowed,
+            bMainMenuVisible,
+            bRegressionActive,
+            bLieTransitionActive,
+            PlayerController != nullptr,
+            PlayerController && PlayerController->IsPresentationDismissReleasePending(),
+            PlayerController && PlayerController->IsFreshThrowDownRequiredAfterPresentation(),
+            PlayerController && PlayerController->IsControlsMenuOpen(),
+            PlayerController && PlayerController->IsCharacterCreatorOpen(),
+            GetWorld() && GetWorld()->IsPaused()))
     {
         UE_LOG(LogDiscGolfTour, Error,
-            TEXT("Character release rejected because another gameplay authority is active."));
+            TEXT("Character release rejected because the committed player lifecycle gate is closed."));
         return false;
     }
 
@@ -2711,9 +4437,11 @@ bool ADiscGolfTourGameMode::RequestThrowFromGrip(
     }
 
     const FThrowCommand CachedCommand = Adapter->GetLastAuthoritativeCommand();
-    const bool bMatchesCommittedCommand = CachedCommand.MoldId == Command.MoldId
+    const bool bMatchesCommittedCommand = CachedCommand.DiscInstanceId == Command.DiscInstanceId
+        && CachedCommand.MoldId == Command.MoldId
         && CachedCommand.Plastic == Command.Plastic
         && CachedCommand.ThrowStyle == Command.ThrowStyle
+        && CachedCommand.Handedness == Command.Handedness
         && CachedCommand.ShotContext == Command.ShotContext
         && CachedCommand.Direction == Command.Direction
         && CachedCommand.Power01 == Command.Power01
@@ -2728,7 +4456,8 @@ bool ADiscGolfTourGameMode::RequestThrowFromGrip(
         return false;
     }
 
-    if (FVector::DistSquared(GripLocation, Golfer->GetActorLocation()) > FMath::Square(300.0f))
+    if (FVector::DistSquared(GripLocation, Golfer->GetActorLocation())
+        > FMath::Square(MaximumAnimatedGripOriginDistanceCm))
     {
         UE_LOG(LogDiscGolfTour, Error,
             TEXT("Character release rejected because disc_grip_r was implausibly far from the player."));
@@ -2742,8 +4471,16 @@ bool ADiscGolfTourGameMode::RequestThrowFromGrip(
 
 bool ADiscGolfTourGameMode::LaunchThrow(
     const FThrowCommand& Command,
-    const FVector* ReleaseLocationOverrideCm)
+    const FVector* ReleaseLocationOverrideCm,
+    bool bTrustedRegressionCatalogCommand)
 {
+    if (!DiscGolfMath::IsThrowCommandValid(Command))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Throw rejected because the command violates the authoritative input contract."));
+        return false;
+    }
+
     // This private path is shared by accepted player throws and trusted regression
     // presets. Fundamental lifecycle guards still prevent replacing an active disc.
     if (!DiscGolfGameplayGate::CanLaunchThrow(
@@ -2762,36 +4499,170 @@ bool ADiscGolfTourGameMode::LaunchThrow(
     ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(UGameplayStatics::GetPlayerPawn(this, 0));
     if (!Golfer) return false;
 
+    if (bTrustedRegressionCatalogCommand && !bRegressionActive)
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Throw rejected because trusted catalog ingress is restricted to active regression."));
+        return false;
+    }
+    // Regression presets remain catalog-only so accepted reference envelopes do
+    // not inherit mutable player equipment. A real player command instead carries
+    // the exact stable instance captured before the release transaction began.
+    if (!bTrustedRegressionCatalogCommand)
+    {
+        UDiscBagComponent* Bag = Golfer->GetDiscBag();
+        const UDiscGolfCharacterProfile* Profile = Golfer->GetRuntimeCharacterProfile();
+        if (!Bag || !Profile) return false;
+
+        FDGDiscInstance Instance;
+        if (!Bag->GetSelectedDiscInstance(Instance)
+            || !IsPlayerThrowProvenanceValid(
+                Command, Profile->Handedness, GetCurrentShotContext(), Instance))
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("Throw rejected because equipment, handedness, or shot-context provenance changed before release."));
+            return false;
+        }
+
+        FString EquipmentError;
+        FResolvedDiscDefinition InstanceResolved;
+        if (!UDiscBagComponent::ResolveDiscInstance(
+            Instance, ResolvedDisc, InstanceResolved, EquipmentError))
+        {
+            UE_LOG(LogDiscGolfTour, Error, TEXT("Throw equipment resolution failed: %s"), *EquipmentError);
+            return false;
+        }
+        ResolvedDisc = MoveTemp(InstanceResolved);
+    }
+
+    if (!GetWorld()) return false;
     const FVector SpawnLocation = ReleaseLocationOverrideCm
         ? *ReleaseLocationOverrideCm
         : Golfer->GetActorLocation() + Golfer->GetActorForwardVector() * 70.0f + FVector(0, 0, 35.0f);
-    ActiveDisc = GetWorld()->SpawnActor<ADiscActor>(SpawnLocation, Golfer->GetActorRotation());
-    if (!ActiveDisc) return false;
+    const FTransform SpawnTransform(
+        Golfer->GetActorQuat(), SpawnLocation, FVector::OneVector);
+    if (!UDiscFlightComponent::IsSpawnTransformValidForLaunch(SpawnTransform))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Throw rejected because the authoritative spawn transform is invalid."));
+        return false;
+    }
 
-    ActiveDisc->InitializeDisc(ResolvedDisc, WindDirector);
-    ActiveDisc->OnDiscSettled.AddDynamic(this, &ADiscGolfTourGameMode::HandleDiscSettled);
-    ActiveDisc->OnDiscHoledOut.AddDynamic(this, &ADiscGolfTourGameMode::HandleDiscHoledOut);
+    if (PresentationShotSequence < 0 || PresentationShotSequence >= MAX_int32)
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Throw rejected because the accepted-shot wind sequence is exhausted."));
+        return false;
+    }
+    const int32 AcceptedShotSequence = PresentationShotSequence + 1;
+    float WindPhaseOriginSeconds = 0.0f;
+    FString WindError;
+    FVector InitialWindMps = FVector::ZeroVector;
+    if (!TrySampleWindForAcceptedShot(
+        WindDirector, AcceptedShotSequence, SpawnLocation,
+        WindPhaseOriginSeconds, InitialWindMps, WindError))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Throw rejected before disc spawn because the physics wind contract failed: %s"),
+            *WindError);
+        return false;
+    }
 
-    ThrowStartLieLocation = CurrentLieLocation;
-    bRouteTelemetryShotPending = bRouteTelemetryActive && ActiveHole && ActiveHole->HoleNumber == 2
+    const FVector CandidateThrowStartLieLocation = CurrentLieLocation;
+    const bool bCandidateRouteTelemetryShotPending =
+        bRouteTelemetryActive && ActiveHole && ActiveHole->HoleNumber == 2
         && Strokes == 0 && CurrentLieType == ELieType::Tee
         && !RouteTelemetrySession.ActiveRouteId.IsNone()
         && DiscGolfRouteTelemetry::CountAttempts(
             RouteTelemetrySession, RouteTelemetrySession.ActiveRouteId)
             < RouteTelemetrySession.TargetAttemptsPerRoute;
-    FThrowCommand AuthoredCommand = DiscGolfCourseRules::ApplyLieEffects(Command, CurrentLieState.Effects);
+    FThrowCommand AuthoredCommand = DiscGolfCourseRules::ApplyLieEffects(
+        Command, CurrentLieState.Effects);
     AuthoredCommand.ShotContext = GetCurrentShotContext();
-    LastRelease = DiscGolfMath::ResolveThrowRelease(AuthoredCommand);
-    LastRelease.LiePowerMultiplier = CurrentLieState.Effects.PowerMultiplier;
-    LastRelease.LieTimingErrorMultiplier = CurrentLieState.Effects.TimingErrorMultiplier;
+    FThrowRelease CandidateRelease = DiscGolfMath::ResolveThrowRelease(AuthoredCommand);
+    CandidateRelease.LiePowerMultiplier = CurrentLieState.Effects.PowerMultiplier;
+    CandidateRelease.LieTimingErrorMultiplier = CurrentLieState.Effects.TimingErrorMultiplier;
+    CandidateRelease.WindPhaseOriginSeconds = WindPhaseOriginSeconds;
+    FString AimRebaseError;
+    // CurrentLieLocation is fixed before the montage begins and is the stable
+    // pre-animation planar aim origin. MovePlayerToLie's +88 cm pawn Z placement
+    // is irrelevant because aim distance and release rebasing are XY-only.
+    const FVector AimLineOriginCm = CandidateThrowStartLieLocation;
+    const float AimReferenceDistanceCm = FVector::Dist2D(
+        AimLineOriginCm, ActiveHole->BasketLocation);
+    if (!TryPrepareReleaseForOriginOverride(
+        ReleaseLocationOverrideCm,
+        AimLineOriginCm,
+        AimReferenceDistanceCm,
+        CandidateRelease,
+        AimRebaseError))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Throw rejected before disc spawn because the grip-origin aim rebase failed: %s"),
+            *AimRebaseError);
+        return false;
+    }
+    FString ReleaseError;
+    if (!DiscGolfMath::IsThrowReleaseValid(CandidateRelease, &ReleaseError))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Throw rejected before disc spawn because the resolved release is invalid: %s"),
+            *ReleaseError);
+        return false;
+    }
+
+    ActiveDisc = GetWorld()->SpawnActor<ADiscActor>(SpawnLocation, Golfer->GetActorRotation());
+    if (!ActiveDisc) return false;
+
+    if (!ActiveDisc->InitializeDisc(ResolvedDisc, WindDirector))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Throw rejected because disc initialization failed after preflight."));
+        ActiveDisc->Destroy();
+        ActiveDisc = nullptr;
+        return false;
+    }
+    if (!ActiveDisc->ConfigureLaunchingActorCollisionExclusion(Golfer))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Throw rejected because the launching golfer collision exclusion could not be configured."));
+        ActiveDisc->Destroy();
+        ActiveDisc = nullptr;
+        return false;
+    }
+    ActiveDisc->OnDiscSettled.AddDynamic(this, &ADiscGolfTourGameMode::HandleDiscSettled);
+    ActiveDisc->OnDiscHoledOut.AddDynamic(this, &ADiscGolfTourGameMode::HandleDiscHoledOut);
+
+    if (!ActiveDisc->Throw(CandidateRelease)
+        || !ActiveDisc->GetFlightComponent()->IsFlying())
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Throw rejected because the disc did not enter authoritative flight."));
+        ActiveDisc->Destroy();
+        ActiveDisc = nullptr;
+        return false;
+    }
+
+    // Commit score, telemetry, presentation, and accepted-shot provenance only
+    // after the component has accepted the complete launch transaction.
+    ThrowStartLieLocation = CandidateThrowStartLieLocation;
+    bRouteTelemetryShotPending = bCandidateRouteTelemetryShotPending;
+    LastRelease = MoveTemp(CandidateRelease);
     bHasLastRelease = true;
     LastReleaseWorldSeconds = GetWorld()->GetTimeSeconds();
     bHasLastFlightTelemetry = false;
     LastPresentationGroundTransitionCount = 0;
-    ++PresentationShotSequence;
+    PresentationShotSequence = AcceptedShotSequence;
     ++Strokes;
     LastThrowShotNumber = Strokes;
-    ActiveDisc->Throw(LastRelease);
+    if (PlayabilityMonitor)
+    {
+        PlayabilityMonitor->StartMonitoring(
+            TEXT("DiscInFlight"),
+            DiscGolfMath::EffectiveFlightTimeoutSeconds(
+                LastRelease.ShotContext, ResolvedDisc.Speed,
+                ActiveDisc->GetFlightComponent()->MaxFlightSeconds) + 1.0f);
+    }
     Golfer->NotifyAuthoritativeRelease(LastRelease);
     RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveThrowRelease(
         LastRelease.Grade, LastRelease.Timing, LastRelease.Quality01, LastRelease.ReleaseSpeedMps),
@@ -2799,12 +4670,27 @@ bool ADiscGolfTourGameMode::LaunchThrow(
     RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveAirborneFlight(
         LastRelease.ReleaseSpeedMps, LastRelease.SpinRpm, 0.0f), SpawnLocation);
     StartBroadcastCameraForShot(ActiveDisc, SpawnLocation, AuthoredCommand.ShotContext);
+
+    // A short tap-in can spawn already overlapping the chain volume. Resolve
+    // that contact now, at solver time zero and only after score/release state
+    // is committed. Deferring to the next render tick would allow 30/60/120 FPS
+    // launches to advance different numbers of fixed steps before evaluation.
+    ADiscActor* const LaunchedDisc = ActiveDisc;
+    if (ActiveHole && ActiveHole->Basket)
+    {
+        ActiveHole->Basket->EvaluateOverlappingDiscContact(LaunchedDisc);
+    }
     return true;
 }
 
 void ADiscGolfTourGameMode::HandleDiscSettled(ADiscActor* Disc, FVector FinalLocation)
 {
     if (Disc != ActiveDisc) return;
+
+    if (PlayabilityMonitor)
+    {
+        PlayabilityMonitor->MarkProgress(TEXT("DiscResolved"));
+    }
 
     UpdatePresentationAudioEvents();
     LastFlightTelemetry = Disc->GetFlightComponent()->GetTelemetry();
@@ -2815,6 +4701,7 @@ void ADiscGolfTourGameMode::HandleDiscSettled(ADiscActor* Disc, FVector FinalLoc
         LastFlightTelemetry.CourseSurface, LastFlightTelemetry.GroundState,
         LastFlightTelemetry.LastBasketContact);
     ResolveSettledLie(Disc, FinalLocation);
+    RecordRuntimeCheckpointFirstLie();
     CaptureRouteTelemetryAttempt(Disc, false);
     RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolvePenalty(
         CurrentLieState.PenaltyType, CurrentLieState.PenaltyStrokes),
@@ -2846,6 +4733,11 @@ void ADiscGolfTourGameMode::HandleDiscSettled(ADiscActor* Disc, FVector FinalLoc
 
     Disc->SetLifeSpan(1.5f);
     ActiveDisc = nullptr;
+    if (PlayabilityMonitor)
+    {
+        PlayabilityMonitor->StopMonitoring(TEXT("LieEstablished"));
+    }
+    FinishSession16RulesSmokeTest();
     RecordHole1FlightRouteResult(false);
     FinishPineRidgePlaySmokeTest(false);
     FinishRegressionRun();
@@ -2853,18 +4745,27 @@ void ADiscGolfTourGameMode::HandleDiscSettled(ADiscActor* Disc, FVector FinalLoc
 
 void ADiscGolfTourGameMode::FinishLieTransition()
 {
-    ReturnCameraToPlayer();
     bLieTransitionActive = false;
+    if (!CameraViewState.bActive)
+    {
+        ReturnCameraToPlayer();
+    }
 }
 
 void ADiscGolfTourGameMode::HandleDiscHoledOut(ADiscActor* Disc)
 {
     if (Disc != ActiveDisc) return;
 
+    if (PlayabilityMonitor)
+    {
+        PlayabilityMonitor->MarkProgress(TEXT("DiscResolved"));
+    }
+
     UpdatePresentationAudioEvents();
     LastFlightTelemetry = Disc->GetFlightComponent()->GetTelemetry();
     bHasLastFlightTelemetry = true;
     bHoleComplete = true;
+    bool bRoundScoreRecorded = false;
     if (HasAuthoredRound())
     {
         FString RoundError;
@@ -2874,11 +4775,23 @@ void ADiscGolfTourGameMode::HandleDiscHoledOut(ADiscActor* Disc)
         }
         else
         {
+            bRoundScoreRecorded = true;
             UE_LOG(LogDiscGolfTour, Display, TEXT("Round score recorded: hole %d, %d strokes, round %s."),
                 ActiveHole ? ActiveHole->HoleNumber : 0, Strokes,
                 *DiscGolfRound::ScoreLabel(DiscGolfRound::ScoreToPar(RoundState)));
         }
         UpdateCourseStatus();
+    }
+    if (RuntimeCheckpointJournalWriter)
+    {
+        if (bRoundScoreRecorded)
+        {
+            RecordRuntimeCheckpointHoleCompleted();
+        }
+        else
+        {
+            AbortRuntimeCheckpointJournal(TEXT("the authored hole score was not committed"));
+        }
     }
     CurrentLieState = DiscGolfCourseRules::ResolveLie(
         ECourseSurfaceType::Fairway,
@@ -2922,6 +4835,11 @@ void ADiscGolfTourGameMode::HandleDiscHoledOut(ADiscActor* Disc)
     ReturnCameraToPlayer();
     Disc->SetLifeSpan(2.0f);
     ActiveDisc = nullptr;
+    if (PlayabilityMonitor)
+    {
+        PlayabilityMonitor->StopMonitoring(
+            RoundState.bRoundComplete ? TEXT("RoundComplete") : TEXT("HoleComplete"));
+    }
     RecordHole1FlightRouteResult(true);
     FinishPineRidgePlaySmokeTest(true);
     FinishRegressionRun();
@@ -2971,6 +4889,37 @@ bool ADiscGolfTourGameMode::TraceCourseSurfaceAtLocation(
     FCollisionQueryParams Params(SCENE_QUERY_STAT(DiscGolfCourseSurface), false);
     Params.bReturnPhysicalMaterial = true;
     if (ActiveDisc) Params.AddIgnoredActor(ActiveDisc);
+    const FName ActiveHoleSurfaceTag = ActiveHole && HasAuthoredRound()
+        ? FName(*FString::Printf(TEXT("Course.Hole.%d"), ActiveHole->HoleNumber))
+        : NAME_None;
+    bool bHasPresentationGround = false;
+    FVector PresentationGround = LocationCm;
+    bool bHasTypedGround = false;
+    ECourseSurfaceType TypedSurface = ECourseSurfaceType::Fairway;
+    FVector TypedGround = LocationCm;
+    bool bTypedUsesContinuousGround = false;
+
+    const auto FinishTypedProbe = [&]()
+    {
+        if (!bHasTypedGround) return false;
+        OutSurface = TypedSurface;
+        if (!bHasPresentationGround)
+        {
+            OutGroundLocationCm = TypedGround;
+        }
+        else if (bTypedUsesContinuousGround)
+        {
+            OutGroundLocationCm = PresentationGround;
+        }
+        else
+        {
+            // Pads, rock, hazards, OB, and water remain authored vertical
+            // authorities whenever they sit above the continuous ground.
+            OutGroundLocationCm = TypedGround.Z >= PresentationGround.Z
+                ? TypedGround : PresentationGround;
+        }
+        return true;
+    };
 
     // A tree trunk can block the vertical visibility trace before the terrain.
     // Ignore unrelated blockers one actor at a time until typed/tagged/material
@@ -2978,17 +4927,43 @@ bool ADiscGolfTourGameMode::TraceCourseSurfaceAtLocation(
     for (int32 Attempt = 0; Attempt < 16; ++Attempt)
     {
         FHitResult Hit;
-        if (!World->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, Params)) return false;
-        if (DiscGolfCourseRules::HasSurfaceIdentity(Hit.GetActor(), Hit.PhysMaterial.Get()))
+        if (!World->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, Params))
         {
-            OutSurface = DiscGolfCourseRules::ResolveSurface(Hit.GetActor(), Hit.PhysMaterial.Get());
-            OutGroundLocationCm = Hit.ImpactPoint;
-            return true;
+            return FinishTypedProbe();
         }
-        if (!Hit.GetActor()) return false;
-        Params.AddIgnoredActor(Hit.GetActor());
+        AActor* HitActor = Hit.GetActor();
+        if (HitActor && HitActor->ActorHasTag(TEXT("Presentation.CourseTerrain")))
+        {
+            bHasPresentationGround = true;
+            PresentationGround = Hit.ImpactPoint;
+            if (bHasTypedGround) return FinishTypedProbe();
+            Params.AddIgnoredActor(HitActor);
+            continue;
+        }
+        if (!ActiveHoleSurfaceTag.IsNone()
+            && HitActor
+            && !HitActor->ActorHasTag(ActiveHoleSurfaceTag))
+        {
+            Params.AddIgnoredActor(HitActor);
+            continue;
+        }
+        if (DiscGolfCourseRules::HasSurfaceIdentity(HitActor, Hit.PhysMaterial.Get()))
+        {
+            TypedSurface = DiscGolfCourseRules::ResolveSurface(HitActor, Hit.PhysMaterial.Get());
+            TypedGround = Hit.ImpactPoint;
+            bHasTypedGround = true;
+            bTypedUsesContinuousGround = TypedSurface == ECourseSurfaceType::Fairway
+                || TypedSurface == ECourseSurfaceType::LightRough
+                || TypedSurface == ECourseSurfaceType::DeepRough
+                || TypedSurface == ECourseSurfaceType::Dirt;
+            if (!bTypedUsesContinuousGround || bHasPresentationGround) return FinishTypedProbe();
+            Params.AddIgnoredActor(HitActor);
+            continue;
+        }
+        if (!HitActor) return false;
+        Params.AddIgnoredActor(HitActor);
     }
-    return false;
+    return FinishTypedProbe();
 }
 
 FName ADiscGolfTourGameMode::ResolvePresentationSurfaceMaterialAtLocation(const FVector& LocationCm) const
@@ -3028,8 +5003,11 @@ FVector ADiscGolfTourGameMode::FindLastInBoundsRelief(
         const int32 PriorIndex = FMath::Max(0, Index - SampleStride);
         ECourseSurfaceType Surface = ECourseSurfaceType::Fairway;
         FVector GroundPoint = Samples[PriorIndex].WorldLocationCm;
-        TraceCourseSurfaceAtLocation(Samples[PriorIndex].WorldLocationCm, Surface, GroundPoint);
-        if (DiscGolfCourseRules::IsPenaltySurface(Surface))
+        const bool bSurfaceTraceHit = TraceCourseSurfaceAtLocation(
+            Samples[PriorIndex].WorldLocationCm, Surface, GroundPoint);
+        if (!DiscGolfCourseRules::IsInBoundsSurfaceProbe(
+            bSurfaceTraceHit, Surface,
+            Samples[PriorIndex].WorldLocationCm, GroundPoint))
         {
             OutsidePoint = GroundPoint;
         }
@@ -3041,24 +5019,37 @@ FVector ADiscGolfTourGameMode::FindLastInBoundsRelief(
                 const FVector Midpoint = (InsidePoint + OutsidePoint) * 0.5f;
                 ECourseSurfaceType MidSurface = ECourseSurfaceType::Fairway;
                 FVector MidGround = Midpoint;
-                TraceCourseSurfaceAtLocation(Midpoint, MidSurface, MidGround);
-                if (DiscGolfCourseRules::IsPenaltySurface(MidSurface)) OutsidePoint = MidGround;
+                const bool bMidSurfaceTraceHit = TraceCourseSurfaceAtLocation(
+                    Midpoint, MidSurface, MidGround);
+                if (!DiscGolfCourseRules::IsInBoundsSurfaceProbe(
+                    bMidSurfaceTraceHit, MidSurface, Midpoint, MidGround)) OutsidePoint = MidGround;
                 else InsidePoint = MidGround;
             }
 
             FVector Relief = DiscGolfCourseRules::ReliefPointInsideBoundary(InsidePoint, OutsidePoint);
             ECourseSurfaceType ReliefSurface = ECourseSurfaceType::Fairway;
             FVector ReliefGround = Relief;
-            if (TraceCourseSurfaceAtLocation(Relief, ReliefSurface, ReliefGround)
-                && !DiscGolfCourseRules::IsPenaltySurface(ReliefSurface))
+            const bool bReliefSurfaceTraceHit = TraceCourseSurfaceAtLocation(
+                Relief, ReliefSurface, ReliefGround);
+            if (DiscGolfCourseRules::IsInBoundsSurfaceProbe(
+                bReliefSurfaceTraceHit, ReliefSurface, Relief, ReliefGround))
             {
-                Relief = ReliefGround;
+                return ReliefGround;
             }
-            return Relief;
+            // The one-metre relief can itself cross a narrow or irregular
+            // boundary. Never return an untraced point as a playable lie.
+            return InsidePoint;
         }
         if (PriorIndex == 0) break;
     }
-    return FallbackLocationCm;
+    ECourseSurfaceType FallbackSurface = ECourseSurfaceType::Fairway;
+    FVector FallbackGround = FallbackLocationCm;
+    const bool bFallbackSurfaceTraceHit = TraceCourseSurfaceAtLocation(
+        FallbackLocationCm, FallbackSurface, FallbackGround);
+    return DiscGolfCourseRules::IsInBoundsSurfaceProbe(
+        bFallbackSurfaceTraceHit, FallbackSurface,
+        FallbackLocationCm, FallbackGround)
+        ? FallbackGround : FallbackLocationCm;
 }
 
 void ADiscGolfTourGameMode::ResolveSettledLie(ADiscActor* Disc, const FVector& FinalLocation)
@@ -3067,13 +5058,25 @@ void ADiscGolfTourGameMode::ResolveSettledLie(ADiscActor* Disc, const FVector& F
 
     ECourseSurfaceType SurfaceAtRest = LastFlightTelemetry.CourseSurface;
     FVector GroundLocation = FinalLocation;
-    TraceCourseSurfaceAtLocation(FinalLocation, SurfaceAtRest, GroundLocation);
+    const bool bSurfaceTraceHit = TraceCourseSurfaceAtLocation(
+        FinalLocation, SurfaceAtRest, GroundLocation);
+    const bool bSupportedSettledSurface =
+        DiscGolfCourseRules::IsSupportedSettledSurfaceProbe(
+            bSurfaceTraceHit, FinalLocation, GroundLocation);
+    if (!bSupportedSettledSurface)
+    {
+        // A max-flight timeout or world-edge fallthrough has no authoritative
+        // playing surface. Recover from the last proven in-bounds sample.
+        SurfaceAtRest = ECourseSurfaceType::OutOfBounds;
+    }
+    const FVector ResolvedRawLocation = SurfaceAtRest == ECourseSurfaceType::OutOfBounds
+        ? FinalLocation : GroundLocation;
     const FVector LastInBounds = SurfaceAtRest == ECourseSurfaceType::OutOfBounds
         ? FindLastInBoundsRelief(Disc->GetFlightComponent()->GetTrajectorySamples(), ThrowStartLieLocation)
-        : FinalLocation;
+        : ResolvedRawLocation;
 
     CurrentLieState = DiscGolfCourseRules::ResolveLie(
-        SurfaceAtRest, FinalLocation, LastInBounds, ActiveHole->BasketLocation);
+        SurfaceAtRest, ResolvedRawLocation, LastInBounds, ActiveHole->BasketLocation);
     CurrentLieLocation = CurrentLieState.LieLocationCm;
     CurrentLieType = CurrentLieState.LieType;
     Strokes += CurrentLieState.PenaltyStrokes;
@@ -3110,25 +5113,9 @@ void ADiscGolfTourGameMode::ResolveSettledLie(ADiscActor* Disc, const FVector& F
 
 void ADiscGolfTourGameMode::SavePracticeRoundSnapshot()
 {
-    const bool bSession6OutfitValidationNoSave = FParse::Param(
-        FCommandLine::Get(), TEXT("Session6OutfitValidationNoSave"))
-        && (FParse::Param(
-                FCommandLine::Get(), TEXT("Session6OutfitThrowSmokeTest"))
-            || FParse::Param(
-                FCommandLine::Get(), TEXT("Session6OutfitVisualCapture")));
-    const bool bSession7FullCharacterValidationNoSave = FParse::Param(
-        FCommandLine::Get(), TEXT("Session7FullCharacterValidationNoSave"))
-        && (FParse::Param(
-                FCommandLine::Get(), TEXT("Session7FullCharacterThrowSmokeTest"))
-            != FParse::Param(
-                FCommandLine::Get(), TEXT("Session7FullCharacterVisualCapture")));
-    const bool bSession8CookClosureValidationNoSave = FParse::Param(
-        FCommandLine::Get(), TEXT("Session8ValidationNoSave"))
-        && FParse::Param(
-            FCommandLine::Get(), TEXT("Session8CookClosureSmokeTest"));
-    if (bRegressionActive || bSession6OutfitValidationNoSave
-        || bSession7FullCharacterValidationNoSave
-        || bSession8CookClosureValidationNoSave) return;
+    const bool bDeveloperToolNoSave = FParse::Param(
+        FCommandLine::Get(), TEXT("DGDeveloperToolNoSave"));
+    if (bRegressionActive || bDeveloperToolNoSave) return;
     UDiscGolfTourGameInstance* GameInstance = Cast<UDiscGolfTourGameInstance>(GetGameInstance());
     UDiscGolfSaveGame* Profile = GameInstance ? GameInstance->GetProfile() : nullptr;
     if (!GameInstance || !Profile) return;
@@ -3151,6 +5138,19 @@ void ADiscGolfTourGameMode::SavePracticeRoundSnapshot()
         }
     }
     GameInstance->SaveProfile();
+    if (const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(UGameplayStatics::GetPlayerPawn(this, 0)))
+    {
+        if (const UDiscBagComponent* Bag = Golfer->GetDiscBag())
+        {
+            FString EquipmentSaveError;
+            if (!Bag->SaveEquipment(EquipmentSaveError))
+            {
+                UE_LOG(LogDiscGolfTour, Warning,
+                    TEXT("Practice profile saved but isolated equipment payload failed: %s"),
+                    *EquipmentSaveError);
+            }
+        }
+    }
 }
 
 bool ADiscGolfTourGameMode::RestorePracticeRoundSnapshot()
@@ -3238,17 +5238,48 @@ bool ADiscGolfTourGameMode::RestorePracticeRoundSnapshot()
         return false;
     }
 
+    ECourseSurfaceType RestoredLieSurface = ECourseSurfaceType::Fairway;
+    FVector RestoredLieGround = Profile->PracticeLieState.LieLocationCm;
+    FDiscGolfLieState RestoredLieState = Profile->PracticeLieState;
+    bool bRestoredLieWasCanonicalized = false;
+    if (!Profile->bPracticeHoleComplete)
+    {
+        const bool bRestoredLieSurfaceTraceHit = TraceCourseSurfaceAtLocation(
+            Profile->PracticeLieState.LieLocationCm,
+            RestoredLieSurface,
+            RestoredLieGround);
+        const bool bSupportedRestoredLie =
+            DiscGolfCourseRules::TryProjectRestoredLieToSupportedGround(
+                Profile->PracticeLieState,
+                bRestoredLieSurfaceTraceHit,
+                RestoredLieGround,
+                RestoredLieState);
+        if (!bSupportedRestoredLie
+            || RestoredLieSurface == ECourseSurfaceType::OutOfBounds)
+        {
+            UE_LOG(LogDiscGolfTour, Warning,
+                TEXT("Practice snapshot ignored because its saved lie has no supported in-course surface."));
+            return false;
+        }
+        bRestoredLieWasCanonicalized =
+            !RestoredLieState.LieLocationCm.Equals(
+                Profile->PracticeLieState.LieLocationCm, 0.01f);
+    }
+
     Strokes = Profile->PracticeStrokes;
     PenaltyStrokes = Profile->PracticePenaltyStrokes;
     bHoleComplete = Profile->bPracticeHoleComplete;
-    CurrentLieState = Profile->PracticeLieState;
+    CurrentLieState = MoveTemp(RestoredLieState);
     CurrentLieLocation = CurrentLieState.LieLocationCm;
     ThrowStartLieLocation = CurrentLieLocation;
     CurrentLieType = CurrentLieState.LieType;
     LieRulesStatusText = FString::Printf(TEXT("RESTORED - %s - %s"),
         *DiscGolfCourseRules::SurfaceName(CurrentLieState.PlayingSurface),
         *DiscGolfCourseRules::LieEffectsText(CurrentLieState.Effects));
-    MovePlayerToLie(CurrentLieLocation);
+    if (!bHoleComplete)
+    {
+        MovePlayerToLie(CurrentLieLocation);
+    }
     if (ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(UGameplayStatics::GetPlayerPawn(this, 0)))
     {
         if (UDiscBagComponent* Bag = Golfer->GetDiscBag();
@@ -3262,6 +5293,12 @@ bool ADiscGolfTourGameMode::RestorePracticeRoundSnapshot()
     ApplyShotContextToGolfer();
     UpdateCourseStatus();
     CourseStatusText += TEXT(" | PRACTICE RESTORED");
+    if (bRestoredLieWasCanonicalized)
+    {
+        UE_LOG(LogDiscGolfTour, Display,
+            TEXT("Practice snapshot lie was projected onto current supported course ground."));
+        SavePracticeRoundSnapshot();
+    }
     UE_LOG(LogDiscGolfTour, Display, TEXT("Practice snapshot restored: %s hole %d, %d strokes, %d penalties."),
         *Profile->PracticeCourseId.ToString(), Profile->PracticeHoleNumber, Strokes, PenaltyStrokes);
     return true;
@@ -3273,7 +5310,8 @@ void ADiscGolfTourGameMode::ReturnCameraToPlayer()
     {
         if (APawn* Pawn = PC->GetPawn())
         {
-            PC->SetViewTargetWithBlend(Pawn, 0.45f);
+            const float BlendSeconds = GetPlayerSettings().bReducedMotion ? 0.0f : 0.45f;
+            PC->SetViewTargetWithBlend(Pawn, BlendSeconds);
         }
     }
 }
@@ -3292,10 +5330,13 @@ void ADiscGolfTourGameMode::ResetHole()
         return;
     }
 
-    // A player reset during a regression throw must also release the regression
-    // state. StartRegressionPreset calls ResetHole before spawning its disc, so
-    // the ActiveDisc guard keeps normal suite-to-suite transitions intact.
-    const bool bCancelledActiveRegression = bRegressionActive && ActiveDisc != nullptr;
+    // Every external reset cancels regression, including the one-tick transition
+    // between suite presets. StartRegressionPreset owns the only internal reset
+    // exemption through bRegressionInternalReset.
+    const bool bCancelledActiveRegression = ShouldCancelRegressionForReset(
+        bRegressionActive, bRegressionInternalReset);
+    const bool bCancelledRegressionSuite =
+        bCancelledActiveRegression && bRegressionSuiteActive;
     if (bCancelledActiveRegression)
     {
         bRegressionActive = false;
@@ -3304,7 +5345,7 @@ void ADiscGolfTourGameMode::ResetHole()
         ActiveRegressionRenderFps = 0;
         RegressionQueue.Reset();
         RegressionQueuePosition = 0;
-        RegressionSuiteSummaries.Reset();
+        RegressionPresentationAudioSequenceBaseline = 0;
         RestoreRegressionEnvironment();
     }
 
@@ -3314,7 +5355,15 @@ void ADiscGolfTourGameMode::ResetHole()
     StopBroadcastCamera(false);
     if (ADiscGolfFlyoverRouteActor* Route = DevBootstrap ? DevBootstrap->GetFlyoverRoute() : nullptr)
     {
+        Route->OnFlyoverFinished.RemoveDynamic(this, &ADiscGolfTourGameMode::HandleFlyoverFinished);
         Route->StopPreview();
+    }
+    ActiveFlyoverRoute = nullptr;
+    if (FlyoverCameraViewToken.IsValid())
+    {
+        FString ReleaseError;
+        DiscGolfCameraViewContract::TryRelease(CameraViewState, FlyoverCameraViewToken, ReleaseError);
+        FlyoverCameraViewToken = FDiscGolfCameraViewToken();
     }
     if (ActiveDisc)
     {
@@ -3339,6 +5388,11 @@ void ADiscGolfTourGameMode::ResetHole()
     if (bCancelledActiveRegression)
     {
         TrajectoryStatusText = TEXT("Regression cancelled - ready");
+        if (bCancelledRegressionSuite)
+        {
+            FailRegressionSuiteSmoke(TEXT("Active regression was cancelled"));
+        }
+        RegressionSuiteSummaries.Reset();
     }
 }
 
@@ -3375,6 +5429,15 @@ void ADiscGolfTourGameMode::RecordPresentationAudioEvent(
     }
     LastPresentationAudioEvent = ContextualEvent;
     ++PresentationAudioEventSequence;
+
+    if (PresentationAudioRouter)
+    {
+        const FDiscGolfPlayerSettings Settings = GetPlayerSettings();
+        const float OutputGain01 = FMath::Clamp(
+            Settings.MasterVolume * Settings.EffectsVolume, 0.0f, 1.0f);
+        PresentationAudioRouter->ConsumeSemanticEvent(
+            ContextualEvent, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, OutputGain01);
+    }
 
     UE_LOG(LogDiscGolfTour, Display,
         TEXT("Presentation audio event #%llu: %s | %s | intensity %.2f | pitch %.2f"),
@@ -3436,13 +5499,30 @@ void ADiscGolfTourGameMode::RunCourseRulesFixture(const FString& FixtureName)
     const bool bObFixture = FixtureName.Equals(TEXT("OB"), ESearchCase::IgnoreCase)
         || FixtureName.Equals(TEXT("OutOfBounds"), ESearchCase::IgnoreCase);
     const bool bHazardFixture = FixtureName.Equals(TEXT("Hazard"), ESearchCase::IgnoreCase);
-    if (!bObFixture && !bHazardFixture)
+    const bool bWaterFixture = FixtureName.Equals(TEXT("Water"), ESearchCase::IgnoreCase);
+    if (!bObFixture && !bHazardFixture && !bWaterFixture)
     {
-        TrajectoryStatusText = TEXT("Rules fixture must be OB or Hazard");
+        TrajectoryStatusText = TEXT("Rules fixture must be OB, Hazard, or Water");
         return;
     }
 
-    if (ActiveHole->CourseId != TEXT("RegressionCourse") && !LoadCourse(TEXT("Regression")))
+    if (bWaterFixture)
+    {
+        if ((!HasAuthoredRound()
+                || ActiveCourseManifest.CourseId != TEXT("PineRidgeChampionship"))
+            && !LoadCourse(TEXT("PineRidge")))
+        {
+            TrajectoryStatusText = TEXT("Water fixture could not load Pine Ridge");
+            return;
+        }
+        if ((!ActiveHole || ActiveHole->HoleNumber != 3) && !LoadRoundHole(3))
+        {
+            TrajectoryStatusText = TEXT("Water fixture could not activate Pine Ridge Hole 3");
+            return;
+        }
+    }
+    else if (ActiveHole->CourseId != TEXT("RegressionCourse")
+        && !LoadCourse(TEXT("Regression")))
     {
         TrajectoryStatusText = TEXT("Rules fixture could not load the regression course");
         return;
@@ -3452,10 +5532,34 @@ void ADiscGolfTourGameMode::RunCourseRulesFixture(const FString& FixtureName)
     ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(UGameplayStatics::GetPlayerPawn(this, 0));
     if (!Golfer) return;
 
-    const FVector Direction = bObFixture ? FVector(0.0f, -1.0f, 0.0f) : FVector(0.0f, 1.0f, 0.0f);
-    CurrentLieLocation = bObFixture
-        ? FVector(6200.0f, -2450.0f, 0.0f)
-        : FVector(8300.0f, 2900.0f, 0.0f);
+    const FVector Direction = bObFixture
+        ? FVector(0.0f, -1.0f, 0.0f) : FVector(0.0f, 1.0f, 0.0f);
+    if (bWaterFixture)
+    {
+        const FDiscGolfHoleBlockoutDefinition* HoleDefinition =
+            ActiveHoleDefinitions.IsValidIndex(RoundState.CurrentHoleIndex)
+                ? &ActiveHoleDefinitions[RoundState.CurrentHoleIndex] : nullptr;
+        const FDiscGolfBlockoutSurfaceDefinition* WaterSurface = HoleDefinition
+            ? HoleDefinition->Surfaces.FindByPredicate(
+                [](const FDiscGolfBlockoutSurfaceDefinition& Surface)
+                {
+                    return Surface.SurfaceType == ECourseSurfaceType::Hazard
+                        && Surface.SurfaceId.ToString().Contains(TEXT("LakeWater"));
+                })
+            : nullptr;
+        if (!WaterSurface)
+        {
+            TrajectoryStatusText = TEXT("Water fixture could not resolve authored GalleryLakeWater authority");
+            return;
+        }
+        CurrentLieLocation = WaterSurface->LocationCm;
+    }
+    else
+    {
+        CurrentLieLocation = bObFixture
+            ? FVector(6200.0f, -2450.0f, 0.0f)
+            : FVector(8300.0f, 2900.0f, 0.0f);
+    }
     CurrentLieState = DiscGolfCourseRules::ResolveLie(
         ECourseSurfaceType::Fairway,
         CurrentLieLocation,
@@ -3479,8 +5583,17 @@ void ADiscGolfTourGameMode::RunCourseRulesFixture(const FString& FixtureName)
     Command.TimingError = 0.0f;
     TrajectoryStatusText = bObFixture
         ? TEXT("RUNNING OUT-OF-BOUNDS RULES FIXTURE")
-        : TEXT("RUNNING HAZARD RULES FIXTURE");
-    RequestThrow(Command);
+        : bWaterFixture
+            ? TEXT("RUNNING AUTHORED PINE RIDGE WATER RULES FIXTURE")
+            : TEXT("RUNNING HAZARD RULES FIXTURE");
+    FString CommandError;
+    if (!TryBindAutomatedPlayerCommand(Golfer, Command, CommandError)
+        || !RequestThrow(Command))
+    {
+        TrajectoryStatusText = FString::Printf(
+            TEXT("RULES FIXTURE THROW REJECTED - %s"),
+            CommandError.IsEmpty() ? TEXT("authoritative launch failed") : *CommandError);
+    }
 }
 
 void ADiscGolfTourGameMode::StartBroadcastCameraForShot(
@@ -3490,6 +5603,20 @@ void ADiscGolfTourGameMode::StartBroadcastCameraForShot(
 {
     StopBroadcastCamera(false);
     if (!GetWorld() || !Disc || !ActiveHole) return;
+    if (!GetPlayerSettings().bAutoFollowDisc) return;
+
+    FString AcquireError;
+    if (!DiscGolfCameraViewContract::TryAcquire(
+        CameraViewState,
+        EDiscGolfCameraViewOwner::LiveShot,
+        EDiscGolfCameraViewMode::FollowDisc,
+        BroadcastCameraViewToken,
+        AcquireError))
+    {
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Broadcast camera view blocked: %s"), *AcquireError);
+        return;
+    }
 
     BroadcastCameraDirector = GetWorld()->SpawnActor<ADiscBroadcastCameraDirector>(
         ReleaseLocationCm, FRotator::ZeroRotator);
@@ -3498,22 +5625,34 @@ void ADiscGolfTourGameMode::StartBroadcastCameraForShot(
     {
         if (BroadcastCameraDirector) BroadcastCameraDirector->Destroy();
         BroadcastCameraDirector = nullptr;
-        if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0))
-        {
-            PC->SetViewTargetWithBlend(Disc, 0.20f);
-        }
+        FString ReleaseError;
+        DiscGolfCameraViewContract::TryRelease(
+            CameraViewState, BroadcastCameraViewToken, ReleaseError);
+        BroadcastCameraViewToken = FDiscGolfCameraViewToken();
+        ReturnCameraToPlayer();
         return;
     }
 
     if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0))
     {
-        PC->SetViewTargetWithBlend(BroadcastCameraDirector, 0.16f);
+        const float BlendSeconds = GetPlayerSettings().bReducedMotion ? 0.0f : 0.16f;
+        PC->SetViewTargetWithBlend(BroadcastCameraDirector, BlendSeconds);
     }
 }
 
 void ADiscGolfTourGameMode::StopBroadcastCamera(bool bPreserveForCameraBlend)
 {
-    if (!BroadcastCameraDirector) return;
+    if (!BroadcastCameraDirector)
+    {
+        if (BroadcastCameraViewToken.IsValid())
+        {
+            FString ReleaseError;
+            DiscGolfCameraViewContract::TryRelease(
+                CameraViewState, BroadcastCameraViewToken, ReleaseError);
+        }
+        BroadcastCameraViewToken = FDiscGolfCameraViewToken();
+        return;
+    }
 
     ADiscBroadcastCameraDirector* PreviousDirector = BroadcastCameraDirector;
     BroadcastCameraDirector = nullptr;
@@ -3526,6 +5665,14 @@ void ADiscGolfTourGameMode::StopBroadcastCamera(bool bPreserveForCameraBlend)
     {
         PreviousDirector->Destroy();
     }
+    FString ReleaseError;
+    if (!DiscGolfCameraViewContract::TryRelease(
+        CameraViewState, BroadcastCameraViewToken, ReleaseError))
+    {
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Broadcast camera release ignored: %s"), *ReleaseError);
+    }
+    BroadcastCameraViewToken = FDiscGolfCameraViewToken();
 }
 
 UDiscTrajectorySubsystem* ADiscGolfTourGameMode::GetTrajectorySubsystem() const
@@ -3547,6 +5694,84 @@ FDiscTrajectorySummary ADiscGolfTourGameMode::GetLastTrajectorySummary() const
         : FDiscTrajectorySummary();
 }
 
+bool ADiscGolfTourGameMode::DeferNextTrajectoryExport(FString& OutError)
+{
+    UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem();
+    if (!Trajectories)
+    {
+        OutError = TEXT("Trajectory subsystem is unavailable");
+        return false;
+    }
+    if (!Trajectories->DeferNextCaptureExport(OutError))
+    {
+        return false;
+    }
+
+    TrajectoryStatusText = TEXT("TRAJECTORY EXPORT DEFERRED - waiting for completed flight");
+    return true;
+}
+
+bool ADiscGolfTourGameMode::FlushDeferredTrajectoryExport(
+    FDiscTrajectorySummary& OutSummary,
+    FString& OutError)
+{
+    UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem();
+    if (!Trajectories)
+    {
+        OutSummary = FDiscTrajectorySummary();
+        OutError = TEXT("Trajectory subsystem is unavailable");
+        return false;
+    }
+    if (!Trajectories->FlushDeferredCaptureExport(OutSummary, OutError))
+    {
+        TrajectoryStatusText = FString::Printf(TEXT("DEFERRED EXPORT FAILED - %s"), *OutError);
+        return false;
+    }
+
+    TrajectoryStatusText = FString::Printf(
+        TEXT("EXPORTED DEFERRED %d samples | air %.1f m | final %.1f m"),
+        OutSummary.SampleCount,
+        OutSummary.AirCarryMeters,
+        OutSummary.FinalCarryMeters);
+    return true;
+}
+
+bool ADiscGolfTourGameMode::DiscardDeferredTrajectoryExport()
+{
+    UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem();
+    if (!Trajectories || !Trajectories->DiscardDeferredCaptureExport())
+    {
+        return false;
+    }
+
+    TrajectoryStatusText = TEXT("Trajectory auto-export ready");
+    return true;
+}
+
+bool ADiscGolfTourGameMode::IsTrajectoryExportDeferralArmed() const
+{
+    const UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem();
+    return Trajectories && Trajectories->IsCaptureExportDeferralArmed();
+}
+
+bool ADiscGolfTourGameMode::HasPendingDeferredTrajectoryExport() const
+{
+    const UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem();
+    return Trajectories && Trajectories->HasPendingDeferredCaptureExport();
+}
+
+bool ADiscGolfTourGameMode::GetPendingDeferredTrajectorySummary(
+    FDiscTrajectorySummary& OutSummary) const
+{
+    const UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem();
+    if (!Trajectories)
+    {
+        OutSummary = FDiscTrajectorySummary();
+        return false;
+    }
+    return Trajectories->GetPendingDeferredCaptureSummary(OutSummary);
+}
+
 FString ADiscGolfTourGameMode::GetSelectedRegressionPresetName() const
 {
     const UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem();
@@ -3562,6 +5787,8 @@ void ADiscGolfTourGameMode::CompleteDiscCapture(ADiscActor* Disc, bool bHoledOut
     if (Disc) RecordThrowHistory(Disc, bHoledOut);
     UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem();
     if (!Disc || !Trajectories) return;
+    const bool bSelectedDiagnosticOnly = bRegressionActive && !bRegressionSuiteActive
+        && !Trajectories->AreRegressionPresetsAuthoritative();
 
     const UDiscFlightComponent* Flight = Disc->GetFlightComponent();
     if (!Flight) return;
@@ -3575,22 +5802,61 @@ void ADiscGolfTourGameMode::CompleteDiscCapture(ADiscActor* Disc, bool bHoledOut
         Disc->GetResolvedDisc(), LastRelease, Flight->GetTrajectorySamples(), Flight->GetGroundTransitions(),
         LastFlightTelemetry, CurrentLieState, bHoledOut, PresetId, RenderFps, Summary, Error))
     {
-        TrajectoryStatusText = FString::Printf(TEXT("EXPORT FAILED - %s"), *Error);
+        TrajectoryStatusText = FString::Printf(TEXT("%sEXPORT FAILED - %s"),
+            bSelectedDiagnosticOnly ? TEXT("DIAGNOSTIC-ONLY | ") : TEXT(""), *Error);
         UE_LOG(LogDiscGolfTour, Error, TEXT("Trajectory export failed: %s"), *Error);
         return;
     }
 
+    const bool bExportDeferred = Trajectories->HasPendingDeferredCaptureExport();
+#if 0 // Throw Lab capture is available only to direct development/test subsystem callers.
+    if (!bRegressionActive && bThrowLabActive)
+    {
+        UDiscThrowLabSubsystem* ThrowLab = GetThrowLabSubsystem();
+        FString ThrowLabError;
+        if (!ThrowLab || !ThrowLab->RecordCompletedThrow(
+            Disc->GetResolvedDisc(), LastRelease, Flight->GetTrajectorySamples(),
+            Flight->GetGroundTransitions(), LastFlightTelemetry, Summary, ThrowLabError))
+        {
+            ThrowLabStatusText = ThrowLab
+                ? FString::Printf(TEXT("THROW LAB RECORD REJECTED - %s"), *ThrowLabError)
+                : TEXT("THROW LAB RECORD REJECTED - subsystem unavailable");
+            UE_LOG(LogDiscGolfTour, Error, TEXT("%s"), *ThrowLabStatusText);
+        }
+        else
+        {
+            ThrowLabStatusText = FString::Printf(TEXT("THROW LAB CAPTURED | %s | %d BOUNDED SAMPLES"),
+                *Summary.CaptureId, ThrowLab->GetSelectedRecord()
+                    ? ThrowLab->GetSelectedRecord()->ReplaySamples.Num() : 0);
+            UE_LOG(LogDiscGolfTour, Display, TEXT("%s"), *ThrowLabStatusText);
+        }
+    }
+#endif
     if (bRegressionActive)
     {
         RegressionSuiteSummaries.Add(Summary);
-        TrajectoryStatusText = FString::Printf(TEXT("%s - %s | carry %.2f m | apex %.2f m"),
+        TrajectoryStatusText = FString::Printf(TEXT("%s%s - %s | carry %.2f m | apex %.2f m%s"),
+            bSelectedDiagnosticOnly ? TEXT("DIAGNOSTIC-ONLY | ") : TEXT(""),
             Summary.bRegressionPassed ? TEXT("REGRESSION PASS") : TEXT("REGRESSION FAIL"),
-            *Summary.PresetId.ToString(), Summary.FinalCarryMeters, Summary.ApexMeters);
+            *Summary.PresetId.ToString(), Summary.FinalCarryMeters, Summary.ApexMeters,
+            bExportDeferred ? TEXT(" | export deferred") : TEXT(""));
+    }
+    else if (bExportDeferred)
+    {
+        TrajectoryStatusText = FString::Printf(
+            TEXT("CAPTURED %d samples | export deferred"),
+            Summary.SampleCount);
     }
     else
     {
+#if DG_RELEASE_V05_SCOPE
+        TrajectoryStatusText = FString::Printf(
+            TEXT("CAPTURED %d samples | air %.1f m | final %.1f m"),
+            Summary.SampleCount, Summary.AirCarryMeters, Summary.FinalCarryMeters);
+#else
         TrajectoryStatusText = FString::Printf(TEXT("EXPORTED %d samples | air %.1f m | final %.1f m"),
             Summary.SampleCount, Summary.AirCarryMeters, Summary.FinalCarryMeters);
+#endif
     }
 }
 
@@ -3631,13 +5897,49 @@ void ADiscGolfTourGameMode::RecordThrowHistory(ADiscActor* Disc, bool bHoledOut)
 void ADiscGolfTourGameMode::StoreReplayCapture(ADiscActor* Disc)
 {
     const UDiscFlightComponent* Flight = Disc ? Disc->GetFlightComponent() : nullptr;
+    bLastReplayCaptureActualSampleProvenanceValid = false;
+    bLastReplayCaptureNominalRateValid = false;
     if (!Flight || Flight->GetTrajectorySamples().Num() < 2) return;
-    DiscGolfPlayerExperience::BuildBoundedReplaySamples(
-        Flight->GetTrajectorySamples(), LastReplaySamples);
+    FString SelectionError;
+    const FDiscActualReplaySelectionPolicy SelectionPolicy;
+    if (!DiscGolfPresentationMath::BuildBoundedActualReplaySamples(
+        Flight->GetTrajectorySamples(), Flight->GetGroundTransitions(),
+        SelectionPolicy, LastReplaySamples, SelectionError))
+    {
+        LastReplaySamples.Reset();
+        ReplayStatusText = FString::Printf(
+            TEXT("Replay capture rejected - %s"), *SelectionError);
+        UE_LOG(LogDiscGolfTour, Warning,
+            TEXT("Strict actual-sample replay capture rejected: %s"), *SelectionError);
+        return;
+    }
     LastReplayDisc = Disc->GetResolvedDisc();
     LastReplayRelease = LastRelease;
     const float Duration = LastReplaySamples.Last().TimeSeconds - LastReplaySamples[0].TimeSeconds;
-    ReplayStatusText = FString::Printf(TEXT("Replay ready - %.1f s - %d solver samples"),
+    bLastReplayCaptureActualSampleProvenanceValid = LastReplaySamples.Num() >= 2;
+    for (const FDiscTrajectorySample& Selected : LastReplaySamples)
+    {
+        bLastReplayCaptureActualSampleProvenanceValid &=
+            Flight->GetTrajectorySamples().ContainsByPredicate(
+                [&Selected](const FDiscTrajectorySample& Actual)
+                {
+                    return Actual.TimeSeconds == Selected.TimeSeconds
+                        && Actual.WorldLocationCm == Selected.WorldLocationCm
+                        && Actual.VelocityMps == Selected.VelocityMps
+                        && Actual.DiscNormalWorld == Selected.DiscNormalWorld
+                        && Actual.WindMps == Selected.WindMps
+                        && Actual.SpinRpm == Selected.SpinRpm
+                        && Actual.AngleOfAttackDeg == Selected.AngleOfAttackDeg
+                        && Actual.GroundState == Selected.GroundState
+                        && Actual.GroundSurface == Selected.GroundSurface
+                        && Actual.CourseSurface == Selected.CourseSurface
+                        && Actual.GroundContactCount == Selected.GroundContactCount;
+                });
+    }
+    bLastReplayCaptureNominalRateValid = Duration > SMALL_NUMBER
+        && static_cast<float>(LastReplaySamples.Num() - 1) / Duration
+            <= SelectionPolicy.MaxSampleRateHz + KINDA_SMALL_NUMBER;
+    ReplayStatusText = FString::Printf(TEXT("Replay ready - %.1f s - %d bounded actual samples"),
         Duration, LastReplaySamples.Num());
 }
 
@@ -3656,7 +5958,39 @@ void ADiscGolfTourGameMode::ToggleShotTracer()
 
 void ADiscGolfTourGameMode::CycleReplayCamera()
 {
-    if (ReplayActor) ReplayActor->CycleCameraMode();
+    if (ReplayActor)
+    {
+        ReplayActor->CycleCameraMode();
+        ReplayStatusText = FString::Printf(TEXT("Instant replay - %s - %.2fx"),
+            *GetReplayCameraLabel(), ReplayActor->GetPlaybackRate());
+    }
+}
+
+void ADiscGolfTourGameMode::ToggleReplayPause()
+{
+    if (!ReplayActor) return;
+    if (ReplayActor->IsReplayPaused()) ReplayActor->ResumeReplay();
+    else ReplayActor->PauseReplay();
+    ReplayStatusText = FString::Printf(TEXT("Instant replay - %s - %.2fx"),
+        ReplayActor->IsReplayPaused() ? TEXT("PAUSED") : TEXT("PLAYING"),
+        ReplayActor->GetPlaybackRate());
+}
+
+void ADiscGolfTourGameMode::SeekReplayRelative(float DeltaSeconds)
+{
+    if (!ReplayActor || !FMath::IsFinite(DeltaSeconds)) return;
+    ReplayActor->SeekReplay(ReplayActor->GetPlaybackTimeSeconds() + DeltaSeconds);
+    ReplayStatusText = FString::Printf(TEXT("Instant replay - %.1f / %.1f s - %.2fx"),
+        ReplayActor->GetPlaybackTimeSeconds(), ReplayActor->GetDurationSeconds(),
+        ReplayActor->GetPlaybackRate());
+}
+
+void ADiscGolfTourGameMode::CycleReplayPlaybackRate()
+{
+    if (!ReplayActor) return;
+    const float NewRate = ReplayActor->CyclePlaybackRate();
+    ReplayStatusText = FString::Printf(TEXT("Instant replay - %.2fx - %s"),
+        NewRate, ReplayActor->IsReplayPaused() ? TEXT("PAUSED") : TEXT("PLAYING"));
 }
 
 FString ADiscGolfTourGameMode::GetReplayCameraLabel() const
@@ -3676,9 +6010,20 @@ void ADiscGolfTourGameMode::ToggleInstantReplay()
         ReplayStatusText = TEXT("Replay cancelled");
         return;
     }
-    if (ActiveDisc || bRegressionActive)
+    const ADiscGolfTourPlayerController* TourPC = Cast<ADiscGolfTourPlayerController>(
+        UGameplayStatics::GetPlayerController(this, 0));
+    if (bMainMenuVisible || ActiveDisc || bRegressionActive || bLieTransitionActive || bScorecardVisible
+        || bHoleIntroActive || IsCourseFlyoverActive() || BroadcastCameraDirector
+        || (TourPC && (TourPC->IsCharacterCreatorOpen() || TourPC->IsControlsMenuOpen())))
     {
-        ReplayStatusText = TEXT("Replay unavailable while a shot or suite is running");
+        ReplayStatusText = TEXT("Replay unavailable while another presentation is active");
+        return;
+    }
+    if (const ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(
+            UGameplayStatics::GetPlayerPawn(this, 0));
+        Golfer && Golfer->IsAnimatedThrowActive())
+    {
+        ReplayStatusText = TEXT("Replay unavailable while a character throw is active");
         return;
     }
     if (LastReplaySamples.Num() < 2 || !GetWorld())
@@ -3687,24 +6032,42 @@ void ADiscGolfTourGameMode::ToggleInstantReplay()
         return;
     }
 
+    FString AcquireError;
+    if (!DiscGolfCameraViewContract::TryAcquire(
+        CameraViewState,
+        EDiscGolfCameraViewOwner::Replay,
+        EDiscGolfCameraViewMode::ShotReplay,
+        ReplayCameraViewToken,
+        AcquireError))
+    {
+        ReplayStatusText = FString::Printf(TEXT("Replay camera blocked - %s"), *AcquireError);
+        return;
+    }
+
     ReplayActor = GetWorld()->SpawnActor<ADiscReplayActor>(
         LastReplaySamples[0].WorldLocationCm,
         FRotator::ZeroRotator);
-    if (!ReplayActor || !ReplayActor->InitializeReplay(LastReplaySamples, 0.75f))
+    const FDiscGolfPlayerSettings Settings = GetPlayerSettings();
+    if (!ReplayActor || !ReplayActor->InitializeReplay(LastReplaySamples, Settings.ReplaySpeed))
     {
         if (ReplayActor) ReplayActor->Destroy();
         ReplayActor = nullptr;
         ReplayStatusText = TEXT("Replay could not start from the recorded samples");
+        FString ReleaseError;
+        DiscGolfCameraViewContract::TryRelease(
+            CameraViewState, ReplayCameraViewToken, ReleaseError);
+        ReplayCameraViewToken = FDiscGolfCameraViewToken();
         ReturnCameraToPlayer();
         return;
     }
+    ReplayActor->SetReducedMotion(Settings.bReducedMotion);
 
     ReplayActor->OnReplayFinished.AddDynamic(this, &ADiscGolfTourGameMode::HandleReplayFinished);
     ReplayStatusText = FString::Printf(TEXT("Instant replay - %.2fx - %.1f s recorded"),
         ReplayActor->GetPlaybackRate(), ReplayActor->GetDurationSeconds());
     if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0))
     {
-        PC->SetViewTargetWithBlend(ReplayActor, 0.25f);
+        PC->SetViewTargetWithBlend(ReplayActor, Settings.bReducedMotion ? 0.0f : 0.25f);
     }
     RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveReplay(true),
         LastReplaySamples[0].WorldLocationCm, 0.0f, true);
@@ -3718,7 +6081,11 @@ void ADiscGolfTourGameMode::StopInstantReplay(bool bReturnCamera)
         ReplayActor->Destroy();
         ReplayActor = nullptr;
     }
-    if (bReturnCamera) ReturnCameraToPlayer();
+    FString ReleaseError;
+    const bool bReleased = DiscGolfCameraViewContract::TryRelease(
+        CameraViewState, ReplayCameraViewToken, ReleaseError);
+    ReplayCameraViewToken = FDiscGolfCameraViewToken();
+    if (bReturnCamera && bReleased) ReturnCameraToPlayer();
 }
 
 void ADiscGolfTourGameMode::HandleReplayFinished(ADiscReplayActor* FinishedReplay)
@@ -3730,6 +6097,30 @@ void ADiscGolfTourGameMode::HandleReplayFinished(ADiscReplayActor* FinishedRepla
     RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveReplay(false),
         LastReplaySamples.IsEmpty() ? FVector::ZeroVector : LastReplaySamples.Last().WorldLocationCm,
         Duration, true);
+}
+
+void ADiscGolfTourGameMode::HandlePlayabilityFailure(FDGPlayabilityCheckResult Result)
+{
+    LastPlayabilityFailure = MoveTemp(Result);
+    ++PlayabilityFailureCount;
+    UE_LOG(LogDiscGolfTour, Error,
+        TEXT("PLAYABILITY FAILURE: check=%s gate=%d code=%d blocking=%s state=%s message=%s"),
+        *LastPlayabilityFailure.CheckId.ToString(),
+        static_cast<int32>(LastPlayabilityFailure.GateLevel),
+        static_cast<int32>(LastPlayabilityFailure.FailureCode),
+        LastPlayabilityFailure.bBlocking ? TEXT("yes") : TEXT("no"),
+        PlayabilityMonitor ? *PlayabilityMonitor->CurrentStateName : TEXT("Unavailable"),
+        *LastPlayabilityFailure.Message);
+    if (LastPlayabilityFailure.FailureCode == EDGPlayabilityFailureCode::Timeout
+        && LastPlayabilityFailure.CheckId == TEXT("DiscInFlight")
+        && ActiveDisc
+        && ActiveDisc->GetFlightComponent()->IsFlying())
+    {
+        // The monitor is an independent escape hatch if the solver stops
+        // making progress. The normal settled delegate owns lie relief,
+        // capture cleanup, camera return, and save persistence.
+        ActiveDisc->GetFlightComponent()->StopFlight(true);
+    }
 }
 
 float ADiscGolfTourGameMode::GetReplayProgress01() const
@@ -3747,15 +6138,16 @@ float ADiscGolfTourGameMode::GetReplayDurationSeconds() const
 
 float ADiscGolfTourGameMode::GetReplayPlaybackRate() const
 {
-    return ReplayActor ? ReplayActor->GetPlaybackRate() : 0.75f;
+    return ReplayActor ? ReplayActor->GetPlaybackRate() : GetPlayerSettings().ReplaySpeed;
 }
 
 FString ADiscGolfTourGameMode::GetPresentationStatusText() const
 {
     if (ReplayActor)
     {
-        return FString::Printf(TEXT("INSTANT REPLAY  %3.0f%%  |  %.2fx  |  V / Right Shoulder cancel"),
-            ReplayActor->GetProgress01() * 100.0f, ReplayActor->GetPlaybackRate());
+        return FString::Printf(TEXT("INSTANT REPLAY  %3.0f%%  |  %.2fx  |  %s  |  V / Right Shoulder cancel"),
+            ReplayActor->GetProgress01() * 100.0f, ReplayActor->GetPlaybackRate(),
+            ReplayActor->IsReplayPaused() ? TEXT("PAUSED") : TEXT("PLAYING"));
     }
     return FString::Printf(TEXT("TRACER %s  |  %s  |  [T toggle | V replay]"),
         bShotTracerEnabled ? TEXT("ON") : TEXT("OFF"), *ReplayStatusText);
@@ -3790,7 +6182,8 @@ void ADiscGolfTourGameMode::DrawShotTracer() const
 
     TArray<int32> Indices;
     DiscGolfPresentationMath::BuildTracerSampleIndices(*Samples, Indices);
-    const bool bReplaying = ReplayActor != nullptr;
+    const FColor PreferredTracerColor = DiscGolfPlayerExperience::ResolveTracerColor(
+        GetPlayerSettings().TracerColorPreset).ToFColor(true);
     for (int32 PointIndex = 1; PointIndex < Indices.Num(); ++PointIndex)
     {
         const FDiscTrajectorySample& A = (*Samples)[Indices[PointIndex - 1]];
@@ -3799,9 +6192,7 @@ void ADiscGolfTourGameMode::DrawShotTracer() const
             || B.GroundState != EDiscGroundState::Airborne;
         const FColor Color = bGround
             ? FColor(255, 145, 32)
-            : bReplaying
-                ? FColor(255, 220, 70)
-                : FColor(55, 225, 255);
+            : PreferredTracerColor;
         DrawDebugLine(GetWorld(), A.WorldLocationCm, B.WorldLocationCm, Color, false, 0.0f, 0, bGround ? 5.0f : 4.0f);
     }
 
@@ -3834,9 +6225,21 @@ void ADiscGolfTourGameMode::CyclePhysicsRegressionPreset()
 
 void ADiscGolfTourGameMode::SaveRegressionEnvironment()
 {
-    if (bRegressionEnvironmentSaved || !WindDirector) return;
-    SavedBaseWindMps = WindDirector->BaseWindMps;
-    SavedGustAmplitudeMps = WindDirector->GustAmplitudeMps;
+    if (bRegressionEnvironmentSaved) return;
+    if (WindDirector)
+    {
+        FString WindError;
+        if (!WindDirector->ValidatePhysicsWindConfiguration(WindError))
+        {
+            TrajectoryStatusText = FString::Printf(
+                TEXT("Regression rejected invalid source wind: %s"), *WindError);
+            UE_LOG(LogDiscGolfTour, Error, TEXT("%s"), *TrajectoryStatusText);
+            return;
+        }
+        SavedBaseWindMps = WindDirector->BaseWindMps;
+        SavedGustAmplitudeMps = WindDirector->GustAmplitudeMps;
+        SavedGustFrequencyHz = WindDirector->GustFrequencyHz;
+    }
     if (const IConsoleVariable* MaxFpsVariable = IConsoleManager::Get().FindConsoleVariable(TEXT("t.MaxFPS")))
     {
         SavedMaxFps = MaxFpsVariable->GetFloat();
@@ -3846,10 +6249,18 @@ void ADiscGolfTourGameMode::SaveRegressionEnvironment()
 
 void ADiscGolfTourGameMode::RestoreRegressionEnvironment()
 {
-    if (bRegressionEnvironmentSaved && WindDirector)
+    if (!bRegressionEnvironmentSaved) return;
+    if (WindDirector)
     {
-        WindDirector->BaseWindMps = SavedBaseWindMps;
-        WindDirector->GustAmplitudeMps = SavedGustAmplitudeMps;
+        FString WindError;
+        if (!WindDirector->TryConfigurePhysicsWind(
+            SavedBaseWindMps, SavedGustAmplitudeMps,
+            SavedGustFrequencyHz, WindError))
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("Regression could not restore its validated source wind: %s"),
+                *WindError);
+        }
     }
     bRegressionEnvironmentSaved = false;
     if (GEngine && GetWorld())
@@ -3873,15 +6284,30 @@ void ADiscGolfTourGameMode::StartRegressionPreset(int32 PresetIndex)
     ActiveRegressionRenderFps = Preset.RenderFps;
     if (WindDirector)
     {
-        WindDirector->BaseWindMps = Preset.WindMps;
-        WindDirector->GustAmplitudeMps = 0.0f;
+        FString WindError;
+        if (!WindDirector->TryConfigurePhysicsWind(
+            Preset.WindMps, 0.0f, WindDirector->GustFrequencyHz, WindError))
+        {
+            const FString Failure = FString::Printf(
+                TEXT("Regression preset %s has invalid wind: %s"),
+                *Preset.PresetId.ToString(), *WindError);
+            RegressionSuiteSummaries.Add(
+                UDiscTrajectorySubsystem::MakeRegressionLaunchFailureSummary(
+                    Preset, EDGHandedness::Right, Failure));
+            TrajectoryStatusText = Failure;
+            UE_LOG(LogDiscGolfTour, Error, TEXT("%s"), *Failure);
+            FinishRegressionRun();
+            return;
+        }
     }
     if (GEngine && GetWorld())
     {
         GEngine->Exec(GetWorld(), *FString::Printf(TEXT("t.MaxFPS %d"), Preset.RenderFps));
     }
 
+    bRegressionInternalReset = true;
     ResetHole();
+    bRegressionInternalReset = false;
     ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(UGameplayStatics::GetPlayerPawn(this, 0));
     if (!Golfer)
     {
@@ -3903,8 +6329,25 @@ void ADiscGolfTourGameMode::StartRegressionPreset(int32 PresetIndex)
         Golfer->AddActorWorldRotation(FRotator(0.0f, Preset.AimOffsetDeg, 0.0f));
     }
 
-    TrajectoryStatusText = FString::Printf(TEXT("RUNNING %s"), *Preset.DisplayName.ToString());
-    LaunchThrow(Preset.MakeCommand(Golfer->GetActorForwardVector()));
+    const bool bSelectedDiagnosticOnly = !bRegressionSuiteActive
+        && !Trajectories->AreRegressionPresetsAuthoritative();
+    TrajectoryStatusText = FString::Printf(TEXT("%sRUNNING %s"),
+        bSelectedDiagnosticOnly ? TEXT("DIAGNOSTIC-ONLY | ") : TEXT(""),
+        *Preset.DisplayName.ToString());
+    const FThrowCommand Command = Preset.MakeCommand(Golfer->GetActorForwardVector());
+    if (!LaunchThrow(Command, nullptr, true))
+    {
+        const FString Failure = FString::Printf(
+            TEXT("Authoritative throw boundary rejected regression preset %s"),
+            *Preset.PresetId.ToString());
+        RegressionSuiteSummaries.Add(
+            UDiscTrajectorySubsystem::MakeRegressionLaunchFailureSummary(
+                Preset, Command.Handedness, Failure));
+        TrajectoryStatusText = FString::Printf(TEXT("%sREGRESSION FAIL - %s"),
+            bSelectedDiagnosticOnly ? TEXT("DIAGNOSTIC-ONLY | ") : TEXT(""), *Failure);
+        UE_LOG(LogDiscGolfTour, Error, TEXT("%s"), *TrajectoryStatusText);
+        FinishRegressionRun();
+    }
 }
 
 void ADiscGolfTourGameMode::RunSelectedPhysicsRegression()
@@ -3920,43 +6363,100 @@ void ADiscGolfTourGameMode::RunSelectedPhysicsRegression()
         return;
     }
     SaveRegressionEnvironment();
+    if (!bRegressionEnvironmentSaved)
+    {
+        if (TrajectoryStatusText.IsEmpty())
+        {
+            TrajectoryStatusText = TEXT("Regression could not validate its source environment");
+        }
+        return;
+    }
     bRegressionActive = true;
     bRegressionSuiteActive = false;
-    RegressionPresentationAudioTraceBaseline = PresentationAudioEventTrace.Num();
+    RegressionPresentationAudioSequenceBaseline = PresentationAudioEventSequence;
     RegressionSuiteSummaries.Reset();
     StartRegressionPreset(SelectedRegressionPresetIndex);
 }
 
 void ADiscGolfTourGameMode::RunPhysicsRegressionSuite()
 {
+    UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem();
+    const auto BeginCurrentReport = [this, Trajectories](FString& OutFailure)
+    {
+        LastRegressionReportPath.Reset();
+        if (!Trajectories)
+        {
+            OutFailure = TEXT("Trajectory subsystem is unavailable");
+            return false;
+        }
+        FString ReportError;
+        if (!Trajectories->BeginRegressionSuiteReport(
+                LastRegressionReportPath, ReportError))
+        {
+            OutFailure = FString::Printf(
+                TEXT("Regression report preflight failed: %s"), *ReportError);
+            return false;
+        }
+        OutFailure.Reset();
+        return true;
+    };
+
     if (bRegressionActive || ActiveDisc)
     {
-        TrajectoryStatusText = TEXT("Wait for the current throw or regression to finish");
+        const FString Failure = TEXT("Wait for the current throw or regression to finish");
+        TrajectoryStatusText = Failure;
+        if (bRegressionSuiteSmokeTestActive)
+        {
+            FailRegressionSuiteSmoke(Failure);
+        }
         return;
     }
+
+    RegressionSuiteSummaries.Reset();
+    if (!bRegressionSuiteSmokeTestActive)
+    {
+        FString MarkerFailure;
+        if (!BeginCurrentReport(MarkerFailure))
+        {
+            TrajectoryStatusText = MarkerFailure;
+            FailRegressionSuiteSmoke(MarkerFailure);
+            return;
+        }
+    }
+
     if (ActiveHole && ActiveHole->CourseId != TEXT("RegressionCourse") && !LoadCourse(TEXT("Regression")))
     {
-        TrajectoryStatusText = TEXT("Regression course could not be loaded");
+        const FString Failure = TEXT("Regression course could not be loaded");
+        TrajectoryStatusText = Failure;
+        FailRegressionSuiteSmoke(Failure);
         return;
     }
-    UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem();
     if (!Trajectories || Trajectories->GetRegressionPresets().IsEmpty())
     {
-        TrajectoryStatusText = TEXT("No regression presets are available");
+        const FString Failure = TEXT("No regression presets are available");
+        TrajectoryStatusText = Failure;
+        FailRegressionSuiteSmoke(Failure);
         return;
     }
 
     SaveRegressionEnvironment();
+    if (!bRegressionEnvironmentSaved)
+    {
+        const FString Failure = TrajectoryStatusText.IsEmpty()
+            ? TEXT("Regression could not validate its source environment")
+            : TrajectoryStatusText;
+        FailRegressionSuiteSmoke(Failure);
+        return;
+    }
     bRegressionActive = true;
     bRegressionSuiteActive = true;
-    RegressionPresentationAudioTraceBaseline = PresentationAudioEventTrace.Num();
+    RegressionPresentationAudioSequenceBaseline = PresentationAudioEventSequence;
     RegressionQueue.Reset();
     for (int32 Index = 0; Index < Trajectories->GetRegressionPresets().Num(); ++Index)
     {
         RegressionQueue.Add(Index);
     }
     RegressionQueuePosition = 0;
-    RegressionSuiteSummaries.Reset();
     StartRegressionPreset(RegressionQueue[0]);
 }
 
@@ -3976,6 +6476,63 @@ void ADiscGolfTourGameMode::FinishRegressionRun()
     RestoreRegressionEnvironment();
 }
 
+void ADiscGolfTourGameMode::FailRegressionSuiteSmoke(const FString& Failure)
+{
+    if (UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem())
+    {
+        FString FailureReportPath;
+        FString FailureReportError;
+        if (Trajectories->WriteRegressionSuiteFailureReport(
+                RegressionSuiteSummaries,
+                Failure,
+                FailureReportPath,
+                FailureReportError))
+        {
+            LastRegressionReportPath = MoveTemp(FailureReportPath);
+        }
+        else
+        {
+            LastRegressionReportPath.Reset();
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("Regression failure report could not be published: %s"),
+                *FailureReportError);
+            if (!InvalidateLatestPhysicsRegressionReport())
+            {
+                UE_LOG(LogDiscGolfTour, Error,
+                    TEXT("Prior Latest physics regression report could not be invalidated."));
+            }
+        }
+    }
+    else
+    {
+        LastRegressionReportPath.Reset();
+        if (!InvalidateLatestPhysicsRegressionReport())
+        {
+            UE_LOG(LogDiscGolfTour, Error,
+                TEXT("Prior Latest physics regression report could not be invalidated."));
+        }
+    }
+
+    if (!bRegressionSuiteSmokeTestActive) return;
+
+    bRegressionSuiteSmokeTestActive = false;
+    bRegressionActive = false;
+    bRegressionSuiteActive = false;
+    ActiveRegressionPresetId = NAME_None;
+    ActiveRegressionRenderFps = 0;
+    RegressionQueue.Reset();
+    RegressionQueuePosition = 0;
+    RegressionPresentationAudioSequenceBaseline = 0;
+    RegressionSuiteSummaries.Reset();
+    RestoreRegressionEnvironment();
+
+    TrajectoryStatusText = FString::Printf(
+        TEXT("PHYSICS REGRESSION SUITE SMOKE FAIL - %s"), *Failure);
+    UE_LOG(LogDiscGolfTour, Error,
+        TEXT("PHYSICS REGRESSION SUITE SMOKE FAIL: %s"), *Failure);
+    FPlatformMisc::RequestExitWithStatus(false, 1);
+}
+
 void ADiscGolfTourGameMode::AdvanceRegressionSuite()
 {
     if (!bRegressionSuiteActive) return;
@@ -3988,8 +6545,21 @@ void ADiscGolfTourGameMode::AdvanceRegressionSuite()
     UDiscTrajectorySubsystem* Trajectories = GetTrajectorySubsystem();
     FString Error;
     bool bPassed = false;
-    if (Trajectories && Trajectories->WriteRegressionSuiteReport(
-        RegressionSuiteSummaries, LastRegressionReportPath, bPassed, Error))
+    const bool bPresentationTraceUnchanged = IsPresentationSequenceUnchanged(
+        RegressionPresentationAudioSequenceBaseline,
+        PresentationAudioEventSequence);
+    if (!bPresentationTraceUnchanged)
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Physics regression presentation isolation failed: event sequence changed from %llu to %llu."),
+            static_cast<unsigned long long>(RegressionPresentationAudioSequenceBaseline),
+            static_cast<unsigned long long>(PresentationAudioEventSequence));
+    }
+
+    const bool bReportWritten = Trajectories && Trajectories->WriteRegressionSuiteReport(
+        RegressionSuiteSummaries, bPresentationTraceUnchanged,
+        LastRegressionReportPath, bPassed, Error);
+    if (bReportWritten)
     {
         TrajectoryStatusText = FString::Printf(TEXT("SUITE %s - %d scenarios - report saved"),
             bPassed ? TEXT("PASS") : TEXT("FAIL"), RegressionSuiteSummaries.Num());
@@ -3998,18 +6568,43 @@ void ADiscGolfTourGameMode::AdvanceRegressionSuite()
     }
     else
     {
-        TrajectoryStatusText = FString::Printf(TEXT("SUITE REPORT FAILED - %s"), *Error);
-    }
-
-    const bool bPresentationTraceUnchanged =
-        PresentationAudioEventTrace.Num() == RegressionPresentationAudioTraceBaseline;
-    if (!bPresentationTraceUnchanged)
-    {
         bPassed = false;
-        TrajectoryStatusText = TEXT("SUITE FAIL - regression emitted presentation audio events");
-        UE_LOG(LogDiscGolfTour, Error,
-            TEXT("Physics regression presentation isolation failed: trace grew from %d to %d."),
-            RegressionPresentationAudioTraceBaseline, PresentationAudioEventTrace.Num());
+        if (!Trajectories)
+        {
+            Error = TEXT("Trajectory subsystem is unavailable");
+            if (!InvalidateLatestPhysicsRegressionReport())
+            {
+                Error += TEXT("; prior Latest report could not be invalidated");
+            }
+            LastRegressionReportPath.Reset();
+        }
+        else
+        {
+            FString FailureReportPath;
+            FString FailureReportError;
+            const FString PublicationFailure = FString::Printf(
+                TEXT("Final regression report publication failed: %s"), *Error);
+            if (Trajectories->WriteRegressionSuiteFailureReport(
+                    RegressionSuiteSummaries,
+                    PublicationFailure,
+                    FailureReportPath,
+                    FailureReportError))
+            {
+                LastRegressionReportPath = MoveTemp(FailureReportPath);
+            }
+            else
+            {
+                LastRegressionReportPath.Reset();
+                Error += FString::Printf(
+                    TEXT("; terminal failure report also failed: %s"),
+                    *FailureReportError);
+                if (!InvalidateLatestPhysicsRegressionReport())
+                {
+                    Error += TEXT("; prior Latest report could not be invalidated");
+                }
+            }
+        }
+        TrajectoryStatusText = FString::Printf(TEXT("SUITE REPORT FAILED - %s"), *Error);
     }
 
     bRegressionActive = false;
@@ -4018,6 +6613,7 @@ void ADiscGolfTourGameMode::AdvanceRegressionSuite()
     ActiveRegressionRenderFps = 0;
     RegressionQueue.Reset();
     RegressionQueuePosition = 0;
+    RegressionPresentationAudioSequenceBaseline = 0;
     RestoreRegressionEnvironment();
     if (bRegressionSuiteSmokeTestActive)
     {
@@ -4032,6 +6628,13 @@ void ADiscGolfTourGameMode::AdvanceRegressionSuite()
             UE_LOG(LogDiscGolfTour, Error,
                 TEXT("PHYSICS REGRESSION SUITE SMOKE FAIL: %s"), *TrajectoryStatusText);
         }
-        FPlatformMisc::RequestExit(false);
+        if (bPassed)
+        {
+            FPlatformMisc::RequestExit(false);
+        }
+        else
+        {
+            FPlatformMisc::RequestExitWithStatus(false, 1);
+        }
     }
 }

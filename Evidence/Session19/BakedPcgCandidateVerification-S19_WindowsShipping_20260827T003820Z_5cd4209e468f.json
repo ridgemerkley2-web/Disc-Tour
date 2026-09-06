@@ -1,0 +1,97 @@
+{
+  "schema": "DiscGolfTour.Session19BakedPcgCandidateVerification.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "candidateId": "S19_WindowsShipping_20260827T003820Z_5cd4209e468f",
+  "verifiedUtc": "2026-08-27T00:45:21.732783Z",
+  "state": "PASS_CANDIDATE_BOUND_AUTHORED_DATA_RUNTIME_AND_BAKED_OUTPUT_ACCEPTANCE_PENDING",
+  "policy": "Config/DG_Session19BakedPcgPolicy.json",
+  "archive": {
+    "hostPathRecorded": false,
+    "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260827T003820Z_5cd4209e468f/Windows",
+    "fileCount": 31,
+    "bytes": 1246026263,
+    "canonicalManifestSha256": "9D5AD0D1D063876C6F98069FB05E83F5C3EC7AF661222E04ADA2890E3D2D6CD0",
+    "liveHashRevalidationPass": true
+  },
+  "shippingExecutable": {
+    "path": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+    "bytes": 162632192,
+    "sha256": "B78AEA94A5CEB36B11777D149F724D3A090F7BF3074E4C98A66BB12AE91C7793",
+    "literalGenerateStringAbsenceClaimed": false
+  },
+  "sourceClosure": {
+    "requiredForFutureCandidates": true,
+    "retrofitAllowed": false,
+    "preBuildReceiptProvided": true,
+    "preBuildReceipt": {
+      "path": "Evidence/Session19/BakedPcgSourceClosurePreBuild-S19_WindowsShipping_20260827T003820Z_5cd4209e468f.json",
+      "bytes": 49325,
+      "sha256": "FAF239EA1AFD0FBC4C9564F6E8277123FC70B5395E1D0C6FF0DA3F3195A85916",
+      "preBuildSha256": "43C8A223ACC4DF1E14E0E729F5EF6CD8FA656F9213634FB69DA880FA2E9E32D0"
+    },
+    "postBuildSha256": "43C8A223ACC4DF1E14E0E729F5EF6CD8FA656F9213634FB69DA880FA2E9E32D0",
+    "prePostMatch": true
+  },
+  "authoredRuntimeData": {
+    "stagingClass": "NONUFS",
+    "archiveDataRoot": "DiscGolfTour/Data",
+    "manifest": {
+      "path": "Manifest_NonUFSFiles_Win64.txt",
+      "bytes": 1809,
+      "sha256": "2B105097BE46E31CF04B8C4CE94DEE5D0113F387A6FB2060D335BFA4B185CE17"
+    },
+    "files": [
+      {
+        "sourcePath": "Data/PineRidgeHole1.json",
+        "archivePath": "DiscGolfTour/Data/PineRidgeHole1.json",
+        "bytes": 7740,
+        "sha256": "CD1991551FD3F13465A5C6737871A2D4B91A31E078CAD1C97F458A7A5081F317",
+        "sourceAuthorityMatch": true,
+        "nonUfsManifestOccurrenceCount": 1,
+        "ufsManifestOccurrenceCount": 0
+      },
+      {
+        "sourcePath": "Data/PineRidgeHole2.json",
+        "archivePath": "DiscGolfTour/Data/PineRidgeHole2.json",
+        "bytes": 8586,
+        "sha256": "AB55ACE68264C270DE932DC0E0DEA644B844AEBB29F6CC0E994614789CA96F2E",
+        "sourceAuthorityMatch": true,
+        "nonUfsManifestOccurrenceCount": 1,
+        "ufsManifestOccurrenceCount": 0
+      },
+      {
+        "sourcePath": "Data/PineRidgeHole3.json",
+        "archivePath": "DiscGolfTour/Data/PineRidgeHole3.json",
+        "bytes": 8509,
+        "sha256": "A1FC744234E94FBE383F5AED21DCEF9D84A4213CF9E8625B57CA4C3339EC46A2",
+        "sourceAuthorityMatch": true,
+        "nonUfsManifestOccurrenceCount": 1,
+        "ufsManifestOccurrenceCount": 0
+      }
+    ],
+    "allThreeExactSourceAuthorityMatches": true,
+    "allThreeNonUfsManifestBindingsExact": true,
+    "allThreeUfsManifestOccurrencesAbsent": true,
+    "ioStoreMembershipClaimed": false
+  },
+  "technicalBoundary": {
+    "candidateBoundAuthoredDataPass": true,
+    "runtimeAuthoredSelectionProven": false,
+    "cookedRuntimePcgConsumerAbsenceProven": false,
+    "reachableRuntimeGenerationCallsiteAbsenceProven": false,
+    "literalBinaryStringAbsenceAcceptedAsProof": false,
+    "deterministicBakeSaveReopenProven": false,
+    "threeHoleCollisionVisualPerformanceAccepted": false
+  },
+  "shippingPackageEvidenceAccepted": false,
+  "blockerClosed": false,
+  "releaseReady": false,
+  "remainingEvidence": [
+    "SHIPPING_LOG_PROVES_AUTHORED_JSON_FOR_HOLES_1_2_3_WITH_NO_SOURCE_FALLBACK",
+    "COOKED_ASSET_REGISTRY_HAS_NO_RUNTIME_PCG_GENERATION_CONSUMER",
+    "DETERMINISTIC_BAKE_SAVE_REOPEN_IDENTITY",
+    "THREE_HOLE_COLLISION_VISUAL_AND_PERFORMANCE_ACCEPTANCE"
+  ],
+  "receiptPath": "Evidence/Session19/BakedPcgCandidateVerification-S19_WindowsShipping_20260827T003820Z_5cd4209e468f.json"
+}

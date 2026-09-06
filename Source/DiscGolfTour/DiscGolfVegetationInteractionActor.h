@@ -15,7 +15,7 @@ enum class EDiscGolfVegetationInteractionType : uint8
     Shrub
 };
 
-/** Non-blocking PCG proxy for leaf canopy and shrub drag. Trunks stay solid collision. */
+/** Non-blocking decorative canopy/shrub drag proxy. Trunks stay solid collision. */
 UCLASS(BlueprintType)
 class DISCGOLFTOUR_API ADiscGolfVegetationInteractionActor : public AActor
 {

@@ -25,6 +25,81 @@ namespace
     constexpr TCHAR DefaultReadinessReportRelativePath[] =
         TEXT("Developer/EnvironmentAssetBindingReport.json");
 
+    constexpr TCHAR ApprovedPineRidgeRoot[] =
+        TEXT("/Game/Presentation/Course/PineRidge");
+    constexpr TCHAR ApprovedEnginePrimitiveRoot[] =
+        TEXT("/Engine/BasicShapes");
+    constexpr TCHAR QuarantinedSpruceRoot[] =
+        TEXT("/Game/PN_interactiveSpruceForest");
+    constexpr TCHAR QuarantinedStumpRoot[] =
+        TEXT("/Game/Stump_Scanned");
+    constexpr TCHAR QuarantinedWaterRoot[] =
+        TEXT("/Game/WaterMaterials");
+
+    FString NormalizeContentPath(FString Path)
+    {
+        Path.TrimStartAndEndInline();
+        Path.ReplaceInline(TEXT("\\"), TEXT("/"));
+        while (Path.RemoveFromEnd(TEXT("/")))
+        {
+        }
+        return Path;
+    }
+
+    FString PackagePathFromObjectPath(const FSoftObjectPath& AssetPath)
+    {
+        FString PackagePath = NormalizeContentPath(AssetPath.ToString());
+        int32 ObjectDelimiter = INDEX_NONE;
+        if (PackagePath.FindChar(TEXT('.'), ObjectDelimiter))
+        {
+            PackagePath.LeftInline(ObjectDelimiter, EAllowShrinking::No);
+        }
+        return PackagePath;
+    }
+
+    bool IsSameOrChildPath(const FString& Path, const TCHAR* Root)
+    {
+        return Path.Equals(Root, ESearchCase::IgnoreCase)
+            || Path.StartsWith(FString(Root) + TEXT("/"), ESearchCase::IgnoreCase);
+    }
+
+    bool IsQuarantinedPath(const FString& Path)
+    {
+        return IsSameOrChildPath(Path, QuarantinedSpruceRoot)
+            || IsSameOrChildPath(Path, QuarantinedStumpRoot)
+            || IsSameOrChildPath(Path, QuarantinedWaterRoot);
+    }
+
+    bool ValidateVariantAssetPaths(
+        const FDiscGolfEnvironmentMeshVariant& Variant,
+        FString& OutError)
+    {
+        const FSoftObjectPath VisualPath = Variant.VisualMesh.ToSoftObjectPath();
+        if (!VisualPath.IsNull()
+            && !UDiscGolfEnvironmentAssetBinder::ValidateApprovedRuntimeAssetPath(
+                VisualPath, OutError))
+        {
+            return false;
+        }
+
+        const FSoftObjectPath CollisionPath = Variant.CollisionProxyMesh.ToSoftObjectPath();
+        if (!CollisionPath.IsNull()
+            && !UDiscGolfEnvironmentAssetBinder::ValidateApprovedRuntimeAssetPath(
+                CollisionPath, OutError))
+        {
+            return false;
+        }
+
+        const FSoftObjectPath InteractionPath = Variant.InteractionProxyMesh.ToSoftObjectPath();
+        if (!InteractionPath.IsNull()
+            && !UDiscGolfEnvironmentAssetBinder::ValidateApprovedRuntimeAssetPath(
+                InteractionPath, OutError))
+        {
+            return false;
+        }
+        return true;
+    }
+
     FString CategoryName(EDiscGolfEnvironmentAssetCategory Category)
     {
         if (const UEnum* Enum = StaticEnum<EDiscGolfEnvironmentAssetCategory>())
@@ -45,6 +120,7 @@ namespace
             case EDiscGolfEnvironmentBindingStatus::NeedsWindBinding: return TEXT("NEEDS_WIND_BINDING");
             case EDiscGolfEnvironmentBindingStatus::ScaleWarning: return TEXT("SCALE_WARNING");
             case EDiscGolfEnvironmentBindingStatus::Ambiguous: return TEXT("AMBIGUOUS");
+            case EDiscGolfEnvironmentBindingStatus::BlockedByProvenance: return TEXT("BLOCKED_BY_PROVENANCE");
             default: return TEXT("UNKNOWN");
         }
     }
@@ -422,7 +498,19 @@ namespace
         const FDiscGolfEnvironmentAssetSlot& Slot,
         const FDiscGolfEnvironmentMeshVariant& Variant)
     {
-        FDiscGolfEnvironmentBindingCandidate Candidate = Inspect(
+        FDiscGolfEnvironmentBindingCandidate Candidate;
+        Candidate.AssetPath = Variant.VisualMesh.ToSoftObjectPath();
+        Candidate.CollisionProxyPath = Variant.CollisionProxyMesh.ToSoftObjectPath();
+        Candidate.InteractionProxyPath = Variant.InteractionProxyMesh.ToSoftObjectPath();
+        FString PolicyError;
+        if (!ValidateVariantAssetPaths(Variant, PolicyError))
+        {
+            Candidate.Statuses.Add(EDiscGolfEnvironmentBindingStatus::BlockedByProvenance);
+            Candidate.Notes = PolicyError;
+            return Candidate;
+        }
+
+        Candidate = Inspect(
             Variant.VisualMesh.LoadSynchronous(), Slot.Category, 100.0f);
         Candidate.CollisionProxyPath = Variant.CollisionProxyMesh.ToSoftObjectPath();
         Candidate.InteractionProxyPath = Variant.InteractionProxyMesh.ToSoftObjectPath();
@@ -442,14 +530,28 @@ namespace
         TSet<EDiscGolfEnvironmentAssetCategory> Categories;
         for (const FDiscGolfEnvironmentBindingProposal& Proposal : Scan.Proposals)
         {
+            const int32 CategoryIndex = static_cast<int32>(Proposal.Category);
+            if (CategoryIndex >= 16
+                || Categories.Contains(Proposal.Category))
+            {
+                return false;
+            }
             Categories.Add(Proposal.Category);
         }
-        return Categories.Num() == 16;
+        for (int32 CategoryIndex = 0; CategoryIndex < 16; ++CategoryIndex)
+        {
+            if (!Categories.Contains(
+                static_cast<EDiscGolfEnvironmentAssetCategory>(CategoryIndex)))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     bool IsProductionReady(const FDiscGolfEnvironmentBindingScan& Scan)
     {
-        if (!IsStructurallyComplete(Scan)) return false;
+        if (!Scan.bProvenanceAccepted || !IsStructurallyComplete(Scan)) return false;
 
         for (const FDiscGolfEnvironmentBindingProposal& Proposal : Scan.Proposals)
         {
@@ -465,6 +567,83 @@ namespace
         }
         return true;
     }
+}
+
+bool UDiscGolfEnvironmentAssetBinder::ValidateApprovedRuntimeAssetPath(
+    const FSoftObjectPath& AssetPath,
+    FString& OutError)
+{
+    const FString NormalizedObjectPath = NormalizeContentPath(AssetPath.ToString());
+    const FString PackagePath = PackagePathFromObjectPath(AssetPath);
+    if (NormalizedObjectPath.IsEmpty()
+        || NormalizedObjectPath.Contains(TEXT(".."))
+        || NormalizedObjectPath.Contains(TEXT(":"))
+        || NormalizedObjectPath.Contains(TEXT("//"))
+        || PackagePath.IsEmpty())
+    {
+        OutError = FString::Printf(
+            TEXT("Runtime asset path is malformed or empty: %s"), *AssetPath.ToString());
+        return false;
+    }
+    if (IsQuarantinedPath(PackagePath))
+    {
+        OutError = FString::Printf(
+            TEXT("Runtime asset path is blocked by the provenance quarantine: %s"),
+            *AssetPath.ToString());
+        return false;
+    }
+    if (!IsSameOrChildPath(PackagePath, ApprovedPineRidgeRoot)
+        && !IsSameOrChildPath(PackagePath, ApprovedEnginePrimitiveRoot))
+    {
+        OutError = FString::Printf(
+            TEXT("Runtime asset path is outside the approved project/Engine roots: %s"),
+            *AssetPath.ToString());
+        return false;
+    }
+    OutError.Reset();
+    return true;
+}
+
+bool UDiscGolfEnvironmentAssetBinder::ValidateApprovedScanRoots(
+    const TArray<FString>& VendorContentRoots,
+    FString& OutError)
+{
+    if (VendorContentRoots.IsEmpty())
+    {
+        OutError = TEXT("At least one approved PineRidge scan root is required.");
+        return false;
+    }
+    for (const FString& ConfiguredRoot : VendorContentRoots)
+    {
+        const FString Root = NormalizeContentPath(ConfiguredRoot);
+        if (Root.IsEmpty()
+            || !Root.StartsWith(TEXT("/Game/"), ESearchCase::IgnoreCase)
+            || Root.Contains(TEXT(".."))
+            || Root.Contains(TEXT("."))
+            || Root.Contains(TEXT("//"))
+            || IsExcludedVendorSubtree(Root + TEXT("/")))
+        {
+            OutError = FString::Printf(
+                TEXT("Environment scan root is malformed or excluded: %s"), *ConfiguredRoot);
+            return false;
+        }
+        if (IsQuarantinedPath(Root))
+        {
+            OutError = FString::Printf(
+                TEXT("Environment scan root is blocked by the provenance quarantine: %s"),
+                *ConfiguredRoot);
+            return false;
+        }
+        if (!IsSameOrChildPath(Root, ApprovedPineRidgeRoot))
+        {
+            OutError = FString::Printf(
+                TEXT("Environment scan root is outside the approved PineRidge project root: %s"),
+                *ConfiguredRoot);
+            return false;
+        }
+    }
+    OutError.Reset();
+    return true;
 }
 
 TArray<EDiscGolfEnvironmentBindingStatus>
@@ -518,6 +697,11 @@ UDiscGolfEnvironmentAssetBinder::ValidateVariantForSlot(
     FString& OutNotes)
 {
     OutNotes.Reset();
+    if (!ValidateVariantAssetPaths(Variant, OutNotes))
+    {
+        return { EDiscGolfEnvironmentBindingStatus::BlockedByProvenance };
+    }
+
     const UStaticMesh* VisualMesh = Variant.VisualMesh.LoadSynchronous();
     TArray<EDiscGolfEnvironmentBindingStatus> Statuses = ValidateMeshCharacteristics(
         Slot.Category, VisualMesh, false, OutNotes);
@@ -608,22 +792,22 @@ FDiscGolfEnvironmentBindingScan UDiscGolfEnvironmentAssetBinder::ProposeBindings
     const FString& SavedRelativeReportPath)
 {
     FDiscGolfEnvironmentBindingScan Scan;
+    if (!ValidateApprovedScanRoots(VendorContentRoots, Scan.PolicyError))
+    {
+        WriteReport(Scan, Scan.ReportPath, SavedRelativeReportPath, false, false, false);
+        return Scan;
+    }
+    Scan.bProvenanceAccepted = true;
+
     for (FString Root : VendorContentRoots)
     {
-        Root.TrimStartAndEndInline();
-        Root.ReplaceInline(TEXT("\\"), TEXT("/"));
-        while (Root.RemoveFromEnd(TEXT("/")))
-        {
-        }
-        const bool bValidProjectRoot = Root.StartsWith(TEXT("/Game/"))
-            && !Root.Contains(TEXT(".."));
-        const bool bExcludedRoot = IsExcludedVendorSubtree(Root + TEXT("/"));
+        Root = NormalizeContentPath(MoveTemp(Root));
         const bool bAlreadyPresent = Scan.VendorContentRoots.ContainsByPredicate(
             [&Root](const FString& ExistingRoot)
             {
                 return ExistingRoot.Equals(Root, ESearchCase::IgnoreCase);
             });
-        if (bValidProjectRoot && !bExcludedRoot && !bAlreadyPresent)
+        if (!bAlreadyPresent)
         {
             Scan.VendorContentRoots.Add(MoveTemp(Root));
         }
@@ -642,6 +826,20 @@ FDiscGolfEnvironmentBindingScan UDiscGolfEnvironmentAssetBinder::ProposeBindings
             {
                 MeshAssets.AddUnique(Asset);
             }
+        }
+    }
+
+    for (const FAssetData& AssetData : MeshAssets)
+    {
+        FString AssetPolicyError;
+        if (!ValidateApprovedRuntimeAssetPath(
+            FSoftObjectPath(AssetData.GetObjectPathString()), AssetPolicyError))
+        {
+            Scan.bProvenanceAccepted = false;
+            Scan.PolicyError = MoveTemp(AssetPolicyError);
+            Scan.Proposals.Reset();
+            WriteReport(Scan, Scan.ReportPath, SavedRelativeReportPath, false, false, false);
+            return Scan;
         }
     }
 
@@ -733,6 +931,7 @@ UDiscGolfEnvironmentAssetBinder::ValidateEnvironmentAssetReadinessToReport(
 {
     FDiscGolfEnvironmentValidationResult Result;
     FDiscGolfEnvironmentBindingScan Scan;
+    Scan.bProvenanceAccepted = true;
     Scan.VendorContentRoots.Add(TEXT("ASSIGNED_DATA_ASSET_ONLY"));
     if (AssetSet)
     {
@@ -743,7 +942,15 @@ UDiscGolfEnvironmentAssetBinder::ValidateEnvironmentAssetReadinessToReport(
             Proposal.bRetainedExistingBinding = true;
             for (const FDiscGolfEnvironmentMeshVariant& Variant : Slot.Variants)
             {
-                Proposal.Candidates.Add(InspectAssignedVariant(Slot, Variant));
+                FDiscGolfEnvironmentBindingCandidate Candidate =
+                    InspectAssignedVariant(Slot, Variant);
+                if (Candidate.Statuses.Contains(
+                    EDiscGolfEnvironmentBindingStatus::BlockedByProvenance))
+                {
+                    Scan.bProvenanceAccepted = false;
+                    if (Scan.PolicyError.IsEmpty()) Scan.PolicyError = Candidate.Notes;
+                }
+                Proposal.Candidates.Add(MoveTemp(Candidate));
             }
             if (Proposal.Candidates.IsEmpty())
             {
@@ -787,6 +994,25 @@ bool UDiscGolfEnvironmentAssetBinder::ApplyApprovedBindings(
         return false;
     }
 
+    // Validate the complete requested path set, including metadata that would be preserved,
+    // before loading any object or changing the data asset.
+    for (const FSoftObjectPath& Path : ApprovedVisualMeshes)
+    {
+        if (!ValidateApprovedRuntimeAssetPath(Path, OutError))
+        {
+            return false;
+        }
+        const FDiscGolfEnvironmentMeshVariant* Existing = Slot->Variants.FindByPredicate(
+            [&Path](const FDiscGolfEnvironmentMeshVariant& Variant)
+            {
+                return Variant.VisualMesh.ToSoftObjectPath() == Path;
+            });
+        if (Existing && !ValidateVariantAssetPaths(*Existing, OutError))
+        {
+            return false;
+        }
+    }
+
     TArray<FDiscGolfEnvironmentMeshVariant> Approved;
     for (const FSoftObjectPath& Path : ApprovedVisualMeshes)
     {
@@ -794,6 +1020,14 @@ bool UDiscGolfEnvironmentAssetBinder::ApplyApprovedBindings(
         if (!Mesh)
         {
             OutError = FString::Printf(TEXT("Approved path is not a StaticMesh: %s"), *Path.ToString());
+            return false;
+        }
+        FString ResolvedPathError;
+        if (!ValidateApprovedRuntimeAssetPath(FSoftObjectPath(Mesh), ResolvedPathError))
+        {
+            OutError = FString::Printf(
+                TEXT("Approved path resolved outside the provenance allowlist: %s"),
+                *ResolvedPathError);
             return false;
         }
         const FDiscGolfEnvironmentMeshVariant* Existing = Slot->Variants.FindByPredicate(
@@ -859,13 +1093,15 @@ bool UDiscGolfEnvironmentAssetBinder::WriteReport(
     Root->SetNumberField(TEXT("schema_version"), 2);
     Root->SetStringField(TEXT("generated_utc"), FDateTime::UtcNow().ToIso8601());
     Root->SetBoolField(TEXT("automatic_apply_performed"), false);
+    Root->SetBoolField(TEXT("provenance_accepted"), Scan.bProvenanceAccepted);
+    Root->SetStringField(TEXT("policy_error"), Scan.PolicyError);
     Root->SetBoolField(TEXT("readiness_evaluated"), bReadinessEvaluated);
     Root->SetBoolField(TEXT("structurally_complete"), bStructurallyComplete);
     Root->SetBoolField(TEXT("production_ready"), bProductionReady);
     Root->SetStringField(TEXT("report_kind"),
         bReadinessEvaluated ? TEXT("assigned_readiness") : TEXT("candidate_proposals"));
     Root->SetStringField(TEXT("approval_policy"),
-        TEXT("Candidates are advisory. Existing bindings remain until ApplyApprovedBindings receives explicit paths."));
+        TEXT("Candidates are advisory. Scan and apply paths must pass the runtime provenance allowlist; existing bindings remain until ApplyApprovedBindings receives explicit paths."));
     TArray<TSharedPtr<FJsonValue>> Roots;
     for (const FString& VendorRoot : Scan.VendorContentRoots)
     {

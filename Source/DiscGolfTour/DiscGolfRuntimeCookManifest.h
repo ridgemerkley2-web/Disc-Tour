@@ -17,13 +17,15 @@ class DISCGOLFTOUR_API UDiscGolfRuntimeCookManifest : public UPrimaryDataAsset
     GENERATED_BODY()
 
 public:
+    UDiscGolfRuntimeCookManifest();
+
     static const FPrimaryAssetType PrimaryAssetType;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook")
     FName ManifestId = TEXT("dg_runtime_v1");
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook")
-    FString SourceSpecRelativePath = TEXT("Config/DG_RuntimeCookManifest.json");
+    FString SourceSpecRelativePath;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook")
     FString SourceSpecSha256;
@@ -41,14 +43,32 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook")
     int32 ExpectedRuntimePackageCount = 69;
 
+    /** Accepted Sessions 8B MetaHuman closure; never folded into the legacy 69. */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook")
+    int32 ExpectedMetaHumanRuntimePackageCount = 264;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook")
+    int32 ExpectedAvatarBackendProfileCount = 2;
+
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook")
     int32 ExpectedExcludedPackageCount = 12;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook")
+    int32 ExpectedExcludedMetaHumanPackageCount = 1;
+
+    /** SHA-256 of sorted MetaHuman package names, each followed by a newline. */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook")
+    FString MetaHumanRuntimePackageListSha256;
 
     /** Soft package dependencies included by the Runtime asset bundle. */
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook", meta=(AssetBundles="Runtime"))
     TArray<TSoftObjectPtr<UObject>> RuntimeAssets;
 
-    /** Stable visual-backend entry points; initially only the DGMaster fallback. */
+    /** Separate exact MetaHuman package closure: assembly, wrapper, retarget and target IK. */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook", meta=(AssetBundles="Runtime"))
+    TArray<TSoftObjectPtr<UObject>> MetaHumanRuntimeAssets;
+
+    /** Exact stable visual-backend entry points: DGMaster fallback then MetaHuman. */
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook", meta=(AssetBundles="Runtime"))
     TArray<TSoftObjectPtr<UDiscGolfAvatarBackendProfile>> AvatarBackendProfiles;
 
@@ -56,10 +76,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook")
     TArray<FString> ExplicitlyExcludedPackages;
 
+    /** Editor-only source MHC packages; strings so they never become cook roots. */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Cook")
+    TArray<FString> ExplicitlyExcludedMetaHumanPackages;
+
     virtual FPrimaryAssetId GetPrimaryAssetId() const override;
 
     UFUNCTION(BlueprintPure, Category="Disc Golf|Cook")
     TArray<FSoftObjectPath> GetRuntimeAssetPaths() const;
+
+    UFUNCTION(BlueprintPure, Category="Disc Golf|Cook")
+    TArray<FSoftObjectPath> GetMetaHumanRuntimeAssetPaths() const;
 
     /** C++/test guard used by strict validators after the asset is authored. */
     bool ValidateRuntimeContract(FString& OutError) const;

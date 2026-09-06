@@ -1,11 +1,13 @@
 """Import the licensed Pine Ridge source set and build Unreal material assets.
 
-Run with UnrealEditor-Cmd after download-pine-ridge-cc0-assets.ps1. The script is
-idempotent and only writes below /Game/Presentation/Course/PineRidge.
+Run with full UnrealEditor.exe after download-pine-ridge-cc0-assets.ps1. The script
+is idempotent and only writes below /Game/Presentation/Course/PineRidge.
 """
 
 from pathlib import Path
 import base64
+from datetime import datetime, timezone
+import hashlib
 import json
 import unreal
 
@@ -18,6 +20,88 @@ FOLIAGE_ROOT = f"{CONTENT_ROOT}/Foliage/PolyHaven/FirSapling"
 FIXTURE_ROOT = f"{CONTENT_ROOT}/Fixtures/PolyHaven"
 MATERIAL_ROOT = f"{CONTENT_ROOT}/Materials"
 RECEIPT_PATH = ROOT / "Saved" / "PineRidgeAssetImportReceipt.json"
+DURABLE_RECEIPT_PATH = SOURCE_ROOT / "derived_runtime_receipt.json"
+IMPORTER_PATH = ROOT / "Scripts" / "import-pine-ridge-assets.py"
+
+
+POLY_TEXTURE_DESTINATIONS = {
+    "Textures/ForestGround01": "Content/Presentation/Course/PineRidge/Textures/ForestGround",
+    "Textures/LeafyGrass": "Content/Presentation/Course/PineRidge/Textures/LeafyGrass",
+    "Textures/GrassPath2": "Content/Presentation/Course/PineRidge/Textures/GrassPath",
+    "Models/FirSapling/Textures": "Content/Presentation/Course/PineRidge/Textures/FirSapling",
+    "Models/Boulder01/Textures": "Content/Presentation/Course/PineRidge/Textures/Boulder01",
+    "Models/Shrub04/Textures": "Content/Presentation/Course/PineRidge/Textures/Shrub04",
+    "Textures/WeatheredPlanks": "Content/Presentation/Course/PineRidge/Textures/WeatheredPlanks",
+}
+
+POLY_MESH_OUTPUTS = {
+    "SourceArt/PineRidge/PolyHaven/Models/FirSapling/fir_sapling_1k.fbx": [
+        "Content/Presentation/Course/PineRidge/Foliage/PolyHaven/FirSapling/fir_sapling_a.uasset",
+        "Content/Presentation/Course/PineRidge/Foliage/PolyHaven/FirSapling/fir_sapling_b.uasset",
+        "Content/Presentation/Course/PineRidge/Foliage/PolyHaven/FirSapling/fir_sapling_c.uasset",
+    ],
+    "SourceArt/PineRidge/PolyHaven/Models/Boulder01/boulder_01_1k.fbx": [
+        "Content/Presentation/Course/PineRidge/Fixtures/PolyHaven/Boulder01/boulder_01_1k.uasset",
+    ],
+    "SourceArt/PineRidge/PolyHaven/Models/Shrub04/shrub_04_1k.fbx": [
+        "Content/Presentation/Course/PineRidge/Fixtures/PolyHaven/Shrub04/shrub_04_1k.uasset",
+    ],
+}
+
+PROJECT_ORIGINAL_RUNTIME_ARTIFACTS = {
+    "Content/Presentation/Course/PineRidge/Materials/M_GalleryLakeWater.uasset": {
+        "kind": "PROJECT_ORIGINAL_PROCEDURAL_MATERIAL",
+        "projectInputs": ["Scripts/import-pine-ridge-assets.py"],
+        "directProjectSources": [],
+        "runtimeDependencies": [],
+    },
+    "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeGrassBlade.uasset": {
+        "kind": "PROJECT_ORIGINAL_GENERATED_MASK_MATERIAL",
+        "projectInputs": [
+            "Scripts/import-pine-ridge-assets.py",
+            "SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png",
+            "SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png.base64",
+        ],
+        "directProjectSources": [],
+        "runtimeDependencies": [
+            "Content/Presentation/Course/PineRidge/Textures/Generated/pine_ridge_grass_card_alpha.uasset",
+        ],
+    },
+    "Content/Presentation/Course/PineRidge/Materials/M_PineRidgeLeafLitter.uasset": {
+        "kind": "PROJECT_ORIGINAL_GENERATED_MASK_MATERIAL",
+        "projectInputs": [
+            "Scripts/import-pine-ridge-assets.py",
+            "SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png",
+            "SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png.base64",
+        ],
+        "directProjectSources": [],
+        "runtimeDependencies": [
+            "Content/Presentation/Course/PineRidge/Textures/Generated/pine_ridge_litter_card_alpha.uasset",
+        ],
+    },
+    "Content/Presentation/Course/PineRidge/Textures/Generated/pine_ridge_grass_card_alpha.uasset": {
+        "kind": "PROJECT_ORIGINAL_GENERATED_TEXTURE",
+        "projectInputs": [
+            "SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png",
+            "SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png.base64",
+        ],
+        "directProjectSources": [
+            "SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png",
+        ],
+        "runtimeDependencies": [],
+    },
+    "Content/Presentation/Course/PineRidge/Textures/Generated/pine_ridge_litter_card_alpha.uasset": {
+        "kind": "PROJECT_ORIGINAL_GENERATED_TEXTURE",
+        "projectInputs": [
+            "SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png",
+            "SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png.base64",
+        ],
+        "directProjectSources": [
+            "SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png",
+        ],
+        "runtimeDependencies": [],
+    },
+}
 
 
 def log(message):
@@ -1183,6 +1267,501 @@ def configure_lod_chain(root, reductions, subsystem):
         unreal.EditorAssetLibrary.save_loaded_asset(asset, only_if_is_dirty=False)
 
 
+def sha256_file(path):
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest().upper()
+
+
+def object_path_for_content_file(relative_path):
+    if not relative_path.startswith("Content/") or not relative_path.endswith(".uasset"):
+        raise RuntimeError(f"Invalid runtime artifact path: {relative_path}")
+    package = "/Game/" + relative_path[len("Content/"):-len(".uasset")]
+    return f"{package}.{Path(relative_path).stem}"
+
+
+def content_file_for_package_path(package_path):
+    text = str(package_path)
+    if not text.startswith("/Game/Presentation/Course/PineRidge/"):
+        raise RuntimeError(f"Dependency leaves the Pine Ridge content root: {text}")
+    return f"Content/{text[len('/Game/'): ]}.uasset"
+
+
+def texture_output_for_source(source_relative_path):
+    prefix = "SourceArt/PineRidge/PolyHaven/"
+    if not source_relative_path.startswith(prefix):
+        raise RuntimeError(f"Source leaves the Poly Haven root: {source_relative_path}")
+    source_inside_root = source_relative_path[len(prefix):]
+    source_parent = str(Path(source_inside_root).parent).replace("\\", "/")
+    destination = POLY_TEXTURE_DESTINATIONS.get(source_parent)
+    if destination is None:
+        raise RuntimeError(f"No texture destination for source: {source_relative_path}")
+    return f"{destination}/{Path(source_relative_path).stem}.uasset"
+
+
+def write_durable_derived_receipt(manifest_path):
+    manifest_payload = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
+    manifest_files = manifest_payload.get("files", [])
+    if len(manifest_files) != 35:
+        raise RuntimeError(
+            f"Durable receipt requires exactly 35 source files; received {len(manifest_files)}"
+        )
+
+    source_records = []
+    source_by_asset = {}
+    texture_outputs_by_asset = {}
+    manifest_paths = set()
+    for source in manifest_files:
+        relative_path = source["relativePath"]
+        if relative_path in manifest_paths:
+            raise RuntimeError(f"Duplicate source path in manifest: {relative_path}")
+        manifest_paths.add(relative_path)
+        source_path = ROOT / relative_path
+        if not source_path.is_file():
+            raise RuntimeError(f"Receipt source is missing: {relative_path}")
+        if source_path.stat().st_size != source["byteSize"]:
+            raise RuntimeError(f"Receipt source size drifted: {relative_path}")
+        if hashlib.md5(source_path.read_bytes()).hexdigest() != source["md5"]:
+            raise RuntimeError(f"Receipt source MD5 drifted: {relative_path}")
+        source_records.append({
+            "assetId": source["assetId"],
+            "role": source["role"],
+            "relativePath": relative_path,
+            "byteSize": source["byteSize"],
+            "md5": source["md5"],
+            "sha256": sha256_file(source_path),
+        })
+        source_by_asset.setdefault(source["assetId"], []).append(relative_path)
+        if source["role"] != "StaticMeshFBX1K":
+            texture_outputs_by_asset.setdefault(source["assetId"], []).append(
+                texture_output_for_source(relative_path)
+            )
+
+    for values in source_by_asset.values():
+        values.sort()
+    for values in texture_outputs_by_asset.values():
+        values.sort()
+
+    runtime_artifacts = []
+    source_record_by_path = {entry["relativePath"]: entry for entry in source_records}
+    asset_registry = unreal.AssetRegistryHelpers.get_asset_registry()
+    dependency_options = unreal.AssetRegistryDependencyOptions()
+    dependency_options.set_editor_property("include_soft_package_references", True)
+    dependency_options.set_editor_property("include_hard_package_references", True)
+    dependency_options.set_editor_property("include_searchable_names", False)
+    dependency_options.set_editor_property("include_soft_management_references", False)
+    dependency_options.set_editor_property("include_hard_management_references", False)
+
+    def add_runtime_artifact(relative_path, provenance_kind, direct_sources,
+                             transitive_sources, runtime_dependencies):
+        disk_path = ROOT / relative_path
+        if not disk_path.is_file():
+            raise RuntimeError(f"Derived runtime artifact is missing: {relative_path}")
+        object_path = object_path_for_content_file(relative_path)
+        asset = unreal.EditorAssetLibrary.load_asset(object_path)
+        if asset is None:
+            raise RuntimeError(f"Derived runtime artifact does not load: {object_path}")
+        package_path = object_path.rsplit(".", 1)[0]
+        observed_dependencies = sorted(
+            content_file_for_package_path(value)
+            for value in asset_registry.get_dependencies(package_path, dependency_options)
+            if str(value).startswith(CONTENT_ROOT + "/")
+        )
+        expected_dependencies = sorted(runtime_dependencies)
+        if observed_dependencies != expected_dependencies:
+            raise RuntimeError(
+                f"Scoped runtime dependencies differ for {object_path}: "
+                f"expected={expected_dependencies} observed={observed_dependencies}"
+            )
+
+        observed_import_sources = []
+        try:
+            import_data = asset.get_editor_property("asset_import_data")
+            if import_data:
+                for filename in import_data.extract_filenames():
+                    source_path = Path(str(filename))
+                    try:
+                        relative_source = source_path.resolve().relative_to(ROOT.resolve()).as_posix()
+                    except ValueError as exc:
+                        raise RuntimeError(
+                            f"Import source leaves the project for {object_path}: {source_path}"
+                        ) from exc
+                    observed_import_sources.append(relative_source)
+        except Exception as exc:
+            if direct_sources:
+                raise RuntimeError(
+                    f"Could not inspect import sources for {object_path}: {exc}"
+                ) from exc
+        observed_import_sources.sort()
+        if observed_import_sources != sorted(direct_sources):
+            raise RuntimeError(
+                f"Import sources differ for {object_path}: "
+                f"expected={sorted(direct_sources)} observed={observed_import_sources}"
+            )
+
+        semantic_settings = {}
+        if isinstance(asset, unreal.Texture2D):
+            source_record = source_record_by_path[direct_sources[0]]
+            role = source_record["role"]
+            expected_compression = (
+                unreal.TextureCompressionSettings.TC_DEFAULT
+                if "Diffuse" in role else
+                unreal.TextureCompressionSettings.TC_NORMALMAP
+                if "Normal" in role else
+                unreal.TextureCompressionSettings.TC_MASKS
+            )
+            expected_srgb = "Diffuse" in role
+            actual_compression = asset.get_editor_property("compression_settings")
+            actual_srgb = asset.get_editor_property("srgb")
+            if actual_compression != expected_compression or actual_srgb != expected_srgb:
+                raise RuntimeError(
+                    f"Texture settings differ for {object_path}: "
+                    f"compression={actual_compression} srgb={actual_srgb}"
+                )
+            semantic_settings = {
+                "compression": str(actual_compression),
+                "srgb": actual_srgb,
+            }
+        elif isinstance(asset, unreal.StaticMesh):
+            expected_lod_count = 4 if "FirSapling" in relative_path else 3 if "Boulder01" in relative_path else 1
+            actual_lod_count = asset.get_num_lods()
+            if actual_lod_count != expected_lod_count:
+                raise RuntimeError(
+                    f"Static-mesh LOD count differs for {object_path}: "
+                    f"expected={expected_lod_count} observed={actual_lod_count}"
+                )
+            semantic_settings = {"lodCount": actual_lod_count}
+        runtime_artifacts.append({
+            "relativePath": relative_path,
+            "objectPath": object_path,
+            "assetClass": asset.get_class().get_name(),
+            "provenanceKind": provenance_kind,
+            "byteSize": disk_path.stat().st_size,
+            "sha256": sha256_file(disk_path),
+            "directSourceRelativePaths": sorted(direct_sources),
+            "runtimeDependencies": observed_dependencies,
+            "semanticSettings": semantic_settings,
+            "transitiveSourceRelativePaths": sorted(transitive_sources),
+        })
+
+    for source in source_records:
+        if source["role"] == "StaticMeshFBX1K":
+            continue
+        output = texture_output_for_source(source["relativePath"])
+        add_runtime_artifact(
+            output, "DIRECT_TEXTURE_IMPORT", [source["relativePath"]],
+            [source["relativePath"]], []
+        )
+
+    mesh_material_dependencies = {
+        "fir_sapling": [
+            "Content/Presentation/Course/PineRidge/Materials/MI_FirSaplingBranches.uasset",
+            "Content/Presentation/Course/PineRidge/Materials/MI_FirSaplingTwigs.uasset",
+        ],
+        "boulder_01": [
+            "Content/Presentation/Course/PineRidge/Materials/MI_Boulder01.uasset",
+        ],
+        "shrub_04": [
+            "Content/Presentation/Course/PineRidge/Materials/MI_Shrub04.uasset",
+        ],
+    }
+    for source_path, outputs in POLY_MESH_OUTPUTS.items():
+        source = next(
+            (entry for entry in source_records if entry["relativePath"] == source_path), None
+        )
+        if source is None or source["role"] != "StaticMeshFBX1K":
+            raise RuntimeError(f"Mesh source is not manifest-bound: {source_path}")
+        asset_id = source["assetId"]
+        for output in outputs:
+            add_runtime_artifact(
+                output, "DIRECT_STATIC_MESH_IMPORT", [source_path],
+                source_by_asset[asset_id], mesh_material_dependencies[asset_id]
+            )
+
+    all_texture_roles = None
+    material_specs = {
+        "M_PineRidgeTerrain": ([('forrest_ground_01', all_texture_roles)], []),
+        "M_PineRidgeFairwayBlend": ([('leafy_grass', all_texture_roles), ('forrest_ground_01', all_texture_roles)], []),
+        "M_PineRidgeTrailBlend": ([('grass_path_2', all_texture_roles), ('forrest_ground_01', all_texture_roles)], []),
+        "MI_PineRidgeFairway": ([('leafy_grass', all_texture_roles)], ["M_PineRidgeTerrain"]),
+        "MI_PineRidgeForestFloor": ([('forrest_ground_01', all_texture_roles)], ["M_PineRidgeTerrain"]),
+        "MI_PineRidgePath": ([('grass_path_2', all_texture_roles)], ["M_PineRidgeTerrain"]),
+        "MI_PineRidgeTrailWear": ([('grass_path_2', all_texture_roles)], ["M_PineRidgeTerrain"]),
+        "MI_PineRidgeShoreReeds": ([('leafy_grass', all_texture_roles)], ["M_PineRidgeTerrain"]),
+        "M_PineRidgeBark": ([('fir_sapling', {
+            "BranchesDiffuse1K", "BranchesNormalDX1K", "BranchesRoughness1K"
+        })], []),
+        "M_PineRidgeNeedles": ([('fir_sapling', {
+            "TwigsDiffuse1K", "TwigsNormalDX1K", "TwigsRoughness1K", "TwigsOpacity1K"
+        })], []),
+        "MI_FirSaplingBranches": ([('fir_sapling', {
+            "BranchesDiffuse1K", "BranchesNormalDX1K", "BranchesRoughness1K"
+        })], ["M_PineRidgeBark"]),
+        "MI_FirSaplingTwigs": ([('fir_sapling', {
+            "TwigsDiffuse1K", "TwigsNormalDX1K", "TwigsRoughness1K", "TwigsOpacity1K"
+        })], ["M_PineRidgeNeedles"]),
+        "M_PineRidgeRock": ([('boulder_01', all_texture_roles)], []),
+        "MI_Boulder01": ([('boulder_01', all_texture_roles)], ["M_PineRidgeRock"]),
+        "M_PineRidgeBrush": ([('shrub_04', all_texture_roles)], []),
+        "MI_Shrub04": ([('shrub_04', all_texture_roles)], ["M_PineRidgeBrush"]),
+        "M_PineRidgeSignWood": ([('weathered_planks', all_texture_roles)], []),
+        "MI_PineRidgeSignWood": ([('weathered_planks', all_texture_roles)], ["M_PineRidgeSignWood"]),
+    }
+
+    material_transitive_sources = {}
+    for material_name, (source_selectors, parent_materials) in material_specs.items():
+        selected_records = [
+            source
+            for asset_id, roles in source_selectors
+            for source in source_records
+            if source["assetId"] == asset_id
+            and source["role"] != "StaticMeshFBX1K"
+            and (roles is None or source["role"] in roles)
+        ]
+        direct_dependency_sources = sorted({
+            source["relativePath"] for source in selected_records
+        })
+        sources = sorted(set(direct_dependency_sources).union(*(
+            set(material_transitive_sources[parent]) for parent in parent_materials
+        )))
+        material_transitive_sources[material_name] = sources
+        texture_dependencies = sorted({
+            texture_output_for_source(source["relativePath"])
+            for source in selected_records
+        })
+        material_dependencies = [
+            f"Content/Presentation/Course/PineRidge/Materials/{name}.uasset"
+            for name in parent_materials
+        ]
+        add_runtime_artifact(
+            f"Content/Presentation/Course/PineRidge/Materials/{material_name}.uasset",
+            "AUTHORED_UNREAL_ASSET_WITH_POLY_HAVEN_DEPENDENCY", [], sources,
+            texture_dependencies + material_dependencies,
+        )
+
+    runtime_artifacts.sort(key=lambda entry: entry["relativePath"].casefold())
+    if len(runtime_artifacts) != 55:
+        raise RuntimeError(
+            f"Durable receipt requires 55 Poly Haven-derived artifacts; received {len(runtime_artifacts)}"
+        )
+    if len({entry["relativePath"].casefold() for entry in runtime_artifacts}) != 55:
+        raise RuntimeError("Durable receipt derived-artifact paths are not unique")
+
+    excluded_runtime_artifacts = []
+    for relative_path, declaration in sorted(PROJECT_ORIGINAL_RUNTIME_ARTIFACTS.items()):
+        disk_path = ROOT / relative_path
+        if not disk_path.is_file():
+            raise RuntimeError(f"Project-original runtime artifact is missing: {relative_path}")
+        object_path = object_path_for_content_file(relative_path)
+        asset = unreal.EditorAssetLibrary.load_asset(object_path)
+        if asset is None:
+            raise RuntimeError(f"Project-original runtime artifact does not load: {object_path}")
+        package_path = object_path.rsplit(".", 1)[0]
+        observed_dependencies = sorted(
+            content_file_for_package_path(value)
+            for value in asset_registry.get_dependencies(package_path, dependency_options)
+            if str(value).startswith(CONTENT_ROOT + "/")
+        )
+        expected_dependencies = sorted(declaration["runtimeDependencies"])
+        if observed_dependencies != expected_dependencies:
+            raise RuntimeError(
+                f"Project-original dependencies differ for {object_path}: "
+                f"expected={expected_dependencies} observed={observed_dependencies}"
+            )
+        observed_import_sources = []
+        try:
+            import_data = asset.get_editor_property("asset_import_data")
+            if import_data:
+                observed_import_sources = sorted(
+                    Path(str(filename)).resolve().relative_to(ROOT.resolve()).as_posix()
+                    for filename in import_data.extract_filenames()
+                )
+        except Exception as exc:
+            if declaration["directProjectSources"]:
+                raise RuntimeError(
+                    f"Could not inspect project import sources for {object_path}: {exc}"
+                ) from exc
+        if observed_import_sources != sorted(declaration["directProjectSources"]):
+            raise RuntimeError(
+                f"Project import sources differ for {object_path}: "
+                f"expected={sorted(declaration['directProjectSources'])} "
+                f"observed={observed_import_sources}"
+            )
+        semantic_settings = {}
+        if isinstance(asset, unreal.Texture2D):
+            semantic_settings = {
+                "compression": str(asset.get_editor_property("compression_settings")),
+                "srgb": asset.get_editor_property("srgb"),
+                "filter": str(asset.get_editor_property("filter")),
+                "mipGenSettings": str(asset.get_editor_property("mip_gen_settings")),
+            }
+            expected_semantics = {
+                "compression": str(unreal.TextureCompressionSettings.TC_MASKS),
+                "srgb": False,
+                "filter": str(unreal.TextureFilter.TF_NEAREST),
+                "mipGenSettings": str(unreal.TextureMipGenSettings.TMGS_NO_MIPMAPS),
+            }
+            if semantic_settings != expected_semantics:
+                raise RuntimeError(
+                    f"Generated-texture settings differ for {object_path}: {semantic_settings}"
+                )
+        project_inputs = []
+        for input_path in declaration["projectInputs"]:
+            local_input = ROOT / input_path
+            if not local_input.is_file():
+                raise RuntimeError(f"Project-original input is missing: {input_path}")
+            project_inputs.append({
+                "relativePath": input_path,
+                "byteSize": local_input.stat().st_size,
+                "sha256": sha256_file(local_input),
+            })
+        excluded_runtime_artifacts.append({
+            "relativePath": relative_path,
+            "objectPath": object_path,
+            "assetClass": asset.get_class().get_name(),
+            "provenanceKind": declaration["kind"],
+            "byteSize": disk_path.stat().st_size,
+            "sha256": sha256_file(disk_path),
+            "directProjectSourceRelativePaths": observed_import_sources,
+            "runtimeDependencies": observed_dependencies,
+            "semanticSettings": semantic_settings,
+            "projectInputs": project_inputs,
+        })
+
+    runtime_root = ROOT / "Content/Presentation/Course/PineRidge"
+    observed_runtime_paths = sorted(
+        path.relative_to(ROOT).as_posix()
+        for path in runtime_root.rglob("*.uasset")
+        if path.is_file()
+    )
+    declared_runtime_paths = sorted(
+        [entry["relativePath"] for entry in runtime_artifacts]
+        + [entry["relativePath"] for entry in excluded_runtime_artifacts]
+    )
+    if observed_runtime_paths != declared_runtime_paths:
+        missing = sorted(set(observed_runtime_paths) - set(declared_runtime_paths))
+        extra = sorted(set(declared_runtime_paths) - set(observed_runtime_paths))
+        raise RuntimeError(
+            f"Pine Ridge runtime partition is incomplete: unclassified={missing} missing={extra}"
+        )
+
+    engine_build_path = Path(unreal.Paths.engine_dir()) / "Build" / "Build.version"
+    engine_build = json.loads(engine_build_path.read_text(encoding="utf-8-sig"))
+    project_input_paths = sorted({
+        item["relativePath"]
+        for artifact in excluded_runtime_artifacts
+        for item in artifact["projectInputs"]
+    })
+    project_inputs = []
+    for relative_path in project_input_paths:
+        input_path = ROOT / relative_path
+        project_inputs.append({
+            "relativePath": relative_path,
+            "byteSize": input_path.stat().st_size,
+            "sha256": sha256_file(input_path),
+        })
+
+    receipt = {
+        "schema": "DiscGolfTour.PineRidgeDerivedAssetReceipt.v1",
+        "schemaVersion": 1,
+        "sourceId": "poly_haven_pine_ridge_cc0",
+        "status": "COMPLETE_DURABLE_SOURCE_TO_UASSET_RECEIPT",
+        "completedUtc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "license": {
+            "spdxExpression": "CC0-1.0",
+            "url": "https://polyhaven.com/license",
+            "attributionRequired": False,
+        },
+        "sourceManifest": {
+            "relativePath": manifest_path.relative_to(ROOT).as_posix(),
+            "byteSize": manifest_path.stat().st_size,
+            "sha256": sha256_file(manifest_path),
+            "fileCount": 35,
+        },
+        "importExecution": {
+            "engineVersion": (
+                f"{engine_build['MajorVersion']}.{engine_build['MinorVersion']}."
+                f"{engine_build['PatchVersion']}"
+            ),
+            "engineChangelist": engine_build["Changelist"],
+            "engineCompatibleChangelist": engine_build["CompatibleChangelist"],
+            "engineBranch": engine_build["BranchName"],
+            "engineBuildFileSha256": sha256_file(engine_build_path),
+            "importerRelativePath": IMPORTER_PATH.relative_to(ROOT).as_posix(),
+            "importerByteSize": IMPORTER_PATH.stat().st_size,
+            "importerSha256": sha256_file(IMPORTER_PATH),
+            "contentRoot": CONTENT_ROOT,
+            "hostPathsRecorded": False,
+            "secretsRecorded": False,
+            "pinnedImportOptions": {
+                "assetTask": {
+                    "automated": True,
+                    "replaceExisting": True,
+                    "replaceExistingSettings": True,
+                    "save": True,
+                },
+                "polyTextures": {
+                    "color": {"compression": "TC_DEFAULT", "srgb": True},
+                    "normal": {"compression": "TC_NORMALMAP", "srgb": False},
+                    "data": {"compression": "TC_MASKS", "srgb": False},
+                },
+                "generatedMasks": {
+                    "compression": "TC_MASKS",
+                    "srgb": False,
+                    "filter": "TF_NEAREST",
+                    "mipGenSettings": "TMGS_NO_MIPMAPS",
+                },
+                "staticMeshes": {
+                    "importAsSkeletal": False,
+                    "importMesh": True,
+                    "importMaterials": False,
+                    "importTextures": False,
+                    "generateLightmapUVs": True,
+                    "autoGenerateCollision": False,
+                    "convertScene": True,
+                    "convertSceneUnit": True,
+                    "firCombineMeshes": False,
+                    "fixtureCombineMeshes": True,
+                    "firLods": [[1.0, 1.0], [0.2, 0.22], [0.05, 0.085], [0.0125, 0.03]],
+                    "boulderLods": [[1.0, 1.0], [0.18, 0.16], [0.035, 0.045]],
+                    "shrubLodCount": 1,
+                },
+                "materials": {"replaceExpressions": True, "saveAfterCompile": True},
+            },
+        },
+        "sourceFiles": sorted(source_records, key=lambda entry: entry["relativePath"].casefold()),
+        "projectInputs": project_inputs,
+        "derivedRuntimeArtifacts": runtime_artifacts,
+        "excludedProjectOriginalRuntimeArtifacts": excluded_runtime_artifacts,
+        "expectedCounts": {
+            "sourceFiles": 35,
+            "directTextureImports": 32,
+            "directStaticMeshImports": 5,
+            "dependentDerivatives": 18,
+            "polyHavenDerived": 55,
+            "excludedProjectOriginal": 5,
+            "runtimeRootTotal": 60,
+        },
+        "closureAssertions": {
+            "allSourceFilesHashVerified": True,
+            "allSourceFilesMapped": True,
+            "allDerivedRuntimeArtifactsHashBound": True,
+            "runtimeRootPartitionComplete": True,
+            "technicalSourceToRuntimeClosureComplete": True,
+            "actualStagedPackageProvenanceClosed": False,
+        },
+    }
+    DURABLE_RECEIPT_PATH.write_text(
+        json.dumps(receipt, indent=2, ensure_ascii=True) + "\n", encoding="utf-8"
+    )
+    log(
+        f"DURABLE_RECEIPT sources=35 derived=55 excluded=5 "
+        f"sha256={sha256_file(DURABLE_RECEIPT_PATH)} path={DURABLE_RECEIPT_PATH}"
+    )
+
+
 def main():
     manifest = SOURCE_ROOT / "asset_manifest.json"
     if not manifest.is_file():
@@ -1489,7 +2068,11 @@ def main():
     RECEIPT_PATH.parent.mkdir(parents=True, exist_ok=True)
     RECEIPT_PATH.write_text(json.dumps(receipt, indent=2), encoding="utf-8")
     unreal.EditorAssetLibrary.save_directory(CONTENT_ROOT, only_if_is_dirty=False, recursive=True)
-    log(f"SUCCESS meshes={len(static_meshes)} receipt={RECEIPT_PATH}")
+    write_durable_derived_receipt(manifest)
+    log(
+        f"SUCCESS meshes={len(static_meshes)} receipt={RECEIPT_PATH} "
+        f"durableReceipt={DURABLE_RECEIPT_PATH}"
+    )
 
 
 try:

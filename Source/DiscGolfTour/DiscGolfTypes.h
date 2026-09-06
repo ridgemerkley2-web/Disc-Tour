@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DiscGolfCharacterTypes.h"
 #include "DiscGolfTypes.generated.h"
 
 UENUM(BlueprintType)
@@ -229,6 +230,8 @@ struct FResolvedDiscDefinition
 {
     GENERATED_BODY()
 
+    /** Invalid for catalog/regression resolution; stable and populated for a player-owned disc instance. */
+    UPROPERTY(BlueprintReadOnly) FGuid DiscInstanceId;
     UPROPERTY(BlueprintReadOnly) FName MoldId = NAME_None;
     UPROPERTY(BlueprintReadOnly) FText DisplayName;
     UPROPERTY(BlueprintReadOnly) int32 Speed = 7;
@@ -236,6 +239,14 @@ struct FResolvedDiscDefinition
     UPROPERTY(BlueprintReadOnly) float Turn = -1.0f;
     UPROPERTY(BlueprintReadOnly) float Fade = 2.0f;
     UPROPERTY(BlueprintReadOnly) EDiscPlastic Plastic = EDiscPlastic::Tour;
+    UPROPERTY(BlueprintReadOnly) float DiscMassGrams = 175.0f;
+    UPROPERTY(BlueprintReadOnly) float DiscWear01 = 0.0f;
+    UPROPERTY(BlueprintReadOnly) FLinearColor DiscColor = FLinearColor::White;
+    UPROPERTY(BlueprintReadOnly) FName DiscStampId = TEXT("dg_generic_default");
+    UPROPERTY(BlueprintReadOnly) FString DiscNickname;
+    UPROPERTY(BlueprintReadOnly) bool bDiscFavorite = false;
+    /** Wear is captured as equipment metadata but remains physics-neutral until measured calibration exists. */
+    UPROPERTY(BlueprintReadOnly) bool bWearAffectsPhysics = false;
     UPROPERTY(BlueprintReadOnly) FDiscAeroProfile Aero;
 };
 
@@ -244,9 +255,12 @@ struct FThrowCommand
 {
     GENERATED_BODY()
 
+    /** Optional player-owned identity; invalid for catalog-only and regression throws. */
+    UPROPERTY(BlueprintReadWrite) FGuid DiscInstanceId;
     UPROPERTY(BlueprintReadWrite) FName MoldId = NAME_None;
     UPROPERTY(BlueprintReadWrite) EDiscPlastic Plastic = EDiscPlastic::Tour;
     UPROPERTY(BlueprintReadWrite) EThrowStyle ThrowStyle = EThrowStyle::Backhand;
+    UPROPERTY(BlueprintReadWrite) EDGHandedness Handedness = EDGHandedness::Right;
     UPROPERTY(BlueprintReadWrite) EDiscShotContext ShotContext = EDiscShotContext::Drive;
     UPROPERTY(BlueprintReadWrite) FVector Direction = FVector::ForwardVector;
     UPROPERTY(BlueprintReadWrite) float Power01 = 0.82f;
@@ -281,8 +295,14 @@ struct FThrowRelease
     UPROPERTY(BlueprintReadOnly) float EffectiveNoseAngleDeg = 0.0f;
     UPROPERTY(BlueprintReadOnly) float EffectiveLaunchAngleDeg = 0.0f;
     UPROPERTY(BlueprintReadOnly) EThrowStyle ThrowStyle = EThrowStyle::Backhand;
+    UPROPERTY(BlueprintReadOnly) EDGHandedness Handedness = EDGHandedness::Right;
     UPROPERTY(BlueprintReadOnly) EDiscShotContext ShotContext = EDiscShotContext::Drive;
     UPROPERTY(BlueprintReadOnly) FVector Direction = FVector::ForwardVector;
+    /**
+     * Replayable world/shot gust phase selected from the authoritative
+     * accepted-shot sequence. It is never sourced from render-ticked time.
+     */
+    UPROPERTY(BlueprintReadOnly) float WindPhaseOriginSeconds = 0.0f;
     UPROPERTY(BlueprintReadOnly) float LiePowerMultiplier = 1.0f;
     UPROPERTY(BlueprintReadOnly) float LieTimingErrorMultiplier = 1.0f;
 };
@@ -413,6 +433,8 @@ struct FDiscFlightTelemetry
     UPROPERTY(BlueprintReadOnly) float SpinRpm = 0.0f;
     UPROPERTY(BlueprintReadOnly) float AngleOfAttackDeg = 0.0f;
     UPROPERTY(BlueprintReadOnly) float FlightTimeSeconds = 0.0f;
+    /** Absolute gust phase for a sample is WindPhaseOriginSeconds + FlightTimeSeconds. */
+    UPROPERTY(BlueprintReadOnly) float WindPhaseOriginSeconds = 0.0f;
     UPROPERTY(BlueprintReadOnly) float CarryMeters = 0.0f;
     UPROPERTY(BlueprintReadOnly) EDiscGroundState GroundState = EDiscGroundState::Airborne;
     UPROPERTY(BlueprintReadOnly) EGroundSurfaceType GroundSurface = EGroundSurfaceType::Fairway;

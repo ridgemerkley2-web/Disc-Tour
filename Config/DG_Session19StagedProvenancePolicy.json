@@ -1,0 +1,258 @@
+{
+  "schema": "DiscGolfTour.Session19StagedProvenancePolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "policyId": "windows_shipping_whole_archive_provenance_v1",
+  "state": "IMPLEMENTED_PENDING_FRESH_WINDOWS_SHIPPING_CANDIDATE",
+  "releaseReady": false,
+  "closesReleaseBlockerWithoutAcceptedReceipt": false,
+  "target": {
+    "platform": "Win64",
+    "configuration": "Shipping",
+    "milestone": "v0.5",
+    "holes": [1, 2, 3],
+    "cleanBuildRequired": true,
+    "nonIterativeCookRequired": true,
+    "pakRequired": true,
+    "ioStoreRequired": true,
+    "archiveRequired": true
+  },
+  "requiredArchiveFiles": [
+    "Manifest_UFSFiles_Win64.txt",
+    "Manifest_NonUFSFiles_Win64.txt",
+    "DiscGolfTour.exe",
+    "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe"
+  ],
+  "requiredLooseDataFiles": [
+    "DiscGolfTour/Data/PineRidgeCourse.json",
+    "DiscGolfTour/Data/PineRidgeHole1.json",
+    "DiscGolfTour/Data/PineRidgeHole2.json",
+    "DiscGolfTour/Data/PineRidgeHole3.json",
+    "DiscGolfTour/Data/PineRidgePresentation.json"
+  ],
+  "manifestFiles": {
+    "ufs": "Manifest_UFSFiles_Win64.txt",
+    "nonUfs": "Manifest_NonUFSFiles_Win64.txt"
+  },
+  "distributionIdentityAuthority": {
+    "ufsDevelopmentPathRows": "DIAGNOSTIC_NON_AUTHORITATIVE_FOR_DISTRIBUTION",
+    "malformedStageManifestsFail": true,
+    "authoritativeFinalIdentityScopes": [
+      "ARCHIVE_FILE",
+      "NONUFS_ENTRY",
+      "CONTAINER_NAMED_ENTRY",
+      "CONTAINER_ANONYMOUS_CHUNK"
+    ],
+    "exactDevelopmentPathExceptions": [
+      "Engine/Plugins/Editor/BlueprintMaterialTextureNodes/BlueprintMaterialTextureNodes.uplugin",
+      "Engine/Plugins/Editor/ContentBrowser/ContentBrowserAssetDataSource/ContentBrowserAssetDataSource.uplugin",
+      "Engine/Plugins/Editor/DataValidation/DataValidation.uplugin",
+      "Engine/Plugins/Editor/EditorScriptingUtilities/EditorScriptingUtilities.uplugin",
+      "Engine/Plugins/Editor/EngineAssetDefinitions/EngineAssetDefinitions.uplugin",
+      "Engine/Plugins/Editor/ProxyLODPlugin/ProxyLODPlugin.uplugin"
+    ],
+    "exceptionMatchMode": "EXACT_CASE_SENSITIVE_IDENTITY",
+    "allOtherDevelopmentPathMatchesFail": true
+  },
+  "containerPolicy": {
+    "extensionsInventoriedByUnrealPak": [".pak", ".utoc"],
+    "pakInventoryMethod": "UnrealPak positional -List",
+    "utocInventoryMethod": "UnrealPak -ListContainer=<utoc> -CSV=<csv>",
+    "utocCompanionExtension": ".ucas",
+    "requireEveryContainerInventorySuccess": true,
+    "requirePakListSummaryCountMatch": true,
+    "requireIoStoreCsvHeaderExact": true,
+    "requireIoStoreChunkOrderContiguous": true,
+    "requireEveryNamedEntryClassified": true,
+    "requireEveryAnonymousChunkClassified": true,
+    "allowDuplicateNamedEntriesWithinContainer": false,
+    "allowDuplicatePhysicalPaths": false
+  },
+  "forbiddenArchiveExtensions": [
+    ".pdb",
+    ".ilk",
+    ".exp",
+    ".lib",
+    ".obj"
+  ],
+  "forbiddenPathTokens": [
+    "/Animation/Mocap/",
+    "/Animation/Throws/AM_DG_RHBH_Prototype",
+    "/Animation/Throws/A_DG_RHBH_Prototype",
+    "/Characters/Customization/",
+    "/Characters/MetaHuman/Source/",
+    "/DiscGolf/Cook/DA_DG_RuntimeCookManifest",
+    "/DiscGolf/Tests/",
+    "/Materials/CharacterCustomization/",
+    "/Materials/Outfits/",
+    "/Outfits/",
+    "/PN_interactiveSpruceForest/",
+    "/Stump_Scanned/",
+    "/WaterMaterials/",
+    "/Data/PhysicsRegressionPresets.json",
+    "/Plugins/DiscGolfCharacterFramework/",
+    "/Binaries/Win64/DiscGolfCharacterFramework",
+    "/Engine/Plugins/Experimental/Landmass/Binaries/",
+    "/Engine/Plugins/Experimental/Landmass/Config/",
+    "/Engine/Plugins/Experimental/Landmass/Content/",
+    "/Engine/Plugins/Experimental/Landmass/Resources/",
+    "/Engine/Plugins/Experimental/Landmass/Source/",
+    "/Source/",
+    "/Intermediate/",
+    "/Saved/"
+  ],
+  "forbiddenDevelopmentPathTokens": [
+    "/Developers/",
+    "/Editor/",
+    "/Engine/Content/VREditor/",
+    "/Engine/Content/EditorMeshes/",
+    "/Engine/Content/Slate/Testing/",
+    "/Engine/Plugins/Developer/Concert/",
+    "/Engine/Plugins/ChaosVD/",
+    "/EditorMaterials/",
+    "/EditorResources/",
+    "/Slate/Automation/",
+    "/SlateDebug/",
+    "/Tests/",
+    "GPUDumpViewer"
+  ],
+  "forbiddenBinaryMarkers": [
+    "DiscGolfCharacterFramework",
+    "/Script/DiscGolfCharacterFramework"
+  ],
+  "pluginDependencyClosure": {
+    "capabilityPolicy": {
+      "path": "Config/DG_Session19ShippingPluginCapabilityPolicy.json",
+      "bytes": 8770,
+      "sha256": "26F140F20D651651DE38C8B17DF55C0BA5B0A068CEEB39552B2FA60F0ACD3D12"
+    },
+    "requiredFinalPayloadDescriptors": [
+      "Engine/Plugins/Editor/BlueprintMaterialTextureNodes/BlueprintMaterialTextureNodes.uplugin",
+      "Engine/Plugins/ChaosClothAssetDataflowNodes/ChaosClothAssetDataflowNodes.uplugin",
+      "Engine/Plugins/ChaosClothAssetEditorCore/ChaosClothAssetEditorCore.uplugin",
+      "Engine/Plugins/Experimental/ChaosSolverPlugin/ChaosSolverPlugin.uplugin",
+      "Engine/Plugins/Editor/ContentBrowser/ContentBrowserAssetDataSource/ContentBrowserAssetDataSource.uplugin",
+      "Engine/Plugins/Editor/DataValidation/DataValidation.uplugin",
+      "Engine/Plugins/Experimental/EditorDataStorageFeatures/EditorDataStorageFeatures.uplugin",
+      "Engine/Plugins/Editor/EditorScriptingUtilities/EditorScriptingUtilities.uplugin",
+      "Engine/Plugins/Editor/EngineAssetDefinitions/EngineAssetDefinitions.uplugin",
+      "Engine/Plugins/Experimental/Landmass/Landmass.uplugin",
+      "Engine/Plugins/MovieScene/LevelSequenceEditor/LevelSequenceEditor.uplugin",
+      "Engine/Plugins/Animation/LiveLinkDevice/LiveLinkDevice.uplugin",
+      "Engine/Plugins/Developer/PluginUtils/PluginUtils.uplugin",
+      "Engine/Plugins/Editor/ProxyLODPlugin/ProxyLODPlugin.uplugin",
+      "Engine/Plugins/Enterprise/VariantManager/VariantManager.uplugin"
+    ],
+    "reviewedMetadataOnlyDependencyDescriptors": [
+      "Engine/Plugins/ChaosClothAssetDataflowNodes/ChaosClothAssetDataflowNodes.uplugin",
+      "Engine/Plugins/ChaosClothAssetEditorCore/ChaosClothAssetEditorCore.uplugin",
+      "Engine/Plugins/Experimental/ChaosSolverPlugin/ChaosSolverPlugin.uplugin",
+      "Engine/Plugins/Editor/ContentBrowser/ContentBrowserAssetDataSource/ContentBrowserAssetDataSource.uplugin",
+      "Engine/Plugins/Editor/DataValidation/DataValidation.uplugin",
+      "Engine/Plugins/Experimental/EditorDataStorageFeatures/EditorDataStorageFeatures.uplugin",
+      "Engine/Plugins/Editor/EditorScriptingUtilities/EditorScriptingUtilities.uplugin",
+      "Engine/Plugins/Editor/EngineAssetDefinitions/EngineAssetDefinitions.uplugin",
+      "Engine/Plugins/MovieScene/LevelSequenceEditor/LevelSequenceEditor.uplugin",
+      "Engine/Plugins/Animation/LiveLinkDevice/LiveLinkDevice.uplugin",
+      "Engine/Plugins/Developer/PluginUtils/PluginUtils.uplugin",
+      "Engine/Plugins/Editor/ProxyLODPlugin/ProxyLODPlugin.uplugin",
+      "Engine/Plugins/Enterprise/VariantManager/VariantManager.uplugin"
+    ],
+    "descriptorOnlyForbiddenSubdirectories": [
+      "Binaries",
+      "Config",
+      "Content",
+      "Resources",
+      "Source"
+    ],
+    "reviewedResidualMetadataExclusions": [
+      "Engine/Plugins/ChaosClothAssetEditorCore/Config/DefaultChaosClothAssetEditorCore.ini",
+      "Engine/Plugins/Editor/EditorScriptingUtilities/Config/DefaultEditorScriptingUtilities.ini"
+    ],
+    "landmassDescriptor": "Engine/Plugins/Experimental/Landmass/Landmass.uplugin",
+    "landmassNeverCookVirtualRoot": "/Landmass",
+    "landmassForbiddenFinalPayloadSubtrees": [
+      "/Engine/Plugins/Experimental/Landmass/Binaries/",
+      "/Engine/Plugins/Experimental/Landmass/Config/",
+      "/Engine/Plugins/Experimental/Landmass/Content/",
+      "/Engine/Plugins/Experimental/Landmass/Resources/",
+      "/Engine/Plugins/Experimental/Landmass/Source/"
+    ]
+  },
+  "uatLogRequirements": {
+    "requiredCaseInsensitiveTokens": [
+      "BuildCookRun",
+      "-platform=Win64",
+      "-clientconfig=Shipping",
+      "-build",
+      "-cook",
+      "-stage",
+      "-pak",
+      "-iostore",
+      "-archive",
+      "-clean",
+      "-distribution",
+      "IsIterativeCook=false",
+      "BUILD SUCCESSFUL",
+      "AutomationTool exiting with ExitCode=0"
+    ],
+    "forbiddenCaseInsensitiveTokens": [
+      "-clientconfig=Development",
+      "ClientConfigsToBuild=Development",
+      "IsIterativeCook=true",
+      "IterativeDeploy=True",
+      "SkipCook=True",
+      "Distribution=False",
+      "BUILD FAILED"
+    ]
+  },
+  "classificationManifest": {
+    "schema": "DiscGolfTour.Session19StagedProvenanceClassification.v1",
+    "schemaVersion": 1,
+    "requiredState": "REVIEWED_FOR_WINDOWS_SHIPPING",
+    "recordScopes": [
+      "ARCHIVE_FILE",
+      "UFS_ENTRY",
+      "NONUFS_ENTRY",
+      "CONTAINER_NAMED_ENTRY",
+      "CONTAINER_ANONYMOUS_CHUNK"
+    ],
+    "allowedClassifications": [
+      "PROJECT_AUTHORED_RUNTIME",
+      "PROJECT_GENERATED_BUILD_OUTPUT",
+      "POLY_HAVEN_CC0_DERIVED",
+      "EPIC_ENGINE_REDISTRIBUTABLE",
+      "EPIC_METAHUMAN_PROJECT_ASSET",
+      "APPROVED_THIRD_PARTY_RUNTIME",
+      "PROJECT_RELEASE_METADATA"
+    ],
+    "requireExactIdentityRecords": true,
+    "requireShippingApprovedTrue": true,
+    "requireAuthorityId": true,
+    "requireLicenseId": true,
+    "requireExistingProjectEvidence": true,
+    "allowUnclassified": false,
+    "allowExtraRecords": false,
+    "allowDuplicateRecords": false
+  },
+  "receipt": {
+    "schema": "DiscGolfTour.Session19StagedProvenanceReceipt.v1",
+    "schemaVersion": 1,
+    "writeOnlyOnExplicitOutputPath": true,
+    "recordHostPaths": false,
+    "releaseReadyOnPass": false,
+    "blockerClosedOnPass": false
+  },
+  "negativeFixture": {
+    "candidateId": "S18_DEVELOPMENT_NEGATIVE_FIXTURE",
+    "archiveLeaf": "S18_PolyHavenProvenance_63624166-aa24-49d0-a89f-74a125a36be2/Windows",
+    "uatLog": "Evidence/Session18/BuildCookRun.log",
+    "expectedResult": "REJECT",
+    "requiredReasonCodes": [
+      "NOT_SHIPPING_BUILD",
+      "FORBIDDEN_PDB",
+      "FORBIDDEN_FRAMEWORK_ARTIFACT"
+    ],
+    "mayNeverSatisfyPositiveEvidence": true
+  }
+}

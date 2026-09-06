@@ -9,8 +9,10 @@ class UHierarchicalInstancedStaticMeshComponent;
 struct FDiscGolfHoleBlockoutDefinition;
 
 /**
- * Deterministic visual terrain beneath the sealed authored collision surfaces.
- * The mesh has no collision and cannot participate in lie or flight queries.
+ * Deterministic continuous course ground. Base section 0 owns the visible and
+ * physical terrain shape across every quality tier; authored blockout actors
+ * still provide semantic surface/penalty identity. All detail sections and
+ * instance components are presentation-only and collision-free.
  */
 UCLASS()
 class DISCGOLFTOUR_API ADiscGolfTerrainPresentationActor : public AActor
@@ -134,6 +136,8 @@ public:
 
     UFUNCTION(BlueprintPure, Category="Course|Presentation")
     bool IsCollisionInvariant() const;
+
+    bool IsBaseTerrainCollisionFace(int32 FaceIndex) const;
 
 private:
     UPROPERTY(VisibleAnywhere)

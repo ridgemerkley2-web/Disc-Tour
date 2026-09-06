@@ -1,0 +1,146 @@
+Running AutomationTool...
+Using bundled DotNet SDK version: 10.0 win-x64
+Starting AutomationTool...
+Parsing command line: BuildCookRun -project=C:\DGTour\DiscGolfTour.uproject -noP4 -platform=Win64 -clientconfig=Shipping -build -cook -stage -pak -iostore -archive -archivedirectory=C:\DGTour_Packages\S19_WindowsShipping_20260826T234854Z_6c5a87aa6074 -clean -ubtargs="-NoUBA -MaxParallelActions=4" -distribution -nodebuginfo -utf8output
+Initializing script modules...
+Total script module initialization time: 0.29 s.
+Using C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe
+Executing commands...
+Setting up ProjectParams for C:\DGTour\DiscGolfTour.uproject
+********** BUILD COMMAND STARTED **********
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" DiscGolfTourEditor Win64 Development -Project="C:\DGTour\DiscGolfTour.uproject" -Clean -NoHotReload "C:\DGTour\DiscGolfTour.uproject" -NoUBTMakefiles  -log="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development.txt"
+Log file: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development.txt
+Cleaning DiscGolfTourEditor binaries...
+Trace written to file C:\Users\ridge\AppData\Local\UnrealBuildTool\Trace.uba with size 583b
+Took 0.88s to run dotnet.exe, ExitCode=0
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" DiscGolfTour Win64 Shipping -Project="C:\DGTour\DiscGolfTour.uproject" -Clean -NoHotReload "C:\DGTour\DiscGolfTour.uproject" -NoUBTMakefiles  -remoteini="C:\DGTour"  -NoUBA -MaxParallelActions=4 -distribution  -log="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTour-Win64-Shipping.txt"
+Log file: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTour-Win64-Shipping.txt
+Cleaning DiscGolfTour binaries...
+Trace written to file C:\Users\ridge\AppData\Local\UnrealBuildTool\Trace.uba with size 583b
+Took 0.75s to run dotnet.exe, ExitCode=0
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Target="DiscGolfTourEditor Win64 Development -Project=C:\DGTour\DiscGolfTour.uproject" -Target="DiscGolfTour Win64 Shipping -Project=C:\DGTour\DiscGolfTour.uproject  -remoteini=\"C:\DGTour\"  -NoUBA -MaxParallelActions=4 -distribution " -log="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development_2.txt"
+Log file: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development_2.txt
+Executing up to 4 actions based on MaxProcessorCount override
+Using 'git status' to determine working set for adaptive non-unity build (C:\DGTour).
+Creating makefile for DiscGolfTourEditor (no existing makefile)
+Creating makefile for DiscGolfTour (no existing makefile)
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+Building DiscGolfTour and DiscGolfTourEditor...
+===== Toolchain Information =====
+DiscGolfTour Win64 Shipping:
+  Using ISPC compiler (C:\Program Files\Epic Games\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+    Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+  Using Visual Studio 14.44.35228 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  [Adaptive Build] Excluded from DiscGolfRuntimeFoundation unity file: DiscGolfAnimInstance.cpp, DiscGolfAnimNotifies.cpp, DiscGolfAppearanceComponent.cpp, DiscGolfAvatarBackendComponent.cpp, DiscGolfCharacterCustomizationComponent.cpp, DiscGolfCosmeticCatalog.cpp, DiscGolfCourseValidatorLibrary.cpp, DiscGolfOutfitCatalog.cpp, DiscGolfOutfitComponent.cpp, DiscGolfOutfitItem.cpp, DiscGolfPlayabilityLibrary.cpp, DiscGolfPlayabilityMonitorComponent.cpp, DiscGolfRuntimeFoundation.cpp, DiscGolfThrowComponent.cpp
+  [Adaptive Build] Excluded from DiscGolfTour unity file: BasketActor.cpp, DevCourseBootstrap.cpp, DiscActor.cpp, DiscBagComponent.cpp, DiscCatalogSubsystem.cpp, DiscFlightComponent.cpp, DiscGolfBuiltInEnvironmentProvider.cpp, DiscGolfCameraViewContract.cpp, DiscGolfCharacterCreatorWidget.cpp, DiscGolfCharacterRigUnits.cpp, DiscGolfCourseDefinition.cpp, DiscGolfCoursePresentationDefinition.cpp, DiscGolfCourseRules.cpp, DiscGolfEnvironmentController.cpp, DiscGolfEnvironmentDataAssets.cpp, DiscGolfEnvironmentZoneActor.cpp, DiscGolferPawn.cpp, DiscGolfFixtureQaRunner.cpp, DiscGolfFullCharacterRuntime.cpp, DiscGolfHUD.cpp, DiscGolfInputConfig.cpp, DiscGolfMetaHumanAvatarBackendComponent.cpp, DiscGolfMetaHumanOutfitRequiredBonesComponent.cpp, DiscGolfMetaHumanRetargetAnimInstance.cpp, DiscGolfOutfitRuntime.cpp, DiscGolfPlayerExperience.cpp, DiscGolfPresentationAudioRouterComponent.cpp, DiscGolfPresentationMath.cpp, DiscGolfQualityAdapter.cpp, DiscGolfRHBHThrowAdapterComponent.cpp, DiscGolfRoundFlowPresentation.cpp, DiscGolfRoundFlowWidget.cpp, DiscGolfRuntimeCheckpointJournal.cpp, DiscGolfRuntimeCookManifest.cpp, DiscGolfSession16CorePlayabilityContract.cpp, DiscGolfTerrainPresentationActor.cpp, DiscGolfTerrainPresentationMath.cpp, DiscGolfTour.cpp, DiscGolfTourGameInstance.cpp, DiscGolfTourGameMode.cpp, DiscGolfTourPlayerController.cpp, DiscGolfVegetationInteractionActor.cpp, DiscGolfWindZoneActor.cpp, DiscReplayActor.cpp, DiscTrajectorySubsystem.cpp, ThrowControllerComponent.cpp, WindDirector.cpp, DiscCatalogTests.cpp, DiscEquipmentSession11Tests.cpp, DiscFlightBoundaryTests.cpp, DiscGolfAnimInstanceBridgeTests.cpp, DiscGolfAuthoredInputValidationTests.cpp, DiscGolfAvatarBackendRuntimeTests.cpp, DiscGolfBasketContactMathTests.cpp, DiscGolfBrandLicenseTests.cpp, DiscGolfBuiltInEnvironmentProviderTests.cpp, DiscGolfCharacterProfileRuntimeTests.cpp, DiscGolfCourseDefinitionTests.cpp, DiscGolfCourseRulesTests.cpp, DiscGolfEnvironmentTests.cpp, DiscGolfFullCharacterRuntimeTests.cpp, DiscGolfGameInstancePersistencePolicyTests.cpp, DiscGolfGameplayGateTests.cpp, DiscGolfInputTests.cpp, DiscGolfMetaHumanRetargetPolicyTests.cpp, DiscGolfNonAuthorityThrowIngressTests.cpp, DiscGolfOutfitRuntimeTests.cpp, DiscGolfPresentationTests.cpp, DiscGolfProductionMotionTests.cpp, DiscGolfPuttingTests.cpp, DiscGolfQualityAdapterTests.cpp, DiscGolfReleasePerformanceCaptureTests.cpp, DiscGolfReleaseTests.cpp, DiscGolfRestoredLieCanonicalizationTests.cpp, DiscGolfRuntimeCheckpointJournalTests.cpp, DiscGolfRuntimeCookManifestTests.cpp, DiscGolfSaveSchemaTests.cpp, DiscGolfSession10EnvironmentContractTests.cpp, DiscGolfSession12AudioRouterTests.cpp, DiscGolfSession12CameraReplayTests.cpp, DiscGolfSession12InputUiTests.cpp, DiscGolfSession12PresentationContractTests.cpp, DiscGolfSession13CourseJsonTests.cpp, DiscGolfSession16CorePlayabilityTests.cpp, DiscGolfSession17RoundFlowUiTests.cpp, DiscGolfSession18ProvenanceTests.cpp, DiscGolfSession19AudioCandidateTests.cpp, DiscGolfSession3ThrowTransactionTests.cpp, DiscGolfSolverInputValidationTests.cpp, DiscGolfTerrainPuttRegressionTests.cpp, DiscGolfThrowIngressTests.cpp, DiscTrajectoryTests.cpp
+DiscGolfTourEditor Win64 Development:
+  Using ISPC compiler (C:\Program Files\Epic Games\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+    Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+  Using Visual Studio 14.44.35228 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  [Adaptive Build] Excluded from DiscGolfTourEditor unity file: DiscGolfCourseAuthoringActors.cpp, DiscGolfCourseAuthoringExporter.cpp, DiscGolfCourseAuthoringPcgAdapter.cpp, DiscGolfCourseAuthoringValidation.cpp, DiscGolfEnvironmentAssetBinder.cpp, DiscGolfPcgAuthoringController.cpp, DiscGolfProductionMotionAuthoringUtility.cpp, DiscGolfSession3AssetUtility.cpp, DiscGolfSession4AssetUtility.cpp, DiscGolfSession5MocapUtility.cpp, DiscGolfSession8BMetaHumanUtility.cpp, PCGDiscGolfZoneDensity.cpp, DiscGolfCourseAuthoringActorsTests.cpp, DiscGolfCourseAuthoringExporterTests.cpp, DiscGolfCourseAuthoringPcgAdapterTests.cpp, DiscGolfCourseAuthoringValidationTests.cpp, DiscGolfEnvironmentAssetBinderTests.cpp, DiscGolfPcgShippingSeparationTests.cpp, DiscGolfSession13CourseAuthoringFixtureTests.cpp
+  [Adaptive Build] Excluded from DiscGolfRuntimeFoundation unity file: DiscGolfAnimInstance.cpp, DiscGolfAnimNotifies.cpp, DiscGolfAppearanceComponent.cpp, DiscGolfAvatarBackendComponent.cpp, DiscGolfCharacterCustomizationComponent.cpp, DiscGolfCosmeticCatalog.cpp, DiscGolfCourseValidatorLibrary.cpp, DiscGolfOutfitCatalog.cpp, DiscGolfOutfitComponent.cpp, DiscGolfOutfitItem.cpp, DiscGolfPlayabilityLibrary.cpp, DiscGolfPlayabilityMonitorComponent.cpp, DiscGolfRuntimeFoundation.cpp, DiscGolfThrowComponent.cpp
+  [Adaptive Build] Excluded from DiscGolfTourDeveloper unity file: DiscGolfAIPlannerAdapter.cpp, DiscGolfAIShotPlannerComponent.cpp, DiscGolfCareerSubsystem.cpp, DiscGolfCompetitionRuntime.cpp, DiscGolfLevelDesignReviewActor.cpp, DiscGolfScoringLibrary.cpp, DiscGolfSession14AISmokeRunner.cpp, DiscGolfSession15VerticalSliceContract.cpp, DiscGolfSession15VerticalSliceRunner.cpp, DiscGolfSession3SmokeRunner.cpp, DiscGolfSession3VisualCaptureRunner.cpp, DiscGolfSession4VisualCaptureRunner.cpp, DiscGolfSession5MocapSmokeRunner.cpp, DiscGolfSession5MocapVisualCaptureRunner.cpp, DiscGolfSession6OutfitSmokeRunner.cpp, DiscGolfSession6OutfitVisualCaptureRunner.cpp, DiscGolfSession7FullCharacterSmokeRunner.cpp, DiscGolfSession7FullCharacterVisualCaptureRunner.cpp, DiscGolfSession8BMetaHumanPackagedRunner.cpp, DiscGolfSession8CookClosureRunner.cpp, DiscGolfTourDeveloperModule.cpp, DiscThrowLabSubsystem.cpp, DiscGolfLevelDesignReviewTests.cpp, DiscGolfSession14AITests.cpp, DiscGolfSession14CompetitionCareerTests.cpp, DiscGolfSession14SmokeFoundationTests.cpp, DiscGolfSession15VerticalSliceTests.cpp, DiscThrowLabSession11Tests.cpp
+  [Adaptive Build] Excluded from DiscGolfTour unity file: BasketActor.cpp, DevCourseBootstrap.cpp, DiscActor.cpp, DiscBagComponent.cpp, DiscCatalogSubsystem.cpp, DiscFlightComponent.cpp, DiscGolfBuiltInEnvironmentProvider.cpp, DiscGolfCameraViewContract.cpp, DiscGolfCharacterCreatorWidget.cpp, DiscGolfCharacterRigUnits.cpp, DiscGolfCourseDefinition.cpp, DiscGolfCoursePresentationDefinition.cpp, DiscGolfCourseRules.cpp, DiscGolfEnvironmentController.cpp, DiscGolfEnvironmentDataAssets.cpp, DiscGolfEnvironmentZoneActor.cpp, DiscGolferPawn.cpp, DiscGolfFixtureQaRunner.cpp, DiscGolfFullCharacterRuntime.cpp, DiscGolfHUD.cpp, DiscGolfInputConfig.cpp, DiscGolfMetaHumanAvatarBackendComponent.cpp, DiscGolfMetaHumanOutfitRequiredBonesComponent.cpp, DiscGolfMetaHumanRetargetAnimInstance.cpp, DiscGolfOutfitRuntime.cpp, DiscGolfPlayerExperience.cpp, DiscGolfPresentationAudioRouterComponent.cpp, DiscGolfPresentationMath.cpp, DiscGolfQualityAdapter.cpp, DiscGolfRHBHThrowAdapterComponent.cpp, DiscGolfRoundFlowPresentation.cpp, DiscGolfRoundFlowWidget.cpp, DiscGolfRuntimeCheckpointJournal.cpp, DiscGolfRuntimeCookManifest.cpp, DiscGolfSession16CorePlayabilityContract.cpp, DiscGolfTerrainPresentationActor.cpp, DiscGolfTerrainPresentationMath.cpp, DiscGolfTour.cpp, DiscGolfTourGameInstance.cpp, DiscGolfTourGameMode.cpp, DiscGolfTourPlayerController.cpp, DiscGolfVegetationInteractionActor.cpp, DiscGolfWindZoneActor.cpp, DiscReplayActor.cpp, DiscTrajectorySubsystem.cpp, ThrowControllerComponent.cpp, WindDirector.cpp, DiscCatalogTests.cpp, DiscEquipmentSession11Tests.cpp, DiscFlightBoundaryTests.cpp, DiscGolfAnimInstanceBridgeTests.cpp, DiscGolfAuthoredInputValidationTests.cpp, DiscGolfAvatarBackendRuntimeTests.cpp, DiscGolfBasketContactMathTests.cpp, DiscGolfBrandLicenseTests.cpp, DiscGolfBuiltInEnvironmentProviderTests.cpp, DiscGolfCharacterProfileRuntimeTests.cpp, DiscGolfCourseDefinitionTests.cpp, DiscGolfCourseRulesTests.cpp, DiscGolfEnvironmentTests.cpp, DiscGolfFullCharacterRuntimeTests.cpp, DiscGolfGameInstancePersistencePolicyTests.cpp, DiscGolfGameplayGateTests.cpp, DiscGolfInputTests.cpp, DiscGolfMetaHumanRetargetPolicyTests.cpp, DiscGolfNonAuthorityThrowIngressTests.cpp, DiscGolfOutfitRuntimeTests.cpp, DiscGolfPresentationTests.cpp, DiscGolfProductionMotionTests.cpp, DiscGolfPuttingTests.cpp, DiscGolfQualityAdapterTests.cpp, DiscGolfReleasePerformanceCaptureTests.cpp, DiscGolfReleaseTests.cpp, DiscGolfRestoredLieCanonicalizationTests.cpp, DiscGolfRuntimeCheckpointJournalTests.cpp, DiscGolfRuntimeCookManifestTests.cpp, DiscGolfSaveSchemaTests.cpp, DiscGolfSession10EnvironmentContractTests.cpp, DiscGolfSession12AudioRouterTests.cpp, DiscGolfSession12CameraReplayTests.cpp, DiscGolfSession12InputUiTests.cpp, DiscGolfSession12PresentationContractTests.cpp, DiscGolfSession13CourseJsonTests.cpp, DiscGolfSession16CorePlayabilityTests.cpp, DiscGolfSession17RoundFlowUiTests.cpp, DiscGolfSession18ProvenanceTests.cpp, DiscGolfSession19AudioCandidateTests.cpp, DiscGolfSession3ThrowTransactionTests.cpp, DiscGolfSolverInputValidationTests.cpp, DiscGolfTerrainPuttRegressionTests.cpp, DiscGolfThrowIngressTests.cpp, DiscTrajectoryTests.cpp
+=================================
+Using Unreal Build Accelerator local executor to run 295 action(s)
+  CPU 8 physical cores, 16 logical cores
+  Memory 15.05 GB physical, 55.95 GB/61.05 GB committed
+  UBA Storage capacity 40 GB
+** For DiscGolfTourEditor-Win64-Development **
+[1/295] Compile [x64] SharedPCH.UnrealEd.Project.ValApi.ValExpApi.Cpp20.cpp [NoUba]
+** For DiscGolfTour-Win64-Shipping **
+[2/295] Compile [x64] SharedPCH.Engine.Project.ValApi.ValExpApi.Cpp20.cpp [NoUba]
+** For DiscGolfTourEditor-Win64-Development **
+[3/295] Compile [x64] DiscGolfAnimInstance.cpp [NoUba]
+[4/295] Compile [x64] DiscGolfAnimNotifies.cpp [NoUba]
+[5/295] Compile [x64] DiscGolfAppearanceComponent.cpp [NoUba]
+[6/295] Compile [x64] DiscGolfAvatarBackendComponent.cpp [NoUba]
+[7/295] Compile [x64] DiscGolfCharacterCustomizationComponent.cpp [NoUba]
+[8/295] Compile [x64] DiscGolfCosmeticCatalog.cpp [NoUba]
+[9/295] Compile [x64] DiscGolfCourseValidatorLibrary.cpp [NoUba]
+[10/295] Compile [x64] DiscGolfOutfitCatalog.cpp [NoUba]
+[11/295] Compile [x64] DiscGolfOutfitComponent.cpp [NoUba]
+[12/295] Compile [x64] DiscGolfOutfitItem.cpp [NoUba]
+[13/295] Compile [x64] DiscGolfPlayabilityLibrary.cpp [NoUba]
+[14/295] Compile [x64] DiscGolfPlayabilityMonitorComponent.cpp [NoUba]
+[15/295] Compile [x64] DiscGolfRuntimeFoundation.cpp [NoUba]
+[16/295] Compile [x64] DiscGolfThrowComponent.cpp [NoUba]
+[17/295] Compile [x64] Module.DiscGolfRuntimeFoundation.cpp [NoUba]
+[18/295] Link [x64] UnrealEditor-DiscGolfRuntimeFoundation.lib [NoUba]
+[19/295] Compile [x64] BasketActor.cpp [NoUba]
+[20/295] Compile [x64] DevCourseBootstrap.cpp [NoUba]
+[21/295] Compile [x64] DiscActor.cpp [NoUba]
+[22/295] Compile [x64] DiscBagComponent.cpp [NoUba]
+[23/295] Compile [x64] DiscCatalogSubsystem.cpp [NoUba]
+[24/295] Compile [x64] DiscCatalogTests.cpp [NoUba]
+[25/295] Compile [x64] DiscEquipmentSession11Tests.cpp [NoUba]
+[26/295] Compile [x64] DiscFlightBoundaryTests.cpp [NoUba]
+[27/295] Compile [x64] DiscFlightComponent.cpp [NoUba]
+[28/295] Compile [x64] DiscGolfAnimInstanceBridgeTests.cpp [NoUba]
+[29/295] Compile [x64] DiscGolfAuthoredInputValidationTests.cpp [NoUba]
+[30/295] Compile [x64] DiscGolfAvatarBackendRuntimeTests.cpp [NoUba]
+[31/295] Compile [x64] DiscGolfBasketContactMathTests.cpp [NoUba]
+[32/295] Compile [x64] DiscGolfBrandLicenseTests.cpp [NoUba]
+[33/295] Compile [x64] DiscGolfBuiltInEnvironmentProvider.cpp [NoUba]
+[34/295] Compile [x64] DiscGolfBuiltInEnvironmentProviderTests.cpp [NoUba]
+[35/295] Compile [x64] DiscGolfCameraViewContract.cpp [NoUba]
+[36/295] Compile [x64] DiscGolfCharacterCreatorWidget.cpp [NoUba]
+[37/295] Compile [x64] DiscGolfCharacterProfileRuntimeTests.cpp [NoUba]
+[38/295] Compile [x64] DiscGolfCharacterRigUnits.cpp [NoUba]
+[39/295] Compile [x64] DiscGolfCourseDefinition.cpp [NoUba]
+[40/295] Compile [x64] DiscGolfCourseDefinitionTests.cpp [NoUba]
+[41/295] Compile [x64] DiscGolfCoursePresentationDefinition.cpp [NoUba]
+[42/295] Compile [x64] DiscGolfCourseRules.cpp [NoUba]
+[43/295] Compile [x64] DiscGolfCourseRulesTests.cpp [NoUba]
+[44/295] Compile [x64] DiscGolfEnvironmentController.cpp [NoUba]
+[45/295] Compile [x64] DiscGolfEnvironmentDataAssets.cpp [NoUba]
+[46/295] Compile [x64] DiscGolfEnvironmentTests.cpp [NoUba]
+[47/295] Compile [x64] DiscGolfEnvironmentZoneActor.cpp [NoUba]
+[48/295] Compile [x64] DiscGolfFixtureQaRunner.cpp [NoUba]
+[49/295] Compile [x64] DiscGolfFullCharacterRuntime.cpp [NoUba]
+[50/295] Compile [x64] DiscGolfFullCharacterRuntimeTests.cpp [NoUba]
+[51/295] Compile [x64] DiscGolfGameInstancePersistencePolicyTests.cpp [NoUba]
+[52/295] Compile [x64] DiscGolfGameplayGateTests.cpp [NoUba]
+[53/295] Compile [x64] DiscGolfHUD.cpp [NoUba]
+[54/295] Compile [x64] DiscGolfInputConfig.cpp [NoUba]
+[55/295] Compile [x64] DiscGolfInputTests.cpp [NoUba]
+[56/295] Compile [x64] DiscGolfMetaHumanAvatarBackendComponent.cpp [NoUba]
+[57/295] Compile [x64] DiscGolfMetaHumanOutfitRequiredBonesComponent.cpp [NoUba]
+[58/295] Compile [x64] DiscGolfMetaHumanRetargetAnimInstance.cpp [NoUba]
+[59/295] Compile [x64] DiscGolfMetaHumanRetargetPolicyTests.cpp [NoUba]
+[60/295] Compile [x64] DiscGolfNonAuthorityThrowIngressTests.cpp [NoUba]
+[61/295] Compile [x64] DiscGolfOutfitRuntime.cpp [NoUba]
+[62/295] Compile [x64] DiscGolfOutfitRuntimeTests.cpp [NoUba]
+[63/295] Compile [x64] DiscGolfPlayerExperience.cpp [NoUba]
+[64/295] Compile [x64] DiscGolfPresentationAudioRouterComponent.cpp [NoUba]
+[65/295] Compile [x64] DiscGolfPresentationMath.cpp [NoUba]
+[66/295] Compile [x64] DiscGolfPresentationTests.cpp [NoUba]
+[67/295] Compile [x64] DiscGolfProductionMotionTests.cpp [NoUba]
+[68/295] Compile [x64] DiscGolfPuttingTests.cpp [NoUba]
+[69/295] Compile [x64] DiscGolfQualityAdapter.cpp [NoUba]
+[70/295] Compile [x64] DiscGolfQualityAdapterTests.cpp [NoUba]
+[71/295] Compile [x64] DiscGolfRHBHThrowAdapterComponent.cpp [NoUba]
+[72/295] Compile [x64] DiscGolfReleasePerformanceCaptureTests.cpp [NoUba]
+[73/295] Compile [x64] DiscGolfReleaseTests.cpp [NoUba]
+[74/295] Compile [x64] DiscGolfRestoredLieCanonicalizationTests.cpp [NoUba]
+[75/295] Compile [x64] DiscGolfRoundFlowPresentation.cpp [NoUba]
+[76/295] Compile [x64] DiscGolfRoundFlowWidget.cpp [NoUba]
+[77/295] Compile [x64] DiscGolfRuntimeCheckpointJournal.cpp [NoUba]
+[78/295] Compile [x64] DiscGolfRuntimeCheckpointJournalTests.cpp [NoUba]
+[79/295] Compile [x64] DiscGolfRuntimeCookManifest.cpp [NoUba]
+[80/295] Compile [x64] DiscGolfRuntimeCookManifestTests.cpp [NoUba]
+[81/295] Compile [x64] DiscGolfSaveSchemaTests.cpp [NoUba]
+[82/295] Compile [x64] DiscGolfSession10EnvironmentContractTests.cpp [NoUba]
+[83/295] Compile [x64] DiscGolfSession12AudioRouterTests.cpp [NoUba]
+[84/295] Compile [x64] DiscGolfSession12CameraReplayTests.cpp [NoUba]
+[85/295] Compile [x64] DiscGolfSession12InputUiTests.cpp [NoUba]
+[86/295] Compile [x64] DiscGolfSession12PresentationContractTests.cpp [NoUba]
+[87/295] Compile [x64] DiscGolfSession13CourseJsonTests.cpp [NoUba]
+[88/295] Compile [x64] DiscGolfSession16CorePlayabilityContract.cpp [NoUba]
+[89/295] Compile [x64] DiscGolfSession16CorePlayabilityTests.cpp [NoUba]
+[90/295] Compile [x64] DiscGolfSession17RoundFlowUiTests.cpp [NoUba]
+[91/295] Compile [x64] DiscGolfSession18ProvenanceTests.cpp [NoUba]
+[92/295] Compile [x64] DiscGolfSession19AudioCandidateTests.cpp [NoUba]
+[93/295] Compile [x64] DiscGolfSession3ThrowTransactionTests.cpp [NoUba]
+[94/295] Compile [x64] DiscGolfSolverInputValidationTests.cpp [NoUba]
+[95/295] Compile [x64] DiscGolfTerrainP

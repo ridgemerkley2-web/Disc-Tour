@@ -1,0 +1,75 @@
+{
+  "schema": "DiscGolfTour.Session19BakedPcgSourceAuthorityReceipt.v2",
+  "schemaVersion": 2,
+  "session": 19,
+  "runId": "Session19BakedPcgSourceAuthority_20260825_02",
+  "verifiedUtc": "2026-08-25T18:30:00Z",
+  "state": "SOURCE_AUTHORITY_AND_SHIPPING_PCG_SOURCE_SEPARATION_VERIFIED_COOK_PROOF_PENDING",
+  "policy": "Config/DG_Session19BakedPcgPolicy.json",
+  "sourceAuthorityAccepted": true,
+  "shippingPackageEvidenceAccepted": false,
+  "releaseReady": false,
+  "blockerClosed": false,
+  "holes": [
+    {
+      "path": "Data/PineRidgeHole1.json",
+      "holeNumber": 1,
+      "treeCount": 12,
+      "sourceBytes": 7740,
+      "sourceSha256": "CD1991551FD3F13465A5C6737871A2D4B91A31E078CAD1C97F458A7A5081F317",
+      "canonicalPayloadBytes": 816,
+      "canonicalPayloadSha256": "5C74CCD61CB4871B062E3A3E8BB4A3A1E5053F2C6F93D58E417F0172E99B26E8"
+    },
+    {
+      "path": "Data/PineRidgeHole2.json",
+      "holeNumber": 2,
+      "treeCount": 18,
+      "sourceBytes": 8586,
+      "sourceSha256": "AB55ACE68264C270DE932DC0E0DEA644B844AEBB29F6CC0E994614789CA96F2E",
+      "canonicalPayloadBytes": 1180,
+      "canonicalPayloadSha256": "E0CF19D98179253592C9C5F1A54270D321E9A56D8A9D8D17781345AA3C8CE1C7"
+    },
+    {
+      "path": "Data/PineRidgeHole3.json",
+      "holeNumber": 3,
+      "treeCount": 14,
+      "sourceBytes": 8509,
+      "sourceSha256": "A1FC744234E94FBE383F5AED21DCEF9D84A4213CF9E8625B57CA4C3339EC46A2",
+      "canonicalPayloadBytes": 972,
+      "canonicalPayloadSha256": "61D73AB730DBAE0835E650A92096FB18D558C552C2EC69133B1B3C64D08E7101"
+    }
+  ],
+  "combinedCanonicalPayload": {
+    "treeCount": 44,
+    "bytes": 2982,
+    "sha256": "98D9B1F10A683D1C90EC25F766A3224B00AC550F9C379F2051535F9B82638BF6"
+  },
+  "sourceConsumerProof": {
+    "manifestSelectsAllThreeHoleFiles": true,
+    "buildRulesStageAllThreeHoleFiles": true,
+    "parserPreservesExplicitTreeArrayOrder": true,
+    "bootstrapConsumesDefinitionTrees": true,
+    "bootstrapUsesTreeLocationAndHeightScale": true,
+    "authoredCollisionTreeCount": 44,
+    "externalGenerateForestCallCount": 0,
+    "externalGenerateLocalCallCount": 0,
+    "runtimePcgModuleDependencyCount": 0,
+    "runtimePcgGenerationApiCount": 0,
+    "editorOnlyGenerateForestDefinitionCount": 1,
+    "serializedContentCallMarkerCount": 0
+  },
+  "boundedClaim": "THE_ORDERED_JSON_TREES_ARRAYS_ARE_THE_DETERMINISTIC_COMPETITIVE_TREE_COLLISION_AND_AUTHORED_TREE_VISUAL_PLACEMENT_AUTHORITY",
+  "notAcceptedByThisReceipt": [
+    "ALL_DECORATIVE_NONCOLLIDING_FOLIAGE_IS_PREBAKED",
+    "COOKED_ASSET_REGISTRY_ABSENCE",
+    "SHIPPING_BINARY_ABSENCE",
+    "SHIPPING_UFS_NONUFS_OR_IOSTORE_ABSENCE",
+    "SESSION13_RELEASE_BLOCKER_CLOSURE"
+  ],
+  "remainingEvidence": [
+    "FRESH_WINDOWS_SHIPPING_PACKAGE_AND_LOG",
+    "AUTHORED_JSON_RUNTIME_SOURCE_FOR_ALL_THREE_HOLES",
+    "COOKED_RUNTIME_PCG_GRAPH_AND_CONSUMER_ABSENCE",
+    "THREE_HOLE_COLLISION_VISUAL_AND_PERFORMANCE_ACCEPTANCE"
+  ]
+}

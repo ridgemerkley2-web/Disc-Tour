@@ -1,0 +1,44 @@
+{
+  "checkedUtc": "2026-08-25T03:35:25.998681Z",
+  "disclaimer": "This result evaluates one executable against a bounded marker policy. It does not prove cook, package, archive, provenance, playability, legal clearance, blocker closure, or release readiness.",
+  "errors": [],
+  "input": {
+    "bytes": 171347456,
+    "fileName": "DiscGolfTour-Win64-Shipping.exe",
+    "hostPathRecorded": false,
+    "pe": {
+      "dllImage": false,
+      "executableImage": true,
+      "format": "PE32+",
+      "machine": "AMD64",
+      "sectionCount": 9
+    },
+    "sha256": "c98f5d11e8c5290245021c4b7937ac5654c5da2193fe9b1c9ebe7fcb75ee4977"
+  },
+  "passed": true,
+  "policyId": "windows_shipping_v05_executable_marker_policy_v1",
+  "policySha256": "9ef5f485f92979387796e23bb933ff41fcdb2e76ec9ae90292e0cf6c5e35b059",
+  "releaseReady": false,
+  "resolvedBlockers": [],
+  "scan": {
+    "caseInsensitive": true,
+    "encodings": [
+      "ascii",
+      "utf-16le"
+    ],
+    "forbiddenMatchCount": 0,
+    "forbiddenMatches": [],
+    "missingRequiredMarkerIds": [],
+    "required": [
+      {
+        "foundAscii": true,
+        "foundUtf16Le": true,
+        "id": "project_owned_runtime_foundation"
+      }
+    ]
+  },
+  "schema": "DiscGolfTour.Session19ShippingBinaryEvidence.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "state": "PASS_BINARY_MARKER_POLICY_ONLY"
+}

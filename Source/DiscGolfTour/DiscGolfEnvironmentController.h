@@ -6,12 +6,11 @@
 #include "DiscGolfEnvironmentController.generated.h"
 
 class UBoxComponent;
-class UPCGComponent;
 class UDiscGolfForestPreset;
 class AWindDirector;
 class ADiscGolfEnvironmentZoneActor;
 
-/** Owns one course-scale PCG forest and resolves designer zones into biome density. */
+/** Resolves designer zones, environment quality, and optional shared wind data. */
 UCLASS(BlueprintType)
 class DISCGOLFTOUR_API ADiscGolfEnvironmentController : public AActor
 {
@@ -24,8 +23,6 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Environment")
     TObjectPtr<UBoxComponent> GenerationBounds;
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Environment")
-    TObjectPtr<UPCGComponent> PCGComponent;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Environment")
     TSoftObjectPtr<UDiscGolfForestPreset> ForestPreset;
@@ -34,21 +31,15 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Environment")
     FVector CourseExtentCm = FVector(90000.0f, 60000.0f, 10000.0f);
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Environment")
-    bool bSynchronizeDiscFlightWind = true;
+    bool bSynchronizeDiscFlightWind = false;
 
-    UFUNCTION(BlueprintCallable, CallInEditor, Category="Environment")
-    void GenerateForest();
-    UFUNCTION(BlueprintCallable, CallInEditor, Category="Environment")
-    void CleanupForest();
     UFUNCTION(BlueprintCallable, Category="Environment")
-    void ApplyPreset();
-    UFUNCTION(BlueprintCallable, Category="Environment")
-    void SynchronizeWindDirector(AWindDirector* WindDirector) const;
+    bool SynchronizeWindDirector(AWindDirector* WindDirector) const;
     UFUNCTION(BlueprintPure, Category="Environment")
     float EvaluateDensity(
         const FVector& WorldLocation,
         EDiscGolfEnvironmentAssetCategory Category) const;
-    /** PCG batch path: reuses one preset load and one zone query for every sampled point. */
+    /** Authoring batch path: reuses one preset load and one zone query for sampled points. */
     float EvaluateDensityFromZones(
         const FVector& WorldLocation,
         EDiscGolfEnvironmentAssetCategory Category,
@@ -56,4 +47,10 @@ public:
         const TArray<const ADiscGolfEnvironmentZoneActor*>& Zones) const;
     UFUNCTION(BlueprintPure, Category="Environment")
     bool HasProductionConfiguration() const;
+
+    /** Pure authoring-completeness predicate kept asset-load-free for contract validation. */
+    static bool IsProductionConfigurationComplete(
+        int32 BindingSlotCount,
+        int32 PopulatedSlotCount,
+        bool bHasAuthoringGraph);
 };

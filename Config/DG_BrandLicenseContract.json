@@ -1,0 +1,267 @@
+{
+  "schema": "DiscGolfTour.BrandLicenseContract.v1",
+  "schema_version": 1,
+  "audit_scope": "TECHNICAL_PROVENANCE_GATE_NOT_LEGAL_ADVICE",
+  "normal_status": "PASS_CONTRACT_RELEASE_BLOCKED",
+  "release_status": "BLOCKED_PENDING_PROVENANCE_AND_CLEARANCE_CLOSURE",
+  "policy": {
+    "active_brand_id": "dg_generic",
+    "unknown_brand_policy": "BLOCK",
+    "unknown_rights_policy": "DO_NOT_SHIP",
+    "unregistered_content_policy": "BLOCK",
+    "working_title_status": "INTERNAL_ONLY_NOT_CLEARED_PUBLIC_TITLE",
+    "receipt_secrets_forbidden": true,
+    "manual_visual_brand_review_required": true,
+    "distribution_builds_require_release_ready": true,
+    "actual_staged_package_provenance_closure_status": "NOT_IMPLEMENTED_SOURCE_GATE_ONLY",
+    "source_gate_covers_every_staged_file": false
+  },
+  "brands": [
+    {
+      "brand_id": "dg_generic",
+      "display_name": "Generic project-original presentation",
+      "status": "GENERIC_UNBRANDED_APPROVED",
+      "public_runtime_allowed": true,
+      "authorized_logo_count": 0,
+      "evidence": "Docs/DG_GAME_BIBLE.md"
+    },
+    {
+      "brand_id": "premium_disc_golf",
+      "display_name": "Premium Disc Golf",
+      "status": "DORMANT_BLOCKED_PENDING_EXPLICIT_REAPPROVAL",
+      "public_runtime_allowed": false,
+      "authorized_logo_count": 0,
+      "evidence": "Docs/DG_GAME_BIBLE.md"
+    }
+  ],
+  "technical_dependencies": [
+    {
+      "dependency_id": "epic_metahuman",
+      "display_name": "Epic MetaHuman",
+      "status": "APPROVED_UE_ONLY_TECHNICAL_DEPENDENCY",
+      "public_runtime_branding_allowed": false,
+      "release_use_allowed": true,
+      "license_url": "https://www.unrealengine.com/eula/content",
+      "content_roots": [
+        "Content/DiscGolf/Characters/MetaHuman/Common",
+        "Content/DiscGolf/Characters/MetaHuman/Generated"
+      ],
+      "expected_content_file_count": 261,
+      "restrictions": [
+        "UE_ONLY_CONTENT",
+        "NO_PUBLIC_TECHNOLOGY_BRANDING_WITHOUT_SEPARATE_APPROVAL",
+        "NO_AI_TRAINING_OR_DATABASE_USE",
+        "SOURCE_MHC_EDITOR_ONLY_EXCLUDED_FROM_RUNTIME_CLOSURE"
+      ]
+    },
+    {
+      "dependency_id": "disc_golf_character_framework",
+      "display_name": "Disc Golf Character Framework",
+      "status": "PROJECT_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+      "public_runtime_branding_allowed": false,
+      "release_use_allowed": false,
+      "license_url": null,
+      "content_roots": [
+        "Plugins/DiscGolfCharacterFramework"
+      ],
+      "expected_content_file_count": 96,
+      "restrictions": [
+        "NO_LICENSE_COPYING_OR_NOTICE_PRESENT",
+        "NO_REDISTRIBUTION_RIGHT_INFERRED_FROM_LOCAL_POSSESSION",
+        "OWNER_DECISION_OR_WRITTEN_GRANT_REQUIRED_BEFORE_DISTRIBUTION",
+        "EXPECTED_FILE_COUNT_EXCLUDES_GENERATED_BINARIES_AND_INTERMEDIATE"
+      ]
+    }
+  ],
+  "approved_external_sources": [
+    {
+      "source_id": "poly_haven_pine_ridge_cc0",
+      "publisher": "Poly Haven",
+      "status": "LICENSED_EXTERNAL_APPROVED",
+      "license": "CC0-1.0",
+      "license_url": "https://polyhaven.com/license",
+      "manifest": "SourceArt/PineRidge/PolyHaven/asset_manifest.json",
+      "manifest_sha256": "880C79DD7F9151DAD0D8344C0E505CBB1E3AC98D06C955E9DACD6E305BCBD250",
+      "expected_file_count": 35,
+      "release_use_allowed": true,
+      "attribution_required": false,
+      "derived_runtime_provenance_status": "INCOMPLETE_NO_DURABLE_SOURCE_TO_UASSET_RECEIPT",
+      "release_derived_outputs_allowed": false
+    }
+  ],
+  "quarantined_imports": [
+    {
+      "source_id": "fab_project_nature_spruce_forest",
+      "publisher": "Project Nature",
+      "listing_id": "f8044501-17a2-498f-b198-5f1bc71ee87a",
+      "disk_root": "Content/PN_interactiveSpruceForest",
+      "package_root": "/Game/PN_interactiveSpruceForest",
+      "expected_file_count": 363,
+      "expected_total_bytes": 1565612902,
+      "status": "QUARANTINED_PENDING_RECEIPT_EVIDENCE",
+      "release_use_allowed": false,
+      "evidence": "Docs/FAB_ASSET_MANIFEST.md"
+    },
+    {
+      "source_id": "fab_greenbuggames_stump_scanned",
+      "publisher": "GreenBugGames",
+      "listing_id": "5f433961-8d90-49ab-a991-e4c7a78acccf",
+      "disk_root": "Content/Stump_Scanned",
+      "package_root": "/Game/Stump_Scanned",
+      "expected_file_count": 63,
+      "expected_total_bytes": 680263631,
+      "status": "QUARANTINED_PENDING_RECEIPT_EVIDENCE",
+      "release_use_allowed": false,
+      "evidence": "Docs/FAB_ASSET_MANIFEST.md"
+    },
+    {
+      "source_id": "fab_tharlevfx_water_materials",
+      "publisher": "tharlevfx",
+      "listing_id": "063155ea-d9d2-4f29-b09f-33270b0bc861",
+      "disk_root": "Content/WaterMaterials",
+      "package_root": "/Game/WaterMaterials",
+      "expected_file_count": 107,
+      "expected_total_bytes": 91003274,
+      "status": "QUARANTINED_PENDING_RECEIPT_EVIDENCE",
+      "release_use_allowed": false,
+      "evidence": "Docs/FAB_ASSET_MANIFEST.md"
+    }
+  ],
+  "development_only_content": [
+    {
+      "content_id": "session6_proxy_outfits",
+      "manifest": "SourceArt/DiscGolf/Outfits/Proxy/proxy_outfit_source_manifest.json",
+      "manifest_sha256": "551F5021720410879445675EA37BFC423E24DD99E69E98E0B2B3F539B47B6B27",
+      "required_status": "DO_NOT_SHIP",
+      "release_use_allowed": false
+    },
+    {
+      "content_id": "session7_proxy_customization",
+      "manifest": "SourceArt/DiscGolf/Characters/Customization/Proxy/proxy_customization_source_manifest.json",
+      "manifest_sha256": "4481300D0079B7B9E0360B82885E2665BF016362FBB2BECE0E708718C18C4711",
+      "required_status": "DO_NOT_SHIP",
+      "release_use_allowed": false
+    },
+    {
+      "content_id": "motion_source_registry",
+      "manifest": "SourceArt/DiscGolf/Mocap/motion_source_registry.json",
+      "manifest_sha256": "13301FF11E3E6024E1F64C1154D7AEBC232F71DECC7C143F12F319A929BD979E",
+      "required_status": "NO_CLEARED_PRODUCTION_MOTION_PRESENT",
+      "release_use_allowed": false
+    }
+  ],
+  "public_name_clearance": {
+    "final_public_title": null,
+    "final_public_title_status": "NOT_LOCKED_NOT_CLEARED",
+    "working_names": [
+      "DGTour",
+      "DiscGolfTour",
+      "Disc Golf Tour"
+    ],
+    "equipment_display_names": [
+      {
+        "stable_id": "Apex",
+        "display_name": "Apex",
+        "status": "PENDING_PUBLIC_NAME_CLEARANCE_DEVELOPMENT_ONLY"
+      },
+      {
+        "stable_id": "Vector",
+        "display_name": "Vector",
+        "status": "PENDING_PUBLIC_NAME_CLEARANCE_DEVELOPMENT_ONLY"
+      },
+      {
+        "stable_id": "Line",
+        "display_name": "Line",
+        "status": "PENDING_PUBLIC_NAME_CLEARANCE_DEVELOPMENT_ONLY"
+      },
+      {
+        "stable_id": "Compass",
+        "display_name": "Compass",
+        "status": "PENDING_PUBLIC_NAME_CLEARANCE_DEVELOPMENT_ONLY"
+      },
+      {
+        "stable_id": "Touch",
+        "display_name": "Touch",
+        "status": "PENDING_PUBLIC_NAME_CLEARANCE_DEVELOPMENT_ONLY"
+      }
+    ],
+    "course_display_names": [
+      {
+        "stable_id": "PineRidgeChampionship",
+        "display_name": "Pine Ridge Championship",
+        "status": "PENDING_PUBLIC_NAME_CLEARANCE_DEVELOPMENT_ONLY"
+      }
+    ]
+  },
+  "scan_contract": {
+    "runtime_text_roots": [
+      "Config/DefaultGame.ini",
+      "Data",
+      "Source/DiscGolfTour",
+      "Plugins/DiscGolfCharacterFramework/Source"
+    ],
+    "runtime_binary_roots": [
+      "Content/Data/Discs",
+      "Content/DiscGolf/Characters/Customization",
+      "Content/DiscGolf/Outfits",
+      "Content/Presentation/Course/PineRidge"
+    ],
+    "forbidden_runtime_tokens": [
+      "premium_disc_golf",
+      "premium_default",
+      "premium_bag_default",
+      "BrewsterRidgeTreeLine",
+      "NorthwoodBlackCompression",
+      "IdlewildLakeFrame",
+      "Brewster Ridge",
+      "Northwood Black",
+      "Idlewild",
+      "Innova",
+      "Discraft",
+      "Discmania",
+      "Dynamic Discs",
+      "Latitude 64",
+      "MVP Disc",
+      "Prodigy Disc",
+      "Westside Discs",
+      "Nike",
+      "Adidas",
+      "Oakley",
+      "Under Armour"
+    ],
+    "forbidden_public_ui_fragments": [
+      "CURATED METAHUMAN",
+      "METAHUMAN /",
+      "MetaHuman backend availability",
+      "assembled MetaHuman preview",
+      "Assembled MetaHuman",
+      "Verified assembled MetaHuman"
+    ],
+    "required_public_ui_fragments": [
+      "CURATED REALISTIC PRESET",
+      "REALISTIC / CURATED",
+      "REALISTIC / UNAVAILABLE",
+      "Realistic character backend is available"
+    ],
+    "required_forest_reference_ids": [
+      "OpeningBroadTreeLine",
+      "NeedleCanopyCompression",
+      "GalleryLakeFrame"
+    ],
+    "required_never_cook_roots": [
+      "/Game/PN_interactiveSpruceForest",
+      "/Game/Stump_Scanned",
+      "/Game/WaterMaterials"
+    ]
+  },
+  "release_blockers": [
+    "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+    "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+    "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+    "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+    "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+    "POLY_HAVEN_DERIVED_RUNTIME_PROVENANCE_RECEIPT_INCOMPLETE",
+    "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+    "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED"
+  ]
+}

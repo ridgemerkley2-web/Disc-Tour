@@ -10,11 +10,25 @@ void FDiscGolfPlayerSettings::Normalize()
     MasterVolume = FMath::Clamp(MasterVolume, 0.0f, 1.0f);
     MusicVolume = FMath::Clamp(MusicVolume, 0.0f, 1.0f);
     EffectsVolume = FMath::Clamp(EffectsVolume, 0.0f, 1.0f);
+    AmbienceVolume = FMath::Clamp(AmbienceVolume, 0.0f, 1.0f);
+    VoiceVolume = FMath::Clamp(VoiceVolume, 0.0f, 1.0f);
     MouseSensitivity = FMath::Clamp(MouseSensitivity, 0.25f, 3.0f);
     ControllerSensitivity = FMath::Clamp(ControllerSensitivity, 0.25f, 3.0f);
+    ControllerDeadZone = FMath::Clamp(ControllerDeadZone, 0.0f, 0.95f);
     CameraShakeStrength = FMath::Clamp(CameraShakeStrength, 0.0f, 1.0f);
+    ReplaySpeed = FMath::Clamp(ReplaySpeed, 0.25f, 2.0f);
     HudScale = FMath::Clamp(HudScale, 0.75f, 1.35f);
     TextScale = FMath::Clamp(TextScale, 0.85f, 1.30f);
+    AimAssist01 = FMath::Clamp(AimAssist01, 0.0f, 1.0f);
+    TimingWindowScale = FMath::Clamp(TimingWindowScale, 0.5f, 2.0f);
+    ColorVisionMode = static_cast<EDiscGolfColorVisionMode>(FMath::Clamp(
+        static_cast<int32>(ColorVisionMode),
+        static_cast<int32>(EDiscGolfColorVisionMode::None),
+        static_cast<int32>(EDiscGolfColorVisionMode::Tritanopia)));
+    TracerColorPreset = static_cast<EDiscGolfTracerColorPreset>(FMath::Clamp(
+        static_cast<int32>(TracerColorPreset),
+        static_cast<int32>(EDiscGolfTracerColorPreset::SignalTeal),
+        static_cast<int32>(EDiscGolfTracerColorPreset::PaperWhite)));
 }
 
 void UDiscGolfThrowHistorySubsystem::RecordThrow(const FDiscGolfThrowHistoryEntry& Entry)
@@ -125,6 +139,46 @@ float DiscGolfPlayerExperience::BasketMarkerOpacity(
     return DistanceMeters >= 25.0f ? 0.42f : 0.22f;
 }
 
+FLinearColor DiscGolfPlayerExperience::ResolveTracerColor(EDiscGolfTracerColorPreset Preset)
+{
+    switch (Preset)
+    {
+        case EDiscGolfTracerColorPreset::AccessibleLime:
+            return FLinearColor(0.72f, 0.94f, 0.18f, 1.0f);
+        case EDiscGolfTracerColorPreset::TournamentAmber:
+            return FLinearColor(0.96f, 0.67f, 0.20f, 1.0f);
+        case EDiscGolfTracerColorPreset::PaperWhite:
+            return FLinearColor(0.96f, 0.95f, 0.89f, 1.0f);
+        case EDiscGolfTracerColorPreset::SignalTeal:
+        default:
+            return FLinearColor(0.18f, 0.78f, 0.64f, 1.0f);
+    }
+}
+
+FString DiscGolfPlayerExperience::ColorVisionModeName(EDiscGolfColorVisionMode Mode)
+{
+    switch (Mode)
+    {
+        case EDiscGolfColorVisionMode::Protanopia: return TEXT("PROTANOPIA");
+        case EDiscGolfColorVisionMode::Deuteranopia: return TEXT("DEUTERANOPIA");
+        case EDiscGolfColorVisionMode::Tritanopia: return TEXT("TRITANOPIA");
+        case EDiscGolfColorVisionMode::None:
+        default: return TEXT("NONE");
+    }
+}
+
+FString DiscGolfPlayerExperience::TracerColorPresetName(EDiscGolfTracerColorPreset Preset)
+{
+    switch (Preset)
+    {
+        case EDiscGolfTracerColorPreset::AccessibleLime: return TEXT("ACCESSIBLE LIME");
+        case EDiscGolfTracerColorPreset::TournamentAmber: return TEXT("TOURNAMENT AMBER");
+        case EDiscGolfTracerColorPreset::PaperWhite: return TEXT("PAPER WHITE");
+        case EDiscGolfTracerColorPreset::SignalTeal:
+        default: return TEXT("SIGNAL TEAL");
+    }
+}
+
 void DiscGolfPlayerExperience::BuildBoundedReplaySamples(
     const TArray<FDiscTrajectorySample>& Source,
     TArray<FDiscTrajectorySample>& OutSamples,
@@ -184,4 +238,3 @@ void DiscGolfPlayerExperience::BuildBoundedReplaySamples(
     OutSamples.Reserve(Selected.Num());
     for (const int32 Index : Selected) OutSamples.Add(Source[Index]);
 }
-

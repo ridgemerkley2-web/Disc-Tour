@@ -35,6 +35,19 @@ CURVES = (
     "DG_BraceAlpha",
     "DG_ReleaseApproachAlpha",
     "DG_FollowThroughAlpha",
+    "DG_WeightShiftAlpha",
+    "DG_BraceCompressionAlpha",
+    "DG_HipDriveAlpha",
+    "DG_TorsoDriveAlpha",
+    "DG_ShoulderDriveAlpha",
+    "DG_ElbowLeadAlpha",
+    "DG_WristLagAlpha",
+    "DG_FingerReleaseAlpha",
+    "DG_OffArmCounterbalanceAlpha",
+    "DG_GazeTargetAlpha",
+    "DG_DiscPlaneAlpha",
+    "DG_BraceExtensionAlpha",
+    "DG_RecoveryBeatAlpha",
 )
 
 CHAINS = (

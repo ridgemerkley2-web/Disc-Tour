@@ -171,6 +171,11 @@ NEW_SESSION5_FILES = {
     "Scripts/probe_dg_character_session5_mocap_units.py",
     "Scripts/validate_dg_character_session5_mocap_fixture.py",
     "Scripts/validate_motion_source_registry.py",
+    "Scripts/audit_motion_development_reference.py",
+    "Scripts/author_dg_metahuman_to_dgmaster_retargeter.py",
+    "Scripts/inspect_dg_metahuman_to_master_inputs.py",
+    "Scripts/inspect_dg_metahuman_to_dgmaster_retargeter.py",
+    "Scripts/validate_dg_metahuman_to_dgmaster_retargeter.py",
     "Scripts/validate_dg_character_session5_wiring.py",
     "Scripts/run-session5-mocap-profile-smokes.py",
     "Scripts/run-session5-mocap-visual-capture.py",
@@ -183,7 +188,12 @@ NEW_SESSION5_FILES = {
     "Source/DiscGolfTourEditor/DiscGolfSession5MocapUtility.h",
     "SourceArt/DiscGolf/Mocap/motion_source_registry.json",
 }
-INTENDED_SESSION5_UNTRACKED = NEW_SESSION5_FILES | set(FIXTURE_PACKAGES)
+EDITOR_PIPELINE_PACKAGES = {
+    "Content/DiscGolf/Animation/Mocap/Rigs/RTG_MetaHuman_To_DGMaster.uasset",
+}
+INTENDED_SESSION5_UNTRACKED = (
+    NEW_SESSION5_FILES | set(FIXTURE_PACKAGES) | EDITOR_PIPELINE_PACKAGES
+)
 
 REQUIRED_EXISTING_WIRING_FILES = {
     "DiscGolfTour.uproject",
@@ -414,7 +424,7 @@ def _check_fixture_packages() -> tuple[list[str], dict[str, Any]]:
         if root.is_dir()
         else set()
     )
-    unexpected = sorted(actual - set(FIXTURE_PACKAGES))
+    unexpected = sorted(actual - set(FIXTURE_PACKAGES) - EDITOR_PIPELINE_PACKAGES)
     errors = [f"missing required authored fixture package: {path}" for path in missing]
     errors.extend(f"unexpected file under the fixture content root: {path}" for path in unexpected)
     sizes = {
@@ -429,6 +439,7 @@ def _check_fixture_packages() -> tuple[list[str], dict[str, Any]]:
         "present_count": len(present),
         "missing": missing,
         "unexpected": unexpected,
+        "allowed_editor_pipeline_packages": sorted(EDITOR_PIPELINE_PACKAGES),
         "sizes": sizes,
     }
 

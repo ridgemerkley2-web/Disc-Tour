@@ -1,0 +1,148 @@
+{
+  "archive": {
+    "bytes": 1246018071,
+    "canonicalManifestSha256": "362CA24911629BE4EEC5076F6A0D5C0DCD6F7071C1DD2BAB102D86CF7807A184",
+    "fileCount": 31,
+    "forbiddenPathMatchCount": 0,
+    "forbiddenPathMatches": [],
+    "hostPathRecorded": false,
+    "missingRequiredFiles": [],
+    "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260826T200427Z_9e7536afd2ec/Windows"
+  },
+  "binaryScan": {
+    "caseInsensitive": true,
+    "encodings": [
+      "ascii",
+      "utf-16le"
+    ],
+    "forbiddenMatchCount": 0,
+    "groups": [
+      {
+        "id": "developer_module",
+        "matchCount": 0,
+        "matches": [],
+        "passed": true
+      },
+      {
+        "id": "career_entrypoints_saves_and_symbols",
+        "matchCount": 0,
+        "matches": [],
+        "passed": true
+      },
+      {
+        "id": "ai_entrypoints_spawn_and_symbols",
+        "matchCount": 0,
+        "matches": [],
+        "passed": true
+      },
+      {
+        "id": "throw_lab_entrypoints_saves_and_symbols",
+        "matchCount": 0,
+        "matches": [],
+        "passed": true
+      }
+    ]
+  },
+  "bindings": {
+    "candidateContent": {
+      "artifact": "candidate-content",
+      "bytes": 26660,
+      "fileName": "CandidateContent-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+      "hostPathRecorded": false,
+      "sha256": "8237F4DAF5FD668BDC6ED2A89106847DEE6C3C5420765EF673DA53AE8C7706A7"
+    },
+    "candidateVerification": {
+      "artifact": "candidate-verification",
+      "bytes": 6452,
+      "fileName": "ShippingCandidateVerification-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+      "hostPathRecorded": false,
+      "sha256": "9D7F82CFC86843C6B3C3F6265BFD7EE04DBB05DFC6E89A1F84BDFFC7839431A3"
+    },
+    "freshUserDirManifest": {
+      "artifact": "fresh-userdir-manifest",
+      "bytes": 3919,
+      "fileName": "FreshUserDir-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+      "hostPathRecorded": false,
+      "sha256": "645F29D92186AAFC8F2EB7C1830568E68FD084410656AF8F5B21FF1612541024"
+    },
+    "policy": {
+      "artifact": "policy",
+      "bytes": 6262,
+      "fileName": "DG_Session19V05CareerAiThrowLabShippingExclusionPolicy.json",
+      "hostPathRecorded": false,
+      "sha256": "2B9810CF2B700DF6036EC6A31F3D229BDD198B293C2157D206F298548C6B7F8D"
+    },
+    "shippingBinary": {
+      "artifact": "shipping-binary",
+      "bytes": 1346,
+      "fileName": "ShippingBinary-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+      "hostPathRecorded": false,
+      "sha256": "38E5A3A305039194213F63F2EF97924692D8468E6AEE14A33941772DE859AA5D"
+    },
+    "validator": {
+      "artifact": "validator",
+      "bytes": 38477,
+      "fileName": "validate_dg_session19_v05_feature_exclusion.py",
+      "hostPathRecorded": false,
+      "sha256": "986E306C5EF0C14F42587D58CF009EFCCDCC1754B42461327E97C32C6B2A95F2"
+    }
+  },
+  "candidateId": "S19_WindowsShipping_20260826T200427Z_9e7536afd2ec",
+  "claimBoundary": {
+    "blockerClosureClaimed": false,
+    "distributionClearance": false,
+    "humanPlayFeelApproval": false,
+    "legalApproval": false,
+    "manualGameplayReviewComplete": false,
+    "manualGameplayReviewRequired": true,
+    "publicAiOpponentClaimAllowed": false,
+    "publicCareerClaimAllowed": false,
+    "publicThrowLabClaimAllowed": false,
+    "releaseReady": false,
+    "technicalExclusionEvidenceOnly": true
+  },
+  "contentExclusion": {
+    "CAREER_AI": {
+      "authoritativeMatchCount": 0,
+      "manifestDiagnosticMatchCount": 0,
+      "passed": true
+    },
+    "THROW_LAB": {
+      "authoritativeMatchCount": 0,
+      "manifestDiagnosticMatchCount": 0,
+      "passed": true
+    }
+  },
+  "disclaimer": "This receipt proves only bounded technical exclusion assertions for one immutable candidate. Public product claims, manual gameplay review, human play-feel approval, legal approval, distribution clearance, blocker closure, and release readiness remain pending.",
+  "failures": [],
+  "freshUserDirExclusion": {
+    "aiSpawnSideEffectCount": 0,
+    "candidateUserDirBindingSha256": "4e4f9929b540b92bddf3739e40819c80f9bded483d72f84d1c05881131466d63",
+    "careerSaveCount": 0,
+    "forbiddenArtifacts": 0,
+    "forbiddenPathMatchCount": 0,
+    "forbiddenPathMatches": [],
+    "observedFileCount": 5,
+    "passed": true,
+    "throwLabSaveCount": 0,
+    "unknownFiles": 0,
+    "userDirToken": "946cdca0-e57b-4006-a49b-04b8cb3b307d"
+  },
+  "generatedUtc": "2026-08-26T20:47:55.009489Z",
+  "passed": true,
+  "schema": "DiscGolfTour.Session19V05CareerAiThrowLabShippingExclusionReceipt.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "state": "PASS_CANDIDATE_BOUND_V05_CAREER_AI_THROW_LAB_EXCLUSION",
+  "technicalAssertions": {
+    "aiShippingEntrypointAbsent": true,
+    "aiSpawnCapabilityIdentityAbsent": true,
+    "aiSpawnFreshUserDirSideEffectAbsent": true,
+    "careerModuleAndSymbolIdentityAbsent": true,
+    "careerShippingEntrypointAbsent": true,
+    "careerShippingSaveAbsent": true,
+    "throwLabModuleSymbolAndContentIdentityAbsent": true,
+    "throwLabShippingEntrypointAbsent": true,
+    "throwLabShippingSaveAbsent": true
+  }
+}

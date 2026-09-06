@@ -1,0 +1,93 @@
+{
+  "schema": "DiscGolfTour.Session19ShippingPcgSeparationPolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "policyId": "v05_shipping_authored_json_editor_only_pcg_v1",
+  "authority": "ADDITIVE_SOURCE_COOK_TECHNICAL_POLICY_NOT_RELEASE_APPROVAL",
+  "state": "SOURCE_CONFIG_SEPARATION_PASS_FRESH_SHIPPING_COOK_PROOF_PENDING",
+  "strategy": "SHIP_EXACT_AUTHORED_JSON_44_TREE_RUNTIME_OUTPUT_AND_EXCLUDE_ALL_PCG_AUTHORING_CODE_AND_GRAPH_CONTENT",
+  "target": {
+    "platform": "Windows",
+    "configuration": "Shipping",
+    "milestone": "v0.5",
+    "courseId": "PineRidgeChampionship",
+    "layoutId": "Championship",
+    "holeNumbers": [1, 2, 3]
+  },
+  "runtimeAuthority": {
+    "source": "ORDERED_EXPLICIT_TREES_ARRAYS_IN_AUTHORED_HOLE_JSON",
+    "treeCount": 44,
+    "canonicalPayloadBytes": 2982,
+    "canonicalPayloadSha256": "98D9B1F10A683D1C90EC25F766A3224B00AC550F9C379F2051535F9B82638BF6",
+    "shippingSourceFallbackAllowed": false,
+    "runtimeRandomPlacementAllowed": false
+  },
+  "compileBoundary": {
+    "runtimeModuleRules": "Source/DiscGolfTour/DiscGolfTour.Build.cs",
+    "runtimeForbiddenModuleDependencies": ["PCG"],
+    "runtimeControllerHeader": "Source/DiscGolfTour/DiscGolfEnvironmentController.h",
+    "runtimeControllerSource": "Source/DiscGolfTour/DiscGolfEnvironmentController.cpp",
+    "runtimeForbiddenSymbols": [
+      "UPCG",
+      "PCGComponent",
+      "GenerateForest",
+      "GenerateLocal",
+      "SetGraph"
+    ],
+    "editorModuleRules": "Source/DiscGolfTourEditor/DiscGolfTourEditor.Build.cs",
+    "editorRequiredModuleDependency": "PCG",
+    "editorAuthoringController": "Source/DiscGolfTourEditor/DiscGolfPcgAuthoringController.cpp",
+    "editorNode": "Source/DiscGolfTourEditor/PCGDiscGolfZoneDensity.cpp",
+    "pluginTargetAllowList": ["Editor"]
+  },
+  "assetBoundary": {
+    "presetHeader": "Source/DiscGolfTour/DiscGolfEnvironmentDataAssets.h",
+    "forestGraphProperty": "ForestGraph",
+    "forestGraphPropertyEditorOnly": true,
+    "forestGraphPropertyGenericSoftObject": true,
+    "graphDiskPath": "Content/Environment/Forest/PCG/PCG_TemperateMountainForest.uasset",
+    "graphPackagePath": "/Game/Environment/Forest/PCG/PCG_TemperateMountainForest",
+    "graphBytes": 705957,
+    "graphSha256": "86DF264918903F0F18832D6B078F4AFE032B3DFC31D64134F2B2CD2F3B17D159",
+    "shippingNeverCookDirectory": "/Game/Environment/Forest/PCG",
+    "legacyClassPath": "/Script/DiscGolfTour.PCGDiscGolfZoneDensitySettings",
+    "editorClassPath": "/Script/DiscGolfTourEditor.PCGDiscGolfZoneDensitySettings"
+  },
+  "requiredSourceProof": [
+    "RUNTIME_MODULE_HAS_NO_PCG_DEPENDENCY",
+    "RUNTIME_SOURCE_HAS_NO_PCG_GENERATION_TYPE_OR_API",
+    "PCG_PLUGIN_IS_EDITOR_TARGET_ONLY",
+    "FOREST_GRAPH_PROPERTY_IS_EDITOR_ONLY_AND_GENERIC",
+    "EDITOR_MODULE_OWNS_GRAPH_CONTROLLER_AND_CUSTOM_NODE",
+    "SHIPPING_COOK_CONFIGURATION_EXCLUDES_PCG_GRAPH_DIRECTORY",
+    "AUTHORED_JSON_44_TREE_AUTHORITY_UNCHANGED"
+  ],
+  "freshCookProofRequired": [
+    "FINAL_WINDOWS_ARCHIVE_IDENTITY",
+    "IOSTORE_HAS_NO_PROJECT_PCG_GRAPH_ENTRY",
+    "COOKED_ASSET_REGISTRY_HAS_NO_PROJECT_PCG_GRAPH_OBJECT",
+    "COOKED_PROJECT_ASSETS_HAVE_NO_PCG_COMPONENT_GRAPH_OR_GENERATION_MARKERS",
+    "SHIPPING_BINARY_AND_MODULE_INVENTORY_HAVE_NO_PROJECT_PCG_RUNTIME_DEPENDENCY"
+  ],
+  "claimBoundary": {
+    "sourceConfigSeparationProven": true,
+    "freshShippingCookAbsenceProven": false,
+    "unrealPcgBakeSaveReopenProven": false,
+    "collisionVisualApproval": false,
+    "performanceAcceptance": false,
+    "soakAcceptance": false,
+    "manualGameplayAcceptance": false,
+    "humanPlayFeelApproval": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "session13BlockerClosed": false,
+    "releaseReady": false
+  },
+  "evidence": {
+    "validator": "Scripts/validate_dg_session19_shipping_pcg_separation.py",
+    "selfTestMinimumMutationCount": 28
+  },
+  "session13BlockerClosed": false,
+  "releaseReady": false
+}

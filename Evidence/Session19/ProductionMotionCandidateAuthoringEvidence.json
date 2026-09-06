@@ -1,0 +1,232 @@
+{
+  "authored_assets": [
+    {
+      "bytes": 272668,
+      "exists": true,
+      "file": "Content/DiscGolf/Animation/ProductionMotion/Drive/A_DG_RHBH_Drive_Procedural_v001.uasset",
+      "object_path": "/Game/DiscGolf/Animation/ProductionMotion/Drive/A_DG_RHBH_Drive_Procedural_v001.A_DG_RHBH_Drive_Procedural_v001",
+      "package": "/Game/DiscGolf/Animation/ProductionMotion/Drive/A_DG_RHBH_Drive_Procedural_v001",
+      "sha256": "43530C4802599684CA44CA62609C8759E7D06E5CE9C692E657C3120D4985C822"
+    },
+    {
+      "bytes": 21214,
+      "exists": true,
+      "file": "Content/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v001.uasset",
+      "object_path": "/Game/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v001.AM_DG_RHBH_Drive_Procedural_v001",
+      "package": "/Game/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v001",
+      "sha256": "ED67CFF772682AB023F522AB4D0CD7FC535A3DDE1501A2CA17108D458604C2CE"
+    },
+    {
+      "bytes": 183697,
+      "exists": true,
+      "file": "Content/DiscGolf/Animation/ProductionMotion/Approach/A_DG_RHBH_Approach_Procedural_v001.uasset",
+      "object_path": "/Game/DiscGolf/Animation/ProductionMotion/Approach/A_DG_RHBH_Approach_Procedural_v001.A_DG_RHBH_Approach_Procedural_v001",
+      "package": "/Game/DiscGolf/Animation/ProductionMotion/Approach/A_DG_RHBH_Approach_Procedural_v001",
+      "sha256": "FF38F160DA70CD0A12B4E2FD335C128E3043E1F850901930A95AA65C24DEDDB1"
+    },
+    {
+      "bytes": 21244,
+      "exists": true,
+      "file": "Content/DiscGolf/Animation/ProductionMotion/Approach/AM_DG_RHBH_Approach_Procedural_v001.uasset",
+      "object_path": "/Game/DiscGolf/Animation/ProductionMotion/Approach/AM_DG_RHBH_Approach_Procedural_v001.AM_DG_RHBH_Approach_Procedural_v001",
+      "package": "/Game/DiscGolf/Animation/ProductionMotion/Approach/AM_DG_RHBH_Approach_Procedural_v001",
+      "sha256": "96D06A1AF3AEE1C764C582B06D0E20CB029CE5E2F0CA511F59EF3B495787163C"
+    },
+    {
+      "bytes": 131591,
+      "exists": true,
+      "file": "Content/DiscGolf/Animation/ProductionMotion/Putt/A_DG_RHBH_Putt_Procedural_v001.uasset",
+      "object_path": "/Game/DiscGolf/Animation/ProductionMotion/Putt/A_DG_RHBH_Putt_Procedural_v001.A_DG_RHBH_Putt_Procedural_v001",
+      "package": "/Game/DiscGolf/Animation/ProductionMotion/Putt/A_DG_RHBH_Putt_Procedural_v001",
+      "sha256": "E8924448E99D01FA2B0B7361FBC50DB31A76670F6E8A070FAAEB5844A5B83781"
+    },
+    {
+      "bytes": 21204,
+      "exists": true,
+      "file": "Content/DiscGolf/Animation/ProductionMotion/Putt/AM_DG_RHBH_Putt_Procedural_v001.uasset",
+      "object_path": "/Game/DiscGolf/Animation/ProductionMotion/Putt/AM_DG_RHBH_Putt_Procedural_v001.AM_DG_RHBH_Putt_Procedural_v001",
+      "package": "/Game/DiscGolf/Animation/ProductionMotion/Putt/AM_DG_RHBH_Putt_Procedural_v001",
+      "sha256": "9148D82E4161790818542107C25C389718E1B4519390255EE6D08367B7F5EC1A"
+    },
+    {
+      "bytes": 4068,
+      "exists": true,
+      "file": "Content/DiscGolf/Animation/ProductionMotion/DA_DG_ProductionMotionLibrary.uasset",
+      "object_path": "/Game/DiscGolf/Animation/ProductionMotion/DA_DG_ProductionMotionLibrary.DA_DG_ProductionMotionLibrary",
+      "package": "/Game/DiscGolf/Animation/ProductionMotion/DA_DG_ProductionMotionLibrary",
+      "sha256": "AAD0157BC480B5C572FFF3D5022AFBA9E8A4824DB5A2CF5287F0330FCCC23CD9"
+    }
+  ],
+  "cook_scope": "/Game/DiscGolf/Animation/ProductionMotion",
+  "derived_from_synthetic_fixture": false,
+  "errors": [],
+  "fresh_shipping_candidate_inclusion_verified": false,
+  "generated_utc": "2026-08-25T19:15:26.393636+00:00",
+  "human_animation_approval": false,
+  "human_disc_contact_approval": false,
+  "metahuman_live_validation_complete": false,
+  "motion_capture_claim": false,
+  "native_author": {
+    "authoring_status": "AUTHORED_SEVEN_FRESH_ASSETS",
+    "created_asset_count": 7,
+    "created_files": [
+      "../../../../../../DGTour/Content/DiscGolf/Animation/ProductionMotion/Drive/A_DG_RHBH_Drive_Procedural_v001.uasset",
+      "../../../../../../DGTour/Content/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v001.uasset",
+      "../../../../../../DGTour/Content/DiscGolf/Animation/ProductionMotion/Approach/A_DG_RHBH_Approach_Procedural_v001.uasset",
+      "../../../../../../DGTour/Content/DiscGolf/Animation/ProductionMotion/Approach/AM_DG_RHBH_Approach_Procedural_v001.uasset",
+      "../../../../../../DGTour/Content/DiscGolf/Animation/ProductionMotion/Putt/A_DG_RHBH_Putt_Procedural_v001.uasset",
+      "../../../../../../DGTour/Content/DiscGolf/Animation/ProductionMotion/Putt/AM_DG_RHBH_Putt_Procedural_v001.uasset",
+      "../../../../../../DGTour/Content/DiscGolf/Animation/ProductionMotion/DA_DG_ProductionMotionLibrary.uasset"
+    ],
+    "derived_from_synthetic_fixture": false,
+    "external_performance_claim": false,
+    "families": [
+      {
+        "duration_seconds": 2.4000000953674316,
+        "family": "Drive",
+        "finish_frame": 138,
+        "frames": 144,
+        "human_animation_approval": false,
+        "human_disc_contact_approval": false,
+        "montage": "/Game/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v001.AM_DG_RHBH_Drive_Procedural_v001",
+        "motion_id": "DG_PROCEDURAL_DRIVE_RHBH_V1",
+        "release_frame": 84,
+        "root_motion_enabled": false,
+        "sequence": "/Game/DiscGolf/Animation/ProductionMotion/Drive/A_DG_RHBH_Drive_Procedural_v001.A_DG_RHBH_Drive_Procedural_v001"
+      },
+      {
+        "duration_seconds": 1.7999999523162842,
+        "family": "Approach",
+        "finish_frame": 104,
+        "frames": 108,
+        "human_animation_approval": false,
+        "human_disc_contact_approval": false,
+        "montage": "/Game/DiscGolf/Animation/ProductionMotion/Approach/AM_DG_RHBH_Approach_Procedural_v001.AM_DG_RHBH_Approach_Procedural_v001",
+        "motion_id": "DG_PROCEDURAL_APPROACH_RHBH_V1",
+        "release_frame": 62,
+        "root_motion_enabled": false,
+        "sequence": "/Game/DiscGolf/Animation/ProductionMotion/Approach/A_DG_RHBH_Approach_Procedural_v001.A_DG_RHBH_Approach_Procedural_v001"
+      },
+      {
+        "duration_seconds": 1.2000000476837158,
+        "family": "Putt",
+        "finish_frame": 68,
+        "frames": 72,
+        "human_animation_approval": false,
+        "human_disc_contact_approval": false,
+        "montage": "/Game/DiscGolf/Animation/ProductionMotion/Putt/AM_DG_RHBH_Putt_Procedural_v001.AM_DG_RHBH_Putt_Procedural_v001",
+        "motion_id": "DG_PROCEDURAL_PUTT_RHBH_V1",
+        "release_frame": 38,
+        "root_motion_enabled": false,
+        "sequence": "/Game/DiscGolf/Animation/ProductionMotion/Putt/A_DG_RHBH_Putt_Procedural_v001.A_DG_RHBH_Putt_Procedural_v001"
+      }
+    ],
+    "family_count": 3,
+    "human_animation_approval": false,
+    "human_disc_contact_approval": false,
+    "library_entry_count": 3,
+    "montage_count": 3,
+    "recipe_id": "DG_PRODUCTION_PROCEDURAL_MOTION_V1",
+    "recipe_md5": "DC3BF8F427882356CB55251B2F2E7B38",
+    "release_ready": false,
+    "rollback_partial_writes": true,
+    "runtime_gameplay_release_authority": false,
+    "schema": "DiscGolfTour.Session19ProductionMotionNativeReport.v1",
+    "sequence_count": 3,
+    "source_kind": "PROJECT_AUTHORED_PROCEDURAL",
+    "status": "PASS_PROJECT_AUTHORED_PROCEDURAL_CANDIDATES"
+  },
+  "native_validation": {
+    "derived_from_synthetic_fixture": false,
+    "external_performance_claim": false,
+    "families": [
+      {
+        "duration_seconds": 2.4000000953674316,
+        "family": "Drive",
+        "finish_frame": 138,
+        "frames": 144,
+        "human_animation_approval": false,
+        "human_disc_contact_approval": false,
+        "montage": "/Game/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v001.AM_DG_RHBH_Drive_Procedural_v001",
+        "motion_id": "DG_PROCEDURAL_DRIVE_RHBH_V1",
+        "release_frame": 84,
+        "root_motion_enabled": false,
+        "sequence": "/Game/DiscGolf/Animation/ProductionMotion/Drive/A_DG_RHBH_Drive_Procedural_v001.A_DG_RHBH_Drive_Procedural_v001"
+      },
+      {
+        "duration_seconds": 1.7999999523162842,
+        "family": "Approach",
+        "finish_frame": 104,
+        "frames": 108,
+        "human_animation_approval": false,
+        "human_disc_contact_approval": false,
+        "montage": "/Game/DiscGolf/Animation/ProductionMotion/Approach/AM_DG_RHBH_Approach_Procedural_v001.AM_DG_RHBH_Approach_Procedural_v001",
+        "motion_id": "DG_PROCEDURAL_APPROACH_RHBH_V1",
+        "release_frame": 62,
+        "root_motion_enabled": false,
+        "sequence": "/Game/DiscGolf/Animation/ProductionMotion/Approach/A_DG_RHBH_Approach_Procedural_v001.A_DG_RHBH_Approach_Procedural_v001"
+      },
+      {
+        "duration_seconds": 1.2000000476837158,
+        "family": "Putt",
+        "finish_frame": 68,
+        "frames": 72,
+        "human_animation_approval": false,
+        "human_disc_contact_approval": false,
+        "montage": "/Game/DiscGolf/Animation/ProductionMotion/Putt/AM_DG_RHBH_Putt_Procedural_v001.AM_DG_RHBH_Putt_Procedural_v001",
+        "motion_id": "DG_PROCEDURAL_PUTT_RHBH_V1",
+        "release_frame": 38,
+        "root_motion_enabled": false,
+        "sequence": "/Game/DiscGolf/Animation/ProductionMotion/Putt/A_DG_RHBH_Putt_Procedural_v001.A_DG_RHBH_Putt_Procedural_v001"
+      }
+    ],
+    "family_count": 3,
+    "human_animation_approval": false,
+    "human_disc_contact_approval": false,
+    "library_entry_count": 3,
+    "montage_count": 3,
+    "recipe_id": "DG_PRODUCTION_PROCEDURAL_MOTION_V1",
+    "recipe_md5": "DC3BF8F427882356CB55251B2F2E7B38",
+    "release_ready": false,
+    "runtime_gameplay_release_authority": false,
+    "schema": "DiscGolfTour.Session19ProductionMotionNativeReport.v1",
+    "sequence_count": 3,
+    "source_kind": "PROJECT_AUTHORED_PROCEDURAL",
+    "status": "PASS_PROJECT_AUTHORED_PROCEDURAL_CANDIDATES"
+  },
+  "performer": "NOT_APPLICABLE_PROCEDURAL_NO_CAPTURE",
+  "phase": "COMPLETE",
+  "product_art_approval": false,
+  "profile_matrix_live_validation_complete": false,
+  "protected_save": {
+    "bytes": 5212,
+    "exists": true,
+    "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+    "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14"
+  },
+  "protected_synthetic_asset_count": 5,
+  "protected_synthetic_asset_reuse_count": 0,
+  "recipe": {
+    "bytes": 20841,
+    "exists": true,
+    "path": "SourceArt/DiscGolf/Motion/ProductionMotionRecipe_v1.json",
+    "recipe_id": "DG_PRODUCTION_PROCEDURAL_MOTION_V1",
+    "sha256": "D979E98DDBBDFD79E661C402403A9EE0C9C29F8061007CF56C7BDA175993EB58"
+  },
+  "release_ready": false,
+  "runtime_binding_scope": "DRIVE_APPROACH_PUTT_TECHNICAL_CANDIDATE_SELECTION",
+  "schema": "DiscGolfTour.Session19ProductionMotionCandidateAuthoringEvidence.v1",
+  "schema_version": 1,
+  "single_release_live_validation_complete": false,
+  "source_kind": "PROJECT_AUTHORED_PROCEDURAL",
+  "status": "PASS_AUTHORED_PROCEDURAL_CANDIDATES_HUMAN_REVIEW_REQUIRED",
+  "target_objects": [
+    "/Game/DiscGolf/Animation/ProductionMotion/Drive/A_DG_RHBH_Drive_Procedural_v001.A_DG_RHBH_Drive_Procedural_v001",
+    "/Game/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v001.AM_DG_RHBH_Drive_Procedural_v001",
+    "/Game/DiscGolf/Animation/ProductionMotion/Approach/A_DG_RHBH_Approach_Procedural_v001.A_DG_RHBH_Approach_Procedural_v001",
+    "/Game/DiscGolf/Animation/ProductionMotion/Approach/AM_DG_RHBH_Approach_Procedural_v001.AM_DG_RHBH_Approach_Procedural_v001",
+    "/Game/DiscGolf/Animation/ProductionMotion/Putt/A_DG_RHBH_Putt_Procedural_v001.A_DG_RHBH_Putt_Procedural_v001",
+    "/Game/DiscGolf/Animation/ProductionMotion/Putt/AM_DG_RHBH_Putt_Procedural_v001.AM_DG_RHBH_Putt_Procedural_v001",
+    "/Game/DiscGolf/Animation/ProductionMotion/DA_DG_ProductionMotionLibrary.DA_DG_ProductionMotionLibrary"
+  ]
+}

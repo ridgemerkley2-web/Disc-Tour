@@ -17,6 +17,7 @@ class UDiscBagComponent;
 class UThrowControllerComponent;
 class UDiscGolferPresentationComponent;
 class UDiscGolfThrowComponent;
+class UDiscGolfAnimationLibrary;
 class UDiscGolfRHBHThrowAdapterComponent;
 class UDiscGolfAppearanceComponent;
 class UDiscGolfCharacterProfile;
@@ -26,6 +27,7 @@ class UDiscGolfCosmeticCatalog;
 class UDiscGolfOutfitCatalog;
 class UDiscGolfOutfitComponent;
 class UAnimMontage;
+enum class EGolferAnimationFamily : uint8;
 struct FInputActionValue;
 struct FThrowRelease;
 
@@ -46,8 +48,13 @@ public:
     UFUNCTION(BlueprintPure) bool IsAnimatedThrowActive() const;
     UFUNCTION(BlueprintPure) FString GetGolferPresentationStatusText() const;
 
-    /** Read-only evidence for command-line validation; normal gameplay always reports the prototype path. */
+    /** Read-only evidence for command-line validation and runtime library selection. */
     FString GetActiveRHBHThrowMontagePath() const;
+    /** Accepted runtime revision, or an isolated non-Shipping capture override. */
+    const FString& GetProductionMotionCandidateRevision() const
+    {
+        return ProductionMotionCandidateRevision;
+    }
     bool IsSession5PipelineValidationMontageActive() const
     {
         return bSession5PipelineValidationMontageActive;
@@ -61,12 +68,21 @@ public:
     bool PreviewCharacterCreatorProfile(
         const FDGBodyProfile& Body,
         const FDGThrowStyle& Style,
-        EDGHandedness Handedness);
+        EDGHandedness Handedness,
+        bool bAllowAvatarBackendFallback = false);
     bool IsCharacterProfileChangeSafe() const;
-    void BeginCharacterCreatorPreview();
-    void EndCharacterCreatorPreview(bool bRestoreView = true);
+    /** Enters creator presentation before mutating paused preview state. */
+    bool BeginCharacterCreatorPreview();
+    /** Restores gameplay presentation before releasing paused preview state. */
+    bool EndCharacterCreatorPreview(bool bRestoreView = true);
     void RotateCharacterCreatorPreview(float DeltaYawDegrees);
     void ZoomCharacterCreatorPreview(float DeltaArmLength);
+    /** Atomically frame the existing creator subject and refresh the paused view. */
+    bool SetCharacterCreatorPreviewFraming(
+        float TargetArmLength,
+        float BoomPitchDegrees,
+        float SubjectYawOffsetDegrees,
+        float VerticalSocketOffsetCm);
 
     /** Complete Session 7 draft on the same possessed pawn. */
     FDGFullCharacterCustomization GetCurrentFullCharacterCustomization() const;
@@ -76,7 +92,8 @@ public:
     bool ApplyFullCharacterCustomizationTransactionally(
         const FDGFullCharacterCustomization& Requested,
         bool bAllowUnavailableItems,
-        FString& OutStatus);
+        FString& OutStatus,
+        bool bAllowAvatarBackendFallback = false);
 
     UDiscGolfCharacterProfile* GetRuntimeCharacterProfile() const { return RuntimeCharacterProfile; }
     USkeletalMeshComponent* GetSkeletalGolferMesh() const { return SkeletalMesh; }
@@ -90,6 +107,8 @@ public:
     {
         return AvatarBackendComponent;
     }
+    /** Read-only evidence seam; presentation policy remains private to the pawn. */
+    bool IsDGProxyPresentationVisible() const;
     USkeletalMeshComponent* GetModularHeadMesh() const { return ModularHeadMesh; }
     UDiscGolfCosmeticCatalog* GetCosmeticCatalog() const;
     bool IsHairHiddenByOutfitCoverage() const { return bHairHiddenByOutfitCoverage; }
@@ -114,6 +133,9 @@ public:
     void NotifyAuthoritativeRelease(const FThrowRelease& Release);
     void CancelThrowPresentation();
 
+    /** Shared by the bound Next Hole action and the Session 16 live-input smoke. */
+    bool TryAdvanceToNextHoleFromPlayerInput();
+
 private:
     UPROPERTY(VisibleAnywhere) TObjectPtr<UCapsuleComponent> Capsule;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UStaticMeshComponent> BodyMesh;
@@ -132,7 +154,12 @@ private:
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfMetaHumanAvatarBackendComponent> AvatarBackendComponent;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UDiscGolfRHBHThrowAdapterComponent> RHBHThrowAdapter;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UStaticMeshComponent> HeldDiscVisual;
+    UPROPERTY() TObjectPtr<UDiscGolfAnimationLibrary> ProductionAnimationLibrary;
     UPROPERTY() TObjectPtr<UAnimMontage> RHBHThrowMontage;
+    UPROPERTY(Transient) TObjectPtr<UAnimMontage> ActiveRHBHThrowMontage;
+    UPROPERTY() TObjectPtr<UAnimMontage> ProductionDriveMontage;
+    UPROPERTY() TObjectPtr<UAnimMontage> ProductionApproachMontage;
+    UPROPERTY() TObjectPtr<UAnimMontage> ProductionPuttMontage;
     UPROPERTY() TObjectPtr<UDiscGolfCharacterProfile> CharacterProfileTemplate;
     UPROPERTY(Transient) TObjectPtr<UDiscGolfCharacterProfile> RuntimeCharacterProfile;
     UPROPERTY(Transient) TArray<EDGBodyRegion> CoveredOutfitBodyRegions;
@@ -140,6 +167,9 @@ private:
     bool bCharacterCreatorPreviewActive = false;
     bool bHairHiddenByOutfitCoverage = false;
     bool bSession5PipelineValidationMontageActive = false;
+    FString ProductionMotionCandidateRevision;
+    bool bDGProxyPresentationVisible = true;
+    int64 ActiveRHBHMontageAttemptSerial = 0;
     bool bSavedSkeletalTickWhenPaused = false;
     bool bSavedCameraBoomTickWhenPaused = false;
     bool bSavedPlayerCameraManagerTickWhenPaused = false;
@@ -156,11 +186,25 @@ private:
     void RefreshCharacterProfilePresentation();
     void ApplyFullCustomizationVisuals();
     void RebuildCustomizationHairForCoverage();
+    void SetDGProxyPresentationVisible(bool bVisible);
+    bool ApplyAvatarBackendForCustomization(
+        const FDGFullCharacterCustomization& Customization,
+        bool bAllowDGMasterFallback,
+        FString& OutStatus);
 
     bool HandleAnimatedRHBHRelease(
         const FThrowCommand& AuthoritativeCommand,
         const FTransform& GripWorldTransform);
-    void HandleRHBHMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+    void HandleRHBHMontageEnded(
+        UAnimMontage* Montage,
+        bool bInterrupted,
+        int64 ExpectedAttemptSerial);
+    void RefreshPreCommitThrowPresentation();
+    void EndPreCommitThrowPresentation();
+    UAnimMontage* ResolveRHBHThrowMontage(
+        const FThrowCommand& AuthoritativeCommand,
+        EGolferAnimationFamily AnimationFamily) const;
+    void StopAndClearActiveRHBHMontage(float BlendOutSeconds);
 
     UFUNCTION()
     void HandleAnimatedThrowRecovered(int64 AttemptSerial, bool bDiscWasReleased);

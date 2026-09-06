@@ -13,25 +13,20 @@
 #include "DiscGolfWorldFixtureActor.h"
 #include "DiscGolfWindZoneActor.h"
 #include "DiscGolfFlyoverRouteActor.h"
-#include "DiscGolfLevelDesignReviewActor.h"
+#include "DiscGolfQualityAdapter.h"
+#include "DiscGolfBuiltInEnvironmentProvider.h"
 #include "DiscGolfEnvironmentController.h"
 #include "DiscGolfEnvironmentDataAssets.h"
 #include "DiscGolfEnvironmentZoneActor.h"
 #include "PineRidgeHole1Environment.h"
-#include "Components/DirectionalLightComponent.h"
-#include "Components/SkyLightComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SplineComponent.h"
-#include "Engine/DirectionalLight.h"
-#include "Components/SkyAtmosphereComponent.h"
-#include "Engine/SkyLight.h"
 #include "Engine/StaticMeshActor.h"
 #include "Engine/StaticMesh.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Materials/MaterialInterface.h"
 #include "Engine/EngineTypes.h"
 #include "EngineUtils.h"
-#include "HAL/IConsoleManager.h"
 #include "Dom/JsonObject.h"
 #include "HAL/FileManager.h"
 #include "Misc/FileHelper.h"
@@ -106,6 +101,17 @@ namespace
         Mesh->SetMaterial(0, Dynamic);
         return true;
     }
+}
+
+void DiscGolfCourseSurfaceProxy::ConfigureHiddenContinuousGround(
+    UStaticMeshComponent* Mesh)
+{
+    if (!Mesh) return;
+
+    Mesh->SetHiddenInGame(true);
+    Mesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+    Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+    Mesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 }
 
 ADevCourseBootstrap::ADevCourseBootstrap()
@@ -241,39 +247,59 @@ ADiscGolfFixturePresentationActor* ADevCourseBootstrap::SpawnFixturePresentation
     return Actor;
 }
 
-void ADevCourseBootstrap::SpawnLighting()
+bool ADevCourseBootstrap::SpawnLighting(FString& OutError)
 {
-    if (!GetWorld() || bLightingSpawned) return;
+    if (!GetWorld())
+    {
+        OutError = TEXT("world unavailable while creating the built-in environment provider");
+        return false;
+    }
+    if (bLightingSpawned && IsValid(BuiltInEnvironmentProvider))
+    {
+        OutError.Reset();
+        return true;
+    }
+
+    ADiscGolfBuiltInEnvironmentProvider* Candidate =
+        GetWorld()->SpawnActor<ADiscGolfBuiltInEnvironmentProvider>();
+    if (!Candidate)
+    {
+        OutError = TEXT("built-in environment provider failed to spawn");
+        UE_LOG(LogDiscGolfTour, Error, TEXT("%s."), *OutError);
+        bLightingSpawned = false;
+        return false;
+    }
+    Candidate->SetOwner(this);
+
+    FDGCourseEnvironmentState InitialState;
+    if (!Candidate->ApplyEnvironmentState(InitialState, OutError))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Built-in environment provider rejected its initial state: %s"),
+            *OutError);
+        Candidate->Destroy();
+        bLightingSpawned = false;
+        return false;
+    }
+
+    BuiltInEnvironmentProvider = Candidate;
     bLightingSpawned = true;
+#if WITH_EDITOR
+    Candidate->SetActorLabel(TEXT("DG_BuiltInEnvironmentProvider"));
+#endif
+    OutError.Reset();
+    return true;
+}
 
-    ADirectionalLight* Sun = GetWorld()->SpawnActor<ADirectionalLight>(FVector::ZeroVector, FRotator(-38.0f, -35.0f, 0.0f));
-    if (Sun)
+void ADevCourseBootstrap::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    if (IsValid(BuiltInEnvironmentProvider))
     {
-        Sun->GetLightComponent()->SetMobility(EComponentMobility::Movable);
-        // Runtime-spawned course art is movable, so the sun must be movable as well.
-        // This project's current exposure range uses Unreal's compact development-light baseline.
-        Sun->GetLightComponent()->SetIntensity(1.25f);
-        Sun->GetLightComponent()->SetLightColor(FLinearColor(1.0f, 0.98f, 0.94f));
-        if (UDirectionalLightComponent* Directional =
-            Cast<UDirectionalLightComponent>(Sun->GetLightComponent()))
-        {
-            Directional->SetAtmosphereSunLight(true);
-        }
+        BuiltInEnvironmentProvider->Destroy();
     }
-
-    ASkyAtmosphere* Atmosphere = GetWorld()->SpawnActor<ASkyAtmosphere>();
-    (void)Atmosphere;
-
-    ASkyLight* Sky = GetWorld()->SpawnActor<ASkyLight>();
-    if (Sky)
-    {
-        Sky->GetLightComponent()->SetMobility(EComponentMobility::Movable);
-        Sky->GetLightComponent()->SetIntensity(0.72f);
-        // The authored sun/atmosphere is static during play. Capture it once so
-        // traversal does not rebuild draw commands for an unchanged real-time sky.
-        Sky->GetLightComponent()->SetRealTimeCapture(false);
-        Sky->GetLightComponent()->RecaptureSky();
-    }
+    BuiltInEnvironmentProvider = nullptr;
+    bLightingSpawned = false;
+    Super::EndPlay(EndPlayReason);
 }
 
 void ADevCourseBootstrap::DestroyGeneratedCourse()
@@ -285,12 +311,10 @@ void ADevCourseBootstrap::DestroyGeneratedCourse()
     SpawnedCourseActors.Reset();
     PineRidgeHoles.Reset();
     PineRidgeFlyovers.Reset();
-    PineRidgeReviews.Reset();
     PineRidgeFoliage.Reset();
     PineRidgeWater.Reset();
     Hole = nullptr;
     FlyoverRoute = nullptr;
-    LevelDesignReview = nullptr;
     FoliagePresentation = nullptr;
     WaterPresentation = nullptr;
     CourseTerrainPresentation = nullptr;
@@ -304,7 +328,13 @@ ADiscGolfHoleActor* ADevCourseBootstrap::BuildPracticeHole()
     if (!GetWorld()) return nullptr;
 
     DestroyGeneratedCourse();
-    SpawnLighting();
+    FString LightingError;
+    if (!SpawnLighting(LightingError))
+    {
+        UE_LOG(LogDiscGolfTour, Error,
+            TEXT("Practice course lighting failed: %s"), *LightingError);
+        return nullptr;
+    }
 
     UStaticMesh* Cube = LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Cube.Cube"));
     UStaticMesh* Cylinder = LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Cylinder.Cylinder"));
@@ -379,7 +409,12 @@ ADiscGolfHoleActor* ADevCourseBootstrap::BuildCourse(const FName& CourseId, FStr
         || CourseId == TEXT("Practice"))
     {
         OutError.Reset();
-        return BuildPracticeHole();
+        ADiscGolfHoleActor* PracticeHole = BuildPracticeHole();
+        if (!PracticeHole)
+        {
+            OutError = TEXT("practice course assembly failed; see the preceding fail-closed diagnostic");
+        }
+        return PracticeHole;
     }
     OutError = FString::Printf(TEXT("unknown course '%s'"), *CourseId.ToString());
     return nullptr;
@@ -395,11 +430,14 @@ ADiscGolfHoleActor* ADevCourseBootstrap::BuildPineRidgeHole(int32 HoleNumber, FS
     FDiscGolfHoleBlockoutDefinition Definition;
     FString Source;
     if (!DiscGolfCourseDefinition::LoadPineRidgeHole(HoleNumber, Definition, Source, OutError)) return nullptr;
-    return BuildAuthoredHole(Definition, Source, OutError);
+    const FDiscGolfResolvedQualityProfile QualityProfile =
+        DiscGolfQualityAdapter::ResolveCurrent(Scalability::GetQualityLevels());
+    return BuildAuthoredHole(Definition, Source, QualityProfile, OutError);
 }
 
 ADiscGolfHoleActor* ADevCourseBootstrap::BuildPersistentPineRidgeCourse(
     const TArray<FDiscGolfHoleBlockoutDefinition>& Definitions,
+    const FDiscGolfResolvedQualityProfile& QualityProfile,
     FString& OutError)
 {
     if (!GetWorld() || Definitions.Num() != 3)
@@ -408,17 +446,25 @@ ADiscGolfHoleActor* ADevCourseBootstrap::BuildPersistentPineRidgeCourse(
         return nullptr;
     }
     DestroyGeneratedCourse();
-    SpawnLighting();
+    if (!SpawnLighting(OutError))
+    {
+        return nullptr;
+    }
     for (const FDiscGolfHoleBlockoutDefinition& Definition : Definitions)
     {
-        if (!BuildAuthoredHole(Definition, TEXT("PERSISTENT AUTHORED COURSE"), OutError, false))
+        if (!BuildAuthoredHole(
+            Definition,
+            TEXT("PERSISTENT AUTHORED COURSE"),
+            QualityProfile,
+            OutError,
+            false))
         {
             DestroyGeneratedCourse();
             return nullptr;
         }
     }
 
-    if (!BuildPineRidgeHole1Environment(Definitions[0], OutError))
+    if (!BuildPineRidgeHole1Environment(Definitions[0], QualityProfile, OutError))
     {
         DestroyGeneratedCourse();
         return nullptr;
@@ -435,15 +481,10 @@ ADiscGolfHoleActor* ADevCourseBootstrap::BuildPersistentPineRidgeCourse(
         DestroyGeneratedCourse();
         return nullptr;
     }
-    const IConsoleVariable* FoliageQuality = IConsoleManager::Get().FindConsoleVariable(
-        TEXT("sg.FoliageQuality"));
-    const int32 QualityLevel = FoliageQuality ? FoliageQuality->GetInt() : 1;
-    const FName QualityTierId = QualityLevel <= 0 ? FName(TEXT("Low"))
-        : QualityLevel == 1 ? FName(TEXT("Medium")) : FName(TEXT("High"));
     const FDiscGolfCourseVisualQualityTier* Tier = Presentation.QualityTiers.FindByPredicate(
-        [QualityTierId](const FDiscGolfCourseVisualQualityTier& Candidate)
+        [&QualityProfile](const FDiscGolfCourseVisualQualityTier& Candidate)
         {
-            return Candidate.TierId == QualityTierId;
+            return Candidate.TierId == QualityProfile.CourseVisualTierId;
         });
     TArray<int32> TerrainSeeds;
     for (const FDiscGolfHoleBlockoutDefinition& Definition : Definitions)
@@ -483,9 +524,13 @@ ADiscGolfHoleActor* ADevCourseBootstrap::BuildPersistentPineRidgeCourse(
             || SurfaceType == ECourseSurfaceType::DeepRough
             || SurfaceType == ECourseSurfaceType::Dirt)
         {
-            // The actor and primitive remain the sealed lie/collision authority. Only its
-            // blockout render mesh is replaced by the successful continuous presentation.
-            It->GetStaticMeshComponent()->SetHiddenInGame(true);
+            // The tagged blockout remains the semantic surface authority for lies
+            // and penalties. The deterministic continuous mesh owns visible ground
+            // contact, so a hidden flat proxy must never stop a disc, pawn, or
+            // spring-arm camera above or below that rendered surface. Visibility
+            // remains blocked because it is the semantic surface trace channel.
+            UStaticMeshComponent* Mesh = It->GetStaticMeshComponent();
+            DiscGolfCourseSurfaceProxy::ConfigureHiddenContinuousGround(Mesh);
         }
     }
 #if WITH_EDITOR
@@ -516,13 +561,8 @@ bool ADevCourseBootstrap::ActivatePineRidgeHole(int32 HoleNumber, FString& OutEr
         OutError = FString::Printf(TEXT("persistent Pine Ridge hole %d is unavailable"), HoleNumber);
         return false;
     }
-    for (const TPair<int32, TObjectPtr<ADiscGolfLevelDesignReviewActor>>& Pair : PineRidgeReviews)
-    {
-        if (IsValid(Pair.Value)) Pair.Value->SetReviewVisible(false);
-    }
     Hole = FoundHole->Get();
     FlyoverRoute = PineRidgeFlyovers.Contains(HoleNumber) ? PineRidgeFlyovers[HoleNumber] : nullptr;
-    LevelDesignReview = PineRidgeReviews.Contains(HoleNumber) ? PineRidgeReviews[HoleNumber] : nullptr;
     FoliagePresentation = PineRidgeFoliage.Contains(HoleNumber) ? PineRidgeFoliage[HoleNumber] : nullptr;
     WaterPresentation = PineRidgeWater.Contains(HoleNumber) ? PineRidgeWater[HoleNumber] : nullptr;
     OutError.Reset();
@@ -538,6 +578,7 @@ ADiscGolfFoliagePresentationActor* ADevCourseBootstrap::GetFoliagePresentationFo
 
 bool ADevCourseBootstrap::BuildPineRidgeHole1Environment(
     const FDiscGolfHoleBlockoutDefinition& Definition,
+    const FDiscGolfResolvedQualityProfile& QualityProfile,
     FString& OutError)
 {
     const TArray<FDiscGolfHole1EnvironmentZonePlan> Plans =
@@ -559,14 +600,8 @@ bool ADevCourseBootstrap::BuildPineRidgeHole1Environment(
     EnvironmentController->ForestPreset = TSoftObjectPtr<UDiscGolfForestPreset>(FSoftObjectPath(
         TEXT("/Game/Environment/Forest/DA_TemperateMountainForest.DA_TemperateMountainForest")));
     EnvironmentController->CourseExtentCm = FVector(90000.0f, 60000.0f, 10000.0f);
-    const IConsoleVariable* FoliageQuality = IConsoleManager::Get().FindConsoleVariable(
-        TEXT("sg.FoliageQuality"));
-    const int32 QualityLevel = FoliageQuality ? FoliageQuality->GetInt() : 2;
-    EnvironmentController->Quality = QualityLevel <= 0
-        ? EDiscGolfEnvironmentQuality::Performance
-        : QualityLevel >= 3 ? EDiscGolfEnvironmentQuality::Cinematic
-        : EDiscGolfEnvironmentQuality::High;
-    EnvironmentController->ApplyPreset();
+    EnvironmentController->Quality = QualityProfile.EnvironmentQuality;
+    EnvironmentController->bSynchronizeDiscFlightWind = false;
     EnvironmentController->OnConstruction(EnvironmentController->GetActorTransform());
     EnvironmentController->Tags.AddUnique(TEXT("Course.PersistentEnvironment"));
     EnvironmentController->Tags.AddUnique(TEXT("Environment.Benchmark.Hole1"));
@@ -619,12 +654,19 @@ bool ADevCourseBootstrap::WritePineRidgeHole1EnvironmentStatistics(
     const FDiscGolfHoleBlockoutDefinition& Definition,
     FString& OutError) const
 {
+#if DG_RELEASE_V05_SCOPE
+    // Environment statistics are development evidence. Course construction
+    // remains valid in Shipping without creating a report beside player saves.
+    (void)Definition;
+    OutError.Reset();
+    return true;
+#else
     FDiscGolfHole1EnvironmentStatistics Stats;
     Stats.TreeInstances = Definition.Trees.Num();
     if (const ADiscGolfFoliagePresentationActor* Foliage = GetFoliagePresentationForHole(1))
     {
         // These HISM visuals represent the current tree population even though the provisional
-        // source mesh is a CC0 fir sapling scan. Separate Sapling-slot PCG remains zero until import.
+        // source mesh is a CC0 fir sapling scan. The separate authoring slot remains empty.
         Stats.TreeInstances = Foliage->GetVisualInstanceCount();
     }
     if (CourseTerrainPresentation)
@@ -715,11 +757,13 @@ bool ADevCourseBootstrap::WritePineRidgeHole1EnvironmentStatistics(
     UE_LOG(LogDiscGolfTour, Display, TEXT("Hole 1 environment statistics: %s"), *Path);
     OutError.Reset();
     return true;
+#endif
 }
 
 ADiscGolfHoleActor* ADevCourseBootstrap::BuildAuthoredHole(
     const FDiscGolfHoleBlockoutDefinition& Definition,
     const FString& Source,
+    const FDiscGolfResolvedQualityProfile& QualityProfile,
     FString& OutError,
     bool bResetCourse)
 {
@@ -727,11 +771,13 @@ ADiscGolfHoleActor* ADevCourseBootstrap::BuildAuthoredHole(
     if (bResetCourse)
     {
         DestroyGeneratedCourse();
-        SpawnLighting();
+        if (!SpawnLighting(OutError))
+        {
+            return nullptr;
+        }
     }
     Hole = nullptr;
     FlyoverRoute = nullptr;
-    LevelDesignReview = nullptr;
     FoliagePresentation = nullptr;
     WaterPresentation = nullptr;
 
@@ -785,14 +831,10 @@ ADiscGolfHoleActor* ADevCourseBootstrap::BuildAuthoredHole(
             {
                 return Candidate.HoleNumber == Definition.HoleNumber;
             });
-        const IConsoleVariable* FoliageQuality = IConsoleManager::Get().FindConsoleVariable(TEXT("sg.FoliageQuality"));
-        const int32 QualityLevel = FoliageQuality ? FoliageQuality->GetInt() : 1;
-        const FName QualityTierId = QualityLevel <= 0 ? FName(TEXT("Low"))
-            : QualityLevel == 1 ? FName(TEXT("Medium")) : FName(TEXT("High"));
         const FDiscGolfCourseVisualQualityTier* Tier = Presentation.QualityTiers.FindByPredicate(
-            [QualityTierId](const FDiscGolfCourseVisualQualityTier& Candidate)
+            [&QualityProfile](const FDiscGolfCourseVisualQualityTier& Candidate)
             {
-                return Candidate.TierId == QualityTierId;
+                return Candidate.TierId == QualityProfile.CourseVisualTierId;
             });
         if (Plan && Tier)
         {
@@ -883,16 +925,6 @@ ADiscGolfHoleActor* ADevCourseBootstrap::BuildAuthoredHole(
         if (!Actor) continue; TrackActor(Actor); Actor->GetStaticMeshComponent()->SetStaticMesh(Cylinder);
         Actor->ConfigureLandingZone(Zone); TintMesh(Actor->GetStaticMeshComponent(), FLinearColor(0.08f,0.42f,0.52f));
     }
-    LevelDesignReview = GetWorld()->SpawnActor<ADiscGolfLevelDesignReviewActor>();
-    if (LevelDesignReview)
-    {
-        TrackActor(LevelDesignReview);
-        LevelDesignReview->Configure(Definition.ShotRoutes, Definition.LandingZones);
-#if WITH_EDITOR
-        LevelDesignReview->SetActorLabel(FString::Printf(
-            TEXT("PineRidge_LevelDesignReview_Hole%02d"), Definition.HoleNumber));
-#endif
-    }
     for (const FDiscGolfCameraAnchorDefinition& Anchor : Definition.CameraAnchors)
     {
         ADiscGolfCourseFeatureActor* Actor = GetWorld()->SpawnActor<ADiscGolfCourseFeatureActor>();
@@ -951,7 +983,6 @@ ADiscGolfHoleActor* ADevCourseBootstrap::BuildAuthoredHole(
     BuiltCourseId = Hole->CourseId;
     PineRidgeHoles.Add(Definition.HoleNumber, Hole);
     if (FlyoverRoute) PineRidgeFlyovers.Add(Definition.HoleNumber, FlyoverRoute);
-    if (LevelDesignReview) PineRidgeReviews.Add(Definition.HoleNumber, LevelDesignReview);
     if (FoliagePresentation) PineRidgeFoliage.Add(Definition.HoleNumber, FoliagePresentation);
     if (WaterPresentation) PineRidgeWater.Add(Definition.HoleNumber, WaterPresentation);
     OutError.Reset();

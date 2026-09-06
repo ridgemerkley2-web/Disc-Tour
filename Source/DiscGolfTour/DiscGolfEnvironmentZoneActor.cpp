@@ -41,7 +41,7 @@ ADiscGolfEnvironmentZoneActor::ADiscGolfEnvironmentZoneActor()
     BoxPreview->SetHiddenInGame(true);
 
     Tags.AddUnique(TEXT("Environment.Zone"));
-    Tags.AddUnique(TEXT("PCG.Source.EnvironmentZone"));
+    Tags.AddUnique(TEXT("Environment.Source.Zone"));
 }
 
 void ADiscGolfEnvironmentZoneActor::OnConstruction(const FTransform& Transform)

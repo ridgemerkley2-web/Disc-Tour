@@ -4,7 +4,7 @@
 v0.1 uses a **spin-dominant gyroscopic precession model** intended to be stable, tunable, and frame-rate independent while the project is still being calibrated. It models:
 - 3D translational velocity.
 - A disc-plane attitude represented by world-space forward and normal vectors, rebuilt into an Unreal quaternion for rendering/collision.
-- Signed axial spin for backhand/forehand handedness.
+- Signed axial spin from the combined throw-style and player-handedness convention.
 - Lift and drag from relative airflow.
 - Angle of attack.
 - Aerodynamic trim/stability moments.
@@ -12,7 +12,7 @@ v0.1 uses a **spin-dominant gyroscopic precession model** intended to be stable,
 - Explicit spin decay.
 - Wind and gusts.
 - Opposing high-speed turn and low-speed fade calibration moments.
-- Swept Unreal collision and early ground/tree response.
+- Swept Unreal collision with complete ground states, typed solid/vegetation fixtures, and deterministic basket-contact paths.
 
 The design is informed by the UC Davis/Hummel flying-disc research, which develops a three-dimensional model driven by aerodynamic forces and moments. That research is a **modeling foundation**, not direct proof that its identified coefficient set describes modern golf drivers.
 
@@ -28,26 +28,47 @@ These conventions are critical:
 - `DiscNormalWorld` points through the top face of the disc.
 - Positive gameplay launch angle means upward from the horizontal. Unreal's positive quaternion pitch around the solver's right axis points downward, so the world-boundary rotation intentionally negates the authored angle.
 - Positive angle of attack is nose-up relative to the velocity projected into the disc plane.
-- Positive axial spin is the v0.1 right-hand-backhand convention; forehand uses the opposite sign.
-- Positive player hyzer is mirrored by throw style at launch.
-- Turn and fade use **opposing** lateral stability moments. Signed spin then mirrors the resulting precession between backhand and forehand.
+- Positive axial spin is the v0.1 right-hand-backhand convention. The authoritative rotation sign is `throw-style sign * handedness sign`: backhand is `+1`, forehand is `-1`, right hand is `+1`, and left hand is `-1`.
+- The same combined sign mirrors lateral timing error, authored hyzer bank, and axial spin. Handedness does not change release-speed magnitude, spin-RPM magnitude, nose feedback, or launch-angle feedback.
+- Turn and fade use **opposing** lateral stability moments. Signed spin then mirrors the resulting precession across the negative-sign pair.
+
+| Physical release | Style sign | Hand sign | Rotation sign | Sign relationship |
+|---|---:|---:|---:|---|
+| RHBH | +1 | +1 | +1 | Positive baseline |
+| LHFH | -1 | -1 | +1 | Same sign as RHBH |
+| RHFH | -1 | +1 | -1 | Mirrored from RHBH |
+| LHBH | +1 | -1 | -1 | Mirrored from RHBH; same sign as RHFH |
+
+“Same sign” is a rotational convention, not a claim that the complete trajectories are identical. Backhand and forehand retain their separately calibrated speed and spin-magnitude ceilings.
 
 If any convention changes, update this document and add/adjust a regression check in the same change.
 
 ## Turn/fade convention
-For a right-hand backhand throw, high-speed turn and low-speed fade must oppose one another in bank tendency. Forehand mirrors this through spin direction.
+For the positive RHBH/LHFH sign pair, high-speed turn and low-speed fade must oppose one another in bank tendency. The negative RHFH/LHBH pair mirrors that tendency through signed axial spin.
 
 The current solver computes a stability torque around the in-plane lateral axis:
 - High speed: turn contribution grows above `TurnStartsAboveMps`.
 - Low speed: fade contribution grows below `FadeStartsBelowMps`.
 - The two contributions use opposite signs.
-- Signed axial spin mirrors precession for forehand.
+- Signed axial spin mirrors precession for the RHFH/LHBH negative-sign pair.
 
 Do not replace this with a pre-authored S-curve. The visible flight shape should emerge from attitude, velocity, stability moments, lift/drag, gravity, and wind.
 
 ## Release-quality boundary
 
 Release execution is resolved once before aerodynamic integration. `FThrowCommand` represents player intent; `DiscGolfMath::ResolveThrowRelease` produces the immutable `FThrowRelease` consumed by the flight component. This keeps timing behavior deterministic, serializable, visible in telemetry, and independent of render frame rate.
+
+The authoritative GameMode rejects malformed throw commands before disc spawn or gameplay mutation. Direction must be finite, non-zero, and contain a usable horizontal aim component because launch elevation is carried separately by `LaunchAngleDeg`; `ResolveThrowRelease` canonicalizes that aim into the XY plane so immutable release provenance exactly matches the direction simulated by `DiscFlight`. Plastic, throw style, handedness, and shot context must be known enum values; and all scalar inputs must be finite and remain inside the release contract: power `[0, 1]`, hyzer `[-34, 34]` degrees, nose `[-7, 11]` degrees, launch `[-5, 35]` degrees, and normalized timing error `[-1, 1]`. `ResolveThrowRelease` retains its clamps and zero-direction fallback for deterministic direct-math compatibility, but untrusted gameplay input is not repaired at the authoritative boundary.
+
+Player launches also validate the exact stable equipment instance and player provenance: instance ID, mold, plastic, coherent mass in `[130, 200]` g, wear metadata, profile handedness, and current authoritative shot context. Animated transactions lock bag mutation. Spawn/configure/`Throw()` are provisional; `LastRelease`, accepted-shot sequence, stroke, telemetry, camera, and presentation commit only after `Throw()` succeeds and the flight component is authoritatively flying. Invalid configuration or rejected launch rolls back without a scored throw.
+
+### Numerical and callback safety
+
+The flight component snapshots the accepted configuration before integration and rejects later drift. The snapshot includes an exact ordered wind authority: director, base/gust fields, and every local zone's actor, stable ID, modifiers, and world bounds. It is checked across the launch callback boundary and during flight. Initial acceleration and all runtime velocity, displacement, wind, spin, backlog, contact, timeout, and state values must remain finite and inside bounded envelopes.
+
+The nominal 240 Hz step is configurable only within 1 ms through 1/30 s. A tick processes no more than 128 fixed steps and contributes no more than 100 ms of render delta, so a stall cannot create an unbounded catch-up impulse. Sampling cadence is anchored to solver time rather than render grouping. Pre-spawn scale validation and the live collision transform both require the canonical unit scale.
+
+Airborne, ground, and basket-capture moves use deferred `FScopedMovementUpdate`. The solver validates the actual applied transform and publishes it to the authoritative owner-transform latch before overlap callbacks are dispatched, then validates callback effects. This prevents legitimate overlap callbacks from observing a stale latch without weakening the rule: a later finite external teleport still fails closed and restores the last authoritative transform. Vegetation re-entry cooldown uses `Telemetry.FlightTimeSeconds`, never render/world time.
 
 The timing meter sweeps from 0 to 1 over 1.30 seconds and wraps. Its center target is 0.82. Signed error is `(needle - 0.82) / 0.18`, clamped to `[-1, 1]`; negative is early and positive is late. Equal needle distance on either side therefore produces equal penalty magnitude.
 
@@ -64,12 +85,12 @@ Perfect releases preserve the pre-v0.2 launch baseline exactly. Outside the Perf
 
 - speed falls smoothly to a minimum 84% multiplier,
 - spin falls smoothly to a minimum 78% multiplier,
-- aim reaches at most 6 degrees and mirrors between RHBH/RHFH,
+- aim reaches at most 6 degrees and follows the four-way rotation-sign contract,
 - hyzer reaches at most 4 degrees of signed player-space offset,
 - nose reaches at most 3 degrees of signed offset,
 - launch angle reaches at most 2 degrees of signed offset.
 
-For RHBH, an early release moves aim left and a late release moves aim right; RHFH mirrors that aim result. Early/late nose, hyzer, and launch feedback stay in player throw space, then the existing throw-style handedness convention mirrors disc bank and spin in the solver. Effective launch inputs are clamped before flight (`hyzer [-34, 34]`, `nose [-7, 11]`, `launch [-5, 35]` degrees).
+For RHBH and LHFH, an early release moves aim left and a late release moves aim right; RHFH and LHBH mirror that aim result. Early/late nose, hyzer, and launch feedback stay in player throw space, then the combined throw-style/handedness convention mirrors disc bank and spin in the solver. Effective launch inputs are clamped before flight (`hyzer [-34, 34]`, `nose [-7, 11]`, `launch [-5, 35]` degrees).
 
 These values are gameplay calibration seeds. Tune them only through the resolver and update its automation tests, this document, and the reference envelope together. Do not hide a second timing interpretation inside the flight solver.
 
@@ -88,6 +109,18 @@ The Unreal implementation remains authoritative once it can be compiled and test
 Modern disc-golf molds differ dramatically in rim width, dome, nose, mass distribution, surface, plastic stiffness, wear, and stability. The current coefficients are therefore **seeds**. The game should be calibrated against measured golf-disc throws before calling the physics simulation-grade.
 
 ## Calibration program
+
+The source-controlled capture authority is `Config/DG_PhysicsMeasuredReferencePolicy.json`. It predeclares the equipment/launch matrix, measurement-quality ceilings, fit-versus-holdout split, comparison tolerances, and the 60-attempt Needle Gate route matrix. `Evidence/Session19/PhysicsMeasuredReferenceDataset.template.json` is deliberately empty and is not accepted calibration evidence.
+
+Validate the capture protocol before field work:
+
+```text
+python Scripts/validate_dg_physics_measured_reference.py
+python Scripts/validate_dg_physics_measured_reference.py --self-test
+python Scripts/validate_dg_physics_measured_reference.py --dataset <captured-dataset.json> --require-complete
+```
+
+The last command must fail closed until all 100 predeclared throws, instrument identities, uncertainty records, and named reviews are present. Passing it accepts a measured dataset for calibration comparison only; it does not independently approve play feel or release readiness.
 
 ### Stage A — sanity data
 Record a controlled set of throws in calm conditions:
@@ -141,7 +174,7 @@ Ground play now stays inside the same 240 Hz custom simulation instead of handin
 - **Skip:** a shallow impact clears the surface/plastic-adjusted speed threshold.
 - **Slide:** the fallback for energetic ground contacts that are neither a skip nor an edge roll.
 
-Classification order is intentional: low energy settles first, strong edge contact rolls before skip evaluation, shallow qualifying contact skips, and everything else slides. Signed spin uses magnitude for entry thresholds, so RHBH and RHFH share one ground implementation.
+Classification order is intentional: low energy settles first, strong edge contact rolls before skip evaluation, shallow qualifying contact skips, and everything else slides. Signed spin uses magnitude for entry thresholds, so all four style/hand combinations share one ground implementation.
 
 Skip response combines plastic/surface restitution with a bounded conversion of shallow tangential speed into upward velocity. Each surface also caps a consecutive skip train; once that budget is spent, another qualifying low hop becomes an energy-absorbing skip-out slide. This suppresses collision chatter and very long post-skip skids while preserving longer skip trains on hard rock and tee surfaces. Slide and edge-roll motion are constrained to the current support plane, receive gravity projected down slope, decelerate at a surface-specific rate, and probe for support so the disc can leave an edge and become airborne again. Edge rolls transition to slides at low speed. Ground play has a 12-second safety timeout.
 
@@ -184,26 +217,30 @@ These are deterministic gameplay calibration seeds, not measured coefficients fo
 ## Telemetry and trajectory exports
 Never remove the developer telemetry path. `FDiscFlightTelemetry` carries the exact resolved release alongside live speed, spin, angle of attack, carry, ground state/surface, impact count/angles, and ground travel.
 
-Every completed throw is now exported under `Saved/TrajectoryExports/` in schema-v3 JSON and CSV. The default recorder rate is the solver rate (240 Hz), so each fixed step carries:
+In non-Shipping builds, every completed throw is exported under `Saved/TrajectoryExports/` in trajectory schema v5 JSON and CSV. Shipping intentionally retains the same in-memory trajectory summaries while disabling JSON/CSV file output. Schema v5 keeps player-hand provenance mandatory and adds replayable gust-phase provenance: JSON records `release.handedness` as exactly `Right` or `Left` and `release.wind_phase_origin_s` in `[0, 4096)`, the summary and final telemetry repeat the phase, and CSV records matching `# handedness=Right|Left` and `# wind_phase_origin_s=...` metadata. Consumers must reject missing, unknown, non-finite, out-of-range, or disagreeing provenance. The default recorder rate is the solver rate (240 Hz), so each fixed step carries:
 
 - relative SI position and Unreal world position,
 - SI velocity and sampled wind,
 - disc top-face normal, spin, and angle of attack,
 - ground state, physical surface, gameplay course surface, and cumulative contact count.
 
-Discrete ground transitions are recorded separately with time/location, prior and next states, physical/gameplay surfaces, contact number, impact speed, incidence angle, and disc edge angle. The export also embeds the resolved disc/aero profile, immutable release with applied lie multipliers, final telemetry, air/final carry, apex, lateral displacement, air time, ground distance, raw/playing surface, resulting lie/location, penalty, relief rule, and completion state. Physics preset/report schemas remain version 2.
+Discrete ground transitions are recorded separately with time/location, prior and next states, physical/gameplay surfaces, contact number, impact speed, incidence angle, and disc edge angle. The export also embeds the resolved disc/aero profile, immutable release with handedness and applied lie multipliers, final telemetry, air/final carry, apex, lateral displacement, air time, ground distance, raw/playing surface, resulting lie/location, penalty, relief rule, and completion state. The physics-preset schema is version 2 and the regression-report schema is version 3.
 
 ## Lie effects stay outside the solver
 
 Lie effects modify a copy of `FThrowCommand` before `ResolveThrowRelease`; `UDiscFlightComponent` still consumes one immutable release and has no knowledge of strokes or relief. Current profiles are light rough 96% power / 110% timing sensitivity, deep rough 88% / 125%, and hazard 92% / 115%. A perfect zero-error release remains centered even when timing sensitivity is higher. Any tuning change must update the rules automation tests and HUD text, while the established clean-lie reference envelope must remain unchanged.
 
-`Data/PhysicsRegressionPresets.json` defines source-controlled launch commands and acceptance envelopes. The calm Apex baseline is repeated at 30/60/120 FPS with wind and gusts disabled. A suite passes only when every scenario remains in its envelope and those three matched throws agree with the 60 FPS result within 0.35 m final carry, 0.10 m apex, 0.25 m lateral finish, 0.50 m ground distance, and identical ground-contact count. These are regression thresholds, not claims of measurement accuracy.
+`Data/PhysicsRegressionPresets.json` defines source-controlled launch commands and acceptance envelopes. Its canonical raw-file SHA-1 is `193C48DBCEDDBC629FA5873892F061C30BA4FF21`, and a report is authoritative only when it records that exact source identity. Existing preset commands are explicitly bound to right-handed execution; the calm RHBH Apex baseline remains the numeric compatibility authority and is repeated at 30/60/120 FPS with wind and gusts disabled. A suite passes only when every scenario remains in its envelope, each accepted throw retains a distinct deterministic phase origin, and those three matched throws agree with the 60 FPS result within 0.35 m final carry, 0.10 m apex, 0.25 m lateral finish, 0.50 m ground distance, and identical ground-contact count. Component-level nonzero-gust coverage separately drives the real 240 Hz accumulator at 30/60/120 FPS while advancing the presentation clock; position, velocity, sample count, and every sampled wind must agree. Four-way handedness/sign tests supplement this baseline; they do not silently retune or reinterpret it. These are regression thresholds, not claims of measurement accuracy. The preset file and regression launcher are Development/Test diagnostics and are deliberately unavailable in Shipping.
+
+Automated physics launches must pass an external `-UserDir` plus explicit launch-time `-NoLoadExistingSave -DGNoProfileWrites`. The GameInstance snapshots those flags before GameInstance subsystem initialization: `NoLoadExistingSave` skips the existing profile and makes the in-memory profile ephemeral, while either profile suppression flag makes profile save calls succeed without disk I/O. `DGDeveloperToolNoSave` remains a separate legacy guard for practice-round snapshot writes and is not a blanket profile-write policy. The external user directory remains a separate containment boundary for trajectory exports, logs, configuration, and persistence domains outside the profile save.
 
 The first exported baseline exposed a world-boundary sign error: positive authored launch angle had produced downward initial velocity in Unreal even though the independent reference treated it as upward. `LaunchDirectionFromFlat` now explicitly maps positive gameplay launch to positive world Z and has an automation test. The corrected calm 82% Apex RHBH baseline records approximately 84.37 m air carry, 85.02 m final carry, 8.37 m apex above release, and 7.35 s air time in the current runtime course.
 
 ## Putting and basket calibration
 
 Circle 1 (10 m or less) and Circle 2 (more than 10 m through 20 m) are authoritative shot contexts selected from the current lie. Putting does not weaken the drive formula: it uses a separate release branch with lower speed/spin ceilings, smaller timing-miss angle penalties, constrained hyzer/nose input, context-specific launch, and a distance-derived recommended power. The HUD converts current power back into an estimated range and reports the pace difference plus signed lateral aim error at the basket.
+
+Circle 1 launch is distance-calibrated: lies at 2 m or closer use 10 degrees, the angle increases linearly to 14 degrees at 7 m, and farther Circle 1 lies retain 14 degrees. Circle 2 remains at 12 degrees. The flatter tap-in release preserves the accepted natural-putt chain-entry window instead of sending a close putt into the top band; this is a gameplay calibration seed, not a measured biomechanical claim. A disc already inside the basket overlap is evaluated synchronously at solver time zero after the authoritative launch transaction commits. No render tick is involved. A caught disc may use a finite capture snap bounded to 250 cm; the seam does not enlarge the catch volume or reclassify legitimate band, tray, weak-chain, or excessive-pace contacts.
 
 The source-only basket is a deterministic interaction model, not rigid-body chain simulation. It projects the incoming disc to closest horizontal approach over a short horizon and classifies:
 
@@ -217,3 +254,5 @@ The verified calm baselines use the Touch/Base putter. Circle 1 starts at 7 m an
 ## Presentation consumers
 
 The live/retained tracer and instant replay consume the same recorded solver samples described above. They are deliberately outside the physics calibration loop: tracer decimation does not remove export samples, replay interpolation does not run forces or collisions, and replay actors cannot affect scores, lies, basket outcomes, or future captures. If a presentation change alters a regression summary or export, treat it as an architecture violation rather than a calibration adjustment.
+
+Physics handedness support must not be presented as human-approved animation coverage. Automated technical coverage proves guarded right-handed backhand Drive, Approach, and Putt bindings plus synchronous gameplay fallbacks; it does not approve motion quality or disc/hand contact. Left-handed backhand and right- or left-handed forehand remain outside authored-motion coverage. Those fallback releases still use the same immutable command, four-way rotation-sign physics, scoring, and schema-v5 provenance. MetaHuman authentication, asset presence, cook presence, and automated binding tests do not satisfy the eight named manual motion/contact/product decisions; current human approval remains 0/8.

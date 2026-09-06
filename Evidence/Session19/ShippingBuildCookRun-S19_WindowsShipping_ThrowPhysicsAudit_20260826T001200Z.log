@@ -1,0 +1,19 @@
+Running AutomationTool...
+Using bundled DotNet SDK version: 10.0 win-x64
+Starting AutomationTool...
+Parsing command line: BuildCookRun -project=C:\DGTour\DiscGolfTour.uproject -noP4 -platform=Win64 -clientconfig=Shipping -build -cook -stage -pak -iostore -archive -archivedirectory=C:\DGTour_Packages\S19_WindowsShipping_ThrowPhysicsAudit_20260826T001200Z -clean -distribution -nodebuginfo -utf8output
+Initializing script modules...
+Total script module initialization time: 0.17 s.
+Using C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe
+Executing commands...
+Setting up ProjectParams for C:\DGTour\DiscGolfTour.uproject
+********** BUILD COMMAND STARTED **********
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" DiscGolfTourEditor Win64 Development -Project="C:\DGTour\DiscGolfTour.uproject" -Clean -NoHotReload "C:\DGTour\DiscGolfTour.uproject" -NoUBTMakefiles  -log="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development.txt"
+Log file: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development.txt
+A conflicting instance of Global\UnrealBuildTool_Mutex_096b8b11a8779fc55e9da244f4a8ecf62868c83d is already running.
+Trace written to file C:\Users\ridge\AppData\Local\UnrealBuildTool\Trace.uba with size 274b
+Took 0.34s to run dotnet.exe, ExitCode=10
+UnrealBuildTool failed. See log for more details. (C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development.txt)
+AutomationTool executed for 0h 0m 2s
+AutomationTool exiting with ExitCode=10 (Error_SDKNotFound)
+BUILD FAILED

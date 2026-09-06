@@ -1,0 +1,305 @@
+{
+  "schema": "DiscGolfTour.Session19ThreeHoleTechnicalAcceptanceReceipt.v2",
+  "schemaVersion": 2,
+  "session": 19,
+  "candidateId": "S19_WindowsShipping_20260827T015500Z_946521ab0415",
+  "verifiedUtc": "2026-08-27T02:26:02.055803Z",
+  "state": "PASS_CANDIDATE_BOUND_FRESH_INSTALL_THREE_HOLE_RUNTIME_JOURNAL_VERIFIED",
+  "policy": {
+    "path": "Config/DG_Session19ThreeHoleTechnicalAcceptancePolicyV2.json",
+    "bytes": 6176,
+    "sha256": "CCD91093285118A1339AED020D6C1DF28E3A4EBCAE6726AB8DC6A8DB31FE9B25",
+    "policyId": "windows_shipping_v05_candidate_bound_three_hole_artifact_integrity_v2"
+  },
+  "candidate": {
+    "archive": {
+      "hostPathRecorded": false,
+      "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260827T015500Z_946521ab0415/Windows",
+      "bytes": 1246026263,
+      "fileCount": 31,
+      "canonicalManifestSha256": "FE90992E8853CE2E5590738197A11E8E1695A8D35A6436239A554BB226A79029",
+      "liveRevalidationPass": true
+    },
+    "shippingExecutable": {
+      "path": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+      "bytes": 162632192,
+      "sha256": "3C3DAF922A7248CAEF67F7E8264B0C8E14D43EABC541151093F01D8107519D25"
+    }
+  },
+  "projectEvidenceBindings": [
+    {
+      "role": "SHIPPING_CANDIDATE_VERIFICATION",
+      "path": "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260827T015500Z_946521ab0415.json",
+      "bytes": 6452,
+      "sha256": "D8964CE35A051B7656B7052B8D58D09836D630E74FD1434B5AED275E352DB8EC"
+    },
+    {
+      "role": "CANDIDATE_CONTENT_AUDIT",
+      "path": "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260827T015500Z_946521ab0415.json",
+      "bytes": 26660,
+      "sha256": "156D0F3E3175DA6D90E93672BE8E962F7F4BE64D37F3C801373FAC58420BC4F0"
+    },
+    {
+      "role": "SHIPPING_BINARY_POLICY",
+      "path": "Evidence/Session19/ShippingBinary-S19_WindowsShipping_20260827T015500Z_946521ab0415.json",
+      "bytes": 2327,
+      "sha256": "F77AEE0B6821DBCBF9BFE18C1CC93028BD911FFDCAA3C051EF0814D81610D32D"
+    },
+    {
+      "role": "EXTERNAL_TECHNICAL_EVIDENCE_VALIDATION",
+      "path": "Evidence/Session19/ExternalTechnicalEvidence-S19_WindowsShipping_20260827T015500Z_946521ab0415.json",
+      "bytes": 800,
+      "sha256": "2BE6B61136D73F8934812E700A76657654252A49D5FF4AD56561403E6DBC9F0E"
+    },
+    {
+      "role": "FRESH_USERDIR_VALIDATION",
+      "path": "Evidence/Session19/FreshUserDir-S19_WindowsShipping_20260827T015500Z_946521ab0415.json",
+      "bytes": 3919,
+      "sha256": "21362A5EBF94382D57A3CEFE5871F687D675B3DDCD1A066232A8E030EFD91A76"
+    }
+  ],
+  "externalEvidence": {
+    "hostPathRecorded": false,
+    "recoveryLocationToken": "DGTOUR_ACCEPTANCE/Session19ExternalEvidence/S19_WindowsShipping_20260827T015500Z_946521ab0415_8175784b-f16e-4970-af26-8b491577fb9a",
+    "bindings": [
+      {
+        "role": "LAUNCH_RECORD",
+        "path": "launch-record.json",
+        "bytes": 1612,
+        "sha256": "6DB6A59DA8FA787491C82E536D96C4C6142162325061203CB045817BE4F355D4"
+      },
+      {
+        "role": "TECHNICAL_EVIDENCE_MANIFEST",
+        "path": "technical-evidence-manifest.json",
+        "bytes": 7031,
+        "sha256": "C2972CB26066FF22EC03226E76624F27298B9988C1EB6F41939BA479BEDF2CBC"
+      },
+      {
+        "role": "TECHNICAL_EVIDENCE_MANIFEST_SIDECAR",
+        "path": "technical-evidence-manifest.sha256",
+        "bytes": 99,
+        "sha256": "96EB8B970671810FE84572802C5723B8A71D1A35C4F00227026BD56AB4D76FF1"
+      }
+    ],
+    "screenshots": [
+      {
+        "artifactId": "SCREENSHOT_001",
+        "path": "Screenshots/001_front_end.png",
+        "bytes": 260499,
+        "sha256": "95067B5144FB8C006BAE54E7AAB452C081C07627B8B1B22848CE3EC4C2D14915",
+        "width": 1922,
+        "height": 1128,
+        "semanticContentInferred": false
+      },
+      {
+        "artifactId": "SCREENSHOT_002",
+        "path": "Screenshots/002_hole1_tee.png",
+        "bytes": 3071881,
+        "sha256": "8476B153EFA49E6D287B8666937F47064FF3E84CD9294E7E9E329B4C8F295001",
+        "width": 1922,
+        "height": 1128,
+        "semanticContentInferred": false
+      },
+      {
+        "artifactId": "SCREENSHOT_003",
+        "path": "Screenshots/003_hole1_recovered_lie.png",
+        "bytes": 2501711,
+        "sha256": "3BA2FD1720DDDDDC446DFA9B22CA21DB412152A0AAEA7D7E40BA5083250C29BF",
+        "width": 1922,
+        "height": 1128,
+        "semanticContentInferred": false
+      },
+      {
+        "artifactId": "SCREENSHOT_004",
+        "path": "Screenshots/004_hole1_complete.png",
+        "bytes": 2370279,
+        "sha256": "61DAE5B80B1E9B3A5D747E31EA8C4638595137BBE84C6474A2C4381EC31A2666",
+        "width": 1922,
+        "height": 1128,
+        "semanticContentInferred": false
+      },
+      {
+        "artifactId": "SCREENSHOT_005",
+        "path": "Screenshots/005_hole2_tee.png",
+        "bytes": 3613597,
+        "sha256": "54BC29C58DF3BC374BC0192F4C978A369C895688BD00AED36FCEA0810AE4FFC6",
+        "width": 1922,
+        "height": 1128,
+        "semanticContentInferred": false
+      },
+      {
+        "artifactId": "SCREENSHOT_006",
+        "path": "Screenshots/006_hole2_recovered_lie.png",
+        "bytes": 2785522,
+        "sha256": "9CB85B1296F8295CDEDF17CC81562A8A874CF6010A292B454AC91F55B3F54DED",
+        "width": 1922,
+        "height": 1128,
+        "semanticContentInferred": false
+      },
+      {
+        "artifactId": "SCREENSHOT_007",
+        "path": "Screenshots/007_hole2_complete.png",
+        "bytes": 2715932,
+        "sha256": "BFB39A569FF54CF41AF89603249F1AE7C6F67995FB48F96AD669F4DF26E85C6F",
+        "width": 1922,
+        "height": 1128,
+        "semanticContentInferred": false
+      },
+      {
+        "artifactId": "SCREENSHOT_008",
+        "path": "Screenshots/008_hole3_tee.png",
+        "bytes": 2294272,
+        "sha256": "DCAE1328C3E21CCD1559F281943CB4235557C4B8E80B07E96EC9615B8091E251",
+        "width": 1922,
+        "height": 1128,
+        "semanticContentInferred": false
+      },
+      {
+        "artifactId": "SCREENSHOT_009",
+        "path": "Screenshots/009_hole3_recovered_lie.png",
+        "bytes": 1761129,
+        "sha256": "18BC890E82028F60AB90C25D52428DAC1143E0F7C148510B593C6E09ABB820A8",
+        "width": 1922,
+        "height": 1128,
+        "semanticContentInferred": false
+      },
+      {
+        "artifactId": "SCREENSHOT_010",
+        "path": "Screenshots/010_final_scorecard.png",
+        "bytes": 255039,
+        "sha256": "8E00BD91F7298B074AF1EEC5D07268E9FC80906A973ECB2B8EF6D08B94C0D192",
+        "width": 1922,
+        "height": 1128,
+        "semanticContentInferred": false
+      }
+    ]
+  },
+  "freshUserDir": {
+    "token": "8175784b-f16e-4970-af26-8b491577fb9a",
+    "hostPathRecorded": false,
+    "emptyBeforeLaunch": true,
+    "externalBoundaryValidated": true,
+    "postRunAllowlistPass": true,
+    "observedFileCount": 5,
+    "candidateUserDirBindingSha256": "5425D12468D82B54C4125919FE6AA2012C14A6880000F237DD0C5B20757DDAB3"
+  },
+  "process": {
+    "exitCode": 0,
+    "timedOut": false,
+    "cleanExit": true
+  },
+  "artifactIntegrity": {
+    "pass": true,
+    "exactScreenshotSetPass": true,
+    "manifestHashesAndDimensionsPass": true,
+    "screenshotCount": 10,
+    "screenshotFilenamesTreatedAsOpaqueArtifactIds": true,
+    "semanticContentInferredFromScreenshots": false
+  },
+  "checkpointChain": null,
+  "runtimeJournal": {
+    "path": "Saved/TechnicalEvidence/three-hole-runtime-journal-v1.jsonl",
+    "hostPathRecorded": false,
+    "userDirRecoveryLocationToken": "DGTOUR_EXTERNAL_USERDIR/8175784b-f16e-4970-af26-8b491577fb9a/Saved/TechnicalEvidence/three-hole-runtime-journal-v1.jsonl",
+    "bytes": 3228,
+    "sha256": "36C5242A848CDA03343FBB9F74A7EF658A2E80A0332FFD8AB702937904488C94",
+    "schema": "DiscGolfTour.Session19ThreeHoleRuntimeJournal.v1",
+    "candidateId": "S19_WindowsShipping_20260827T015500Z_946521ab0415",
+    "userDirToken": "8175784b-f16e-4970-af26-8b491577fb9a",
+    "executableSha256": "3C3DAF922A7248CAEF67F7E8264B0C8E14D43EABC541151093F01D8107519D25",
+    "archiveManifestSha256": "FE90992E8853CE2E5590738197A11E8E1695A8D35A6436239A554BB226A79029",
+    "launchRecordSha256": "6DB6A59DA8FA787491C82E536D96C4C6142162325061203CB045817BE4F355D4",
+    "technicalEvidenceManifestSha256": "C2972CB26066FF22EC03226E76624F27298B9988C1EB6F41939BA479BEDF2CBC",
+    "captureNonce": "98153d6e-ca19-4d0a-b147-e529dc67a3c3",
+    "roundId": "f2ded0bf-448e-48d0-b1c8-d1bff4027a86",
+    "eventCount": 12,
+    "firstSequence": 1,
+    "lastSequence": 12,
+    "startedUtc": "2026-08-27T02:09:37.787Z",
+    "modifiedUtc": "2026-08-27T02:24:43.688Z",
+    "canonicalJsonLinesValidated": true,
+    "freshUserDirReceiptBindingValidated": true,
+    "launchRecordBindingValidated": true,
+    "technicalManifestBindingValidated": true,
+    "captureWindowValidated": true,
+    "runtimeOperationalBindingValidated": true
+  },
+  "technicalAcceptance": true,
+  "continuityClaims": {
+    "checkpointChainSupplied": false,
+    "checkpointChainStructuralIntegrityValidated": false,
+    "derivedCheckpointMayPromote": false,
+    "runtimeJournalSupplied": true,
+    "runtimeJournalCanonicalBytesValidated": true,
+    "runtimeOperationalBindingValidated": true,
+    "captureWindowBindingPresent": true,
+    "singleRoundProven": true,
+    "freshRoundEntryToFinalScorecardSequencePass": true,
+    "eachHoleTeeAndRecoveredLieObserved": true,
+    "threeHoleCompletionObserved": true
+  },
+  "scoreClaims": {
+    "finalScorecardScoreProven": true,
+    "completedHolesProven": true,
+    "totalHolesProven": true,
+    "holeRowsProven": true,
+    "roundId": "f2ded0bf-448e-48d0-b1c8-d1bff4027a86",
+    "finalScore": {
+      "completedHoles": 3,
+      "totalHoles": 3,
+      "parTotal": 11,
+      "totalStrokes": 19,
+      "totalPenalties": 3,
+      "holeRows": [
+        {
+          "holeNumber": 1,
+          "par": 3,
+          "strokes": 6,
+          "penalties": 1
+        },
+        {
+          "holeNumber": 2,
+          "par": 4,
+          "strokes": 6,
+          "penalties": 1
+        },
+        {
+          "holeNumber": 3,
+          "par": 4,
+          "strokes": 7,
+          "penalties": 1
+        }
+      ]
+    }
+  },
+  "claimBoundary": {
+    "visualQualityApproval": false,
+    "accessibilityApproval": false,
+    "humanPlayFeelApproval": false,
+    "manualGameplayAcceptance": false,
+    "productOwnerApproval": false,
+    "performanceAcceptance": false,
+    "soakAcceptance": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "releaseApproval": false,
+    "releaseReady": false,
+    "cryptographicProcessAttestation": false,
+    "tamperProofEvidence": false,
+    "hostileSameUserForgeryResistance": false,
+    "evidenceTrustModel": "BOUNDED_OPERATIONAL_PROCESS_EVIDENCE_NOT_CRYPTOGRAPHIC_ATTESTATION"
+  },
+  "blockerClosed": false,
+  "releaseReady": false,
+  "remainingEvidence": [
+    "VISUAL_QUALITY_PRODUCT_OWNER_APPROVAL",
+    "ACCESSIBILITY_APPROVAL",
+    "HUMAN_PLAY_FEEL_AND_MANUAL_GAMEPLAY_ACCEPTANCE",
+    "QUANTITATIVE_PERFORMANCE_AND_SOAK_ACCEPTANCE",
+    "WHOLE_ARCHIVE_PROVENANCE_APPROVAL",
+    "LEGAL_AND_DISTRIBUTION_CLEARANCE",
+    "RELEASE_APPROVAL"
+  ],
+  "receiptPath": "Evidence/Session19/ThreeHoleTechnicalAcceptance-S19_WindowsShipping_20260827T015500Z_946521ab0415.json"
+}

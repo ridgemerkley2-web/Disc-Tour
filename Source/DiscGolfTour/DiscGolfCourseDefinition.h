@@ -175,8 +175,28 @@ struct FDiscGolfCourseManifestDefinition
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FDiscGolfCourseManifestHoleEntry> Holes;
 };
 
+/** Result of attempting to load the authored Pine Ridge manifest or hole definition. */
+enum class EDiscGolfAuthoredCourseDataState : uint8
+{
+    Valid,
+    Missing,
+    Invalid
+};
+
+/** Runtime action selected after applying the build's authored-course data policy. */
+enum class EDiscGolfAuthoredCourseLoadAction : uint8
+{
+    UseAuthoredData,
+    UseSourceFallback,
+    FailClosed
+};
+
 namespace DiscGolfCourseDefinition
 {
+    /** Shipping must never mask missing or invalid authored course data with source fallbacks. */
+    DISCGOLFTOUR_API EDiscGolfAuthoredCourseLoadAction ResolveAuthoredCourseLoadAction(
+        EDiscGolfAuthoredCourseDataState DataState,
+        bool bIsShippingBuild);
     DISCGOLFTOUR_API FDiscGolfCourseManifestDefinition PineRidgeCourseFallback();
     DISCGOLFTOUR_API FDiscGolfHoleBlockoutDefinition PineRidgeHole1Fallback();
     DISCGOLFTOUR_API FDiscGolfHoleBlockoutDefinition PineRidgeHole2Fallback();
@@ -212,6 +232,10 @@ namespace DiscGolfCourseDefinition
         FString& OutError);
     DISCGOLFTOUR_API bool Validate(
         const FDiscGolfHoleBlockoutDefinition& Definition,
+        FString& OutError);
+    /** Wind-zone actor identities share one persistent course world across holes. */
+    DISCGOLFTOUR_API bool ValidateCourseWindZoneIdentities(
+        const TArray<FDiscGolfHoleBlockoutDefinition>& Definitions,
         FString& OutError);
     DISCGOLFTOUR_API float MeasuredDistanceFeet(const FDiscGolfHoleBlockoutDefinition& Definition);
 }

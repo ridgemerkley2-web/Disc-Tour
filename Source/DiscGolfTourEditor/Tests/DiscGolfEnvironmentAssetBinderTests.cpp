@@ -96,7 +96,11 @@ bool FDiscGolfEnvironmentBinderTreeProxyTest::RunTest(const FString& Parameters)
     ShrubSlot.Category = EDiscGolfEnvironmentAssetCategory::Shrub;
     ShrubSlot.CollisionMode = EDiscGolfEnvironmentCollisionMode::ShrubOverlap;
     FDiscGolfEnvironmentMeshVariant ShrubVariant;
-    ShrubVariant.VisualMesh = NewObject<UStaticMesh>();
+    UStaticMesh* Shrub = LoadObject<UStaticMesh>(nullptr,
+        TEXT("/Game/Presentation/Course/PineRidge/Fixtures/PolyHaven/Shrub04/"
+             "shrub_04_1k.shrub_04_1k"));
+    TestNotNull(TEXT("Approved PineRidge shrub fixture is available"), Shrub);
+    ShrubVariant.VisualMesh = Shrub;
     ShrubVariant.InteractionProxyMesh = const_cast<UStaticMesh*>(Cylinder);
     TestFalse(TEXT("A dedicated interaction proxy satisfies overlap slot policy"),
         UDiscGolfEnvironmentAssetBinder::ValidateVariantForSlot(
@@ -107,6 +111,84 @@ bool FDiscGolfEnvironmentBinderTreeProxyTest::RunTest(const FString& Parameters)
         UDiscGolfEnvironmentAssetBinder::ValidateVariantForSlot(
             ShrubSlot, ShrubVariant, VariantNotes)
         .Contains(EDiscGolfEnvironmentBindingStatus::NeedsCollision));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfEnvironmentBinderProvenanceGateTest,
+    "DiscGolfTour.Environment.AssetBinder.ProvenanceGateFailsClosed",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDiscGolfEnvironmentBinderProvenanceGateTest::RunTest(const FString& Parameters)
+{
+    (void)Parameters;
+    FString Error;
+    TestFalse(TEXT("An empty scan-root request fails closed"),
+        UDiscGolfEnvironmentAssetBinder::ValidateApprovedScanRoots({}, Error));
+    TestTrue(TEXT("The PineRidge project root is approved for scanning"),
+        UDiscGolfEnvironmentAssetBinder::ValidateApprovedScanRoots(
+            { TEXT("/Game/Presentation/Course/PineRidge") }, Error));
+    TestFalse(TEXT("The quarantined spruce root is rejected"),
+        UDiscGolfEnvironmentAssetBinder::ValidateApprovedScanRoots(
+            { TEXT("/Game/PN_interactiveSpruceForest") }, Error));
+    TestTrue(TEXT("Quarantine rejection is explicit"),
+        Error.Contains(TEXT("quarantine"), ESearchCase::IgnoreCase));
+    TestFalse(TEXT("One quarantined root rejects an otherwise safe request"),
+        UDiscGolfEnvironmentAssetBinder::ValidateApprovedScanRoots(
+            {
+                TEXT("/Game/Presentation/Course/PineRidge"),
+                TEXT("/Game/Stump_Scanned")
+            }, Error));
+    TestFalse(TEXT("Unreviewed project roots are not implicitly trusted"),
+        UDiscGolfEnvironmentAssetBinder::ValidateApprovedScanRoots(
+            { TEXT("/Game/Environment/Vendors/UnreviewedPack") }, Error));
+
+    TestTrue(TEXT("PineRidge runtime meshes remain usable"),
+        UDiscGolfEnvironmentAssetBinder::ValidateApprovedRuntimeAssetPath(
+            FSoftObjectPath(TEXT(
+                "/Game/Presentation/Course/PineRidge/Foliage/PolyHaven/FirSapling/"
+                "fir_sapling_a.fir_sapling_a")), Error));
+    TestTrue(TEXT("Engine primitive proxies remain usable"),
+        UDiscGolfEnvironmentAssetBinder::ValidateApprovedRuntimeAssetPath(
+            FSoftObjectPath(TEXT("/Engine/BasicShapes/Cylinder.Cylinder")), Error));
+    TestFalse(TEXT("Quarantined runtime meshes are rejected"),
+        UDiscGolfEnvironmentAssetBinder::ValidateApprovedRuntimeAssetPath(
+            FSoftObjectPath(TEXT(
+                "/Game/Stump_Scanned/Meshes/Stump_1_mesh.Stump_1_mesh")), Error));
+    TestFalse(TEXT("Arbitrary Engine content is not implicitly trusted"),
+        UDiscGolfEnvironmentAssetBinder::ValidateApprovedRuntimeAssetPath(
+            FSoftObjectPath(TEXT(
+                "/Engine/EngineMaterials/DefaultMaterial.DefaultMaterial")), Error));
+
+    FDiscGolfEnvironmentAssetSlot QuarantinedSlot;
+    QuarantinedSlot.Category = EDiscGolfEnvironmentAssetCategory::Stump;
+    FDiscGolfEnvironmentMeshVariant QuarantinedVariant;
+    QuarantinedVariant.VisualMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT(
+        "/Game/Stump_Scanned/Meshes/Stump_1_mesh.Stump_1_mesh")));
+    FString ReadinessNotes;
+    TestTrue(TEXT("Readiness rejects quarantine without resolving the soft object"),
+        UDiscGolfEnvironmentAssetBinder::ValidateVariantForSlot(
+            QuarantinedSlot, QuarantinedVariant, ReadinessNotes)
+        .Contains(EDiscGolfEnvironmentBindingStatus::BlockedByProvenance));
+    TestTrue(TEXT("Readiness quarantine rejection is explicit"),
+        ReadinessNotes.Contains(TEXT("quarantine"), ESearchCase::IgnoreCase));
+
+    UDiscGolfEnvironmentAssetSet* AssetSet = NewObject<UDiscGolfEnvironmentAssetSet>();
+    const int32 InitialSlotCount = AssetSet->Slots.Num();
+    const FDiscGolfEnvironmentBindingScan RejectedScan =
+        UDiscGolfEnvironmentAssetBinder::ProposeBindingsToReport(
+            {
+                TEXT("/Game/Presentation/Course/PineRidge"),
+                TEXT("/Game/WaterMaterials")
+            },
+            AssetSet,
+            TEXT("Automation/EnvironmentAssetBindingReport_ProvenanceRejected.json"));
+    TestFalse(TEXT("Rejected scan exposes its failed provenance gate"),
+        RejectedScan.bProvenanceAccepted);
+    TestTrue(TEXT("Rejected scan emits no proposals"), RejectedScan.Proposals.IsEmpty());
+    TestTrue(TEXT("Rejected scan queries no accepted roots"),
+        RejectedScan.VendorContentRoots.IsEmpty());
+    TestEqual(TEXT("Rejected scan leaves the data asset unchanged"),
+        AssetSet->Slots.Num(), InitialSlotCount);
     return true;
 }
 
@@ -126,8 +208,9 @@ bool FDiscGolfEnvironmentBinderSafetyTest::RunTest(const FString& Parameters)
     }
     const FDiscGolfEnvironmentBindingScan Scan =
         UDiscGolfEnvironmentAssetBinder::ProposeBindingsToReport(
-            { TEXT("/Game/DefinitelyMissingVendorRoot") }, AssetSet,
+            { TEXT("/Game/Presentation/Course/PineRidge/DefinitelyMissingRoot") }, AssetSet,
             TEXT("Automation/EnvironmentAssetBindingReport_ScanDoesNotMutate.json"));
+    TestTrue(TEXT("Approved scan passes the provenance gate"), Scan.bProvenanceAccepted);
     TestEqual(TEXT("One proposal is emitted for every slot"), Scan.Proposals.Num(), 16);
     TestEqual(TEXT("Scanning preserves slot count"), AssetSet->Slots.Num(), InitialSlotCount);
     for (int32 Index = 0; Index < AssetSet->Slots.Num(); ++Index)
@@ -319,6 +402,52 @@ bool FDiscGolfEnvironmentBinderReadinessResultTest::RunTest(const FString& Param
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfEnvironmentBinderStructuralCompletenessTest,
+    "DiscGolfTour.Environment.AssetBinder.StructuralCompletenessRejectsInvalidCategories",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDiscGolfEnvironmentBinderStructuralCompletenessTest::RunTest(
+    const FString& Parameters)
+{
+    (void)Parameters;
+
+    UDiscGolfEnvironmentAssetSet* OutOfRangeAssetSet =
+        NewObject<UDiscGolfEnvironmentAssetSet>();
+    TestEqual(TEXT("Adversarial fixture starts with sixteen slots"),
+        OutOfRangeAssetSet->Slots.Num(), 16);
+    if (OutOfRangeAssetSet->Slots.Num() == 16)
+    {
+        OutOfRangeAssetSet->Slots[15].Category =
+            static_cast<EDiscGolfEnvironmentAssetCategory>(16);
+    }
+    const FDiscGolfEnvironmentValidationResult OutOfRangeResult =
+        UDiscGolfEnvironmentAssetBinder::ValidateEnvironmentAssetReadinessToReport(
+            OutOfRangeAssetSet,
+            TEXT("Automation/EnvironmentAssetBindingReport_OutOfRangeCategory.json"));
+    TestFalse(TEXT("Sixteen unique values are incomplete when one is outside 0..15"),
+        OutOfRangeResult.bStructurallyComplete);
+    TestFalse(TEXT("Out-of-range category sets cannot be production ready"),
+        OutOfRangeResult.bProductionReady);
+
+    UDiscGolfEnvironmentAssetSet* DuplicateAssetSet =
+        NewObject<UDiscGolfEnvironmentAssetSet>();
+    TestEqual(TEXT("Duplicate fixture starts with sixteen slots"),
+        DuplicateAssetSet->Slots.Num(), 16);
+    if (DuplicateAssetSet->Slots.Num() == 16)
+    {
+        DuplicateAssetSet->Slots[15].Category = DuplicateAssetSet->Slots[0].Category;
+    }
+    const FDiscGolfEnvironmentValidationResult DuplicateResult =
+        UDiscGolfEnvironmentAssetBinder::ValidateEnvironmentAssetReadinessToReport(
+            DuplicateAssetSet,
+            TEXT("Automation/EnvironmentAssetBindingReport_DuplicateCategory.json"));
+    TestFalse(TEXT("A duplicate plus missing category is structurally incomplete"),
+        DuplicateResult.bStructurallyComplete);
+    TestFalse(TEXT("Duplicate category sets cannot be production ready"),
+        DuplicateResult.bProductionReady);
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfEnvironmentBinderApprovalGateTest,
     "DiscGolfTour.Environment.AssetBinder.InvalidApprovalIsAtomic",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -329,12 +458,40 @@ bool FDiscGolfEnvironmentBinderApprovalGateTest::RunTest(const FString& Paramete
     UDiscGolfEnvironmentAssetSet* AssetSet = NewObject<UDiscGolfEnvironmentAssetSet>();
     const int32 InitialCount = AssetSet->Slots[0].Variants.Num();
     FString Error;
-    TestFalse(TEXT("A non-mesh approval is rejected"),
+    TestFalse(TEXT("A non-approved Engine path is rejected before loading"),
         UDiscGolfEnvironmentAssetBinder::ApplyApprovedBindings(
             AssetSet, EDiscGolfEnvironmentAssetCategory::TreeConiferLarge,
             { FSoftObjectPath(TEXT("/Engine/EngineMaterials/DefaultMaterial.DefaultMaterial")) }, Error));
     TestEqual(TEXT("Rejected approval leaves the slot unchanged"),
         AssetSet->Slots[0].Variants.Num(), InitialCount);
+    TestFalse(TEXT("A quarantined path is rejected before loading"),
+        UDiscGolfEnvironmentAssetBinder::ApplyApprovedBindings(
+            AssetSet, EDiscGolfEnvironmentAssetCategory::TreeConiferLarge,
+            { FSoftObjectPath(TEXT(
+                "/Game/PN_interactiveSpruceForest/Meshes/full/high/"
+                "spruce_full_01.spruce_full_01")) }, Error));
+    TestTrue(TEXT("Quarantine apply rejection is explicit"),
+        Error.Contains(TEXT("quarantine"), ESearchCase::IgnoreCase));
+    TestEqual(TEXT("Quarantined approval leaves the slot unchanged"),
+        AssetSet->Slots[0].Variants.Num(), InitialCount);
+
+    UStaticMesh* Cube = LoadObject<UStaticMesh>(nullptr,
+        TEXT("/Engine/BasicShapes/Cube.Cube"));
+    TestNotNull(TEXT("Approved Engine visual fixture is available"), Cube);
+    FDiscGolfEnvironmentMeshVariant Existing;
+    Existing.VisualMesh = Cube;
+    Existing.CollisionProxyMesh = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT(
+        "/Game/Stump_Scanned/Meshes/Collision/SM_StumpProxy.SM_StumpProxy")));
+    AssetSet->Slots[0].Variants = { Existing };
+    TestFalse(TEXT("Reapproval rejects quarantined metadata before loading"),
+        UDiscGolfEnvironmentAssetBinder::ApplyApprovedBindings(
+            AssetSet, EDiscGolfEnvironmentAssetCategory::TreeConiferLarge,
+            { FSoftObjectPath(Cube) }, Error));
+    TestEqual(TEXT("Rejected metadata reapproval preserves the existing variant"),
+        AssetSet->Slots[0].Variants.Num(), 1);
+    TestEqual(TEXT("Rejected metadata reapproval preserves the quarantined soft path"),
+        AssetSet->Slots[0].Variants[0].CollisionProxyMesh.ToSoftObjectPath(),
+        Existing.CollisionProxyMesh.ToSoftObjectPath());
     return true;
 }
 

@@ -5,9 +5,7 @@
 #include "DiscGolfEnvironmentTypes.h"
 #include "DiscGolfEnvironmentDataAssets.generated.h"
 
-class UPCGGraphInterface;
-
-/** Asset-path abstraction consumed by PCG. Fab/Marketplace paths live here, never in forest logic. */
+/** Asset-path abstraction consumed by editor authoring. External paths never enter runtime logic. */
 UCLASS(BlueprintType)
 class DISCGOLFTOUR_API UDiscGolfEnvironmentAssetSet : public UPrimaryDataAsset
 {
@@ -46,8 +44,12 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Forest")
     TSoftObjectPtr<UDiscGolfEnvironmentAssetSet> AssetSet;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PCG")
-    TSoftObjectPtr<UPCGGraphInterface> ForestGraph;
+#if WITH_EDITORONLY_DATA
+    /** Editor-only graph reference. It is stripped from every cooked runtime preset. */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Authoring",
+        meta=(AllowedClasses="/Script/PCG.PCGGraphInterface"))
+    TSoftObjectPtr<UObject> ForestGraph;
+#endif
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Course")
     FDiscGolfEnvironmentCourseClearance Clearance;

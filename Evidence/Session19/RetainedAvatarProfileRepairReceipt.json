@@ -1,0 +1,72 @@
+{
+  "schema": "DiscGolfTour.Session19RetainedAvatarProfileRepairReceipt.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "authority": "ADDITIVE_ENGINEERING_EVIDENCE_NOT_RELEASE_OR_LEGAL_APPROVAL",
+  "state": "EXACT_RETAINED_PROFILE_LEGACY_DEFAULTS_REPAIRED_FRESH_SHIPPING_PACKAGE_PROOF_PENDING",
+  "sourceMigrationReceipt": {
+    "path": "Evidence/Session19/SerializedAssetMigrationReceipt.json",
+    "bytes": 5435,
+    "sha256": "AC1CB2B61D07850E60A40C0701D878F4D7AAFF95CF04B18C280DB418DC91B9A4"
+  },
+  "repairScript": {
+    "path": "Scripts/repair_dg_session19_retained_avatar_profile.py",
+    "bytes": 6777,
+    "sha256": "4737D49AF086863617273E53D8E4FCC84CCD37D742A391E19072CAEBD1048291"
+  },
+  "target": {
+    "package": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default",
+    "path": "Content/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default.uasset",
+    "before": {
+      "bytes": 2176,
+      "sha256": "12E2A6BC0E01EEB9D69C4459B5FA3A963DC756F644EAA001D14CE15486E68465"
+    },
+    "after": {
+      "bytes": 2608,
+      "sha256": "F8B03386EF8C40307D49C8642EE167F486B88EAC70FDD0556D5605AB0317C8AD"
+    }
+  },
+  "repairedProperties": [
+    {
+      "name": "MetaHumanRuntimeMode",
+      "previousValue": "Disabled",
+      "acceptedValue": "ShippingSafeAssembled"
+    },
+    {
+      "name": "bUseRuntimeRetargeting",
+      "previousValue": false,
+      "acceptedValue": true
+    },
+    {
+      "name": "VisualBodyComponentTag",
+      "previousValue": "Body",
+      "acceptedValue": "DGVisualBody"
+    },
+    {
+      "name": "VisualHeadComponentTag",
+      "previousValue": "Face",
+      "acceptedValue": "DGVisualHead"
+    }
+  ],
+  "unchangedContract": {
+    "backendId": "metahuman_assembled",
+    "backend": "MetaHumanPreset",
+    "visualActorClass": "/Game/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default.BP_DG_MetaHuman_Default_C",
+    "retargetAsset": "/Game/DiscGolf/Characters/MetaHuman/RTG_DGMaster_To_MetaHuman.RTG_DGMaster_To_MetaHuman",
+    "preferredQualityProfileId": "GameplayPerformance",
+    "allowRuntimeFaceSculpting": false
+  },
+  "protectedSave": {
+    "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+    "bytes": 5212,
+    "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14"
+  },
+  "acceptance": {
+    "onlyExactTargetAssetSaved": true,
+    "legacySerializedEnumValuesRestored": true,
+    "legacyUnserializedDefaultsMadeExplicit": true,
+    "protectedProductionSaveUnchanged": true,
+    "freshShippingPackageEvidenceAccepted": false,
+    "releaseReady": false
+  }
+}

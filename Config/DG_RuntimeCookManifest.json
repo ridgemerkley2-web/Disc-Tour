@@ -1,13 +1,16 @@
 {
-  "schema": "DiscGolfTour.RuntimeCookManifestSource.v1",
-  "schema_version": 1,
+  "schema": "DiscGolfTour.RuntimeCookManifestSource.v2",
+  "schema_version": 2,
   "manifest_id": "dg_runtime_v1",
-  "source_contract": "Accepted Sessions 2-7 /Game/DiscGolf technical runtime closure at Session 8 start",
+  "source_contract": "Accepted Sessions 2-7 legacy runtime closure plus the separately counted Session 8B canonical MetaHuman assembly boundary",
   "content_status": "ACCEPTED_TECHNICAL_PIPELINE_WITH_NON_PRODUCTION_PROXY_VISUALS",
   "shipping_status": "DO_NOT_CLAIM_SHIPPING_ART_APPROVAL",
   "authority": "COOK_DISCOVERY_ONLY_NO_GAMEPLAY_OR_RELEASE_AUTHORITY",
   "expected_runtime_package_count": 69,
+  "expected_metahuman_runtime_package_count": 264,
+  "expected_avatar_backend_profile_count": 2,
   "expected_excluded_package_count": 12,
+  "expected_excluded_metahuman_package_count": 1,
   "asset_outputs": {
     "runtime_cook_manifest": {
       "package": "/Game/DiscGolf/Cook/DA_DG_RuntimeCookManifest",
@@ -18,7 +21,7 @@
     "dg_master_backend_profile": {
       "package": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster",
       "object": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster.DA_DG_AvatarBackend_DGMaster",
-      "class": "/Script/DiscGolfCharacterFramework.DiscGolfAvatarBackendProfile",
+      "class": "/Script/DiscGolfRuntimeFoundation.DiscGolfAvatarBackendProfile",
       "primary_asset_type": "DiscGolfAvatarBackendProfile",
       "backend_id": "dg_master",
       "backend": "DGMaster",
@@ -28,15 +31,69 @@
       "use_runtime_retargeting": false,
       "runtime_face_sculpting": false,
       "purpose": "Accepted project proxy fallback/research backend"
+    },
+    "metahuman_default_backend_profile": {
+      "package": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default",
+      "object": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default.DA_DG_AvatarBackend_MetaHuman_Default",
+      "class": "/Script/DiscGolfRuntimeFoundation.DiscGolfAvatarBackendProfile",
+      "primary_asset_type": "DiscGolfAvatarBackendProfile",
+      "backend_id": "metahuman_assembled",
+      "backend": "MetaHumanPreset",
+      "runtime_mode": "ShippingSafeAssembled",
+      "preferred_quality_profile_id": "GameplayPerformance",
+      "visual_actor_class": "/Game/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default.BP_DG_MetaHuman_Default_C",
+      "retarget_asset": "/Game/DiscGolf/Characters/MetaHuman/RTG_DGMaster_To_MetaHuman.RTG_DGMaster_To_MetaHuman",
+      "use_runtime_retargeting": true,
+      "visual_body_component_tag": "DGVisualBody",
+      "visual_head_component_tag": "DGVisualHead",
+      "runtime_face_sculpting": false,
+      "accepted_uasset_bytes": 2608,
+      "accepted_uasset_sha256": "F8B03386EF8C40307D49C8642EE167F486B88EAC70FDD0556D5605AB0317C8AD",
+      "purpose": "Accepted Optimized Medium clean-shaven assembled visual backend"
     }
   },
-  "reserved_optional_metahuman_entry_points": {
+  "metahuman_runtime_contract": {
     "backend_id": "metahuman_assembled",
     "backend_profile": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default.DA_DG_AvatarBackend_MetaHuman_Default",
     "assembled_visual_actor_class": "/Game/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default.BP_DG_MetaHuman_Default_C",
     "retarget_asset": "/Game/DiscGolf/Characters/MetaHuman/RTG_DGMaster_To_MetaHuman.RTG_DGMaster_To_MetaHuman",
-    "authoring_status": "BLOCKED_UNTIL_REAL_PROJECT_METAHUMAN_CONTENT_EXISTS",
-    "created_by_session8_cook_author": false
+    "target_ik_rig": "/MetaHumanCharacter/Animation/Retargeting/IK_MH_IKRig.IK_MH_IKRig",
+    "source_mhc": "/Game/DiscGolf/Characters/MetaHuman/Source/MHC_DG_Golfer_Default",
+    "source_mhc_runtime_status": "EDITOR_ONLY_EXCLUDED_FROM_MANIFEST_AND_COOK_CLOSURE",
+    "authoring_status": "AUTHORED_AND_FRESH_PROCESS_VALIDATED_PENDING_PACKAGED_COOK_CLOSURE",
+    "created_by_session8_cook_author": false,
+    "runtime_inventory": {
+      "inventory_semantics": "EXPLICIT_COOK_ROOT_SET_NOT_COMPLETE_TRANSITIVE_DEPENDENCY_GRAPH",
+      "fresh_validation_transitive_runtime_dependency_count": 340,
+      "transitive_dependency_evidence_status": "FRESH2_SOURCE_VALIDATION_ONLY_REQUIRES_PACKAGED_IOSTORE_REPROOF",
+      "expected_package_count": 264,
+      "package_list_sha256": "003A7683069A2353819421CD71ECA82A2A0F8AE2E7786F56E04EA18DB11AB3B9",
+      "directory_groups": [
+        {
+          "name": "ACCEPTED_METAHUMAN_COMMON",
+          "package_root": "/Game/DiscGolf/Characters/MetaHuman/Common",
+          "disk_relative_root": "Content/DiscGolf/Characters/MetaHuman/Common",
+          "expected_package_count": 205,
+          "package_list_sha256": "90C3299AB7182FE1A6D60133936CDD1D6387B3509FF753F46C772579C20CCD1F"
+        },
+        {
+          "name": "ACCEPTED_METAHUMAN_GENERATED",
+          "package_root": "/Game/DiscGolf/Characters/MetaHuman/Generated",
+          "disk_relative_root": "Content/DiscGolf/Characters/MetaHuman/Generated",
+          "expected_package_count": 56,
+          "package_list_sha256": "0D545C7185BD7794E88E5AFECCAAEFA0BC9E0959B8F26004A560BF53A5AE1238"
+        }
+      ],
+      "explicit_packages": [
+        "/Game/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default",
+        "/Game/DiscGolf/Characters/MetaHuman/RTG_DGMaster_To_MetaHuman",
+        "/MetaHumanCharacter/Animation/Retargeting/IK_MH_IKRig"
+      ],
+      "explicit_package_list_sha256": "21DB66FA98C4CBC7B12EE0518F4A1927116898E035411373113AABF3973AD931"
+    },
+    "explicitly_excluded_packages": [
+      "/Game/DiscGolf/Characters/MetaHuman/Source/MHC_DG_Golfer_Default"
+    ]
   },
   "runtime_package_groups": [
     {

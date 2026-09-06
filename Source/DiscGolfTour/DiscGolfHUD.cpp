@@ -132,6 +132,7 @@ namespace DiscGolfHudStyle
         OutFirstLine = EllipsizeToLogicalWidth(Canvas, Font, OutFirstLine, FontScale, MaxLogicalWidth);
         OutSecondLine = EllipsizeToLogicalWidth(Canvas, Font, Remaining, FontScale, MaxLogicalWidth);
     }
+
 }
 
 FString ADiscGolfHUD::PlasticToString(uint8 PlasticValue) const
@@ -264,6 +265,8 @@ void ADiscGolfHUD::DrawControlsMenu(
     }
 
     using namespace DiscGolfHudStyle;
+    const FDiscGolfPlayerSettings Settings = PlayerController->GetCurrentPlayerSettings();
+    const FLinearColor UiAccent = Settings.bHighContrastUI ? PaperWhite : SignalTeal;
     const FViewportLayout Layout(Canvas);
     const auto Rect = [this, &Layout](const FLinearColor& Color, float X, float Y, float W, float H)
     {
@@ -276,10 +279,10 @@ void ADiscGolfHUD::DrawControlsMenu(
 
     DrawRect(Scrim, 0.0f, 0.0f, Canvas->ClipX, Canvas->ClipY);
     Rect(PanelRaised, SafeMargin, 20.0f, ReferenceWidth - SafeMargin * 2.0f, 72.0f);
-    Rect(SignalTeal, SafeMargin, 20.0f, 6.0f, 72.0f);
+    Rect(UiAccent, SafeMargin, 20.0f, 6.0f, 72.0f);
     Text(TEXT("CONTROLS"), PaperWhite, 50.0f, 33.0f, Medium, 1.05f);
     Text(TEXT("ENHANCED INPUT  //  PROFILE CHANGES SAVE AUTOMATICALLY"), MistTeal, 50.0f, 66.0f, Small, 0.80f);
-    Text(TEXT("TAB / SHOULDERS  SETTINGS"), SlateGray, 1010.0f, 48.0f, Small, 0.72f);
+    Text(TEXT("TAB / RIGHT SHOULDER  SETTINGS"), SlateGray, 984.0f, 48.0f, Small, 0.72f);
 
     TArray<FDiscGolfControlBindingRow> Rows;
     PlayerController->GetControlBindingRows(Rows);
@@ -301,7 +304,7 @@ void ADiscGolfHUD::DrawControlsMenu(
         if (bSelected)
         {
             Rect(FLinearColor(0.04f, 0.27f, 0.22f, 0.96f), TableX + 4.0f, RowY - 3.0f, TableW - 8.0f, RowHeight - 1.0f);
-            Rect(SignalTeal, TableX + 4.0f, RowY - 3.0f, 4.0f, RowHeight - 1.0f);
+            Rect(UiAccent, TableX + 4.0f, RowY - 3.0f, 4.0f, RowHeight - 1.0f);
         }
         else if ((RowIndex & 1) != 0)
         {
@@ -338,6 +341,8 @@ void ADiscGolfHUD::DrawSettingsMenu(
 {
     if (!PlayerController || !Canvas) return;
     using namespace DiscGolfHudStyle;
+    const FDiscGolfPlayerSettings Settings = PlayerController->GetCurrentPlayerSettings();
+    const FLinearColor UiAccent = Settings.bHighContrastUI ? PaperWhite : SignalTeal;
     const FViewportLayout Layout(Canvas);
     const auto Rect = [this, &Layout](const FLinearColor& Color, float X, float Y, float W, float H)
     {
@@ -350,37 +355,39 @@ void ADiscGolfHUD::DrawSettingsMenu(
 
     DrawRect(Scrim, 0.0f, 0.0f, Canvas->ClipX, Canvas->ClipY);
     Rect(PanelRaised, SafeMargin, 20.0f, ReferenceWidth - SafeMargin * 2.0f, 72.0f);
-    Rect(SignalTeal, SafeMargin, 20.0f, 6.0f, 72.0f);
+    Rect(UiAccent, SafeMargin, 20.0f, 6.0f, 72.0f);
     Text(TEXT("PLAYER SETTINGS"), PaperWhite, 50.0f, 33.0f, Medium, 1.05f);
     Text(TEXT("ACCESSIBILITY, PRESENTATION, AUDIO AND DISPLAY  //  SAVES AUTOMATICALLY"), MistTeal, 50.0f, 66.0f, Small, 0.78f);
-    Text(TEXT("TAB / SHOULDERS  CONTROLS"), SlateGray, 1015.0f, 48.0f, Small, 0.72f);
+    Text(TEXT("TAB / RIGHT SHOULDER  CONTROLS"), SlateGray, 980.0f, 48.0f, Small, 0.72f);
 
     TArray<FDiscGolfSettingRow> Rows;
     PlayerController->GetSettingRows(Rows);
-    const int32 Selected = PlayerController->GetSelectedControlIndex();
-    constexpr float ColumnWidth = 568.0f;
-    constexpr float RowHeight = 47.0f;
-    constexpr int32 RowsPerColumn = 9;
+    const int32 Selected = PlayerController->GetSelectedSettingIndex();
+    constexpr int32 ColumnCount = 3;
+    constexpr float ColumnWidth = 384.0f;
+    constexpr float ColumnGap = 18.0f;
+    constexpr float RowHeight = 40.0f;
+    const int32 RowsPerColumn = FMath::DivideAndRoundUp(Rows.Num(), ColumnCount);
     for (int32 Index = 0; Index < Rows.Num(); ++Index)
     {
         const int32 Column = Index / RowsPerColumn;
         const int32 Row = Index % RowsPerColumn;
-        const float X = 42.0f + Column * 610.0f;
-        const float Y = 120.0f + Row * RowHeight;
+        const float X = 42.0f + Column * (ColumnWidth + ColumnGap);
+        const float Y = 110.0f + Row * RowHeight;
         const bool bSelected = Index == Selected;
         Rect(bSelected ? FLinearColor(0.04f, 0.27f, 0.22f, 0.96f) : PanelMuted,
-            X, Y, ColumnWidth, 38.0f);
-        if (bSelected) Rect(SignalTeal, X, Y, 4.0f, 38.0f);
-        Text(Rows[Index].Label, bSelected ? PaperWhite : FogGray, X + 18.0f, Y + 11.0f, Small, 0.82f);
+            X, Y, ColumnWidth, 33.0f);
+        if (bSelected) Rect(UiAccent, X, Y, 4.0f, 33.0f);
+        Text(Rows[Index].Label, bSelected ? PaperWhite : FogGray, X + 14.0f, Y + 9.0f, Small, 0.65f);
         Text(FString::Printf(TEXT("<  %s  >"), *Rows[Index].Value),
-            bSelected ? TournamentAmber : MistTeal, X + 300.0f, Y + 11.0f, Small, 0.82f);
+            bSelected ? TournamentAmber : MistTeal, X + 214.0f, Y + 9.0f, Small, 0.64f);
     }
 
     Rect(PanelRaised, SafeMargin, 576.0f, ReferenceWidth - SafeMargin * 2.0f, 112.0f);
     Rect(SuccessMint, SafeMargin, 576.0f, 6.0f, 112.0f);
     Text(PlayerController->GetControlsStatusText(), SuccessMint, 50.0f, 591.0f, Small, 0.88f);
     Text(TEXT("UP / DOWN  SELECT     LEFT / RIGHT  ADJUST     ENTER / BOTTOM  CHARACTER CREATOR"), FogGray, 50.0f, 625.0f, Small, 0.78f);
-    Text(TEXT("TAB / SHOULDERS  CONTROLS     ESCAPE / VIEW  RETURN TO GAME"), FogGray, 50.0f, 650.0f, Small, 0.78f);
+    Text(TEXT("TAB / RIGHT SHOULDER  CONTROLS     ESCAPE / VIEW  RETURN TO GAME"), FogGray, 50.0f, 650.0f, Small, 0.78f);
 }
 
 void ADiscGolfHUD::DrawScorecard(const ADiscGolfTourGameMode* GameMode, UFont* Medium, UFont* Small)
@@ -400,11 +407,13 @@ void ADiscGolfHUD::DrawScorecard(const ADiscGolfTourGameMode* GameMode, UFont* M
 
     const FDiscGolfRoundState Round = GameMode->GetRoundState();
     const bool bRoundComplete = GameMode->IsRoundComplete();
+    const FDiscGolfPlayerSettings Settings = GameMode->GetPlayerSettings();
     constexpr float PanelW = 790.0f;
     constexpr float PanelH = 464.0f;
     constexpr float PanelX = (ReferenceWidth - PanelW) * 0.5f;
     constexpr float PanelY = (ReferenceHeight - PanelH) * 0.5f;
-    const FLinearColor Accent = bRoundComplete ? TournamentAmber : SignalTeal;
+    const FLinearColor Accent = Settings.bHighContrastUI
+        ? PaperWhite : (bRoundComplete ? TournamentAmber : SignalTeal);
 
     // The modal scrim is physical-viewport UI, not reference-frame UI. This also covers
     // letterbox/pillarbox gutters on ultrawide and 4:3 canvases.
@@ -481,6 +490,7 @@ void ADiscGolfHUD::DrawProductionHUD(
     using namespace DiscGolfHudStyle;
     const FDiscGolfPlayerSettings Settings = GameMode->GetPlayerSettings();
     if (!Settings.bHudVisible) return;
+    const FLinearColor UiAccent = Settings.bHighContrastUI ? PaperWhite : SignalTeal;
 
     const FViewportLayout Layout(Canvas);
     const float HudScale = Settings.HudScale;
@@ -513,11 +523,12 @@ void ADiscGolfHUD::DrawProductionHUD(
     if (GameMode->IsHoleIntroVisible())
     {
         const float Progress = GameMode->GetHoleIntroProgress01();
-        const float Fade = FMath::Clamp(FMath::Min(Progress / 0.16f, (1.0f - Progress) / 0.20f), 0.0f, 1.0f);
+        const float Fade = Settings.bReducedMotion ? 1.0f
+            : FMath::Clamp(FMath::Min(Progress / 0.16f, (1.0f - Progress) / 0.20f), 0.0f, 1.0f);
         const FLinearColor IntroPanel(Panel.R, Panel.G, Panel.B, 0.96f * Fade);
         const FLinearColor IntroText(PaperWhite.R, PaperWhite.G, PaperWhite.B, Fade);
         Rect(IntroPanel, 352.0f, 224.0f, 576.0f, 264.0f);
-        Rect(FLinearColor(SignalTeal.R, SignalTeal.G, SignalTeal.B, Fade), 352.0f, 224.0f, 576.0f, 6.0f);
+        Rect(FLinearColor(UiAccent.R, UiAccent.G, UiAccent.B, Fade), 352.0f, 224.0f, 576.0f, 6.0f);
         Text(CourseName, FLinearColor(MistTeal.R, MistTeal.G, MistTeal.B, Fade), 430.0f, 258.0f, Small, 0.80f);
         Text(FString::Printf(TEXT("HOLE %d"), Hole->HoleNumber), IntroText, 430.0f, 296.0f, Medium, 1.78f);
         Text(Hole->HoleName.ToString().ToUpper(), IntroText, 430.0f, 356.0f, Medium, 0.92f);
@@ -531,7 +542,7 @@ void ADiscGolfHUD::DrawProductionHUD(
 
     // Compact tournament scorebug: no implementation state, raw solver data, or asset diagnostics.
     Rect(Panel, SafeMargin, 22.0f, 378.0f * HudScale, 104.0f * HudScale);
-    Rect(SignalTeal, SafeMargin, 22.0f, 5.0f, 104.0f * HudScale);
+    Rect(UiAccent, SafeMargin, 22.0f, 5.0f, 104.0f * HudScale);
     Text(CourseName, MistTeal, 44.0f, 34.0f, Small, 0.72f);
     Text(FString::Printf(TEXT("HOLE %d"), Hole->HoleNumber), PaperWhite, 44.0f, 57.0f, Medium, 1.00f);
     Text(FString::Printf(TEXT("PAR %d   %s"), Hole->Par, *OfficialDistance), FogGray,
@@ -540,9 +551,13 @@ void ADiscGolfHUD::DrawProductionHUD(
     Text(RoundScore, TournamentAmber, 343.0f, 57.0f, Medium, 1.08f);
 
     // Authoritative environment wind, formatted in the player's selected units.
-    if (AWindDirector* Wind = GameMode->GetWindDirector())
+    if (GameMode->GetWindDirector())
     {
-        const FVector WindMps = Wind->GetWindMpsAt(Golfer->GetActorLocation());
+        FVector WindSampleLocation;
+        FVector WindMps = FVector::ZeroVector;
+        FString WindError;
+        GameMode->TryGetAuthoritativeHudWindSample(
+            Golfer->GetActorLocation(), WindSampleLocation, WindMps, WindError);
         Rect(PanelMuted, 1092.0f, 22.0f, 164.0f, 64.0f);
         Text(TEXT("WIND"), SlateGray, 1110.0f, 32.0f, Small, 0.64f);
         Text(DiscGolfPlayerExperience::FormatWind(WindMps.Size2D(), Settings.Units),
@@ -551,7 +566,7 @@ void ADiscGolfHUD::DrawProductionHUD(
         const FVector2D Unit = Direction.GetSafeNormal();
         Draw2DLine(Layout.X(1174.0f), Layout.Y(64.0f),
             Layout.X(1174.0f + Unit.X * 28.0f), Layout.Y(64.0f + Unit.Y * 18.0f),
-            SignalTeal.ToFColor(true));
+            UiAccent.ToFColor(true));
     }
 
     // Subtle target identification. It fades once the physical basket is easy to read.
@@ -565,7 +580,7 @@ void ADiscGolfHUD::DrawProductionHUD(
             Hole->BasketLocation + FVector(0.0f, 0.0f, 130.0f), Screen, true))
         {
             const FLinearColor MarkerBase = Settings.bHighContrastBasketMarker
-                ? TournamentAmber : SignalTeal;
+                ? TournamentAmber : UiAccent;
             const FLinearColor Marker(MarkerBase.R, MarkerBase.G, MarkerBase.B, MarkerOpacity);
             const float Radius = 10.0f * Layout.Scale * HudScale;
             Draw2DLine(Screen.X - Radius, Screen.Y, Screen.X, Screen.Y - Radius, Marker.ToFColor(true));
@@ -588,13 +603,15 @@ void ADiscGolfHUD::DrawProductionHUD(
 
     if (GameMode->IsInstantReplayActive())
     {
-        Rect(Panel, 430.0f, 620.0f, 420.0f, 66.0f);
-        Rect(TournamentAmber, 430.0f, 620.0f, 5.0f, 66.0f);
+        Rect(Panel, 404.0f, 606.0f, 472.0f, 80.0f);
+        Rect(TournamentAmber, 404.0f, 606.0f, 5.0f, 80.0f);
         Text(FString::Printf(TEXT("LAST THROW REPLAY  //  %s"), *GameMode->GetReplayCameraLabel()),
-            PaperWhite, 452.0f, 635.0f, Medium, 0.72f);
-        Rect(Divider, 452.0f, 669.0f, 340.0f, 3.0f);
-        Rect(TournamentAmber, 452.0f, 669.0f, 340.0f * GameMode->GetReplayProgress01(), 3.0f);
-        Text(TEXT("T / LB  CAMERA     V / RB  EXIT"), FogGray, 654.0f, 641.0f, Small, 0.58f);
+            PaperWhite, 426.0f, 619.0f, Medium, 0.70f);
+        Text(TEXT("SPACE / BOTTOM PAUSE   LEFT/RIGHT SEEK   UP/TOP SPEED"), FogGray,
+            426.0f, 645.0f, Small, 0.54f);
+        Text(TEXT("T / LB CAMERA   V / RB EXIT"), MistTeal, 670.0f, 619.0f, Small, 0.52f);
+        Rect(Divider, 426.0f, 671.0f, 428.0f, 3.0f);
+        Rect(TournamentAmber, 426.0f, 671.0f, 428.0f * GameMode->GetReplayProgress01(), 3.0f);
         return;
     }
 
@@ -638,8 +655,15 @@ void ADiscGolfHUD::DrawProductionHUD(
     FResolvedDiscDefinition SelectedDisc;
     const UDiscCatalogSubsystem* Catalog = GetGameInstance()
         ? GetGameInstance()->GetSubsystem<UDiscCatalogSubsystem>() : nullptr;
-    const bool bHasDisc = Catalog && Bag
+    bool bHasDisc = Catalog && Bag
         && Catalog->ResolveDisc(Bag->GetSelectedMoldId(), Bag->GetSelectedPlastic(), SelectedDisc);
+    if (bHasDisc)
+    {
+        FResolvedDiscDefinition InstanceResolved;
+        FString EquipmentError;
+        bHasDisc = Bag->ResolveSelectedDiscInstance(SelectedDisc, InstanceResolved, EquipmentError);
+        if (bHasDisc) SelectedDisc = MoveTemp(InstanceResolved);
+    }
     Rect(Panel, 36.0f, 554.0f, 432.0f * HudScale, 132.0f * HudScale);
     Rect(TournamentAmber, 36.0f, 554.0f, 5.0f, 132.0f * HudScale);
     const FString Context = GameMode->GetCurrentLieType() == ELieType::Circle1 ? TEXT("C1")
@@ -650,9 +674,11 @@ void ADiscGolfHUD::DrawProductionHUD(
     if (bHasDisc)
     {
         Text(SelectedDisc.DisplayName.ToString().ToUpper(), PaperWhite, 58.0f, 607.0f, Medium, 0.88f);
-        Text(FString::Printf(TEXT("%s  //  %d | %d | %.0f | %.0f  //  %.0f G"),
+        Text(FString::Printf(TEXT("%s  //  %d | %d | %.0f | %.0f  //  %s  //  %.0f G  //  WEAR %.0f%%%s"),
             *DiscGolfPlayerExperience::DiscClassName(SelectedDisc.Speed), SelectedDisc.Speed,
-            SelectedDisc.Glide, SelectedDisc.Turn, SelectedDisc.Fade, SelectedDisc.Aero.MassKg * 1000.0f),
+            SelectedDisc.Glide, SelectedDisc.Turn, SelectedDisc.Fade,
+            *PlasticToString(static_cast<uint8>(SelectedDisc.Plastic)), SelectedDisc.DiscMassGrams,
+            SelectedDisc.DiscWear01 * 100.0f, SelectedDisc.bDiscFavorite ? TEXT("  //  FAVORITE") : TEXT("")),
             MistTeal, 58.0f, 640.0f, Small, 0.67f);
     }
     if (Throw)
@@ -669,7 +695,7 @@ void ADiscGolfHUD::DrawProductionHUD(
         }
     }
 
-    if (Settings.bAimingIndicatorVisible)
+    if (Settings.bAimingIndicatorVisible && Settings.bShotShapeGuide)
     {
         const float CenterX = Canvas->ClipX * 0.5f;
         const float CenterY = Canvas->ClipY * 0.60f;
@@ -683,6 +709,51 @@ void ADiscGolfHUD::DrawProductionHUD(
         FLinearColor(0.70f, 0.76f, 0.72f, 0.80f), 493.0f, 697.0f, Small, 0.57f);
 }
 
+void ADiscGolfHUD::DrawMainMenu(
+    const ADiscGolfTourGameMode* GameMode,
+    UFont* Medium,
+    UFont* Small)
+{
+    if (!Canvas || !GameMode)
+    {
+        return;
+    }
+
+    using namespace DiscGolfHudStyle;
+    const FViewportLayout Layout(Canvas);
+    const auto Rect = [this, &Layout](const FLinearColor& Color, float X, float Y, float W, float H)
+    {
+        DrawRect(Color, Layout.X(X), Layout.Y(Y), Layout.U(W), Layout.U(H));
+    };
+    const auto Text = [this, &Layout](const FString& Value, const FLinearColor& Color,
+        float X, float Y, UFont* Font, float Scale)
+    {
+        DrawText(Value, Color, Layout.X(X), Layout.Y(Y), Font,
+            Scale * Layout.Scale, false);
+    };
+
+    Rect(Scrim, 0.0f, 0.0f, ReferenceWidth, ReferenceHeight);
+    Rect(Panel, 220.0f, 104.0f, 840.0f, 512.0f);
+    Rect(SignalTeal, 220.0f, 104.0f, 8.0f, 512.0f);
+    Text(TEXT("DISC GOLF TOUR"), SignalTeal, 284.0f, 158.0f, Medium, 1.32f);
+    Text(TEXT("PINE RIDGE"), PaperWhite, 284.0f, 210.0f, Medium, 2.0f);
+    Text(TEXT("A THREE-HOLE FOREST ROUND"), MistTeal, 288.0f, 274.0f, Small, 0.86f);
+
+    Rect(PanelRaised, 284.0f, 330.0f, 712.0f, 92.0f);
+    Rect(TournamentAmber, 284.0f, 330.0f, 6.0f, 92.0f);
+    Text(TEXT("START / CONTINUE ROUND"), PaperWhite, 324.0f, 350.0f, Medium, 1.08f);
+    Text(TEXT("ENTER  /  SPACE  /  GAMEPAD A"), TournamentAmber,
+        324.0f, 390.0f, Small, 0.82f);
+
+    Text(TEXT("CONTROLS"), SignalTeal, 284.0f, 468.0f, Small, 0.82f);
+    Text(TEXT("MOUSE / RIGHT STICK  AIM     SPACE / A  THROW"), PaperWhite,
+        284.0f, 500.0f, Small, 0.72f);
+    Text(TEXT("TAB / LEFT TRIGGER  SCORECARD     L / RIGHT STICK  PREVIEW"), FogGray,
+        284.0f, 530.0f, Small, 0.68f);
+    Text(TEXT("The round begins only when Start is pressed."), SlateGray,
+        284.0f, 576.0f, Small, 0.62f);
+}
+
 void ADiscGolfHUD::DrawHUD()
 {
     Super::DrawHUD();
@@ -690,10 +761,16 @@ void ADiscGolfHUD::DrawHUD()
 
     UFont* Medium = GEngine ? GEngine->GetMediumFont() : nullptr;
     UFont* Small = GEngine ? GEngine->GetSmallFont() : nullptr;
-    if (const ADiscGolfTourPlayerController* PlayerController = Cast<ADiscGolfTourPlayerController>(GetOwningPlayerController()))
+    ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>();
+    ADiscGolfTourPlayerController* PlayerController =
+        Cast<ADiscGolfTourPlayerController>(GetOwningPlayerController());
+    if (PlayerController)
     {
+        PlayerController->RefreshRoundFlowPresentation();
+
         // The Session 4 creator supplies its own full-screen UMG/Slate surface.
-        // Do not stack the existing Canvas settings menu underneath it.
+        // Settings and creator surfaces take precedence over round-flow so the
+        // front end cannot obscure their input or Canvas presentation.
         if (PlayerController->IsCharacterCreatorOpen())
         {
             return;
@@ -704,8 +781,21 @@ void ADiscGolfHUD::DrawHUD()
             return;
         }
     }
+    if (GM && GM->IsMainMenuVisible())
+    {
+        if (!PlayerController || !PlayerController->HasInteractiveRoundFlowWidget())
+        {
+            DrawMainMenu(GM, Medium, Small);
+        }
+        return;
+    }
 
-    ADiscGolfTourGameMode* GM = GetWorld()->GetAuthGameMode<ADiscGolfTourGameMode>();
+    if (GM && GM->IsScorecardVisible()
+        && PlayerController && PlayerController->HasInteractiveRoundFlowWidget())
+    {
+        return;
+    }
+
     ADiscGolferPawn* Golfer = Cast<ADiscGolferPawn>(UGameplayStatics::GetPlayerPawn(this, 0));
     if (!GM || !Golfer || !GM->GetActiveHole()) return;
 
@@ -827,9 +917,17 @@ void ADiscGolfHUD::DrawHUD()
         {
             if (Catalog->ResolveDisc(Bag->GetSelectedMoldId(), Bag->GetSelectedPlastic(), Selected))
             {
-                Text(FString::Printf(TEXT("%s  //  %d / %d / %.0f / %.0f  //  %s  //  %s"),
+                FResolvedDiscDefinition InstanceResolved;
+                FString EquipmentError;
+                if (Bag->ResolveSelectedDiscInstance(Selected, InstanceResolved, EquipmentError))
+                {
+                    Selected = MoveTemp(InstanceResolved);
+                }
+                Text(FString::Printf(TEXT("%s  //  %d / %d / %.0f / %.0f  //  %s  //  %.0f G  //  WEAR %.0f%%%s  //  %s"),
                     *Selected.DisplayName.ToString(), Selected.Speed, Selected.Glide, Selected.Turn, Selected.Fade,
                     *PlasticToString(static_cast<uint8>(Selected.Plastic)),
+                    Selected.DiscMassGrams, Selected.DiscWear01 * 100.0f,
+                    Selected.bDiscFavorite ? TEXT("  //  FAVORITE") : TEXT(""),
                     Catalog->IsUsingPrimaryAssets() ? TEXT("DATA ASSET") : TEXT("SOURCE FALLBACK")),
                     TournamentAmber, Left + 18.0f, SetupY, Small, 0.82f);
             }
@@ -857,16 +955,24 @@ void ADiscGolfHUD::DrawHUD()
 
         if (AWindDirector* Wind = GM->GetWindDirector())
         {
-            const FVector WindMps = Wind->GetWindMpsAt(Golfer->GetActorLocation());
-            const FName WindZone = Wind->GetActiveZoneIdAt(Golfer->GetActorLocation());
+            FVector WindSampleLocation;
+            FVector WindMps = FVector::ZeroVector;
+            FString WindError;
+            const bool bWindValid = GM->TryGetAuthoritativeHudWindSample(
+                Golfer->GetActorLocation(), WindSampleLocation, WindMps, WindError);
+            const FName WindZone = Wind->GetActiveZoneIdAt(WindSampleLocation);
             SetupY += 23.0f;
-            Text(FString::Printf(TEXT("WIND %.1f MPH  //  VECTOR [%.1f, %.1f] M/S  //  %s"),
-                WindMps.Size2D() * 2.23694f, WindMps.X, WindMps.Y,
-                WindZone.IsNone() ? TEXT("GLOBAL") : *WindZone.ToString()),
-                MistTeal, Left + 18.0f, SetupY, Small, 0.74f);
+            Text(bWindValid
+                ? FString::Printf(TEXT("WIND %.1f MPH  //  VECTOR [%.1f, %.1f] M/S  //  %s"),
+                    WindMps.Size2D() * 2.23694f, WindMps.X, WindMps.Y,
+                    WindZone.IsNone() ? TEXT("GLOBAL") : *WindZone.ToString())
+                : FString::Printf(TEXT("WIND INVALID  //  %s"), *WindError),
+                bWindValid ? MistTeal : PenaltyCoral,
+                Left + 18.0f, SetupY, Small, 0.74f);
         }
     }
 
+#if DG_WITH_DEVELOPMENT_CONTENT
     if (GM->IsRouteTelemetryActive()
         && PresentationState.Mode != EDiscGolfHudPresentationMode::Flight
         && PresentationState.Mode != EDiscGolfHudPresentationMode::Replay)
@@ -897,6 +1003,7 @@ void ADiscGolfHUD::DrawHUD()
         Text(TEXT("AFTER LIE: DGT_TelemetryNextShotClear 0/1 // R RESET"), SlateGray,
             TelemetryX + 20.0f, TelemetryY + 156.0f, Small, 0.48f);
     }
+#endif
 
     if (GM->IsDeveloperHudVisible())
     {
@@ -906,8 +1013,9 @@ void ADiscGolfHUD::DrawHUD()
                 ? TournamentAmber
                 : SuccessMint;
 
-        Rect(PanelMuted, Left, 414.0f, MainWidth, 114.0f);
-        Rect(Divider, Left, 414.0f, 5.0f, 114.0f);
+        const float DeveloperPanelHeight = 136.0f;
+        Rect(PanelMuted, Left, 414.0f, MainWidth, DeveloperPanelHeight);
+        Rect(Divider, Left, 414.0f, 5.0f, DeveloperPanelHeight);
         Text(TEXT("TUNING OVERLAY  //  DEV"), SlateGray, Left + 18.0f, 426.0f, Small, 0.64f);
         const EDiscGolfPerformanceBudgetState PerformanceState = GM->GetPerformanceBudgetState();
         const FLinearColor PerformanceColor = PerformanceState == EDiscGolfPerformanceBudgetState::Fail

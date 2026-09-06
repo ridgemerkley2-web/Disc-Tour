@@ -2,7 +2,11 @@
 
 ## License and provenance
 
-The current Pine Ridge environment source set comes from Poly Haven under CC0. Commercial use and modification are allowed without attribution, but this project still retains upstream provenance for auditability. The machine-readable authority is `SourceArt/PineRidge/PolyHaven/asset_manifest.json`, which records the selected upstream URL, local path, byte size, and MD5 checksum for every downloaded file.
+The current Pine Ridge environment source set comes from Poly Haven under CC0. Commercial use and modification are allowed without attribution, but this project still retains upstream provenance for auditability. The upstream machine-readable authority is `SourceArt/PineRidge/PolyHaven/asset_manifest.json`, which records the selected URL, local path, byte size, and MD5 checksum for every downloaded file. The accepted derived-runtime authority is `SourceArt/PineRidge/PolyHaven/derived_runtime_receipt.json`, SHA-256 `13ACC125F5B442BE75DE405DBD76D43AA9381436624E12BDDBA3C7BA4F90D858`.
+
+Session 18 binds the exact 35 source files to 55 derived Unreal packages and separately classifies five project-original packages, forming a complete 60-package partition of `/Game/Presentation/Course/PineRidge`. Independent semantic validation passed all 60 packages; its report SHA-256 is `1C3D6960E342B58143D55B42D701B18D19E17BFE8D118862BE38A93A15B74035`.
+
+Focused `DiscGolfTour.Session18.*` automation passes 3/3, and full `DiscGolfTour.*` automation passes 252/252. Fresh archive `C:\DGTour_Packages\S18_PolyHavenProvenance_63624166-aa24-49d0-a89f-74a125a36be2\Windows` contains all 55 derived and five excluded project-original package identities in 54 files / 1,918,214,604 bytes. Its sorted tab-line manifest SHA-256 is `0877C04FF8911F0903077F8C68093BF8A783FB6939538D2BFD1E2888D35B1870`, and its inner executable SHA-256 is `6051C15D6DCF14D4EE92B34215B79B7AA7BCADC5D8F6F5CA8AB24807E89D4346`. The packaged Pine Ridge play smoke exits 0 with 1,968 samples, authored camera, local wind, and ground contact. Source-controlled evidence is retained under `Evidence/Session18`. This is identity inclusion evidence only. Session 18 closes only the Poly Haven derived-runtime receipt blocker; whole staged-package provenance, Fab receipts, final art, and twelve other public-release blockers remain, leaving exactly thirteen and no release-ready claim.
 
 The reproducible fetch step is `Scripts/download-pine-ridge-cc0-assets.ps1`. It must remain checksum-valid and idempotent. Do not hand-replace a downloaded source file without updating the scripted selection and regenerating the manifest.
 
@@ -27,7 +31,9 @@ Upstream pages:
 
 ## Import and ownership rules
 
-Run `Scripts/import-pine-ridge-assets.py` with `UnrealEditor.exe -ExecutePythonScript=...` after a clean download. UE 5.8 commandlet mode does not expose `StaticMeshEditorSubsystem`, so the pipeline rejects `UnrealEditor-Cmd.exe` before reimporting anything. The full-editor import creates course materials and mesh assets under `/Game/Presentation/Course/PineRidge`, reapplies the fixed fir four-LOD and boulder three-LOD reduction chains, and writes `Saved/PineRidgeAssetImportReceipt.json`. Source validation requires the exact seven asset IDs and 35 manifest files before an engine build.
+Run `Scripts/import-pine-ridge-assets.py` with `UnrealEditor.exe -ExecutePythonScript=...` after a clean download. UE 5.8 commandlet mode does not expose `StaticMeshEditorSubsystem`, so the pipeline rejects `UnrealEditor-Cmd.exe` before reimporting anything. The full-editor import creates course materials and mesh assets under `/Game/Presentation/Course/PineRidge`, reapplies the fixed fir four-LOD and boulder three-LOD reduction chains, writes the transient `Saved/PineRidgeAssetImportReceipt.json`, and writes the source-controlled post-save `SourceArt/PineRidge/PolyHaven/derived_runtime_receipt.json`. Source validation requires the exact seven asset IDs and 35 manifest files before an engine build.
+
+After import, run `Scripts/validate-pine-ridge-provenance-semantics.py` through the full Editor and run `Scripts/validate_dg_session18_poly_haven_provenance.py` plus its self-test. Reject any changed source/runtime hash, missing or extra package, duplicate classification, dependency/import-source mismatch, altered texture/LOD setting, or weakened release ledger. A fresh package must contain all 55 derived and five project-original identities, but that inclusion check remains distinct from whole-stage provenance.
 
 Imported art is presentation only:
 

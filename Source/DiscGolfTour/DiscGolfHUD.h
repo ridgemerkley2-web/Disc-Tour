@@ -14,6 +14,7 @@ public:
     virtual void DrawHUD() override;
 
 private:
+    void DrawMainMenu(const class ADiscGolfTourGameMode* GameMode, UFont* Medium, UFont* Small);
     void DrawControlsMenu(const class ADiscGolfTourPlayerController* PlayerController, UFont* Medium, UFont* Small);
     void DrawSettingsMenu(const class ADiscGolfTourPlayerController* PlayerController, UFont* Medium, UFont* Small);
     void DrawScorecard(const class ADiscGolfTourGameMode* GameMode, UFont* Medium, UFont* Small);

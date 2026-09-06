@@ -1,0 +1,98 @@
+{
+  "candidateId": "S19_WindowsShipping_20260827T023919Z_51a1c132f837",
+  "candidateUserDirBindingSha256": "12d210ef7a55a1259706941bd0cef6c10e2086ce43848bcf8c594ac95ae74366",
+  "counts": {
+    "approvedFiles": 5,
+    "forbiddenArtifacts": 0,
+    "observedFiles": 5,
+    "unknownFiles": 0
+  },
+  "failures": [],
+  "hostPathRecorded": false,
+  "observedFiles": [
+    {
+      "bytes": 239,
+      "classification": "crash_reporter_config_cache",
+      "relativePath": "Saved/Config/CrashReportClient/UECC-Windows-A0A48E264F6E969D1DC6D0A9693C45DD/CrashReportClient.ini",
+      "sha256": "ce69d7e7bbd1a64729bd4d5724f3c1efc47c6c3d555da9d2c6ad741eddc3d893"
+    },
+    {
+      "bytes": 1378,
+      "classification": "production_user_settings",
+      "relativePath": "Saved/Config/Windows/GameUserSettings.ini",
+      "sha256": "25034567f71ecec90a640fa803a6bb0292ec483021905251ec22f55c8b4aa91b"
+    },
+    {
+      "bytes": 38473,
+      "classification": "production_pso_pipeline_cache",
+      "relativePath": "Saved/DiscGolfTour_PCD3D_SM6.upipelinecache",
+      "sha256": "6448232deae83f6bfa8424e82bd703a7c7d73dcd714d70b5edf65247c06741eb"
+    },
+    {
+      "bytes": 5291,
+      "classification": "production_profile",
+      "relativePath": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+      "sha256": "f9d57c521f6406d1292fd240eb17e87056029367cd8006700811282bed7d7d8f"
+    },
+    {
+      "bytes": 3231,
+      "classification": "runtime_checkpoint_journal_candidate_bound",
+      "relativePath": "Saved/TechnicalEvidence/three-hole-runtime-journal-v1.jsonl",
+      "sha256": "3a88bc7d343bcd21535e2336bc1af53467aacbafa357ea57ecb120ae0f3876d6"
+    }
+  ],
+  "policy": {
+    "approvedExactFiles": [
+      "Saved/Config/Windows/GameUserSettings.ini",
+      "Saved/DiscGolfTour_PCD3D_SM6.upipelinecache",
+      "Saved/SaveGames/DiscGolfTour_Profile_0.sav"
+    ],
+    "approvedPatternFiles": [
+      "Saved/Config/CrashReportClient/UECC-Windows-<32-hex>/CrashReportClient.ini"
+    ],
+    "forbiddenArtifactClasses": [
+      "CAPTURE_OUTPUT",
+      "DEVELOPMENT_ARTIFACT",
+      "DEVELOPMENT_EQUIPMENT_SAVE",
+      "DEVELOPMENT_THROWLAB_SAVE",
+      "DIAGNOSTICS_OUTPUT",
+      "ENVIRONMENT_REPORT",
+      "PHYSICS_OUTPUT",
+      "REGRESSION_OUTPUT",
+      "TEST_OUTPUT",
+      "TRAJECTORY_EXPORT",
+      "UNKNOWN_SAVEGAME"
+    ],
+    "maximumApprovedFileBytes": 16777216,
+    "maximumCrashReporterConfigFiles": 32,
+    "mode": "FAIL_CLOSED_EXACT_ALLOWLIST",
+    "reparsePointsRejected": true,
+    "requiredProductionProfile": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+    "runtimeJournalAllowance": "EXACT_CANDIDATE_BOUND_EXTERNAL_CAPTURE_ONLY",
+    "unknownFilesRejected": true,
+    "unknownSaveGamesRejected": true
+  },
+  "releaseBoundary": {
+    "gameplayAcceptanceClaimed": false,
+    "releaseReadinessClaimed": false,
+    "technicalUserDirAcceptanceOnly": true
+  },
+  "runtimeJournalBinding": {
+    "archiveManifestSha256": "5F8BB2E5885358CA3CBAD310AC0A4EC024196B4E80811AE8E748685E4DB50231",
+    "bytes": 3231,
+    "captureNonce": "1bfc3241-8290-4976-b234-4f13fd0087b0",
+    "executableSha256": "9A7AB59B8B055335D249F4C7537EF047F6AADB687DEE20BD6D427C33CECADEF9",
+    "launchRecordSha256": "B49509A4A6EA40ABF5D324340AC480FACD6E8038CE900EECC8011FEDBCA01721",
+    "mode": "CANDIDATE_BOUND_EXTERNAL_CAPTURE",
+    "roundId": "d90adf9a-4e65-467a-ae4d-f884a6960fe6",
+    "sha256": "3A88BC7D343BCD21535E2336BC1AF53467AACBAFA357EA57ECB120AE0F3876D6",
+    "technicalEvidenceManifestSha256": "F059B6A860C85BE80172D2ADA808D867FB0F3BF4685C3D780F46217082D1D35E",
+    "userDirRelativePath": "Saved/TechnicalEvidence/three-hole-runtime-journal-v1.jsonl",
+    "validationState": "PASS_GAME_EMITTED_THREE_HOLE_RUNTIME_JOURNAL"
+  },
+  "schema": "DiscGolfTour.Session19FreshUserDirValidation.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "state": "PASS_FRESH_SHIPPING_USERDIR_ALLOWLIST",
+  "userDirToken": "de633085-9a16-4b8d-ae18-e226c48735d9"
+}

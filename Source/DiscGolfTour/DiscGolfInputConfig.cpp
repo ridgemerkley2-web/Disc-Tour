@@ -34,7 +34,8 @@ namespace
         const UInputAction* Action,
         const FKey& Key,
         bool bNegate = false,
-        bool bDeadZone = false)
+        bool bDeadZone = false,
+        float DeadZoneThreshold = 0.25f)
     {
         FEnhancedActionKeyMapping& Mapping = Context->MapKey(Action, Key);
         if (bNegate)
@@ -44,7 +45,7 @@ namespace
         if (bDeadZone)
         {
             UInputModifierDeadZone* DeadZone = NewObject<UInputModifierDeadZone>(Context);
-            DeadZone->LowerThreshold = 0.25f;
+            DeadZone->LowerThreshold = FMath::Clamp(DeadZoneThreshold, 0.0f, 0.95f);
             DeadZone->UpperThreshold = 1.0f;
             DeadZone->Type = EDeadZoneType::Axial;
             Mapping.Modifiers.Add(DeadZone);
@@ -83,9 +84,11 @@ bool UDiscGolfInputConfig::IsComplete(FString& OutMissingField) const
     REQUIRE_INPUT_FIELD(ThrowAction);
     REQUIRE_INPUT_FIELD(ToggleThrowStyleAction);
     REQUIRE_INPUT_FIELD(ResetHoleAction);
+#if DG_WITH_DEVELOPMENT_CONTENT
     REQUIRE_INPUT_FIELD(CycleRegressionPresetAction);
     REQUIRE_INPUT_FIELD(RunRegressionPresetAction);
     REQUIRE_INPUT_FIELD(RunRegressionSuiteAction);
+#endif
     REQUIRE_INPUT_FIELD(ToggleShotTracerAction);
     REQUIRE_INPUT_FIELD(InstantReplayAction);
     REQUIRE_INPUT_FIELD(ToggleCourseAction);
@@ -127,11 +130,15 @@ void UDiscGolfInputConfig::GetOrderedActions(TArray<const UInputAction*>& OutAct
         ToggleCourseAction,
         CourseFlyoverAction,
         NextHoleAction,
-        ScorecardAction,
+        ScorecardAction
+    });
+#if DG_WITH_DEVELOPMENT_CONTENT
+    OutActions.Append({
         CycleRegressionPresetAction,
         RunRegressionPresetAction,
         RunRegressionSuiteAction
     });
+#endif
 }
 
 bool UDiscGolfInputConfig::IsRemapCandidateCompatible(
@@ -175,10 +182,15 @@ bool UDiscGolfInputConfig::IsRemapCandidateCompatible(
     return true;
 }
 
-UDiscGolfInputConfig* UDiscGolfInputConfig::BuildRuntimeFallback(UObject* Outer)
+UDiscGolfInputConfig* UDiscGolfInputConfig::BuildRuntimeFallback(
+    UObject* Outer,
+    bool bSouthpawController,
+    float ControllerDeadZone)
 {
     UObject* SafeOuter = Outer ? Outer : GetTransientPackage();
-    UDiscGolfInputConfig* Config = NewObject<UDiscGolfInputConfig>(SafeOuter, TEXT("DiscGolfRuntimeInputConfig"));
+    const FName ConfigName = MakeUniqueObjectName(
+        SafeOuter, UDiscGolfInputConfig::StaticClass(), TEXT("DiscGolfRuntimeInputConfig"));
+    UDiscGolfInputConfig* Config = NewObject<UDiscGolfInputConfig>(SafeOuter, ConfigName);
     Config->GameplayMappingContext = NewObject<UInputMappingContext>(Config, TEXT("IMC_Gameplay_Runtime"));
 
     Config->AimAction = MakeAction(Config, TEXT("IA_Aim_Runtime"), EInputActionValueType::Axis1D, TEXT("Aim"), TEXT("Aim"));
@@ -188,9 +200,11 @@ UDiscGolfInputConfig* UDiscGolfInputConfig::BuildRuntimeFallback(UObject* Outer)
     Config->ThrowAction = MakeAction(Config, TEXT("IA_Throw_Runtime"), EInputActionValueType::Boolean, TEXT("Throw"), TEXT("Throw / Release"));
     Config->ToggleThrowStyleAction = MakeAction(Config, TEXT("IA_ToggleThrowStyle_Runtime"), EInputActionValueType::Boolean, TEXT("ToggleThrowStyle"), TEXT("Toggle Throw Style"));
     Config->ResetHoleAction = MakeAction(Config, TEXT("IA_ResetHole_Runtime"), EInputActionValueType::Boolean, TEXT("ResetHole"), TEXT("Reset Hole"));
+#if DG_WITH_DEVELOPMENT_CONTENT
     Config->CycleRegressionPresetAction = MakeAction(Config, TEXT("IA_CycleRegressionPreset_Runtime"), EInputActionValueType::Boolean, TEXT("CycleRegressionPreset"), TEXT("Cycle Physics Preset"));
     Config->RunRegressionPresetAction = MakeAction(Config, TEXT("IA_RunRegressionPreset_Runtime"), EInputActionValueType::Boolean, TEXT("RunRegressionPreset"), TEXT("Run Physics Preset"));
     Config->RunRegressionSuiteAction = MakeAction(Config, TEXT("IA_RunRegressionSuite_Runtime"), EInputActionValueType::Boolean, TEXT("RunRegressionSuite"), TEXT("Run Physics Suite"));
+#endif
     Config->ToggleShotTracerAction = MakeAction(Config, TEXT("IA_ToggleShotTracer_Runtime"), EInputActionValueType::Boolean, TEXT("ToggleShotTracer"), TEXT("Toggle Shot Tracer"));
     Config->InstantReplayAction = MakeAction(Config, TEXT("IA_InstantReplay_Runtime"), EInputActionValueType::Boolean, TEXT("InstantReplay"), TEXT("Instant Replay / Cancel"));
     Config->ToggleCourseAction = MakeAction(Config, TEXT("IA_ToggleCourse_Runtime"), EInputActionValueType::Boolean, TEXT("ToggleCourse"), TEXT("Toggle Course"));
@@ -217,9 +231,11 @@ UDiscGolfInputConfig* UDiscGolfInputConfig::BuildRuntimeFallback(UObject* Outer)
     MapButton(Config->GameplayMappingContext, Config->ThrowAction, EKeys::SpaceBar);
     MapButton(Config->GameplayMappingContext, Config->ToggleThrowStyleAction, EKeys::F);
     MapButton(Config->GameplayMappingContext, Config->ResetHoleAction, EKeys::R);
+#if DG_WITH_DEVELOPMENT_CONTENT
     MapButton(Config->GameplayMappingContext, Config->CycleRegressionPresetAction, EKeys::C);
     MapButton(Config->GameplayMappingContext, Config->RunRegressionPresetAction, EKeys::G);
     MapButton(Config->GameplayMappingContext, Config->RunRegressionSuiteAction, EKeys::H);
+#endif
     MapButton(Config->GameplayMappingContext, Config->ToggleShotTracerAction, EKeys::T);
     MapButton(Config->GameplayMappingContext, Config->InstantReplayAction, EKeys::V);
     MapButton(Config->GameplayMappingContext, Config->ToggleCourseAction, EKeys::K);
@@ -237,12 +253,16 @@ UDiscGolfInputConfig* UDiscGolfInputConfig::BuildRuntimeFallback(UObject* Outer)
     MapButton(Config->GameplayMappingContext, Config->ThrowAction, EKeys::LeftMouseButton);
     MapButton(Config->GameplayMappingContext, Config->ToggleThrowStyleAction, EKeys::RightMouseButton);
 
-    // Controller layout: sticks configure the shot; face/D-pad buttons handle
-    // discrete actions. Explicit dead zones avoid dependence on legacy axes.
-    MapAxisKey(Config->GameplayMappingContext, Config->AimAction, EKeys::Gamepad_LeftX, false, true);
-    MapAxisKey(Config->GameplayMappingContext, Config->PowerAction, EKeys::Gamepad_LeftY, false, true);
-    MapAxisKey(Config->GameplayMappingContext, Config->HyzerAction, EKeys::Gamepad_RightX, false, true);
-    MapAxisKey(Config->GameplayMappingContext, Config->NoseAction, EKeys::Gamepad_RightY, false, true);
+    // Controller layout is independent from character throwing handedness.
+    // Southpaw swaps only the two setup sticks; face and navigation actions stay stable.
+    const FKey AimKey = bSouthpawController ? EKeys::Gamepad_RightX : EKeys::Gamepad_LeftX;
+    const FKey PowerKey = bSouthpawController ? EKeys::Gamepad_RightY : EKeys::Gamepad_LeftY;
+    const FKey HyzerKey = bSouthpawController ? EKeys::Gamepad_LeftX : EKeys::Gamepad_RightX;
+    const FKey NoseKey = bSouthpawController ? EKeys::Gamepad_LeftY : EKeys::Gamepad_RightY;
+    MapAxisKey(Config->GameplayMappingContext, Config->AimAction, AimKey, false, true, ControllerDeadZone);
+    MapAxisKey(Config->GameplayMappingContext, Config->PowerAction, PowerKey, false, true, ControllerDeadZone);
+    MapAxisKey(Config->GameplayMappingContext, Config->HyzerAction, HyzerKey, false, true, ControllerDeadZone);
+    MapAxisKey(Config->GameplayMappingContext, Config->NoseAction, NoseKey, false, true, ControllerDeadZone);
     MapButton(Config->GameplayMappingContext, Config->ThrowAction, EKeys::Gamepad_FaceButton_Bottom);
     MapButton(Config->GameplayMappingContext, Config->ToggleThrowStyleAction, EKeys::Gamepad_FaceButton_Left);
     MapButton(Config->GameplayMappingContext, Config->CyclePlasticAction, EKeys::Gamepad_FaceButton_Right);

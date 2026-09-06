@@ -1,0 +1,77 @@
+{
+  "schema": "DiscGolfTour.Session19AuthenticIngestReceipt.v1",
+  "candidate_revision": "v008",
+  "source_identity": {
+    "source_id": "IMG_2396_ATTACHMENT_2",
+    "take_id": "IMG_2396",
+    "performer_name": "UNVERIFIED_PERFORMER_IDENTITY",
+    "capture_date": "2026-08-29",
+    "source_file": {
+      "path": "C:/Users/ridge/.codex/codex-remote-attachments/019ff834-d426-7252-8786-f18292036e54/EF16B36D-6E63-4886-830E-C47046C4870F/2-IMG_2396.MOV",
+      "bytes": 482884,
+      "sha256": "A445E27134D0A6C13C6FB8FE505F841A6F706468FD955267BA7E1E24AFA5BD3A"
+    }
+  },
+  "source_media": {
+    "codec": "H.264",
+    "width_pixels": 224,
+    "height_pixels": 128,
+    "frame_rate_fps": 15.0,
+    "frame_count": 257,
+    "time_base": "1/600",
+    "duration_seconds": 17.133333,
+    "constant_frame_rate": true
+  },
+  "ingested_asset": [
+    {
+      "asset_id": "CD_2-IMG_2396_1",
+      "role": "CaptureData",
+      "file": {"path": "Content/CaptureManager/Imports/Mono_Video_Ingest/2-IMG_2396_1/CD_2-IMG_2396_1.uasset", "bytes": 2146, "sha256": "03EEBA0986A6595FCB56648B83D23467225D757BE53F5B13900B1A5F4F35467C"},
+      "derived_from_source_sha256": "A445E27134D0A6C13C6FB8FE505F841A6F706468FD955267BA7E1E24AFA5BD3A",
+      "import_tool": "Live Link Hub Capture Manager",
+      "import_settings_id": "Mono_Video_Ingest_DEFAULT_UNVERIFIED"
+    },
+    {
+      "asset_id": "IS_V_video_2-IMG_2396_1",
+      "role": "ImageSequence",
+      "file": {"path": "Content/CaptureManager/Imports/Mono_Video_Ingest/2-IMG_2396_1/IS_V_video_2-IMG_2396_1.uasset", "bytes": 2015, "sha256": "46458D57CEA13ADDF26971F0CCA28828D024DCF8F0FE1E627F4A7E90D112C6E3"},
+      "derived_from_source_sha256": "A445E27134D0A6C13C6FB8FE505F841A6F706468FD955267BA7E1E24AFA5BD3A",
+      "import_tool": "Live Link Hub Capture Manager",
+      "import_settings_id": "Mono_Video_Ingest_DEFAULT_UNVERIFIED"
+    },
+    {
+      "asset_id": "SW_2-IMG_2396_2-IMG_2396_1",
+      "role": "SoundWave",
+      "file": {"path": "Content/CaptureManager/Imports/Mono_Video_Ingest/2-IMG_2396_1/SW_2-IMG_2396_2-IMG_2396_1.uasset", "bytes": 766785, "sha256": "01B49E880FCE6B527A97B0F5583E7500C9C3884F2F4885AD0A0CD57C3EC95FB6"},
+      "derived_from_source_sha256": "A445E27134D0A6C13C6FB8FE505F841A6F706468FD955267BA7E1E24AFA5BD3A",
+      "import_tool": "Live Link Hub Capture Manager",
+      "import_settings_id": "Mono_Video_Ingest_DEFAULT_UNVERIFIED"
+    }
+  ],
+  "rights": {
+    "ownership_or_license": "UNVERIFIED",
+    "derivative_animation_allowed": false,
+    "game_distribution_allowed": false,
+    "performer_release_verified": false,
+    "evidence_file": {"path": "SourceArt/DiscGolf/Motion/PENDING_IMG_2396_RIGHTS_EVIDENCE", "bytes": 0, "sha256": "PENDING"}
+  },
+  "solve": {
+    "completed": true,
+    "solver": "MetaHuman Animator",
+    "solver_version": "UE_5.8.2",
+    "settings_id": "MHA_MONO_BODY_ONLY_HEAD_DISABLED_v008_DIAGNOSTIC",
+    "output_file": {"path": "Content/DiscGolf/Animation/Authentic/v008/Diagnostic/AS_DG_RHBH_IMG2396_v008_DIAGNOSTIC_Performer.uasset", "bytes": 1797715, "sha256": "58A65A5A1C1E73476562E59196EEFD24AF58AD6181CB0D9015397672A875BD16"},
+    "source_sha256": "A445E27134D0A6C13C6FB8FE505F841A6F706468FD955267BA7E1E24AFA5BD3A",
+    "frame_count": 257,
+    "time_base": "1/600",
+    "quality_review_passed": false,
+    "reviewer": "UNASSIGNED",
+    "receipt_file": {"path": "Evidence/Session19/MetaHumanAnimExportReceipt-v008-IMG2396-Diagnostic.json", "bytes": 1251, "sha256": "4E214CADEA03EF4E84ED7EDA7A409D15046CDF14DE021668325939AEB7FDE80F"}
+  },
+  "approvals": {
+    "rights_reviewer": "UNASSIGNED",
+    "technical_reviewer": "UNASSIGNED",
+    "approved_for_candidate_authoring": false
+  },
+  "status": "BLOCKED_PENDING_RIGHTS_AND_QUALITY_REVIEW"
+}

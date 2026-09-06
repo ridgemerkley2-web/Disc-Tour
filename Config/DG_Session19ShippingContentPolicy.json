@@ -1,0 +1,251 @@
+{
+  "schema": "DiscGolfTour.Session19ShippingContentPolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "policyId": "windows_shipping_v05_three_hole_policy_v1",
+  "state": "ENFORCED_IN_SOURCE_AND_CONFIG_PENDING_FRESH_SHIPPING_PROOF",
+  "target": {
+    "platform": "Windows",
+    "configuration": "Shipping",
+    "milestone": "v0.5",
+    "holes": [1, 2, 3]
+  },
+  "compileDefinitions": {
+    "DG_RELEASE_V05_SCOPE": 1,
+    "DG_WITH_CAREER_AI": 0,
+    "DG_WITH_THROW_LAB": 0,
+    "DG_WITH_DEVELOPMENT_CONTENT": 0
+  },
+  "packageHardening": {
+    "pakRules": {
+      "path": "Config/DefaultPakFileRules.ini",
+      "bytes": 3303,
+      "sha256": "F9EBECA5023163592B8B5756925BA272E0D45EBCC0B2B5332B70F4D18FD71CB4"
+    },
+    "packagingConfig": {
+      "path": "Config/DefaultGame.ini",
+      "bytes": 2891,
+      "sha256": "304390E67BF6C8FE0BD8D3BE1D830B303F4FBB0ED26358D8B638F9C1CF6DF296"
+    },
+    "projectDescriptor": {
+      "path": "DiscGolfTour.uproject",
+      "bytes": 2975,
+      "sha256": "D88EAF4CC35491DFE9E64EDD000E860996DCA3213690F6F94E491C24DC96BB38"
+    },
+    "shippingGameTarget": {
+      "path": "Source/DiscGolfTour.Target.cs",
+      "bytes": 1026,
+      "sha256": "6930D056321E4ABBEE290A8CA20B9917B2CCAA8E270D039B01B34C2DD1827843"
+    },
+    "shippingPluginCapabilityPolicy": {
+      "path": "Config/DG_Session19ShippingPluginCapabilityPolicy.json",
+      "bytes": 8770,
+      "sha256": "26F140F20D651651DE38C8B17DF55C0BA5B0A068CEEB39552B2FA60F0ACD3D12"
+    },
+    "reviewedExactPluginDescriptorExclusionCount": 31,
+    "broadPluginDirectoryExclusionsAllowed": false,
+    "preserveRuntimeCapablePlugins": true,
+    "preserveContentOnlyPlugins": true,
+    "requiredNeverCookVirtualRoots": [
+      "/Engine/VREditor",
+      "/Engine/EditorMaterials",
+      "/Engine/EditorMeshes",
+      "/Engine/EditorResources",
+      "/SpeedTreeImporter",
+      "/Landmass"
+    ],
+    "shippingIgnoredPluginDependencies": [
+      "ConcertMain",
+      "ConcertSyncClient",
+      "ConcertSyncCore",
+      "ConcertSharedSlate",
+      "AssetManagerEditor"
+    ],
+    "projectTargetConfigurationShippingDeniedPlugins": [
+      "ChaosVD",
+      "ConcertMain",
+      "ConcertSyncClient",
+      "ConcertSyncCore",
+      "ConcertSharedSlate",
+      "AssetManagerEditor",
+      "ConsoleVariables",
+      "FacialAnimation",
+      "SpeedTreeImporter"
+    ],
+    "projectEditorOnlyPlugins": [],
+    "projectShippingDependencyEnabledPlugins": [
+      "BlueprintMaterialTextureNodes",
+      "EditorScriptingUtilities",
+      "Landmass"
+    ],
+    "residualExactPakExclusions": [
+      ".../Engine/Plugins/ChaosClothAssetEditorCore/Config/DefaultChaosClothAssetEditorCore.ini",
+      ".../Engine/Plugins/Editor/EditorScriptingUtilities/Config/DefaultEditorScriptingUtilities.ini"
+    ],
+    "shippingForbiddenPluginContentRoots": [
+      "/Engine/Plugins/Experimental/Landmass/Binaries/",
+      "/Engine/Plugins/Experimental/Landmass/Config/",
+      "/Engine/Plugins/Experimental/Landmass/Content/",
+      "/Engine/Plugins/Experimental/Landmass/Resources/",
+      "/Engine/Plugins/Experimental/Landmass/Source/"
+    ],
+    "requiredPresentFinalPayloadPluginDescriptors": [
+      "Engine/Plugins/Animation/ControlRigModules/ControlRigModules.uplugin",
+      "Engine/Plugins/BaseMaterial/BaseMaterial.uplugin"
+    ],
+    "requiredAbsentFinalPayloadPluginDescriptors": [
+      "Engine/Plugins/Editor/ConsoleVariablesEditor/ConsoleVariables.uplugin",
+      "Engine/Plugins/Editor/FacialAnimation/FacialAnimation.uplugin"
+    ],
+    "requiredDependencyClosureFinalPayloadDescriptors": [
+      "Engine/Plugins/Editor/BlueprintMaterialTextureNodes/BlueprintMaterialTextureNodes.uplugin",
+      "Engine/Plugins/ChaosClothAssetDataflowNodes/ChaosClothAssetDataflowNodes.uplugin",
+      "Engine/Plugins/ChaosClothAssetEditorCore/ChaosClothAssetEditorCore.uplugin",
+      "Engine/Plugins/Experimental/ChaosSolverPlugin/ChaosSolverPlugin.uplugin",
+      "Engine/Plugins/Editor/ContentBrowser/ContentBrowserAssetDataSource/ContentBrowserAssetDataSource.uplugin",
+      "Engine/Plugins/Editor/DataValidation/DataValidation.uplugin",
+      "Engine/Plugins/Experimental/EditorDataStorageFeatures/EditorDataStorageFeatures.uplugin",
+      "Engine/Plugins/Editor/EditorScriptingUtilities/EditorScriptingUtilities.uplugin",
+      "Engine/Plugins/Editor/EngineAssetDefinitions/EngineAssetDefinitions.uplugin",
+      "Engine/Plugins/Experimental/Landmass/Landmass.uplugin",
+      "Engine/Plugins/MovieScene/LevelSequenceEditor/LevelSequenceEditor.uplugin",
+      "Engine/Plugins/Animation/LiveLinkDevice/LiveLinkDevice.uplugin",
+      "Engine/Plugins/Developer/PluginUtils/PluginUtils.uplugin",
+      "Engine/Plugins/Editor/ProxyLODPlugin/ProxyLODPlugin.uplugin",
+      "Engine/Plugins/Enterprise/VariantManager/VariantManager.uplugin"
+    ],
+    "reviewedMetadataOnlyDependencyDescriptors": [
+      "Engine/Plugins/ChaosClothAssetDataflowNodes/ChaosClothAssetDataflowNodes.uplugin",
+      "Engine/Plugins/ChaosClothAssetEditorCore/ChaosClothAssetEditorCore.uplugin",
+      "Engine/Plugins/Experimental/ChaosSolverPlugin/ChaosSolverPlugin.uplugin",
+      "Engine/Plugins/Editor/ContentBrowser/ContentBrowserAssetDataSource/ContentBrowserAssetDataSource.uplugin",
+      "Engine/Plugins/Editor/DataValidation/DataValidation.uplugin",
+      "Engine/Plugins/Experimental/EditorDataStorageFeatures/EditorDataStorageFeatures.uplugin",
+      "Engine/Plugins/Editor/EditorScriptingUtilities/EditorScriptingUtilities.uplugin",
+      "Engine/Plugins/Editor/EngineAssetDefinitions/EngineAssetDefinitions.uplugin",
+      "Engine/Plugins/MovieScene/LevelSequenceEditor/LevelSequenceEditor.uplugin",
+      "Engine/Plugins/Animation/LiveLinkDevice/LiveLinkDevice.uplugin",
+      "Engine/Plugins/Developer/PluginUtils/PluginUtils.uplugin",
+      "Engine/Plugins/Editor/ProxyLODPlugin/ProxyLODPlugin.uplugin",
+      "Engine/Plugins/Enterprise/VariantManager/VariantManager.uplugin"
+    ],
+    "metadataOnlyDependencyForbiddenSubdirectories": [
+      "Binaries",
+      "Config",
+      "Content",
+      "Resources",
+      "Source"
+    ]
+  },
+  "neverCookRoots": [
+    "/Game/DiscGolf/Animation/Mocap",
+    "/Game/DiscGolf/Animation/Throws",
+    "/Game/DiscGolf/Characters/Customization",
+    "/Game/DiscGolf/Characters/MetaHuman/Source",
+    "/Game/DiscGolf/Cook",
+    "/Game/DiscGolf/Materials/CharacterCustomization",
+    "/Game/DiscGolf/Materials/Outfits",
+    "/Game/DiscGolf/Outfits",
+    "/Game/DiscGolf/Tests",
+    "/Game/PN_interactiveSpruceForest",
+    "/Game/Stump_Scanned",
+    "/Game/WaterMaterials",
+    "/Engine/VREditor",
+    "/Engine/EditorMaterials",
+    "/Engine/EditorMeshes",
+    "/Engine/EditorResources",
+    "/SpeedTreeImporter",
+    "/Landmass"
+  ],
+  "authoritativeIdentityPolicy": {
+    "authoritativeScopes": [
+      "ARCHIVE_FILE",
+      "NONUFS_ENTRY",
+      "CONTAINER_NAMED_ENTRY"
+    ],
+    "manifestUfsDevelopmentRows": "NON_AUTHORITATIVE_DIAGNOSTIC_ONLY",
+    "requiredDependencyClosureDescriptorExceptions": [
+      "Engine/Plugins/Editor/BlueprintMaterialTextureNodes/BlueprintMaterialTextureNodes.uplugin",
+      "Engine/Plugins/ChaosClothAssetDataflowNodes/ChaosClothAssetDataflowNodes.uplugin",
+      "Engine/Plugins/ChaosClothAssetEditorCore/ChaosClothAssetEditorCore.uplugin",
+      "Engine/Plugins/Experimental/ChaosSolverPlugin/ChaosSolverPlugin.uplugin",
+      "Engine/Plugins/Editor/ContentBrowser/ContentBrowserAssetDataSource/ContentBrowserAssetDataSource.uplugin",
+      "Engine/Plugins/Editor/DataValidation/DataValidation.uplugin",
+      "Engine/Plugins/Experimental/EditorDataStorageFeatures/EditorDataStorageFeatures.uplugin",
+      "Engine/Plugins/Editor/EditorScriptingUtilities/EditorScriptingUtilities.uplugin",
+      "Engine/Plugins/Editor/EngineAssetDefinitions/EngineAssetDefinitions.uplugin",
+      "Engine/Plugins/Experimental/Landmass/Landmass.uplugin",
+      "Engine/Plugins/MovieScene/LevelSequenceEditor/LevelSequenceEditor.uplugin",
+      "Engine/Plugins/Animation/LiveLinkDevice/LiveLinkDevice.uplugin",
+      "Engine/Plugins/Developer/PluginUtils/PluginUtils.uplugin",
+      "Engine/Plugins/Editor/ProxyLODPlugin/ProxyLODPlugin.uplugin",
+      "Engine/Plugins/Enterprise/VariantManager/VariantManager.uplugin"
+    ],
+    "forbiddenIdentityExceptions": []
+  },
+  "forbiddenShippingPathTokens": [
+    "/Animation/Mocap/",
+    "/Animation/Throws/AM_DG_RHBH_Prototype",
+    "/Animation/Throws/A_DG_RHBH_Prototype",
+    "/Characters/Customization/",
+    "/Characters/MetaHuman/Source/",
+    "/DiscGolf/Cook/DA_DG_RuntimeCookManifest",
+    "/Materials/CharacterCustomization/",
+    "/Materials/Outfits/",
+    "/Outfits/",
+    "/DiscGolf/Tests/",
+    "/PN_interactiveSpruceForest/",
+    "/Stump_Scanned/",
+    "/WaterMaterials/",
+    "/Plugins/DiscGolfCharacterFramework/",
+    "/Engine/Plugins/Experimental/Landmass/Binaries/",
+    "/Engine/Plugins/Experimental/Landmass/Config/",
+    "/Engine/Plugins/Experimental/Landmass/Content/",
+    "/Engine/Plugins/Experimental/Landmass/Resources/",
+    "/Engine/Plugins/Experimental/Landmass/Source/"
+  ],
+  "forbiddenLooseFilePatterns": [
+    "*.pdb",
+    "*/Data/PhysicsRegressionPresets.json",
+    "*/Plugins/DiscGolfCharacterFramework/*"
+  ],
+  "requiredLooseDataFiles": [
+    "DiscGolfTour/Data/PineRidgeCourse.json",
+    "DiscGolfTour/Data/PineRidgeHole1.json",
+    "DiscGolfTour/Data/PineRidgeHole2.json",
+    "DiscGolfTour/Data/PineRidgeHole3.json",
+    "DiscGolfTour/Data/PineRidgePresentation.json"
+  ],
+  "featureExclusions": {
+    "career": {
+      "shippingEnabled": false,
+      "forbiddenSavePrefix": "DGT_Career_",
+      "freshInstallSaveMustNotExist": true,
+      "publicClaimAllowed": false
+    },
+    "aiOpponents": {
+      "shippingEnabled": false,
+      "runtimeSpawnMustNotOccur": true,
+      "publicClaimAllowed": false
+    },
+    "throwLab": {
+      "shippingEnabled": false,
+      "forbiddenSavePrefix": "DGT_ThrowLab",
+      "consoleEntryPointMustBeInert": true,
+      "publicClaimAllowed": false
+    },
+    "pcg": {
+      "runtimeGenerationAllowed": false,
+      "shippingAuthority": "DETERMINISTIC_BAKED_OUTPUT_ONLY"
+    }
+  },
+  "evidenceRequiredBeforeClosure": [
+    "CLEAN_NON_ITERATIVE_WINDOWS_SHIPPING_BUILD_COOK_STAGE_PAK_IOSTORE_ARCHIVE",
+    "WHOLE_ARCHIVE_SHA256_MANIFEST",
+    "WHOLE_IOSTORE_ENTRY_AND_CHUNK_INVENTORY",
+    "ZERO_FORBIDDEN_PATH_OR_LOOSE_FILE_MATCHES",
+    "FRESH_INSTALL_THREE_HOLE_ACCEPTANCE",
+    "ZERO_CAREER_AI_OR_THROW_LAB_ENTRYPOINT_SIDE_EFFECTS"
+  ],
+  "releaseReady": false
+}

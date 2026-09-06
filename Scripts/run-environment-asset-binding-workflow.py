@@ -5,31 +5,13 @@ Usage:
     -script=Scripts/run-environment-asset-binding-workflow.py -unattended -NullRHI
 """
 
-import os
-
 import unreal
 
 
 ASSET_SET_PATH = "/Game/Environment/Forest/DA_TemperateMountainForest_Assets"
-PLANNED_MESH_VENDOR_ROOTS = [
-    "/Game/Environment/Vendors/ProjectNature/SpruceForest",
-    "/Game/Environment/Vendors/Megascans/EuropeanBeech",
-    "/Game/Environment/Vendors/ProjectNature/ConiferBushesSaplings01",
-    "/Game/Environment/Vendors/ProjectNature/FernCollection",
-    "/Game/Environment/Vendors/ProjectNature/FoliageCollection",
-    "/Game/Environment/Vendors/Shadowmire/RockCollection04",
-    "/Game/Environment/Vendors/GreenBugGames/StumpScanned",
+APPROVED_RUNTIME_MESH_ROOTS = [
+    "/Game/Presentation/Course/PineRidge",
 ]
-VERIFIED_IMPORTED_MESH_VENDOR_ROOTS = [
-    "/Game/PN_interactiveSpruceForest",
-    "/Game/Stump_Scanned",
-]
-MANUAL_INTEGRATION_VENDOR_ROOTS = [
-    "/Game/Environment/Vendors/ProjectNature/ForestLandscapeMaterials01",
-    "/Game/Environment/Vendors/tharlevfx/WaterMaterials",
-    "/Game/WaterMaterials",
-]
-EXTRA_VENDOR_ROOTS_ENV_VAR = "DISC_GOLF_ENVIRONMENT_VENDOR_ROOTS"
 
 
 def normalize_vendor_root(root):
@@ -39,48 +21,16 @@ def normalize_vendor_root(root):
     return normalized
 
 
-def is_same_or_child_root(root, parent_root):
-    root_key = root.casefold()
-    parent_key = parent_root.casefold()
-    return root_key == parent_key or root_key.startswith(parent_key + "/")
-
-
-def is_manual_integration_root(root, manual_roots):
-    return any(is_same_or_child_root(root, manual_root) for manual_root in manual_roots)
-
-
-def configured_existing_vendor_roots():
-    """Return mesh-scan roots and log material-only/manual integration roots separately."""
-    manual_roots = [
-        root
-        for configured_root in MANUAL_INTEGRATION_VENDOR_ROOTS
-        if (root := normalize_vendor_root(configured_root))
-    ]
-    configured = (
-        list(PLANNED_MESH_VENDOR_ROOTS)
-        + list(VERIFIED_IMPORTED_MESH_VENDOR_ROOTS)
-    )
-    extras = os.environ.get(EXTRA_VENDOR_ROOTS_ENV_VAR, "")
-    if extras:
-        configured.extend(
-            root for line in extras.splitlines() for root in line.split(";")
-        )
-
+def configured_existing_runtime_roots():
+    """Return only source-controlled runtime roots cleared for this workflow."""
     unique_roots = []
     seen = set()
-    for configured_root in configured:
+    for configured_root in APPROVED_RUNTIME_MESH_ROOTS:
         root = normalize_vendor_root(configured_root)
         if not root:
-            unreal.log_warning(
-                f"ENVIRONMENT_VENDOR_ROOT_REJECTED: {configured_root!r}"
+            raise RuntimeError(
+                f"Approved environment runtime root is malformed: {configured_root!r}"
             )
-            continue
-        if is_manual_integration_root(root, manual_roots):
-            unreal.log_warning(
-                "ENVIRONMENT_VENDOR_ROOT_MANUAL_ONLY_REJECTED: "
-                f"{configured_root!r}"
-            )
-            continue
         key = root.casefold()
         if key not in seen:
             seen.add(key)
@@ -93,30 +43,19 @@ def configured_existing_vendor_roots():
     ]
     missing_roots = [root for root in unique_roots if root not in existing_roots]
     unreal.log(
-        "ENVIRONMENT_VENDOR_ROOTS: "
+        "ENVIRONMENT_APPROVED_RUNTIME_ROOTS: "
         f"configured={len(unique_roots)} existing={len(existing_roots)} "
-        f"missing={len(missing_roots)} extra_env={EXTRA_VENDOR_ROOTS_ENV_VAR}"
+        f"missing={len(missing_roots)}"
     )
     if missing_roots:
         unreal.log(
-            "ENVIRONMENT_VENDOR_ROOTS_PENDING: " + ", ".join(missing_roots)
+            "ENVIRONMENT_APPROVED_RUNTIME_ROOTS_MISSING: "
+            + ", ".join(missing_roots)
         )
     if not existing_roots:
-        unreal.log_warning(
-            "ENVIRONMENT_VENDOR_ROOTS_EMPTY: proposal will contain no imported candidates"
+        raise RuntimeError(
+            "ENVIRONMENT_APPROVED_RUNTIME_ROOTS_EMPTY: no approved content is available"
         )
-
-    manual_existing = [
-        root
-        for root in manual_roots
-        if unreal.EditorAssetLibrary.does_directory_exist(root)
-    ]
-    unreal.log(
-        "ENVIRONMENT_MANUAL_INTEGRATION_ROOTS: "
-        f"configured={len(manual_roots)} existing={len(manual_existing)} "
-        "excluded_from_static_mesh_candidates=true roots="
-        + ", ".join(manual_roots)
-    )
     return existing_roots
 
 
@@ -128,11 +67,13 @@ asset_set = unreal.EditorAssetLibrary.load_asset(ASSET_SET_PATH)
 if not asset_set:
     raise RuntimeError(f"Environment asset set is missing: {ASSET_SET_PATH}")
 
-vendor_roots = configured_existing_vendor_roots()
+runtime_roots = configured_existing_runtime_roots()
 
 scan = unreal.DiscGolfEnvironmentAssetBinder.scan_environment_assets(
-    vendor_roots, asset_set
+    runtime_roots, asset_set
 )
+if not scan.provenance_accepted:
+    raise RuntimeError(f"Environment scan provenance rejected: {scan.policy_error}")
 unreal.log(
     "ENVIRONMENT_SCAN_OK: "
     f"roots={len(scan.vendor_content_roots)} "
@@ -141,8 +82,12 @@ unreal.log(
 )
 
 proposal = unreal.DiscGolfEnvironmentAssetBinder.propose_bindings(
-    vendor_roots, asset_set
+    runtime_roots, asset_set
 )
+if not proposal.provenance_accepted:
+    raise RuntimeError(
+        f"Environment proposal provenance rejected: {proposal.policy_error}"
+    )
 unreal.log(
     "ENVIRONMENT_PROPOSAL_OK: "
     f"roots={len(proposal.vendor_content_roots)} "

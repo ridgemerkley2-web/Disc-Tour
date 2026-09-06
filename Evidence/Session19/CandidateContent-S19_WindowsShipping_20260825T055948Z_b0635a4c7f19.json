@@ -1,0 +1,596 @@
+{
+  "schema": "DiscGolfTour.Session19CandidateContentAuditReceipt.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "runId": "S19_WindowsShipping_20260825T055948Z_b0635a4c7f19",
+  "generatedUtc": "2026-08-25T06:07:37Z",
+  "state": "PASS_BOUNDED_STAGED_CONTENT_AUDIT",
+  "bindings": {
+    "shippingContentPolicy": {
+      "path": "Config/DG_Session19ShippingContentPolicy.json",
+      "bytes": 6105,
+      "sha256": "39DD21D303E02DD60A7B661B40F95DECBBBAF995896B9288DA0475025B204B48"
+    },
+    "stagedProvenancePolicy": {
+      "path": "Config/DG_Session19StagedProvenancePolicy.json",
+      "bytes": 6067,
+      "sha256": "36C0AD369BC5F4EB7C13D52F6BE4997EA82BBC69CFD603B2C9135848503FDBCC"
+    },
+    "shippingBinaryPolicy": {
+      "path": "Config/DG_Session19ShippingBinaryPolicy.json",
+      "bytes": 7170,
+      "sha256": "3E750646AD0C9009C2A144B69334212187159833628A4DEF60F14889DA80E70D"
+    },
+    "windowsShippingPakRules": {
+      "path": "Config/DefaultPakFileRules.ini",
+      "bytes": 4275,
+      "sha256": "9E75BB75EF8EF75C3FF477B9809C9B16B378DDCB930C21A574840916B26C7D69"
+    },
+    "windowsShippingPackagingConfig": {
+      "path": "Config/DefaultGame.ini",
+      "bytes": 2684,
+      "sha256": "DE43D8F3FE8AB79DC7C4C9BCDDEA4BAAB5AD09A3D3B1B92F63626DD5F08681DB"
+    },
+    "projectDescriptor": {
+      "path": "DiscGolfTour.uproject",
+      "bytes": 3109,
+      "sha256": "02DDB8E3714A947BE7751076CF08AF4054E3EBD79CC6959191C7B348762248B2"
+    },
+    "shippingGameTarget": {
+      "path": "Source/DiscGolfTour.Target.cs",
+      "bytes": 1123,
+      "sha256": "E2035633ACF1691E2F24669247E8C9B62671E48566EF8EE13745F5CC3D6E6E2A"
+    },
+    "correctedCandidateVerification": {
+      "path": "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260825T055948Z_b0635a4c7f19.json",
+      "bytes": 3667,
+      "sha256": "40933A15794E9FD59BFFDF068F739C29F7A5D4C66AF03FF842332950EBC967F1"
+    },
+    "shippingBinaryReceipt": {
+      "path": "Evidence/Session19/ShippingBinary-S19_WindowsShipping_20260825T055948Z_b0635a4c7f19.json",
+      "bytes": 1346,
+      "sha256": "4DB760909398AB6CAADB04981F8FA944B203B4B89DEBEC2C41725CFDEDFE49B6"
+    },
+    "serializedAssetMigrationReceipt": {
+      "path": "Evidence/Session19/SerializedAssetMigrationReceipt.json",
+      "bytes": 5435,
+      "sha256": "AC1CB2B61D07850E60A40C0701D878F4D7AAFF95CF04B18C280DB418DC91B9A4"
+    }
+  },
+  "archive": {
+    "hostPathRecorded": false,
+    "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260825T055948Z_b0635a4c7f19/Windows",
+    "fileCount": 31,
+    "bytes": 1253512829,
+    "canonicalManifestSha256": "55016EB30BE3B7D160C2089E0C9E8468CB8B3B612C949E960922199237589D7B"
+  },
+  "inventory": {
+    "ufsEntryCount": 2786,
+    "nonUfsEntryCount": 24,
+    "containerCount": 3,
+    "containerNamedEntryCount": 2709,
+    "auditedIdentityCount": 5550,
+    "canonicalIdentitySha256": "E6FD242078F4125D6BF1DE3E345E85EEC824E3CD5097D490E595B45B446F87B7",
+    "authoritativeIdentityCount": 2764,
+    "authoritativeCanonicalIdentitySha256": "6A668E8A30429BE38B5AC165078A5A72DC5FFD0071AFA33DDF5DA87630BDC2D7",
+    "ufsManifestDiagnosticEntryCount": 2786,
+    "authoritativeScopePolicy": {
+      "authoritativeScopes": [
+        "ARCHIVE_FILE",
+        "NONUFS_ENTRY",
+        "CONTAINER_NAMED_ENTRY"
+      ],
+      "manifestUfsDevelopmentRows": "NON_AUTHORITATIVE_DIAGNOSTIC_ONLY",
+      "forbiddenIdentityExceptions": []
+    },
+    "containers": [
+      {
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.pak",
+        "bytes": 10458767,
+        "sha256": "82878ABD9CD9F225E2482B6E727F38BE6581D81254A5DDFE4164DFE71AF0621B",
+        "method": "UnrealPak positional -List",
+        "entryCount": 1654,
+        "canonicalIdentitySha256": "EBF0DF9957A86998972D4B635045BEBB410461935B847A50D3BBCD6B5847CD94"
+      },
+      {
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.utoc",
+        "bytes": 480541,
+        "sha256": "403DD802F6EAD8EEBF63475CF7CCF1DB57A4E2AA974BDEDC354BB6ABE53391B4",
+        "method": "UnrealPak -ListContainer CSV",
+        "chunkCount": 2596,
+        "namedEntryCount": 1055,
+        "anonymousChunkCount": 1541,
+        "canonicalIdentitySha256": "453AEBCB797E15D1941CE745ECD1FEB2739D811EC45A18BC3080BB679F10C8F0"
+      },
+      {
+        "path": "DiscGolfTour/Content/Paks/global.utoc",
+        "bytes": 842,
+        "sha256": "ABD797A0D8569333B2C6B214B623C4754792D4FD5566A63A934954B3FB950AC5",
+        "method": "UnrealPak -ListContainer CSV",
+        "chunkCount": 1,
+        "namedEntryCount": 0,
+        "anonymousChunkCount": 1,
+        "canonicalIdentitySha256": "FCE3644C14E6B480E9BE19AFADF7CFA15533179EA768448DDB38E36EDE767AEF"
+      }
+    ]
+  },
+  "forbiddenIdentityCategories": {
+    "LEGACY_CHARACTER_FRAMEWORK": {
+      "passed": true,
+      "matchCount": 0,
+      "matches": [],
+      "manifestUfsDiagnosticMatchCount": 0,
+      "manifestUfsDiagnosticMatches": []
+    },
+    "QUARANTINED_FAB_ROOTS": {
+      "passed": true,
+      "matchCount": 0,
+      "matches": [],
+      "manifestUfsDiagnosticMatchCount": 0,
+      "manifestUfsDiagnosticMatches": []
+    },
+    "THROW_LAB": {
+      "passed": true,
+      "matchCount": 0,
+      "matches": [],
+      "manifestUfsDiagnosticMatchCount": 0,
+      "manifestUfsDiagnosticMatches": []
+    },
+    "CAREER_AI": {
+      "passed": true,
+      "matchCount": 0,
+      "matches": [],
+      "manifestUfsDiagnosticMatchCount": 0,
+      "manifestUfsDiagnosticMatches": []
+    },
+    "DEVELOPMENT_TEST_EDITOR": {
+      "passed": true,
+      "matchCount": 0,
+      "matches": [],
+      "manifestUfsDiagnosticMatchCount": 50,
+      "manifestUfsDiagnosticMatches": [
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/DeveloperDirectoryContent.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/EditorGroupBorder.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/ErrorFilter.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/ExcludedTestsFilter.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/Fail.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/GameGroupBorder.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/Groups.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/InProcess.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/NoSessionWarning.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/NotEnoughParticipants.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/NotRun.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/Participant.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/ParticipantsWarning.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/RefreshTests.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/RefreshWorkers.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/RunTests.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/SmokeTest.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/SmokeTestFilter.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/SmokeTestParent.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/StopTests.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/Success.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/TrackTestHistory.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/VisualCommandlet.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/Warning.png"
+        },
+        {
+          "token": "/Slate/Automation/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Automation/WarningFilter.png"
+        },
+        {
+          "token": "/Engine/Content/Slate/Testing/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Testing/BrushWireframe.png"
+        },
+        {
+          "token": "/Engine/Content/Slate/Testing/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Testing/DefaultPawn_16px.png"
+        },
+        {
+          "token": "/Engine/Content/Slate/Testing/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Testing/FlatColorSquare.png"
+        },
+        {
+          "token": "/Engine/Content/Slate/Testing/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Testing/Hyperlink.png"
+        },
+        {
+          "token": "/Engine/Content/Slate/Testing/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Testing/Lit.png"
+        },
+        {
+          "token": "/Engine/Content/Slate/Testing/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Testing/NewLevelBlank.png"
+        },
+        {
+          "token": "/Engine/Content/Slate/Testing/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Testing/TestRotation.png"
+        },
+        {
+          "token": "/Engine/Content/Slate/Testing/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Testing/Unlit.png"
+        },
+        {
+          "token": "/Engine/Content/Slate/Testing/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Content/Slate/Testing/Wireframe.png"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/BlueprintHeaderView/BlueprintHeaderView.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/ColorGrading/ColorGrading.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/ContentBrowser/ContentBrowserAssetDataSource/ContentBrowserAssetDataSource.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/CurveEditorTools/CurveEditorTools.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/DataValidation/DataValidation.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/EngineAssetDefinitions/EngineAssetDefinitions.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/GeometryMode/GeometryMode.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/MaterialAssetWizard/MaterialAssetWizard.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/ObjectMixer/LightMixer/LightMixer.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/ObjectMixer/ObjectMixer/ObjectMixer.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/ProxyLODPlugin/ProxyLODPlugin.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/SequencerAnimTools/SequencerAnimTools.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/UMGWidgetPreview/UMGWidgetPreview.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Editor/UVEditor/UVEditor.uplugin"
+        },
+        {
+          "token": "/Editor/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Interchange/Editor/InterchangeEditor.uplugin"
+        },
+        {
+          "token": "/Tests/",
+          "scope": "UFS_ENTRY_DIAGNOSTIC",
+          "container": null,
+          "identity": "Engine/Plugins/Tests/InterchangeTests/InterchangeTests.uplugin"
+        }
+      ]
+    },
+    "PROTOTYPE_CUSTOMIZATION_OUTFIT": {
+      "passed": true,
+      "matchCount": 0,
+      "matches": [],
+      "manifestUfsDiagnosticMatchCount": 0,
+      "manifestUfsDiagnosticMatches": []
+    },
+    "COOK_MANIFEST_REGRESSION": {
+      "passed": true,
+      "matchCount": 0,
+      "matches": [],
+      "manifestUfsDiagnosticMatchCount": 0,
+      "manifestUfsDiagnosticMatches": []
+    },
+    "ALL_FROZEN_PATH_TOKENS": {
+      "passed": true,
+      "matchCount": 0,
+      "matches": [],
+      "manifestUfsDiagnosticMatchCount": 0,
+      "manifestUfsDiagnosticMatches": []
+    }
+  },
+  "requiredThreeHoleData": {
+    "expectedHoleNumbers": [
+      1,
+      2,
+      3
+    ],
+    "files": [
+      {
+        "path": "DiscGolfTour/Data/PineRidgeCourse.json",
+        "presentInArchive": true,
+        "presentInNonUfsManifest": true,
+        "bytes": 668,
+        "sha256": "67C7EE82B3A9734724CAA3F7AD37EE46E77DBF736F25F93EF3CE49FDF97150CF",
+        "schema": "disc_golf_course_manifest",
+        "schemaVersion": 1,
+        "courseId": "PineRidgeChampionship",
+        "holeNumbers": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "path": "DiscGolfTour/Data/PineRidgeHole1.json",
+        "presentInArchive": true,
+        "presentInNonUfsManifest": true,
+        "bytes": 7740,
+        "sha256": "CD1991551FD3F13465A5C6737871A2D4B91A31E078CAD1C97F458A7A5081F317",
+        "schema": "disc_golf_hole_blockout",
+        "schemaVersion": 1,
+        "courseId": "PineRidgeChampionship",
+        "holeNumber": 1
+      },
+      {
+        "path": "DiscGolfTour/Data/PineRidgeHole2.json",
+        "presentInArchive": true,
+        "presentInNonUfsManifest": true,
+        "bytes": 8586,
+        "sha256": "AB55ACE68264C270DE932DC0E0DEA644B844AEBB29F6CC0E994614789CA96F2E",
+        "schema": "disc_golf_hole_blockout",
+        "schemaVersion": 1,
+        "courseId": "PineRidgeChampionship",
+        "holeNumber": 2
+      },
+      {
+        "path": "DiscGolfTour/Data/PineRidgeHole3.json",
+        "presentInArchive": true,
+        "presentInNonUfsManifest": true,
+        "bytes": 8509,
+        "sha256": "A1FC744234E94FBE383F5AED21DCEF9D84A4213CF9E8625B57CA4C3339EC46A2",
+        "schema": "disc_golf_hole_blockout",
+        "schemaVersion": 1,
+        "courseId": "PineRidgeChampionship",
+        "holeNumber": 3
+      },
+      {
+        "path": "DiscGolfTour/Data/PineRidgePresentation.json",
+        "presentInArchive": true,
+        "presentInNonUfsManifest": true,
+        "bytes": 2184,
+        "sha256": "0B259E50B353B59BA2F940FB76C121CE69487BEB435D41E9CF21337219B2E8B0",
+        "schema": "disc_golf_course_presentation",
+        "schemaVersion": 1,
+        "courseId": "PineRidgeChampionship",
+        "holeNumbers": [
+          1,
+          2,
+          3
+        ],
+        "assetsReady": false
+      }
+    ]
+  },
+  "requiredRetainedRuntimeAssets": [
+    {
+      "package": "/Game/DiscGolf/Animation/ABP_DG_Player",
+      "stagedIdentity": "DiscGolfTour/Content/DiscGolf/Animation/ABP_DG_Player.uasset",
+      "presentInUfsManifest": true,
+      "presentInContainerInventory": true
+    },
+    {
+      "package": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster",
+      "stagedIdentity": "DiscGolfTour/Content/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_DGMaster.uasset",
+      "presentInUfsManifest": true,
+      "presentInContainerInventory": true
+    },
+    {
+      "package": "/Game/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default",
+      "stagedIdentity": "DiscGolfTour/Content/DiscGolf/Characters/Avatar/Data/DA_DG_AvatarBackend_MetaHuman_Default.uasset",
+      "presentInUfsManifest": true,
+      "presentInContainerInventory": true
+    },
+    {
+      "package": "/Game/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default",
+      "stagedIdentity": "DiscGolfTour/Content/DiscGolf/Characters/MetaHuman/BP_DG_MetaHuman_Default.uasset",
+      "presentInUfsManifest": true,
+      "presentInContainerInventory": true
+    },
+    {
+      "package": "/Game/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter",
+      "stagedIdentity": "DiscGolfTour/Content/DiscGolf/Characters/Profiles/DA_DG_DefaultCharacter.uasset",
+      "presentInUfsManifest": true,
+      "presentInContainerInventory": true
+    },
+    {
+      "package": "/Game/DiscGolf/Rigs/CR_DG_Master",
+      "stagedIdentity": "DiscGolfTour/Content/DiscGolf/Rigs/CR_DG_Master.uasset",
+      "presentInUfsManifest": true,
+      "presentInContainerInventory": true
+    }
+  ],
+  "issues": [],
+  "releaseBoundary": {
+    "boundedStagedContentAuditPassed": true,
+    "freshInstallGameplayAcceptancePerformed": false,
+    "provenanceClassificationPerformed": false,
+    "legalOrVisualApprovalPerformed": false,
+    "blockerClosed": false,
+    "releaseReady": false
+  }
+}

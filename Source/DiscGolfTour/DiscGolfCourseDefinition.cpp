@@ -9,6 +9,457 @@
 
 namespace
 {
+    struct FJsonScope
+    {
+        bool bIsObject = false;
+        TSet<FString> Keys;
+    };
+
+    bool RejectDuplicateJsonKeys(const FString& Json, FString& OutError)
+    {
+        const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Json);
+        TArray<FJsonScope> Scopes;
+        EJsonNotation Notation;
+        while (Reader->ReadNext(Notation))
+        {
+            if (Notation == EJsonNotation::Error)
+            {
+                OutError = TEXT("invalid JSON");
+                return false;
+            }
+
+            if (Notation == EJsonNotation::ObjectEnd || Notation == EJsonNotation::ArrayEnd)
+            {
+                if (!Scopes.IsEmpty()) Scopes.Pop();
+                continue;
+            }
+
+            const FString& Identifier = Reader->GetIdentifier();
+            if (!Scopes.IsEmpty() && Scopes.Last().bIsObject)
+            {
+                if (Identifier.IsEmpty() || Scopes.Last().Keys.Contains(Identifier))
+                {
+                    OutError = Identifier.IsEmpty()
+                        ? TEXT("invalid unnamed JSON object field")
+                        : FString::Printf(TEXT("duplicate JSON field '%s'"), *Identifier);
+                    return false;
+                }
+                Scopes.Last().Keys.Add(Identifier);
+            }
+
+            if (Notation == EJsonNotation::ObjectStart || Notation == EJsonNotation::ArrayStart)
+            {
+                FJsonScope& Scope = Scopes.AddDefaulted_GetRef();
+                Scope.bIsObject = Notation == EJsonNotation::ObjectStart;
+            }
+        }
+        return true;
+    }
+
+    bool ValidateAllowedFields(
+        const TSharedPtr<FJsonObject>& Object,
+        const TCHAR* Context,
+        std::initializer_list<const TCHAR*> AllowedFields,
+        FString& OutError)
+    {
+        if (!Object.IsValid())
+        {
+            OutError = FString::Printf(TEXT("%s must be an object"), Context);
+            return false;
+        }
+
+        for (const TPair<FString, TSharedPtr<FJsonValue>>& Pair : Object->Values)
+        {
+            bool bAllowed = false;
+            for (const TCHAR* Allowed : AllowedFields)
+            {
+                if (Pair.Key == Allowed)
+                {
+                    bAllowed = true;
+                    break;
+                }
+            }
+            if (!bAllowed)
+            {
+                OutError = FString::Printf(TEXT("unknown %s field '%s'"), Context, *Pair.Key);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool RequireString(
+        const TSharedPtr<FJsonObject>& Object,
+        const TCHAR* Field,
+        const TCHAR* Context,
+        FString& OutValue,
+        FString& OutError)
+    {
+        if (!Object.IsValid() || !Object->TryGetStringField(Field, OutValue))
+        {
+            OutError = FString::Printf(TEXT("%s.%s must be a string"), Context, Field);
+            return false;
+        }
+        return true;
+    }
+
+    bool RequireFiniteNumber(
+        const TSharedPtr<FJsonObject>& Object,
+        const TCHAR* Field,
+        const TCHAR* Context,
+        double& OutValue,
+        FString& OutError)
+    {
+        const TSharedPtr<FJsonValue>* Value = Object.IsValid() ? Object->Values.Find(Field) : nullptr;
+        if (!Value || !Value->IsValid() || (*Value)->Type != EJson::Number)
+        {
+            OutError = FString::Printf(TEXT("%s.%s must be a number"), Context, Field);
+            return false;
+        }
+        OutValue = (*Value)->AsNumber();
+        if (!FMath::IsFinite(OutValue))
+        {
+            OutError = FString::Printf(TEXT("%s.%s must be finite"), Context, Field);
+            return false;
+        }
+        return true;
+    }
+
+    bool RequireInteger(
+        const TSharedPtr<FJsonObject>& Object,
+        const TCHAR* Field,
+        const TCHAR* Context,
+        FString& OutError)
+    {
+        double Number = 0.0;
+        if (!RequireFiniteNumber(Object, Field, Context, Number, OutError)) return false;
+        if (FMath::TruncToDouble(Number) != Number
+            || Number < static_cast<double>(MIN_int32)
+            || Number > static_cast<double>(MAX_int32))
+        {
+            OutError = FString::Printf(TEXT("%s.%s must be an integer"), Context, Field);
+            return false;
+        }
+        return true;
+    }
+
+    bool RequireArray(
+        const TSharedPtr<FJsonObject>& Object,
+        const TCHAR* Field,
+        const TCHAR* Context,
+        const TArray<TSharedPtr<FJsonValue>>*& OutValues,
+        FString& OutError)
+    {
+        if (!Object.IsValid() || !Object->TryGetArrayField(Field, OutValues) || !OutValues)
+        {
+            OutError = FString::Printf(TEXT("%s.%s must be an array"), Context, Field);
+            return false;
+        }
+        return true;
+    }
+
+    bool RequireObject(
+        const TSharedPtr<FJsonObject>& Object,
+        const TCHAR* Field,
+        const TCHAR* Context,
+        TSharedPtr<FJsonObject>& OutValue,
+        FString& OutError)
+    {
+        const TSharedPtr<FJsonObject>* Value = nullptr;
+        if (!Object.IsValid() || !Object->TryGetObjectField(Field, Value)
+            || !Value || !Value->IsValid())
+        {
+            OutError = FString::Printf(TEXT("%s.%s must be an object"), Context, Field);
+            return false;
+        }
+        OutValue = *Value;
+        return true;
+    }
+
+    bool ValidateVectorJson(
+        const TSharedPtr<FJsonObject>& Object,
+        const TCHAR* Context,
+        FString& OutError)
+    {
+        if (!ValidateAllowedFields(Object, Context, { TEXT("x"), TEXT("y"), TEXT("z") }, OutError))
+            return false;
+        double Ignored = 0.0;
+        return RequireFiniteNumber(Object, TEXT("x"), Context, Ignored, OutError)
+            && RequireFiniteNumber(Object, TEXT("y"), Context, Ignored, OutError)
+            && RequireFiniteNumber(Object, TEXT("z"), Context, Ignored, OutError);
+    }
+
+    bool ValidateVectorField(
+        const TSharedPtr<FJsonObject>& Object,
+        const TCHAR* Field,
+        const TCHAR* Context,
+        FString& OutError)
+    {
+        TSharedPtr<FJsonObject> Vector;
+        if (!RequireObject(Object, Field, Context, Vector, OutError)) return false;
+        const FString VectorContext = FString::Printf(TEXT("%s.%s"), Context, Field);
+        return ValidateVectorJson(Vector, *VectorContext, OutError);
+    }
+
+    bool ValidateRotationField(
+        const TSharedPtr<FJsonObject>& Object,
+        const TCHAR* Context,
+        FString& OutError)
+    {
+        TSharedPtr<FJsonObject> Rotation;
+        if (!RequireObject(Object, TEXT("rotationDeg"), Context, Rotation, OutError)) return false;
+        const FString RotationContext = FString::Printf(TEXT("%s.rotationDeg"), Context);
+        if (!ValidateAllowedFields(Rotation, *RotationContext,
+            { TEXT("pitch"), TEXT("yaw"), TEXT("roll") }, OutError)) return false;
+        double Ignored = 0.0;
+        return RequireFiniteNumber(Rotation, TEXT("pitch"), *RotationContext, Ignored, OutError)
+            && RequireFiniteNumber(Rotation, TEXT("yaw"), *RotationContext, Ignored, OutError)
+            && RequireFiniteNumber(Rotation, TEXT("roll"), *RotationContext, Ignored, OutError);
+    }
+
+    bool RequireKnownToken(
+        const TSharedPtr<FJsonObject>& Object,
+        const TCHAR* Field,
+        const TCHAR* Context,
+        std::initializer_list<const TCHAR*> AllowedTokens,
+        FString& OutError)
+    {
+        FString Token;
+        if (!RequireString(Object, Field, Context, Token, OutError)) return false;
+        for (const TCHAR* Allowed : AllowedTokens)
+        {
+            if (Token.Equals(Allowed, ESearchCase::IgnoreCase)) return true;
+        }
+        OutError = FString::Printf(TEXT("unknown %s.%s token '%s'"), Context, Field, *Token);
+        return false;
+    }
+
+    bool RequireObjectArrayElement(
+        const TSharedPtr<FJsonValue>& Value,
+        const TCHAR* ArrayName,
+        int32 Index,
+        TSharedPtr<FJsonObject>& OutObject,
+        FString& OutError)
+    {
+        if (!Value.IsValid() || Value->Type != EJson::Object || !Value->AsObject().IsValid())
+        {
+            OutError = FString::Printf(TEXT("%s[%d] must be an object"), ArrayName, Index);
+            return false;
+        }
+        OutObject = Value->AsObject();
+        return true;
+    }
+
+    bool ValidateManifestJsonShape(const TSharedPtr<FJsonObject>& Root, FString& OutError)
+    {
+        if (!ValidateAllowedFields(Root, TEXT("manifest"),
+            { TEXT("schema"), TEXT("schemaVersion"), TEXT("courseId"), TEXT("layoutId"),
+              TEXT("displayName"), TEXT("holes") }, OutError)) return false;
+        FString IgnoredString;
+        if (!RequireString(Root, TEXT("schema"), TEXT("manifest"), IgnoredString, OutError)
+            || !RequireInteger(Root, TEXT("schemaVersion"), TEXT("manifest"), OutError)
+            || !RequireString(Root, TEXT("courseId"), TEXT("manifest"), IgnoredString, OutError)
+            || !RequireString(Root, TEXT("layoutId"), TEXT("manifest"), IgnoredString, OutError)
+            || !RequireString(Root, TEXT("displayName"), TEXT("manifest"), IgnoredString, OutError)) return false;
+        const TArray<TSharedPtr<FJsonValue>>* Holes = nullptr;
+        if (!RequireArray(Root, TEXT("holes"), TEXT("manifest"), Holes, OutError)) return false;
+        for (int32 Index = 0; Index < Holes->Num(); ++Index)
+        {
+            TSharedPtr<FJsonObject> Hole;
+            if (!RequireObjectArrayElement((*Holes)[Index], TEXT("manifest.holes"), Index, Hole, OutError)) return false;
+            const FString Context = FString::Printf(TEXT("manifest.holes[%d]"), Index);
+            if (!ValidateAllowedFields(Hole, *Context,
+                { TEXT("holeNumber"), TEXT("definitionFile"), TEXT("worldOriginCm"), TEXT("worldYawDeg") }, OutError)
+                || !RequireInteger(Hole, TEXT("holeNumber"), *Context, OutError)
+                || !RequireString(Hole, TEXT("definitionFile"), *Context, IgnoredString, OutError)
+                || !ValidateVectorField(Hole, TEXT("worldOriginCm"), *Context, OutError)) return false;
+            double IgnoredNumber = 0.0;
+            if (!RequireFiniteNumber(Hole, TEXT("worldYawDeg"), *Context, IgnoredNumber, OutError)) return false;
+        }
+        return true;
+    }
+
+    bool ValidateHoleJsonShape(const TSharedPtr<FJsonObject>& Root, FString& OutError)
+    {
+        if (!ValidateAllowedFields(Root, TEXT("hole"),
+            { TEXT("schema"), TEXT("schemaVersion"), TEXT("courseId"), TEXT("layoutId"),
+              TEXT("holeNumber"), TEXT("holeName"), TEXT("par"), TEXT("teeLocationCm"),
+              TEXT("basketLocationCm"), TEXT("surfaces"), TEXT("trees"), TEXT("collisionFixtures"),
+              TEXT("landingZones"), TEXT("shotRoutes"), TEXT("cameraAnchors"),
+              TEXT("spectatorBoundaries"), TEXT("windZones"), TEXT("flyoverPointsCm") }, OutError)) return false;
+
+        FString IgnoredString;
+        if (!RequireString(Root, TEXT("schema"), TEXT("hole"), IgnoredString, OutError)
+            || !RequireInteger(Root, TEXT("schemaVersion"), TEXT("hole"), OutError)
+            || !RequireString(Root, TEXT("courseId"), TEXT("hole"), IgnoredString, OutError)
+            || !RequireString(Root, TEXT("layoutId"), TEXT("hole"), IgnoredString, OutError)
+            || !RequireInteger(Root, TEXT("holeNumber"), TEXT("hole"), OutError)
+            || !RequireString(Root, TEXT("holeName"), TEXT("hole"), IgnoredString, OutError)
+            || !RequireInteger(Root, TEXT("par"), TEXT("hole"), OutError)
+            || !ValidateVectorField(Root, TEXT("teeLocationCm"), TEXT("hole"), OutError)
+            || !ValidateVectorField(Root, TEXT("basketLocationCm"), TEXT("hole"), OutError)) return false;
+
+        const TArray<TSharedPtr<FJsonValue>>* Values = nullptr;
+        if (!RequireArray(Root, TEXT("surfaces"), TEXT("hole"), Values, OutError)) return false;
+        for (int32 Index = 0; Index < Values->Num(); ++Index)
+        {
+            TSharedPtr<FJsonObject> O;
+            if (!RequireObjectArrayElement((*Values)[Index], TEXT("surfaces"), Index, O, OutError)) return false;
+            const FString C = FString::Printf(TEXT("surfaces[%d]"), Index);
+            if (!ValidateAllowedFields(O, *C, { TEXT("id"), TEXT("surface"), TEXT("shape"), TEXT("locationCm"), TEXT("scale"), TEXT("rotationDeg") }, OutError)
+                || !RequireString(O, TEXT("id"), *C, IgnoredString, OutError)
+                || !RequireKnownToken(O, TEXT("surface"), *C,
+                    { TEXT("Fairway"), TEXT("TeePad"), TEXT("LightRough"), TEXT("DeepRough"), TEXT("Dirt"), TEXT("Rock"), TEXT("OutOfBounds"), TEXT("Hazard") }, OutError)
+                || !RequireKnownToken(O, TEXT("shape"), *C, { TEXT("Box"), TEXT("Cylinder"), TEXT("Sphere") }, OutError)
+                || !ValidateVectorField(O, TEXT("locationCm"), *C, OutError)
+                || !ValidateVectorField(O, TEXT("scale"), *C, OutError)
+                || !ValidateRotationField(O, *C, OutError)) return false;
+        }
+
+        if (!RequireArray(Root, TEXT("trees"), TEXT("hole"), Values, OutError)) return false;
+        for (int32 Index = 0; Index < Values->Num(); ++Index)
+        {
+            TSharedPtr<FJsonObject> O;
+            if (!RequireObjectArrayElement((*Values)[Index], TEXT("trees"), Index, O, OutError)) return false;
+            const FString C = FString::Printf(TEXT("trees[%d]"), Index);
+            double IgnoredNumber = 0.0;
+            if (!ValidateAllowedFields(O, *C, { TEXT("locationCm"), TEXT("heightScale") }, OutError)
+                || !ValidateVectorField(O, TEXT("locationCm"), *C, OutError)
+                || !RequireFiniteNumber(O, TEXT("heightScale"), *C, IgnoredNumber, OutError)) return false;
+        }
+
+        if (!RequireArray(Root, TEXT("collisionFixtures"), TEXT("hole"), Values, OutError)) return false;
+        for (int32 Index = 0; Index < Values->Num(); ++Index)
+        {
+            TSharedPtr<FJsonObject> O;
+            if (!RequireObjectArrayElement((*Values)[Index], TEXT("collisionFixtures"), Index, O, OutError)) return false;
+            const FString C = FString::Printf(TEXT("collisionFixtures[%d]"), Index);
+            if (!ValidateAllowedFields(O, *C, { TEXT("id"), TEXT("type"), TEXT("shape"), TEXT("locationCm"), TEXT("scale"), TEXT("rotationDeg") }, OutError)
+                || !RequireString(O, TEXT("id"), *C, IgnoredString, OutError)
+                || !RequireKnownToken(O, TEXT("type"), *C,
+                    { TEXT("Tree"), TEXT("DenseGrass"), TEXT("Grass"), TEXT("Brush"), TEXT("Rock"), TEXT("Sign") }, OutError)
+                || !RequireKnownToken(O, TEXT("shape"), *C, { TEXT("Box"), TEXT("Cylinder"), TEXT("Sphere") }, OutError)
+                || !ValidateVectorField(O, TEXT("locationCm"), *C, OutError)
+                || !ValidateVectorField(O, TEXT("scale"), *C, OutError)
+                || !ValidateRotationField(O, *C, OutError)) return false;
+        }
+
+        if (!RequireArray(Root, TEXT("landingZones"), TEXT("hole"), Values, OutError)) return false;
+        for (int32 Index = 0; Index < Values->Num(); ++Index)
+        {
+            TSharedPtr<FJsonObject> O;
+            if (!RequireObjectArrayElement((*Values)[Index], TEXT("landingZones"), Index, O, OutError)) return false;
+            const FString C = FString::Printf(TEXT("landingZones[%d]"), Index);
+            if (!ValidateAllowedFields(O, *C, { TEXT("id"), TEXT("label"), TEXT("locationCm"), TEXT("extentCm"), TEXT("rotationDeg") }, OutError)
+                || !RequireString(O, TEXT("id"), *C, IgnoredString, OutError)
+                || !RequireString(O, TEXT("label"), *C, IgnoredString, OutError)
+                || !ValidateVectorField(O, TEXT("locationCm"), *C, OutError)
+                || !ValidateVectorField(O, TEXT("extentCm"), *C, OutError)
+                || !ValidateRotationField(O, *C, OutError)) return false;
+        }
+
+        if (!RequireArray(Root, TEXT("shotRoutes"), TEXT("hole"), Values, OutError)) return false;
+        for (int32 Index = 0; Index < Values->Num(); ++Index)
+        {
+            TSharedPtr<FJsonObject> O;
+            if (!RequireObjectArrayElement((*Values)[Index], TEXT("shotRoutes"), Index, O, OutError)) return false;
+            const FString C = FString::Printf(TEXT("shotRoutes[%d]"), Index);
+            if (!ValidateAllowedFields(O, *C,
+                { TEXT("id"), TEXT("label"), TEXT("type"), TEXT("shotIntent"), TEXT("landingZoneId"),
+                  TEXT("targetStrokes"), TEXT("riskRating"), TEXT("rewardRating"), TEXT("corridorWidthCm"), TEXT("waypointsCm") }, OutError)
+                || !RequireString(O, TEXT("id"), *C, IgnoredString, OutError)
+                || !RequireString(O, TEXT("label"), *C, IgnoredString, OutError)
+                || !RequireKnownToken(O, TEXT("type"), *C, { TEXT("Primary"), TEXT("RiskReward"), TEXT("Bailout") }, OutError)
+                || !RequireString(O, TEXT("shotIntent"), *C, IgnoredString, OutError)
+                || !RequireString(O, TEXT("landingZoneId"), *C, IgnoredString, OutError)
+                || !RequireInteger(O, TEXT("targetStrokes"), *C, OutError)
+                || !RequireInteger(O, TEXT("riskRating"), *C, OutError)
+                || !RequireInteger(O, TEXT("rewardRating"), *C, OutError)) return false;
+            double IgnoredNumber = 0.0;
+            if (!RequireFiniteNumber(O, TEXT("corridorWidthCm"), *C, IgnoredNumber, OutError)) return false;
+            const TArray<TSharedPtr<FJsonValue>>* Waypoints = nullptr;
+            if (!RequireArray(O, TEXT("waypointsCm"), *C, Waypoints, OutError)) return false;
+            for (int32 PointIndex = 0; PointIndex < Waypoints->Num(); ++PointIndex)
+            {
+                TSharedPtr<FJsonObject> Point;
+                if (!RequireObjectArrayElement((*Waypoints)[PointIndex], TEXT("shotRoutes.waypointsCm"), PointIndex, Point, OutError)) return false;
+                const FString PointContext = FString::Printf(TEXT("%s.waypointsCm[%d]"), *C, PointIndex);
+                if (!ValidateVectorJson(Point, *PointContext, OutError)) return false;
+            }
+        }
+
+        if (!RequireArray(Root, TEXT("cameraAnchors"), TEXT("hole"), Values, OutError)) return false;
+        for (int32 Index = 0; Index < Values->Num(); ++Index)
+        {
+            TSharedPtr<FJsonObject> O;
+            if (!RequireObjectArrayElement((*Values)[Index], TEXT("cameraAnchors"), Index, O, OutError)) return false;
+            const FString C = FString::Printf(TEXT("cameraAnchors[%d]"), Index);
+            double IgnoredNumber = 0.0;
+            if (!ValidateAllowedFields(O, *C, { TEXT("id"), TEXT("mode"), TEXT("locationCm"), TEXT("fieldOfViewDeg") }, OutError)
+                || !RequireString(O, TEXT("id"), *C, IgnoredString, OutError)
+                || !RequireKnownToken(O, TEXT("mode"), *C, { TEXT("Launch"), TEXT("Fairway"), TEXT("Finish") }, OutError)
+                || !ValidateVectorField(O, TEXT("locationCm"), *C, OutError)
+                || !RequireFiniteNumber(O, TEXT("fieldOfViewDeg"), *C, IgnoredNumber, OutError)) return false;
+        }
+
+        if (!RequireArray(Root, TEXT("spectatorBoundaries"), TEXT("hole"), Values, OutError)) return false;
+        for (int32 Index = 0; Index < Values->Num(); ++Index)
+        {
+            TSharedPtr<FJsonObject> O;
+            if (!RequireObjectArrayElement((*Values)[Index], TEXT("spectatorBoundaries"), Index, O, OutError)) return false;
+            const FString C = FString::Printf(TEXT("spectatorBoundaries[%d]"), Index);
+            if (!ValidateAllowedFields(O, *C, { TEXT("id"), TEXT("locationCm"), TEXT("extentCm"), TEXT("rotationDeg") }, OutError)
+                || !RequireString(O, TEXT("id"), *C, IgnoredString, OutError)
+                || !ValidateVectorField(O, TEXT("locationCm"), *C, OutError)
+                || !ValidateVectorField(O, TEXT("extentCm"), *C, OutError)
+                || !ValidateRotationField(O, *C, OutError)) return false;
+        }
+
+        if (!RequireArray(Root, TEXT("windZones"), TEXT("hole"), Values, OutError)) return false;
+        for (int32 Index = 0; Index < Values->Num(); ++Index)
+        {
+            TSharedPtr<FJsonObject> O;
+            if (!RequireObjectArrayElement((*Values)[Index], TEXT("windZones"), Index, O, OutError)) return false;
+            const FString C = FString::Printf(TEXT("windZones[%d]"), Index);
+            double IgnoredNumber = 0.0;
+            if (!ValidateAllowedFields(O, *C, { TEXT("id"), TEXT("locationCm"), TEXT("extentCm"), TEXT("baseWindScale"), TEXT("additiveWindMps") }, OutError)
+                || !RequireString(O, TEXT("id"), *C, IgnoredString, OutError)
+                || !ValidateVectorField(O, TEXT("locationCm"), *C, OutError)
+                || !ValidateVectorField(O, TEXT("extentCm"), *C, OutError)
+                || !RequireFiniteNumber(O, TEXT("baseWindScale"), *C, IgnoredNumber, OutError)
+                || !ValidateVectorField(O, TEXT("additiveWindMps"), *C, OutError)) return false;
+        }
+
+        if (!RequireArray(Root, TEXT("flyoverPointsCm"), TEXT("hole"), Values, OutError)) return false;
+        for (int32 Index = 0; Index < Values->Num(); ++Index)
+        {
+            TSharedPtr<FJsonObject> Point;
+            if (!RequireObjectArrayElement((*Values)[Index], TEXT("flyoverPointsCm"), Index, Point, OutError)) return false;
+            const FString C = FString::Printf(TEXT("flyoverPointsCm[%d]"), Index);
+            if (!ValidateVectorJson(Point, *C, OutError)) return false;
+        }
+        return true;
+    }
+
+    FString DescribeAuthoredDataFailure(
+        const TCHAR* DataLabel,
+        const FString& Path,
+        EDiscGolfAuthoredCourseDataState DataState,
+        const FString& Detail)
+    {
+        const TCHAR* StateLabel = DataState == EDiscGolfAuthoredCourseDataState::Missing
+            ? TEXT("missing")
+            : TEXT("invalid");
+        const FString Cause = Detail.IsEmpty()
+            ? FString::Printf(TEXT("authored data is %s"), StateLabel)
+            : Detail;
+        return FString::Printf(
+            TEXT("Shipping build requires valid authored Pine Ridge %s JSON at '%s'; %s"),
+            DataLabel,
+            *Path,
+            *Cause);
+    }
+
     bool IsFiniteVector(const FVector& Value)
     {
         return FMath::IsFinite(Value.X) && FMath::IsFinite(Value.Y) && FMath::IsFinite(Value.Z);
@@ -102,6 +553,19 @@ namespace
         }
         return false;
     }
+}
+
+EDiscGolfAuthoredCourseLoadAction DiscGolfCourseDefinition::ResolveAuthoredCourseLoadAction(
+    EDiscGolfAuthoredCourseDataState DataState,
+    bool bIsShippingBuild)
+{
+    if (DataState == EDiscGolfAuthoredCourseDataState::Valid)
+    {
+        return EDiscGolfAuthoredCourseLoadAction::UseAuthoredData;
+    }
+    return bIsShippingBuild
+        ? EDiscGolfAuthoredCourseLoadAction::FailClosed
+        : EDiscGolfAuthoredCourseLoadAction::UseSourceFallback;
 }
 
 FDiscGolfCourseManifestDefinition DiscGolfCourseDefinition::PineRidgeCourseFallback()
@@ -452,6 +916,7 @@ bool DiscGolfCourseDefinition::ParseManifestJson(
     FDiscGolfCourseManifestDefinition& OutManifest,
     FString& OutError)
 {
+    if (!RejectDuplicateJsonKeys(Json, OutError)) return false;
     TSharedPtr<FJsonObject> Root;
     const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Json);
     if (!FJsonSerializer::Deserialize(Reader, Root) || !Root.IsValid())
@@ -459,6 +924,7 @@ bool DiscGolfCourseDefinition::ParseManifestJson(
         OutError = TEXT("invalid manifest JSON");
         return false;
     }
+    if (!ValidateManifestJsonShape(Root, OutError)) return false;
     FString Schema;
     if (!Root->TryGetStringField(TEXT("schema"), Schema) || Schema != TEXT("disc_golf_course_manifest"))
     {
@@ -532,6 +998,7 @@ bool DiscGolfCourseDefinition::ParseJson(
     FDiscGolfHoleBlockoutDefinition& OutDefinition,
     FString& OutError)
 {
+    if (!RejectDuplicateJsonKeys(Json, OutError)) return false;
     TSharedPtr<FJsonObject> Root;
     const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Json);
     if (!FJsonSerializer::Deserialize(Reader, Root) || !Root.IsValid())
@@ -539,6 +1006,7 @@ bool DiscGolfCourseDefinition::ParseJson(
         OutError = TEXT("invalid JSON");
         return false;
     }
+    if (!ValidateHoleJsonShape(Root, OutError)) return false;
 
     FString Schema;
     if (!Root->TryGetStringField(TEXT("schema"), Schema)
@@ -698,6 +1166,7 @@ bool DiscGolfCourseDefinition::Validate(const FDiscGolfHoleBlockoutDefinition& D
     {
         if (Fixture.FixtureType == EDiscGolfFixtureType::Unknown
             || !IsFiniteVector(Fixture.LocationCm) || !IsFiniteVector(Fixture.Scale)
+            || Fixture.Rotation.ContainsNaN()
             || Fixture.Scale.GetMin() <= 0.0f || Fixture.Scale.GetMax() > 20.0f)
         { OutError = TEXT("collision fixture definition is invalid"); return false; }
         FixtureTypes.Add(Fixture.FixtureType);
@@ -775,6 +1244,41 @@ bool DiscGolfCourseDefinition::Validate(const FDiscGolfHoleBlockoutDefinition& D
     OutError.Reset(); return true;
 }
 
+bool DiscGolfCourseDefinition::ValidateCourseWindZoneIdentities(
+    const TArray<FDiscGolfHoleBlockoutDefinition>& Definitions,
+    FString& OutError)
+{
+    TMap<FName, int32> OwningHoleByZoneId;
+    for (const FDiscGolfHoleBlockoutDefinition& Definition : Definitions)
+    {
+        for (const FDiscGolfWindZoneDefinition& Zone : Definition.WindZones)
+        {
+            // Per-hole validation owns missing identities. This course-wide
+            // pass only prevents two otherwise valid holes from publishing the
+            // same actor identity into one persistent world.
+            if (Zone.ZoneId.IsNone()) continue;
+
+            if (const int32* OwningHole = OwningHoleByZoneId.Find(Zone.ZoneId))
+            {
+                if (*OwningHole != Definition.HoleNumber)
+                {
+                    OutError = FString::Printf(
+                        TEXT("wind zone id %s is duplicated across holes %d and %d"),
+                        *Zone.ZoneId.ToString(), *OwningHole, Definition.HoleNumber);
+                    return false;
+                }
+            }
+            else
+            {
+                OwningHoleByZoneId.Add(Zone.ZoneId, Definition.HoleNumber);
+            }
+        }
+    }
+
+    OutError.Reset();
+    return true;
+}
+
 bool DiscGolfCourseDefinition::PlaceHoleInCourse(
     const FDiscGolfHoleBlockoutDefinition& LocalDefinition,
     const FDiscGolfCourseManifestHoleEntry& ManifestEntry,
@@ -840,6 +1344,86 @@ bool DiscGolfCourseDefinition::PlaceHoleInCourse(
     return true;
 }
 
+namespace
+{
+bool ResolveManifestHoleForCourseIdentityValidation(
+    const FDiscGolfCourseManifestDefinition& Manifest,
+    const FDiscGolfCourseManifestHoleEntry& Entry,
+    FDiscGolfHoleBlockoutDefinition& OutDefinition,
+    FString& OutError)
+{
+    const FString Path = FPaths::Combine(FPaths::ProjectDir(), Entry.DefinitionFile);
+    FString Json;
+    FString ParseError;
+    FDiscGolfHoleBlockoutDefinition ParsedDefinition;
+    const bool bFileLoaded = FFileHelper::LoadFileToString(Json, *Path);
+    const bool bParsed = bFileLoaded
+        && DiscGolfCourseDefinition::ParseJson(Json, ParsedDefinition, ParseError);
+    const bool bAuthoredDataValid = bParsed
+        && ParsedDefinition.CourseId == Manifest.CourseId
+        && ParsedDefinition.LayoutId == Manifest.LayoutId
+        && ParsedDefinition.HoleNumber == Entry.HoleNumber;
+    const EDiscGolfAuthoredCourseDataState DataState = !bFileLoaded
+        ? EDiscGolfAuthoredCourseDataState::Missing
+        : (bAuthoredDataValid
+            ? EDiscGolfAuthoredCourseDataState::Valid
+            : EDiscGolfAuthoredCourseDataState::Invalid);
+    const EDiscGolfAuthoredCourseLoadAction LoadAction =
+        DiscGolfCourseDefinition::ResolveAuthoredCourseLoadAction(
+            DataState, UE_BUILD_SHIPPING != 0);
+
+    if (LoadAction == EDiscGolfAuthoredCourseLoadAction::UseAuthoredData)
+    {
+        OutDefinition = MoveTemp(ParsedDefinition);
+        return true;
+    }
+    if (LoadAction == EDiscGolfAuthoredCourseLoadAction::FailClosed)
+    {
+        if (ParseError.IsEmpty() && bFileLoaded)
+        {
+            ParseError = FString::Printf(
+                TEXT("authored hole identity does not match manifest hole %d"),
+                Entry.HoleNumber);
+        }
+        OutError = DescribeAuthoredDataFailure(
+            TEXT("hole"), Path, DataState, ParseError);
+        return false;
+    }
+
+    switch (Entry.HoleNumber)
+    {
+        case 1: OutDefinition = DiscGolfCourseDefinition::PineRidgeHole1Fallback(); break;
+        case 2: OutDefinition = DiscGolfCourseDefinition::PineRidgeHole2Fallback(); break;
+        case 3: OutDefinition = DiscGolfCourseDefinition::PineRidgeHole3Fallback(); break;
+        default:
+            OutError = FString::Printf(
+                TEXT("no source fallback exists for hole %d"), Entry.HoleNumber);
+            return false;
+    }
+    return DiscGolfCourseDefinition::Validate(OutDefinition, OutError);
+}
+
+bool ValidateManifestCourseWindZoneIdentities(
+    const FDiscGolfCourseManifestDefinition& Manifest,
+    FString& OutError)
+{
+    TArray<FDiscGolfHoleBlockoutDefinition> Definitions;
+    Definitions.Reserve(Manifest.Holes.Num());
+    for (const FDiscGolfCourseManifestHoleEntry& Entry : Manifest.Holes)
+    {
+        FDiscGolfHoleBlockoutDefinition Definition;
+        if (!ResolveManifestHoleForCourseIdentityValidation(
+            Manifest, Entry, Definition, OutError))
+        {
+            return false;
+        }
+        Definitions.Add(MoveTemp(Definition));
+    }
+    return DiscGolfCourseDefinition::ValidateCourseWindZoneIdentities(
+        Definitions, OutError);
+}
+}
+
 bool DiscGolfCourseDefinition::LoadPineRidgeCourseManifest(
     FDiscGolfCourseManifestDefinition& OutManifest,
     FString& OutSource,
@@ -848,17 +1432,57 @@ bool DiscGolfCourseDefinition::LoadPineRidgeCourseManifest(
     const FString Path = FPaths::Combine(FPaths::ProjectDir(), TEXT("Data/PineRidgeCourse.json"));
     FString Json;
     FString ParseError;
-    if (FFileHelper::LoadFileToString(Json, *Path) && ParseManifestJson(Json, OutManifest, ParseError)
-        && OutManifest.CourseId == TEXT("PineRidgeChampionship")
-        && OutManifest.LayoutId == TEXT("Championship")
-        && OutManifest.Holes.Num() == 3)
+    FDiscGolfCourseManifestDefinition ParsedManifest;
+    const bool bFileLoaded = FFileHelper::LoadFileToString(Json, *Path);
+    const bool bParsed = bFileLoaded && ParseManifestJson(Json, ParsedManifest, ParseError);
+    const bool bAuthoredDataValid = bParsed
+        && ParsedManifest.CourseId == TEXT("PineRidgeChampionship")
+        && ParsedManifest.LayoutId == TEXT("Championship")
+        && ParsedManifest.Holes.Num() == 3;
+    const EDiscGolfAuthoredCourseDataState DataState = !bFileLoaded
+        ? EDiscGolfAuthoredCourseDataState::Missing
+        : (bAuthoredDataValid
+            ? EDiscGolfAuthoredCourseDataState::Valid
+            : EDiscGolfAuthoredCourseDataState::Invalid);
+    const EDiscGolfAuthoredCourseLoadAction LoadAction = ResolveAuthoredCourseLoadAction(
+        DataState,
+        UE_BUILD_SHIPPING != 0);
+    if (LoadAction == EDiscGolfAuthoredCourseLoadAction::UseAuthoredData)
     {
+        OutManifest = MoveTemp(ParsedManifest);
+        if (!ValidateManifestCourseWindZoneIdentities(OutManifest, OutError))
+        {
+            OutManifest = FDiscGolfCourseManifestDefinition();
+            OutSource.Reset();
+            return false;
+        }
         OutSource = TEXT("AUTHORED JSON"); OutError.Reset(); return true;
+    }
+    if (LoadAction == EDiscGolfAuthoredCourseLoadAction::FailClosed)
+    {
+        if (ParseError.IsEmpty() && bFileLoaded)
+        {
+            ParseError = TEXT("authored manifest identity or hole coverage does not match Pine Ridge Championship");
+        }
+        OutManifest = FDiscGolfCourseManifestDefinition();
+        OutSource.Reset();
+        OutError = DescribeAuthoredDataFailure(TEXT("manifest"), Path, DataState, ParseError);
+        return false;
     }
     OutManifest = PineRidgeCourseFallback();
     if (!ValidateManifest(OutManifest, OutError)) return false;
+    if (!ValidateManifestCourseWindZoneIdentities(OutManifest, OutError))
+    {
+        OutManifest = FDiscGolfCourseManifestDefinition();
+        OutSource.Reset();
+        return false;
+    }
     OutSource = TEXT("SOURCE FALLBACK");
-    OutError = ParseError.IsEmpty() ? TEXT("authored manifest missing; using source fallback") : ParseError;
+    OutError = ParseError.IsEmpty()
+        ? (bFileLoaded
+            ? TEXT("authored manifest identity or hole coverage is invalid; using source fallback")
+            : TEXT("authored manifest missing; using source fallback"))
+        : ParseError;
     return true;
 }
 
@@ -873,6 +1497,8 @@ bool DiscGolfCourseDefinition::LoadPineRidgeHole(
     FString ManifestError;
     if (!LoadPineRidgeCourseManifest(Manifest, ManifestSource, ManifestError))
     {
+        OutDefinition = FDiscGolfHoleBlockoutDefinition();
+        OutSource.Reset();
         OutError = ManifestError;
         return false;
     }
@@ -890,14 +1516,38 @@ bool DiscGolfCourseDefinition::LoadPineRidgeHole(
     const FString Path = FPaths::Combine(FPaths::ProjectDir(), Entry->DefinitionFile);
     FString Json;
     FString ParseError;
-    if (FFileHelper::LoadFileToString(Json, *Path) && ParseJson(Json, OutDefinition, ParseError)
+    const bool bFileLoaded = FFileHelper::LoadFileToString(Json, *Path);
+    const bool bParsed = bFileLoaded && ParseJson(Json, OutDefinition, ParseError);
+    const bool bAuthoredDataValid = bParsed
         && OutDefinition.CourseId == Manifest.CourseId
         && OutDefinition.LayoutId == Manifest.LayoutId
-        && OutDefinition.HoleNumber == HoleNumber)
+        && OutDefinition.HoleNumber == HoleNumber;
+    const EDiscGolfAuthoredCourseDataState DataState = !bFileLoaded
+        ? EDiscGolfAuthoredCourseDataState::Missing
+        : (bAuthoredDataValid
+            ? EDiscGolfAuthoredCourseDataState::Valid
+            : EDiscGolfAuthoredCourseDataState::Invalid);
+    const EDiscGolfAuthoredCourseLoadAction LoadAction = ResolveAuthoredCourseLoadAction(
+        DataState,
+        UE_BUILD_SHIPPING != 0);
+    if (LoadAction == EDiscGolfAuthoredCourseLoadAction::UseAuthoredData)
     {
         OutSource = TEXT("AUTHORED JSON");
         OutError.Reset();
         return true;
+    }
+    if (LoadAction == EDiscGolfAuthoredCourseLoadAction::FailClosed)
+    {
+        if (ParseError.IsEmpty() && bFileLoaded)
+        {
+            ParseError = FString::Printf(
+                TEXT("authored hole identity does not match Pine Ridge Championship hole %d"),
+                HoleNumber);
+        }
+        OutDefinition = FDiscGolfHoleBlockoutDefinition();
+        OutSource.Reset();
+        OutError = DescribeAuthoredDataFailure(TEXT("hole"), Path, DataState, ParseError);
+        return false;
     }
 
     switch (HoleNumber)
@@ -909,7 +1559,11 @@ bool DiscGolfCourseDefinition::LoadPineRidgeHole(
     }
     if (!Validate(OutDefinition, OutError)) return false;
     OutSource = TEXT("SOURCE FALLBACK");
-    OutError = ParseError.IsEmpty() ? TEXT("authored hole JSON missing; using source fallback") : ParseError;
+    OutError = ParseError.IsEmpty()
+        ? (bFileLoaded
+            ? TEXT("authored hole identity is invalid; using source fallback")
+            : TEXT("authored hole JSON missing; using source fallback"))
+        : ParseError;
     return true;
 }
 

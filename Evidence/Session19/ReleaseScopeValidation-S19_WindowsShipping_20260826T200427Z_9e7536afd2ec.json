@@ -1,0 +1,51 @@
+{
+  "schema": "DiscGolfTour.Session19ReleaseScopeValidationResult.v1",
+  "schemaVersion": 1,
+  "state": "PASS_AUTHORITY_RELEASE_BLOCKED",
+  "valid": true,
+  "releaseReady": false,
+  "candidateId": "S19_WindowsShipping_20260826T200427Z_9e7536afd2ec",
+  "contract": {
+    "path": "Config/DG_Session19ReleaseScopeContract-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+    "bytes": 74112,
+    "sha256": "28F531D28DD070045D0A2BAFE01E9B388F7CAEB79FF576DC2862BC41148C679A"
+  },
+  "summary": {
+    "session": 19,
+    "candidateId": "S19_WindowsShipping_20260826T200427Z_9e7536afd2ec",
+    "contract": {
+      "path": "Config/DG_Session19ReleaseScopeContract-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+      "bytes": 74112,
+      "sha256": "28F531D28DD070045D0A2BAFE01E9B388F7CAEB79FF576DC2862BC41148C679A"
+    },
+    "contractProfile": "FRESH_CANDIDATE_RUNTIME_JOURNAL_OPERATIONAL_EVIDENCE_V1",
+    "platform": "Windows",
+    "configuration": "Shipping",
+    "holeCount": 3,
+    "strategyCount": 13,
+    "evidenceGateCount": 12,
+    "pendingEvidenceGateCount": 1,
+    "partialEvidenceGateCount": 11,
+    "failClosedEvidenceGateCount": 0,
+    "inheritedBlockerCount": 13,
+    "remainingBlockerCount": 13,
+    "resolvedBlockerCount": 0,
+    "releaseReady": false,
+    "recordCount": 7158,
+    "discoveredIdentityCount": 7158,
+    "classifiedIdentityCount": 0,
+    "unclassifiedIdentityCount": 7158,
+    "auditedIdentityCount": 7158,
+    "authoritativelyAttributedTechnicalOriginCount": 7158,
+    "unresolvedIdentityCount": 0,
+    "unresolvedAnonymousChunkCount": 0,
+    "unresolvedPathIdentityCount": 0,
+    "state": "PASS_EXACT_TECHNICAL_ATTRIBUTION_LEGAL_REVIEW_PENDING",
+    "freshUserDirSelfTestCaseCount": 22,
+    "freshUserDirObservedFileCount": 5,
+    "runtimeOperationalBindingValidated": true,
+    "session10RuntimeOperationalBindingValidated": true,
+    "session12RuntimeOperationalBindingValidated": true
+  },
+  "issues": []
+}

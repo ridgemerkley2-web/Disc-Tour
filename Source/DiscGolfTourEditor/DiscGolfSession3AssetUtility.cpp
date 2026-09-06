@@ -42,10 +42,10 @@ const TCHAR* LocalRefPoseClassPath = TEXT("/Script/AnimGraph.AnimGraphNode_Local
 const TCHAR* SlotClassPath = TEXT("/Script/AnimGraph.AnimGraphNode_Slot");
 const TCHAR* ControlRigNodeClassPath = TEXT("/Script/ControlRigDeveloper.AnimGraphNode_ControlRig");
 const TCHAR* RootClassPath = TEXT("/Script/AnimGraph.AnimGraphNode_Root");
-const TCHAR* PhaseNotifyClassPath = TEXT("/Script/DiscGolfCharacterFramework.AnimNotify_ThrowPhase");
-const TCHAR* ReleaseNotifyClassPath = TEXT("/Script/DiscGolfCharacterFramework.AnimNotify_DiscRelease");
-const TCHAR* FinishNotifyClassPath = TEXT("/Script/DiscGolfCharacterFramework.AnimNotify_ThrowFinished");
-const TCHAR* AnimInstanceParentPath = TEXT("/Script/DiscGolfCharacterFramework.DiscGolfAnimInstance");
+const TCHAR* PhaseNotifyClassPath = TEXT("/Script/DiscGolfRuntimeFoundation.AnimNotify_ThrowPhase");
+const TCHAR* ReleaseNotifyClassPath = TEXT("/Script/DiscGolfRuntimeFoundation.AnimNotify_DiscRelease");
+const TCHAR* FinishNotifyClassPath = TEXT("/Script/DiscGolfRuntimeFoundation.AnimNotify_ThrowFinished");
+const TCHAR* AnimInstanceParentPath = TEXT("/Script/DiscGolfRuntimeFoundation.DiscGolfAnimInstance");
 
 const FName DefaultSlot(TEXT("DefaultSlot"));
 
@@ -680,7 +680,7 @@ bool AuthorMontage(UAnimMontage*& Montage, UAnimSequence* Sequence, USkeleton* S
     UClass* FinishClass = LoadObject<UClass>(nullptr, FinishNotifyClassPath);
     if (!PhaseClass || !ReleaseClass || !FinishClass)
     {
-        Error = TEXT("Installed DiscGolfCharacterFramework notify classes did not load");
+        Error = TEXT("DiscGolfRuntimeFoundation notify classes did not load");
         return false;
     }
 

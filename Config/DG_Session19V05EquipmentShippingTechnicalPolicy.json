@@ -1,0 +1,368 @@
+{
+  "schema": "DiscGolfTour.Session19V05EquipmentShippingTechnicalPolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "policyId": "v05_windows_shipping_equipment_technical_v1",
+  "target": {
+    "platform": "Win64",
+    "configuration": "Shipping",
+    "milestone": "v0.5"
+  },
+  "candidateBinding": {
+    "requireIndependentArchiveCanonicalManifest": true,
+    "requireCandidateVerification": true,
+    "requireCandidateContentReceipt": true,
+    "requireShippingBinaryReceipt": true,
+    "requireFreshUserDirManifest": true,
+    "requireActualContainerInventory": true,
+    "requireActualArchivedExecutableScan": true,
+    "hostPathsMayBeRecorded": false
+  },
+  "requiredArchiveFiles": [
+    "DiscGolfTour.exe",
+    "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+    "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.pak",
+    "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.utoc",
+    "Manifest_UFSFiles_Win64.txt",
+    "Manifest_NonUFSFiles_Win64.txt"
+  ],
+  "catalog": {
+    "authority": "BOUNDED_V05_GENERIC_EQUIPMENT_CATALOG",
+    "molds": [
+      {"id": "Apex", "speed": 12, "glide": 5, "turn": -1.0, "fade": 3.0},
+      {"id": "Vector", "speed": 9, "glide": 5, "turn": -2.0, "fade": 2.0},
+      {"id": "Line", "speed": 7, "glide": 5, "turn": -1.0, "fade": 2.0},
+      {"id": "Compass", "speed": 5, "glide": 5, "turn": 0.0, "fade": 1.0},
+      {"id": "Touch", "speed": 2, "glide": 3, "turn": 0.0, "fade": 1.0}
+    ],
+    "plastics": [
+      {"id": "Base", "turnScale": 1.18, "fadeScale": 0.88, "restitutionScale": 0.72, "frictionScale": 1.18},
+      {"id": "Tour", "turnScale": 1.0, "fadeScale": 1.0, "restitutionScale": 1.0, "frictionScale": 1.0},
+      {"id": "Crystal", "turnScale": 0.84, "fadeScale": 1.12, "restitutionScale": 1.2, "frictionScale": 0.86}
+    ],
+    "baseAero": {
+      "massKg": 0.175,
+      "diameterM": 0.211,
+      "areaM2": 0.03496,
+      "inertiaAxialKgM2": 0.000974,
+      "inertiaPlanarKgM2": 0.000487,
+      "cDa": 0.62,
+      "cM0": 0.0,
+      "cMa": 0.0,
+      "spinDecayPerSec": 0.032,
+      "groundRestitution": 0.16,
+      "groundFriction": 0.46
+    },
+    "derivation": {
+      "speedNorm": "clamp((speed-2)/10,0,1)",
+      "cd0": "lerp(0.135,0.080,speedNorm)",
+      "cLa": "1.72+0.05*glide",
+      "cl0": "0.22+0.018*glide",
+      "highSpeedTurnMomentNm": "max(0,-turn)*0.0035*plastic.turnScale",
+      "lowSpeedFadeMomentNm": "max(0,fade)*0.0025*plastic.fadeScale",
+      "turnStartsAboveMps": "lerp(13.5,20.0,speedNorm)",
+      "fadeStartsBelowMps": "lerp(12.0,17.0,speedNorm)",
+      "groundRestitution": "base.groundRestitution*plastic.restitutionScale",
+      "groundFriction": "base.groundFriction*plastic.frictionScale"
+    },
+    "expectedResolvedVectorSha256": "7201CC14DC8E81773850B1576194B20B0A62FD6E1ECA2D81CB1823709FFED60B",
+    "calibrationRepeatCount": 5,
+    "absoluteTolerance": 1e-9,
+    "anchors": [
+      {
+        "mold": "Apex",
+        "plastic": "Tour",
+        "expected": {
+          "cd0": 0.08,
+          "cLa": 1.97,
+          "cl0": 0.31,
+          "highSpeedTurnMomentNm": 0.0035,
+          "lowSpeedFadeMomentNm": 0.0075,
+          "turnStartsAboveMps": 20.0,
+          "fadeStartsBelowMps": 17.0,
+          "groundRestitution": 0.16,
+          "groundFriction": 0.46
+        }
+      },
+      {
+        "mold": "Vector",
+        "plastic": "Base",
+        "expected": {
+          "cd0": 0.0965,
+          "cLa": 1.97,
+          "cl0": 0.31,
+          "highSpeedTurnMomentNm": 0.00826,
+          "lowSpeedFadeMomentNm": 0.0044,
+          "turnStartsAboveMps": 18.05,
+          "fadeStartsBelowMps": 15.5,
+          "groundRestitution": 0.1152,
+          "groundFriction": 0.5428
+        }
+      },
+      {
+        "mold": "Touch",
+        "plastic": "Crystal",
+        "expected": {
+          "cd0": 0.135,
+          "cLa": 1.87,
+          "cl0": 0.274,
+          "highSpeedTurnMomentNm": 0.0,
+          "lowSpeedFadeMomentNm": 0.0028,
+          "turnStartsAboveMps": 13.5,
+          "fadeStartsBelowMps": 12.0,
+          "groundRestitution": 0.192,
+          "groundFriction": 0.3956
+        }
+      }
+    ],
+    "massCalibration": {
+      "mold": "Apex",
+      "plastic": "Tour",
+      "inputMassGrams": 140.0,
+      "expectedMassKg": 0.14,
+      "expectedMassScale": 0.8,
+      "expectedInertiaAxialKgM2": 0.0007792,
+      "expectedInertiaPlanarKgM2": 0.0003896,
+      "wearInput": 0.9,
+      "wearAffectsPhysics": false,
+      "coefficientFamilyMustRemainUnchanged": true
+    }
+  },
+  "bag": {
+    "bagEquipmentId": "dg_generic_bag_default",
+    "stampId": "dg_generic_default",
+    "capacity": 24,
+    "defaultPlastic": "Tour",
+    "selectedMold": "Apex",
+    "selectedInstanceIndex": 0,
+    "instances": [
+      {"guidWords": [3591438337, 1397052243, 1229934129, 822083585], "mold": "Apex", "massGrams": 175.0},
+      {"guidWords": [3591438338, 1397052243, 1229934129, 822083586], "mold": "Vector", "massGrams": 175.0},
+      {"guidWords": [3591438339, 1397052243, 1229934129, 822083587], "mold": "Line", "massGrams": 175.0},
+      {"guidWords": [3591438340, 1397052243, 1229934129, 822083588], "mold": "Compass", "massGrams": 175.0},
+      {"guidWords": [3591438341, 1397052243, 1229934129, 822083589], "mold": "Touch", "massGrams": 175.0}
+    ]
+  },
+  "candidateContent": {
+    "schema": "DiscGolfTour.Session19CandidateContentAuditReceipt.v1",
+    "passState": "PASS_BOUNDED_STAGED_CONTENT_AUDIT",
+    "requiredExactEquipmentAssets": [
+      "DiscGolfTour/Content/Data/Discs/Molds/DA_Mold_Apex.uasset",
+      "DiscGolfTour/Content/Data/Discs/Molds/DA_Mold_Compass.uasset",
+      "DiscGolfTour/Content/Data/Discs/Molds/DA_Mold_Line.uasset",
+      "DiscGolfTour/Content/Data/Discs/Molds/DA_Mold_Touch.uasset",
+      "DiscGolfTour/Content/Data/Discs/Molds/DA_Mold_Vector.uasset",
+      "DiscGolfTour/Content/Data/Discs/Plastics/DA_Plastic_Base.uasset",
+      "DiscGolfTour/Content/Data/Discs/Plastics/DA_Plastic_Crystal.uasset",
+      "DiscGolfTour/Content/Data/Discs/Plastics/DA_Plastic_Tour.uasset"
+    ],
+    "equipmentAssetPrefixes": [
+      "DiscGolfTour/Content/Data/Discs/Molds/",
+      "DiscGolfTour/Content/Data/Discs/Plastics/"
+    ],
+    "requireExactSet": true,
+    "requireNoIssues": true
+  },
+  "binaryScan": {
+    "caseInsensitive": true,
+    "encodings": ["ascii", "utf-16le"],
+    "requiredMarkers": [
+      "DiscCatalogSubsystem",
+      "DiscBagComponent",
+      "SelectEquipment",
+      "SelectDiscInstance",
+      "ToggleSelectedFavorite",
+      "CyclePlastic",
+      "PracticeMoldId",
+      "PracticePlastic",
+      "dg_generic_bag_default",
+      "dg_generic_default",
+      "PRIMARY ASSETS -",
+      "SOURCE FALLBACK -",
+      "Apex",
+      "Vector",
+      "Line",
+      "Compass",
+      "Touch",
+      "Base",
+      "Tour",
+      "Crystal"
+    ],
+    "forbiddenMarkers": [
+      "DGT_Equipment_Dev_v1"
+    ],
+    "matchMode": "literal-substring"
+  },
+  "sourceTechnicalBindings": [
+    {
+      "path": "Source/DiscGolfTour/DiscGolfTypes.h",
+      "role": "base-aerodynamic-and-ground-calibration-authority",
+      "requiredFragments": [
+        "float MassKg = 0.175f;",
+        "float DiameterM = 0.211f;",
+        "float AreaM2 = 0.03496f;",
+        "float InertiaAxialKgM2 = 0.000974f;",
+        "float InertiaPlanarKgM2 = 0.000487f;",
+        "float CDa = 0.62f;",
+        "float CM0 = 0.0f;",
+        "float CMa = 0.0f;",
+        "float SpinDecayPerSecond = 0.032f;",
+        "float GroundRestitution = 0.16f;",
+        "float GroundFriction = 0.46f;"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscCatalogSubsystem.cpp",
+      "role": "catalog-and-flight-vector-authority",
+      "requiredFragments": [
+        "OutMolds.Add(MakeDisc(TEXT(\"Apex\"), TEXT(\"Apex\"), 12, 5, -1.0f, 3.0f));",
+        "OutMolds.Add(MakeDisc(TEXT(\"Touch\"), TEXT(\"Touch\"), 2, 3, 0.0f, 1.0f));",
+        "Disc.Aero.HighSpeedTurnMomentNm = FMath::Max(0.0f, -Turn) * 0.0035f;",
+        "Disc.Aero.LowSpeedFadeMomentNm = FMath::Max(0.0f, Fade) * 0.0025f;"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscBagComponent.cpp",
+      "role": "bag-identity-selection-atomic-save-authority",
+      "requiredFragments": [
+        "const FName GenericBagId(TEXT(\"dg_generic_bag_default\"));",
+        "Loadout.SelectedDiscInstanceId = Loadout.Discs[0].InstanceId;",
+        "#if DG_RELEASE_V05_SCOPE",
+        "return TEXT(\"DGT_Equipment_Dev_v1\");",
+        "OutError = TEXT(\"Isolated equipment persistence is unavailable in this release build.\");"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscGolfSaveGame.h",
+      "role": "production-profile-schema-authority",
+      "requiredFragments": [
+        "inline constexpr int32 CurrentVersion = 10;",
+        "FName PracticeMoldId = TEXT(\"Apex\");",
+        "EDiscPlastic PracticePlastic = EDiscPlastic::Tour;"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/DiscGolfTourGameInstance.cpp",
+      "role": "production-profile-migration-authority",
+      "requiredFragments": [
+        "if (InOutProfile.SaveSchemaVersion < 5)",
+        "InOutProfile.PracticeMoldId = TEXT(\"Apex\");",
+        "InOutProfile.PracticePlastic = EDiscPlastic::Tour;"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/Tests/DiscEquipmentSession11Tests.cpp",
+      "role": "equipment-identity-calibration-and-atomicity-test-authority",
+      "requiredFragments": [
+        "DiscGolfTour.Session11.Equipment.DefaultLoadoutIsStableAndGeneric",
+        "DiscGolfTour.Session11.Equipment.MassResolutionPreservesParityAndWearBoundary",
+        "DiscGolfTour.Session11.Equipment.SeparateSchemaV1SaveIsAtomic"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/Tests/DiscGolfSaveSchemaTests.cpp",
+      "role": "profile-schema-test-authority",
+      "requiredFragments": [
+        "DiscGolfTour.Persistence.SaveSchema.DefaultVersion",
+        "DiscGolfTour.Persistence.SaveSchema.StaleAndFutureVersionsRejected"
+      ]
+    },
+    {
+      "path": "Source/DiscGolfTour/Tests/DiscGolfMathTests.cpp",
+      "role": "flight-sign-and-stability-test-authority",
+      "requiredFragments": [
+        "DiscGolfTour.Physics.LaunchDirection.PositiveIsUp",
+        "DiscGolfTour.Physics.StabilityMoment.NeutralBand",
+        "DiscGolfTour.Physics.StabilityMoment.TurnFadeOppose"
+      ]
+    }
+  ],
+  "automation": {
+    "repeatLogCount": 2,
+    "minimumSuccessCountPerLog": 255,
+    "requireDistinctLogHashes": true,
+    "requireZeroNonSuccessCompletions": true,
+    "requiredTests": [
+      "DiscGolfTour.Data.Catalog.PrimaryAssetsRegistered",
+      "DiscGolfTour.Data.Catalog.AssetFallbackParity",
+      "DiscGolfTour.Data.Catalog.DuplicateIdsRejected",
+      "DiscGolfTour.Data.Catalog.MissingIdsRejected",
+      "DiscGolfTour.Data.Catalog.InvalidAssetsUseFallback",
+      "DiscGolfTour.Data.Catalog.BagEquipmentSelection",
+      "DiscGolfTour.Session11.Equipment.DefaultLoadoutIsStableAndGeneric",
+      "DiscGolfTour.Session11.Equipment.FavoriteToggleIsInstanceScoped",
+      "DiscGolfTour.Session11.Equipment.LegacySelectionIsAtomic",
+      "DiscGolfTour.Session11.Equipment.LoadoutValidationRejectsInvalidIdentity",
+      "DiscGolfTour.Session11.Equipment.MassResolutionPreservesParityAndWearBoundary",
+      "DiscGolfTour.Session11.Equipment.ResolutionRejectsCatalogMismatch",
+      "DiscGolfTour.Session11.Equipment.SeparateSchemaV1SaveIsAtomic",
+      "DiscGolfTour.Persistence.SaveSchema.DefaultVersion",
+      "DiscGolfTour.Persistence.SaveSchema.CurrentVersionAccepted",
+      "DiscGolfTour.Persistence.SaveSchema.StaleAndFutureVersionsRejected",
+      "DiscGolfTour.Character.Session4.Profile.Schema6Migration",
+      "DiscGolfTour.Character.Session4.Profile.FutureSchemaGuard",
+      "DiscGolfTour.Character.Session4.Profile.LegacyMigrationRegression",
+      "DiscGolfTour.Rules.LieSaveSerialization",
+      "DiscGolfTour.Physics.LaunchDirection.PositiveIsUp",
+      "DiscGolfTour.Physics.StabilityMoment.NeutralBand",
+      "DiscGolfTour.Physics.StabilityMoment.TurnFadeOppose"
+    ]
+  },
+  "saveContract": {
+    "productionProfileSchemaVersion": 10,
+    "productionProfilePath": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+    "selectedMoldField": "PracticeMoldId",
+    "selectedPlasticField": "PracticePlastic",
+    "legacyEquipmentMigrationThreshold": 5,
+    "legacyDefaultMold": "Apex",
+    "legacyDefaultPlastic": "Tour",
+    "isolatedEquipmentSchemaVersion": 1,
+    "isolatedEquipmentPersistenceScope": "DEVELOPMENT_AUTOMATION_ONLY",
+    "shippingIsolatedEquipmentPersistenceAllowed": false,
+    "freshUserDirForbiddenArtifactClass": "DEVELOPMENT_EQUIPMENT_SAVE",
+    "requireProfileObserved": true,
+    "requireZeroUnknownFiles": true,
+    "requireZeroForbiddenArtifacts": true
+  },
+  "throwLabExclusionReceipt": {
+    "schema": "DiscGolfTour.Session19V05CareerAiThrowLabShippingExclusionReceipt.v1",
+    "passState": "PASS_CANDIDATE_BOUND_V05_CAREER_AI_THROW_LAB_EXCLUSION",
+    "requiredTrueAssertions": [
+      "throwLabShippingEntrypointAbsent",
+      "throwLabShippingSaveAbsent",
+      "throwLabModuleSymbolAndContentIdentityAbsent"
+    ],
+    "requireZeroFailures": true,
+    "requireManualPublicLegalClaimsFalse": true
+  },
+  "technicalAssertions": {
+    "exactBoundedCatalogAssetIdentitiesPresent": true,
+    "exactGenericBagIdentityAndSelectionCovered": true,
+    "repeatedFlightPhysicsCalibrationCovered": true,
+    "productionProfileMigrationCovered": true,
+    "isolatedEquipmentAtomicFallbackCoveredInAutomationOnly": true,
+    "isolatedEquipmentShippingPersistenceAbsent": true,
+    "throwLabShippingFeatureAbsentByConsumedReceipt": true
+  },
+  "claimBoundary": {
+    "authority": "CANDIDATE_BOUND_EQUIPMENT_TECHNICAL_EVIDENCE_ONLY",
+    "candidateSemanticInference": "Packaged asset identities, executable markers, implementation bindings, and repeated automation are combined technical evidence; they are not a byte-level proof of every runtime field value or a human play-feel assessment.",
+    "equipmentNameClearance": false,
+    "publicEquipmentNameClaimAllowed": false,
+    "manualPlayFeelApproval": false,
+    "manualGameplayReviewComplete": false,
+    "legalApproval": false,
+    "provenanceApproval": false,
+    "distributionClearance": false,
+    "blockerClosureClaimed": false,
+    "releaseReady": false
+  },
+  "evidenceContract": {
+    "passState": "PASS_CANDIDATE_BOUND_V05_EQUIPMENT_TECHNICAL_EVIDENCE",
+    "failState": "FAIL_CANDIDATE_BOUND_V05_EQUIPMENT_TECHNICAL_EVIDENCE",
+    "writeOnlyWithExplicitOutputArgument": true,
+    "immutableOutput": true,
+    "releaseReady": false,
+    "disclaimer": "This receipt proves only bounded equipment Shipping technical evidence for one immutable candidate. Equipment-name clearance, public claims, manual play-feel/gameplay approval, legal/provenance/distribution approval, blocker closure, and release readiness remain pending."
+  }
+}

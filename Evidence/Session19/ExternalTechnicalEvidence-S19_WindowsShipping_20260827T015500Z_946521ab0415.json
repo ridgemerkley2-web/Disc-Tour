@@ -1,0 +1,27 @@
+{
+  "candidateId": "S19_WindowsShipping_20260827T015500Z_946521ab0415",
+  "claimBoundary": {
+    "accessibilityApproval": false,
+    "humanPlayFeelApproval": false,
+    "legalApproval": false,
+    "manualGameplayAcceptance": false,
+    "manualReviewedUtc": null,
+    "manualReviewerId": null,
+    "releaseApproval": false,
+    "releaseReady": false,
+    "technicalArtifactValidationOnly": true,
+    "visualProductApproval": false
+  },
+  "counts": {
+    "presentMonRows": 0,
+    "screenshots": 10
+  },
+  "failures": [],
+  "manifest": {
+    "sha256": "C2972CB26066FF22EC03226E76624F27298B9988C1EB6F41939BA479BEDF2CBC"
+  },
+  "schema": "DiscGolfTour.Session19ExternalTechnicalEvidenceValidation.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "state": "PASS_CANDIDATE_BOUND_EXTERNAL_TECHNICAL_EVIDENCE"
+}

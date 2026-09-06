@@ -74,6 +74,7 @@ struct DISCGOLFTOUR_API FDiscGolfFullCustomizationResolution
  */
 namespace DiscGolfFullCharacterRuntime
 {
+#if DG_WITH_DEVELOPMENT_CONTENT
     inline constexpr const TCHAR* CosmeticCatalogObjectPath =
         TEXT("/Game/DiscGolf/Characters/Customization/Data/DA_DG_CosmeticCatalog.DA_DG_CosmeticCatalog");
     inline constexpr const TCHAR* HeadMeshObjectPath =
@@ -82,6 +83,12 @@ namespace DiscGolfFullCharacterRuntime
         TEXT("/Game/DiscGolf/Materials/CharacterCustomization/M_DG_HeadProxy.M_DG_HeadProxy");
     inline constexpr const TCHAR* HairMaterialObjectPath =
         TEXT("/Game/DiscGolf/Materials/CharacterCustomization/M_DG_HairProxy.M_DG_HairProxy");
+#else
+    inline constexpr const TCHAR* CosmeticCatalogObjectPath = TEXT("");
+    inline constexpr const TCHAR* HeadMeshObjectPath = TEXT("");
+    inline constexpr const TCHAR* HeadMaterialObjectPath = TEXT("");
+    inline constexpr const TCHAR* HairMaterialObjectPath = TEXT("");
+#endif
 
     inline constexpr int32 MaximumDisplayNameLength = 32;
 
@@ -90,6 +97,14 @@ namespace DiscGolfFullCharacterRuntime
     DISCGOLFTOUR_API FText GetFaceMorphDisplayName(FName MorphKey);
 
     DISCGOLFTOUR_API FDGFullCharacterCustomization MakeDefaultCustomization();
+    /**
+     * Creates a new-install profile without changing the stable schema default
+     * used by legacy saves and test fixtures. Release builds may prefer the
+     * retained, fail-closed MetaHuman presentation while all existing profiles
+     * preserve their explicit backend selection.
+     */
+    DISCGOLFTOUR_API FDGFullCharacterCustomization MakeFreshInstallCustomization(
+        bool bPreferRetainedMetaHuman);
     DISCGOLFTOUR_API void NormalizeForPersistence(
         FDGFullCharacterCustomization& InOutCharacter);
     DISCGOLFTOUR_API bool AreCustomizationsEquivalent(

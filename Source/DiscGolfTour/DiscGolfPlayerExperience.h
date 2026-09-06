@@ -14,6 +14,24 @@ enum class EDiscGolfUnitSystem : uint8
 };
 
 UENUM(BlueprintType)
+enum class EDiscGolfColorVisionMode : uint8
+{
+    None,
+    Protanopia,
+    Deuteranopia,
+    Tritanopia
+};
+
+UENUM(BlueprintType)
+enum class EDiscGolfTracerColorPreset : uint8
+{
+    SignalTeal,
+    AccessibleLime,
+    TournamentAmber,
+    PaperWhite
+};
+
+UENUM(BlueprintType)
 enum class EDiscGolfLandingClassification : uint8
 {
     Fairway,
@@ -26,7 +44,7 @@ enum class EDiscGolfLandingClassification : uint8
 
 /** Persistent, asset-independent settings hooks for the playable vertical slice. */
 USTRUCT(BlueprintType)
-struct FDiscGolfPlayerSettings
+struct DISCGOLFTOUR_API FDiscGolfPlayerSettings
 {
     GENERATED_BODY()
 
@@ -39,10 +57,17 @@ struct FDiscGolfPlayerSettings
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) float MasterVolume = 1.0f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) float MusicVolume = 0.75f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) float EffectsVolume = 1.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) float AmbienceVolume = 0.85f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) float VoiceVolume = 1.0f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) float MouseSensitivity = 1.0f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) float ControllerSensitivity = 1.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) float ControllerDeadZone = 0.25f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) bool bInvertY = false;
+    /** Controller layout only; character throwing handedness remains independent. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) bool bSouthpawController = false;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) float CameraShakeStrength = 1.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) bool bAutoFollowDisc = true;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) float ReplaySpeed = 1.0f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) bool bHudVisible = true;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) bool bBasketMarkerVisible = true;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) EDiscGolfUnitSystem Units = EDiscGolfUnitSystem::Imperial;
@@ -50,7 +75,15 @@ struct FDiscGolfPlayerSettings
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) float TextScale = 1.0f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) bool bReducedMotion = false;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) bool bHighContrastBasketMarker = false;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) bool bHighContrastUI = false;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) bool bSubtitles = true;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) EDiscGolfColorVisionMode ColorVisionMode = EDiscGolfColorVisionMode::None;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) EDiscGolfTracerColorPreset TracerColorPreset = EDiscGolfTracerColorPreset::SignalTeal;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) bool bAimingIndicatorVisible = true;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) float AimAssist01 = 0.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) float TimingWindowScale = 1.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) bool bShotShapeGuide = true;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) bool bOptionalFlightPreview = false;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame) bool bHoldForTiming = false;
 
     void Normalize();
@@ -126,9 +159,11 @@ namespace DiscGolfPlayerExperience
         const FDiscGolfPlayerSettings& Settings,
         bool bBasketDirectlyVisible,
         float DistanceMeters);
+    DISCGOLFTOUR_API FLinearColor ResolveTracerColor(EDiscGolfTracerColorPreset Preset);
+    DISCGOLFTOUR_API FString ColorVisionModeName(EDiscGolfColorVisionMode Mode);
+    DISCGOLFTOUR_API FString TracerColorPresetName(EDiscGolfTracerColorPreset Preset);
     DISCGOLFTOUR_API void BuildBoundedReplaySamples(
         const TArray<FDiscTrajectorySample>& Source,
         TArray<FDiscTrajectorySample>& OutSamples,
         int32 MaxSamples = 1800);
 }
-

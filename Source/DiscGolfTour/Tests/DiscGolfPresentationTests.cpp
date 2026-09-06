@@ -1,13 +1,14 @@
 #if WITH_DEV_AUTOMATION_TESTS
 
 #include "Misc/AutomationTest.h"
+#include "../DevCourseBootstrap.h"
 #include "../DiscGolfPresentationMath.h"
 #include "../DiscGolfPerformanceBudget.h"
 #include "../DiscGolferPresentationComponent.h"
 #include "../DiscGolfFoliagePresentationActor.h"
 #include "../DiscGolfTerrainPresentationActor.h"
 #include "../DiscGolfWaterPresentationActor.h"
-#include "../DiscGolfLevelDesignReviewActor.h"
+#include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/Texture2D.h"
 #include "Materials/MaterialInterface.h"
@@ -254,14 +255,42 @@ bool FDiscGolfPineRidgeEnvironmentAssetsTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("Foliage components can never change competitive collision"),
         Defaults && Defaults->IsCollisionInvariant());
     const ADiscGolfTerrainPresentationActor* TerrainDefaults = GetDefault<ADiscGolfTerrainPresentationActor>();
-    TestTrue(TEXT("Terrain relief can never change competitive collision"),
+    TestTrue(TEXT("Terrain base collision is deterministic and detail overlays remain non-colliding"),
         TerrainDefaults && TerrainDefaults->IsCollisionInvariant());
     const ADiscGolfWaterPresentationActor* WaterDefaults = GetDefault<ADiscGolfWaterPresentationActor>();
     TestTrue(TEXT("Water presentation can never change competitive collision"),
         WaterDefaults && WaterDefaults->IsCollisionInvariant());
-    const ADiscGolfLevelDesignReviewActor* ReviewDefaults = GetDefault<ADiscGolfLevelDesignReviewActor>();
-    TestTrue(TEXT("Level-design review can never change competitive collision"),
-        ReviewDefaults && ReviewDefaults->IsCollisionInvariant());
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDiscGolfPersistentSemanticProxyCollisionTest,
+    "DiscGolfTour.Presentation.PersistentSemanticProxyCollisionContract",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDiscGolfPersistentSemanticProxyCollisionTest::RunTest(
+    const FString& Parameters)
+{
+    UStaticMeshComponent* Proxy = NewObject<UStaticMeshComponent>();
+    Proxy->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    Proxy->SetCollisionObjectType(ECC_WorldStatic);
+    Proxy->SetCollisionResponseToAllChannels(ECR_Block);
+
+    DiscGolfCourseSurfaceProxy::ConfigureHiddenContinuousGround(Proxy);
+
+    TestTrue(TEXT("Continuous-ground semantic proxy is hidden"),
+        Proxy->bHiddenInGame);
+    TestEqual(TEXT("Disc flight ignores the hidden flat proxy"),
+        Proxy->GetCollisionResponseToChannel(ECC_WorldDynamic), ECR_Ignore);
+    TestEqual(TEXT("Pawn placement ignores the hidden flat proxy"),
+        Proxy->GetCollisionResponseToChannel(ECC_Pawn), ECR_Ignore);
+    TestEqual(TEXT("Spring-arm camera ignores the hidden flat proxy"),
+        Proxy->GetCollisionResponseToChannel(ECC_Camera), ECR_Ignore);
+    TestEqual(TEXT("Semantic lie traces still hit the hidden proxy"),
+        Proxy->GetCollisionResponseToChannel(ECC_Visibility), ECR_Block);
+    TestEqual(TEXT("The proxy remains query-enabled for semantic traces"),
+        Proxy->GetCollisionEnabled(), ECollisionEnabled::QueryAndPhysics);
+    TestEqual(TEXT("The proxy remains world-static semantic authority"),
+        Proxy->GetCollisionObjectType(), ECC_WorldStatic);
     return true;
 }
 

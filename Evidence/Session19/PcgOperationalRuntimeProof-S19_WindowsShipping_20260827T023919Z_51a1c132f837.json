@@ -1,0 +1,121 @@
+{
+  "schema": "DiscGolfTour.Session19PcgOperationalRuntimeProofReceipt.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "candidateId": "S19_WindowsShipping_20260827T023919Z_51a1c132f837",
+  "verifiedUtc": "2026-08-27T04:06:32.708071Z",
+  "state": "PASS_CANDIDATE_BOUND_AUTHORED_JSON_OPERATIONAL_RUNTIME_TECHNICAL_PROOF",
+  "authority": "CANDIDATE_BOUND_TECHNICAL_INFERENCE_NOT_CODE_TO_BINARY_ATTESTATION_OR_RELEASE_APPROVAL",
+  "strategyReconciliation": {
+    "runtimeClosureRetired": true,
+    "shippingStrategy": "SHIP_EXACT_AUTHORED_JSON_TREE_OUTPUT_AND_KEEP_PCG_AUTHORING_CODE_AND_GRAPH_OUT_OF_SHIPPING",
+    "shippingSeparationStrategy": "SHIP_EXACT_AUTHORED_JSON_44_TREE_RUNTIME_OUTPUT_AND_EXCLUDE_ALL_PCG_AUTHORING_CODE_AND_GRAPH_CONTENT",
+    "bakeSaveReopenDisposition": "NOT_APPLICABLE_TO_AUTHORED_JSON_EDITOR_ONLY_PCG_SHIPPING_STRATEGY",
+    "bakeSaveReopenApplicable": false,
+    "bakeSaveReopenPending": false,
+    "bakeSaveReopenProven": false
+  },
+  "sourceClosureAndLoader": {
+    "preBuildClosureSha256": "6A98727318AEE21E455ADD57AC2FAA45B5071A32C6FE9FB6EC66310FC224F24C",
+    "postBuildClosureSha256": "6A98727318AEE21E455ADD57AC2FAA45B5071A32C6FE9FB6EC66310FC224F24C",
+    "prePostMatch": true,
+    "failClosedShippingLoaderSourceIdentity": true,
+    "shippingFallbackAllowed": false,
+    "authoredDataLoadPolicyAutomationPass": true
+  },
+  "cleanShippingBuild": {
+    "clean": true,
+    "iterativeCook": false,
+    "uatExitCode": 0,
+    "verificationMode": "DIRECT_BUILD_PASS",
+    "archiveVerified": true
+  },
+  "archiveAuthoredJson": {
+    "fileCount": 31,
+    "bytes": 1246026263,
+    "canonicalManifestSha256": "5F8BB2E5885358CA3CBAD310AC0A4EC024196B4E80811AE8E748685E4DB50231",
+    "shippingExecutable": {
+      "path": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+      "bytes": 162632192,
+      "sha256": "9A7AB59B8B055335D249F4C7537EF047F6AADB687DEE20BD6D427C33CECADEF9"
+    },
+    "nonUfsManifest": {
+      "path": "Manifest_NonUFSFiles_Win64.txt",
+      "bytes": 1809,
+      "sha256": "A91F0660207BB6A6CA95DA93B8EB92311932CD7650A8017B961C1F3763650AE1"
+    },
+    "authoredJsonFileCount": 4,
+    "allExactSourceMatches": true,
+    "allNonUfsExactlyOnce": true,
+    "allUfsAbsent": true,
+    "combinedTreePayload": {
+      "treeCount": 44,
+      "bytes": 2982,
+      "sha256": "98D9B1F10A683D1C90EC25F766A3224B00AC550F9C379F2051535F9B82638BF6"
+    }
+  },
+  "shippingPcgAbsence": {
+    "freshShippingCookAbsenceProven": true,
+    "projectPcgGraphEntryCount": 0,
+    "pcgModuleEntryCount": 0,
+    "archivePcgModuleFileCount": 0,
+    "assetRegistryProjectPcgGraphCount": 0,
+    "serializedProjectPcgMarkerFileCount": 0,
+    "shippingBinaryProjectPcgMarkerFileCount": 0
+  },
+  "operationalRuntime": {
+    "externalRunToken": "S19_WindowsShipping_20260827T023919Z_51a1c132f837_de633085-9a16-4b8d-ae18-e226c48735d9",
+    "userDirToken": "de633085-9a16-4b8d-ae18-e226c48735d9",
+    "launchRecordSha256": "B49509A4A6EA40ABF5D324340AC480FACD6E8038CE900EECC8011FEDBCA01721",
+    "technicalEvidenceManifestSha256": "F059B6A860C85BE80172D2ADA808D867FB0F3BF4685C3D780F46217082D1D35E",
+    "runtimeJournal": {
+      "schema": "DiscGolfTour.Session19ThreeHoleRuntimeJournal.v1",
+      "bytes": 3231,
+      "sha256": "3A88BC7D343BCD21535E2336BC1AF53467AACBAFA357EA57ECB120AE0F3876D6",
+      "captureNonce": "1bfc3241-8290-4976-b234-4f13fd0087b0",
+      "roundId": "d90adf9a-4e65-467a-ae4d-f884a6960fe6",
+      "eventCount": 12,
+      "firstSequence": 1,
+      "lastSequence": 12,
+      "completedHoles": 3,
+      "totalHoles": 3,
+      "runtimeOperationalBindingValidated": true
+    },
+    "singleRoundProven": true,
+    "threeHoleCompletionObserved": true
+  },
+  "technicalConclusion": {
+    "boundedOperationalRuntimeAuthoredJsonSelectionProven": true,
+    "reasoningBoundary": "Exact source closure and fail-closed Shipping loader policy, clean direct build, archived authored JSON, Shipping PCG absence, and one completed game-emitted three-hole journal are mutually candidate/hash-bound.",
+    "cryptographicCodeToBinaryAttestation": false
+  },
+  "claimBoundary": {
+    "boundedOperationalRuntimeAuthoredJsonSelectionProven": true,
+    "cryptographicCodeToBinaryAttestation": false,
+    "unrealPcgBakeSaveReopenApplicable": false,
+    "unrealPcgBakeSaveReopenProven": false,
+    "visualApproval": false,
+    "collisionApproval": false,
+    "performanceAcceptance": false,
+    "soakAcceptance": false,
+    "manualGameplayAcceptance": false,
+    "humanPlayFeelApproval": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "ownerApproval": false,
+    "releaseApproval": false,
+    "session13BlockerClosed": false,
+    "releaseReady": false
+  },
+  "remainingEvidence": [
+    "THREE_HOLE_COLLISION_AND_VISUAL_PRODUCT_APPROVAL",
+    "QUANTITATIVE_PERFORMANCE_PROFILE_AND_THERMAL_SOAK_ACCEPTANCE",
+    "HUMAN_GAMEPLAY_AND_PLAY_FEEL_APPROVAL",
+    "PROVENANCE_LEGAL_DISTRIBUTION_AND_OWNER_APPROVAL",
+    "RELEASE_APPROVAL"
+  ],
+  "session13BlockerClosed": false,
+  "releaseReady": false,
+  "receiptPath": "Evidence/Session19/PcgOperationalRuntimeProof-S19_WindowsShipping_20260827T023919Z_51a1c132f837.json"
+}

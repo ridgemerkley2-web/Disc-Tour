@@ -1,6 +1,7 @@
 #include "DiscCatalogSubsystem.h"
 
 #include "DiscEquipmentDataAssets.h"
+#include "DiscGolfMath.h"
 #include "DiscGolfTour.h"
 #include "Engine/AssetManager.h"
 
@@ -48,6 +49,16 @@ FDiscPlasticDefinition MakePlastic(
 bool IsFinitePositive(float Value)
 {
     return FMath::IsFinite(Value) && Value > 0.0f;
+}
+
+void ApplyPlasticModifiers(
+    const FDiscPlasticDefinition& Plastic,
+    FDiscAeroProfile& InOutAero)
+{
+    InOutAero.HighSpeedTurnMomentNm *= Plastic.HighSpeedTurnMomentScale;
+    InOutAero.LowSpeedFadeMomentNm *= Plastic.LowSpeedFadeMomentScale;
+    InOutAero.GroundRestitution *= Plastic.GroundRestitutionScale;
+    InOutAero.GroundFriction *= Plastic.GroundFrictionScale;
 }
 }
 
@@ -137,18 +148,29 @@ bool UDiscCatalogSubsystem::ValidateDefinitions(
         }
         MoldIds.Add(Mold.MoldId);
 
-        const FDiscAeroProfile& Aero = Mold.Aero;
         if (Mold.DisplayName.IsEmpty() || Mold.Speed < 1 || Mold.Speed > 15
-            || Mold.Glide < 1 || Mold.Glide > 7 || !FMath::IsFinite(Mold.Turn) || !FMath::IsFinite(Mold.Fade)
-            || !IsFinitePositive(Aero.MassKg) || !IsFinitePositive(Aero.DiameterM)
-            || !IsFinitePositive(Aero.AreaM2) || !IsFinitePositive(Aero.InertiaAxialKgM2)
-            || !IsFinitePositive(Aero.InertiaPlanarKgM2) || !FMath::IsFinite(Aero.CL0)
-            || !FMath::IsFinite(Aero.CLa) || !IsFinitePositive(Aero.CD0) || !IsFinitePositive(Aero.CDa)
-            || !FMath::IsFinite(Aero.HighSpeedTurnMomentNm) || !FMath::IsFinite(Aero.LowSpeedFadeMomentNm)
-            || !IsFinitePositive(Aero.TurnStartsAboveMps) || !IsFinitePositive(Aero.FadeStartsBelowMps)
-            || !IsFinitePositive(Aero.GroundRestitution) || !IsFinitePositive(Aero.GroundFriction))
+            || Mold.Glide < 1 || Mold.Glide > 7
+            || !FMath::IsFinite(Mold.Turn) || !FMath::IsFinite(Mold.Fade))
         {
             OutError = FString::Printf(TEXT("Mold %s has incomplete or non-finite calibration data"),
+                *Mold.MoldId.ToString());
+            return false;
+        }
+
+        FString AeroError;
+        if (!DiscGolfMath::IsDiscAeroProfileValid(Mold.Aero, &AeroError))
+        {
+            OutError = FString::Printf(TEXT("Mold %s has invalid %s"),
+                *Mold.MoldId.ToString(), *AeroError);
+            return false;
+        }
+        const float MoldMassGrams = Mold.Aero.MassKg * 1000.0f;
+        if (!FMath::IsFinite(MoldMassGrams)
+            || MoldMassGrams < DiscGolfMath::ResolvedDiscMinimumMassGrams
+            || MoldMassGrams > DiscGolfMath::ResolvedDiscMaximumMassGrams)
+        {
+            OutError = FString::Printf(
+                TEXT("Mold %s Aero.MassKg must resolve to [130, 200] grams"),
                 *Mold.MoldId.ToString());
             return false;
         }
@@ -173,26 +195,63 @@ bool UDiscCatalogSubsystem::ValidateDefinitions(
             OutError = FString::Printf(TEXT("Duplicate plastic enum mapping for %s"), *Plastic.PlasticId.ToString());
             return false;
         }
+        switch (Plastic.Plastic)
+        {
+            case EDiscPlastic::Base:
+            case EDiscPlastic::Tour:
+            case EDiscPlastic::Crystal:
+                break;
+            default:
+                OutError = FString::Printf(TEXT("Plastic %s has an unknown enum mapping"),
+                    *Plastic.PlasticId.ToString());
+                return false;
+        }
         PlasticIds.Add(Plastic.PlasticId);
         PlasticTypes.Add(Plastic.Plastic);
 
         if (!IsFinitePositive(Plastic.HighSpeedTurnMomentScale)
             || !IsFinitePositive(Plastic.LowSpeedFadeMomentScale)
             || !IsFinitePositive(Plastic.GroundRestitutionScale)
-            || !IsFinitePositive(Plastic.GroundFrictionScale))
+            || !IsFinitePositive(Plastic.GroundFrictionScale)
+            || Plastic.HighSpeedTurnMomentScale > 10.0f
+            || Plastic.LowSpeedFadeMomentScale > 10.0f
+            || Plastic.GroundRestitutionScale > 10.0f
+            || Plastic.GroundFrictionScale > 10.0f)
         {
-            OutError = FString::Printf(TEXT("Plastic %s has incomplete or non-positive modifiers"),
+            OutError = FString::Printf(TEXT("Plastic %s has invalid modifiers"),
                 *Plastic.PlasticId.ToString());
             return false;
         }
     }
 
-    if (!PlasticTypes.Contains(EDiscPlastic::Base)
+    if (PlasticTypes.Num() != 3
+        || !PlasticTypes.Contains(EDiscPlastic::Base)
         || !PlasticTypes.Contains(EDiscPlastic::Tour)
         || !PlasticTypes.Contains(EDiscPlastic::Crystal))
     {
         OutError = TEXT("Plastic catalog must define Base, Tour, and Crystal exactly once");
         return false;
+    }
+
+    // A catalog is selected atomically, so every mold/plastic combination must
+    // remain valid after modifiers. This also catches finite multiplication
+    // overflow before a corrupt Primary Asset catalog can become active.
+    for (const FDiscMoldDefinition& Mold : Molds)
+    {
+        for (const FDiscPlasticDefinition& Plastic : Plastics)
+        {
+            FDiscAeroProfile ResolvedAero = Mold.Aero;
+            ApplyPlasticModifiers(Plastic, ResolvedAero);
+            FString ResolvedAeroError;
+            if (!DiscGolfMath::IsDiscAeroProfileValid(ResolvedAero, &ResolvedAeroError))
+            {
+                OutError = FString::Printf(
+                    TEXT("Mold %s with plastic %s resolves invalid %s"),
+                    *Mold.MoldId.ToString(), *Plastic.PlasticId.ToString(),
+                    *ResolvedAeroError);
+                return false;
+            }
+        }
     }
 
     OutError.Reset();
@@ -207,6 +266,12 @@ bool UDiscCatalogSubsystem::ResolveFromDefinitions(
     FResolvedDiscDefinition& OutDisc)
 {
     OutDisc = FResolvedDiscDefinition();
+    FString DefinitionError;
+    if (!ValidateDefinitions(Molds, Plastics, DefinitionError))
+    {
+        return false;
+    }
+
     const FDiscMoldDefinition* FoundMold = Molds.FindByPredicate([MoldId](const FDiscMoldDefinition& Entry)
     {
         return Entry.MoldId == MoldId;
@@ -217,18 +282,25 @@ bool UDiscCatalogSubsystem::ResolveFromDefinitions(
     });
     if (!FoundMold || !FoundPlastic) return false;
 
-    OutDisc.MoldId = FoundMold->MoldId;
-    OutDisc.DisplayName = FoundMold->DisplayName;
-    OutDisc.Speed = FoundMold->Speed;
-    OutDisc.Glide = FoundMold->Glide;
-    OutDisc.Turn = FoundMold->Turn;
-    OutDisc.Fade = FoundMold->Fade;
-    OutDisc.Plastic = Plastic;
-    OutDisc.Aero = FoundMold->Aero;
-    OutDisc.Aero.HighSpeedTurnMomentNm *= FoundPlastic->HighSpeedTurnMomentScale;
-    OutDisc.Aero.LowSpeedFadeMomentNm *= FoundPlastic->LowSpeedFadeMomentScale;
-    OutDisc.Aero.GroundRestitution *= FoundPlastic->GroundRestitutionScale;
-    OutDisc.Aero.GroundFriction *= FoundPlastic->GroundFrictionScale;
+    FResolvedDiscDefinition Candidate;
+    Candidate.MoldId = FoundMold->MoldId;
+    Candidate.DisplayName = FoundMold->DisplayName;
+    Candidate.Speed = FoundMold->Speed;
+    Candidate.Glide = FoundMold->Glide;
+    Candidate.Turn = FoundMold->Turn;
+    Candidate.Fade = FoundMold->Fade;
+    Candidate.Plastic = Plastic;
+    Candidate.Aero = FoundMold->Aero;
+    ApplyPlasticModifiers(*FoundPlastic, Candidate.Aero);
+    Candidate.DiscMassGrams = Candidate.Aero.MassKg * 1000.0f;
+
+    FString ResolvedError;
+    if (!DiscGolfMath::IsResolvedDiscDefinitionValid(Candidate, &ResolvedError))
+    {
+        return false;
+    }
+
+    OutDisc = MoveTemp(Candidate);
     return true;
 }
 

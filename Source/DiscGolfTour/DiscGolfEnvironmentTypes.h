@@ -5,7 +5,6 @@
 #include "Engine/StaticMesh.h"
 #include "DiscGolfEnvironmentTypes.generated.h"
 
-class UPCGGraphInterface;
 class UMaterialInterface;
 class UMaterialParameterCollection;
 

@@ -1,0 +1,52 @@
+{
+  "schema": "DiscGolfTour.Session19AuthenticIngestReceipt.v1",
+  "candidate_revision": "v008",
+  "source_identity": {
+    "source_id": "REPLACE_WITH_STABLE_SOURCE_ID",
+    "take_id": "REPLACE_WITH_TAKE_ID",
+    "performer_name": "REPLACE_WITH_LEGAL_PERFORMER_NAME",
+    "capture_date": "YYYY-MM-DD",
+    "source_file": {"path": "REPLACE", "bytes": 0, "sha256": "REPLACE_WITH_UPPERCASE_SHA256"}
+  },
+  "source_media": {
+    "codec": "REPLACE",
+    "width_pixels": 0,
+    "height_pixels": 0,
+    "frame_rate_fps": 0,
+    "frame_count": 0,
+    "time_base": "1/1",
+    "duration_seconds": 0,
+    "constant_frame_rate": false
+  },
+  "ingested_asset": [
+    {"asset_id": "REPLACE", "role": "CaptureData", "file": {"path": "REPLACE", "bytes": 0, "sha256": "REPLACE_WITH_UPPERCASE_SHA256"}, "derived_from_source_sha256": "REPLACE_WITH_SOURCE_SHA256", "import_tool": "Live Link Hub Capture Manager", "import_settings_id": "REPLACE"},
+    {"asset_id": "REPLACE", "role": "ImageSequence", "file": {"path": "REPLACE", "bytes": 0, "sha256": "REPLACE_WITH_UPPERCASE_SHA256"}, "derived_from_source_sha256": "REPLACE_WITH_SOURCE_SHA256", "import_tool": "Live Link Hub Capture Manager", "import_settings_id": "REPLACE"},
+    {"asset_id": "REPLACE", "role": "SoundWave", "file": {"path": "REPLACE", "bytes": 0, "sha256": "REPLACE_WITH_UPPERCASE_SHA256"}, "derived_from_source_sha256": "REPLACE_WITH_SOURCE_SHA256", "import_tool": "Live Link Hub Capture Manager", "import_settings_id": "REPLACE"}
+  ],
+  "rights": {
+    "ownership_or_license": "REPLACE_WITH_EXPLICIT_GRANT",
+    "derivative_animation_allowed": false,
+    "game_distribution_allowed": false,
+    "performer_release_verified": false,
+    "evidence_file": {"path": "REPLACE", "bytes": 0, "sha256": "REPLACE_WITH_UPPERCASE_SHA256"}
+  },
+  "solve": {
+    "completed": false,
+    "solver": "MetaHuman Animator",
+    "solver_version": "REPLACE",
+    "settings_id": "REPLACE",
+    "output_file": {"path": "REPLACE", "bytes": 0, "sha256": "REPLACE_WITH_UPPERCASE_SHA256"},
+    "source_sha256": "REPLACE_WITH_SOURCE_SHA256",
+    "frame_count": 0,
+    "time_base": "1/1",
+    "quality_review_passed": false,
+    "reviewer": "REPLACE",
+    "receipt_file": {"path": "REPLACE", "bytes": 0, "sha256": "REPLACE_WITH_UPPERCASE_SHA256"}
+  },
+  "approvals": {
+    "rights_reviewer": "REPLACE",
+    "technical_reviewer": "REPLACE",
+    "approved_for_candidate_authoring": false
+  },
+  "status": "BLOCKED_PENDING_RIGHTS_AND_SOLVE"
+}

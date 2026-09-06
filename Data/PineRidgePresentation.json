@@ -40,17 +40,17 @@
   ],
   "holes": [
     {
-      "holeNumber": 1, "terrainStyleId": "OpeningPines", "forestReferenceId": "BrewsterRidgeTreeLine",
+      "holeNumber": 1, "terrainStyleId": "OpeningPines", "forestReferenceId": "OpeningBroadTreeLine",
       "foliageSeed": 1101, "canopyDensityScale": 1.15, "forestDepthCm": 4200,
       "corridorBufferCm": 610, "teeClearingRadiusCm": 1067, "greenClearingRadiusCm": 1067
     },
     {
-      "holeNumber": 2, "terrainStyleId": "NeedleCorridor", "forestReferenceId": "NorthwoodBlackCompression",
+      "holeNumber": 2, "terrainStyleId": "NeedleCorridor", "forestReferenceId": "NeedleCanopyCompression",
       "foliageSeed": 2202, "canopyDensityScale": 1.40, "forestDepthCm": 4800,
       "corridorBufferCm": 300, "teeClearingRadiusCm": 1100, "greenClearingRadiusCm": 1500
     },
     {
-      "holeNumber": 3, "terrainStyleId": "GalleryLake", "forestReferenceId": "IdlewildLakeFrame",
+      "holeNumber": 3, "terrainStyleId": "GalleryLake", "forestReferenceId": "GalleryLakeFrame",
       "foliageSeed": 3303, "canopyDensityScale": 1.25, "forestDepthCm": 4500,
       "corridorBufferCm": 650, "teeClearingRadiusCm": 1500, "greenClearingRadiusCm": 2200
     }

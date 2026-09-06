@@ -1,0 +1,20 @@
+{
+  "schema": "DiscGolfTour.V008TelemetryExtractionContract.v1",
+  "asset_path": "/Game/DiscGolf/Animation/Authentic/v008/Diagnostic/Retargeted/AS_DG_RHBH_IMG2396_v008_DIAGNOSTIC_DGMaster_NORMALIZED",
+  "sample_rate_hz": 60,
+  "throw_axes_world": {"target_forward": [1.0, 0.0, 0.0], "target_lateral": [0.0, 1.0, 0.0]},
+  "ground_z_cm": 0.0,
+  "phases": {"reachback": 0, "plant": 0, "pocket": 0, "release": 0, "followthrough": 0, "recovery": 0, "settle": 0},
+  "required_sockets": {
+    "DG_HeelContact_L": "foot_l", "DG_ToeContact_L": "ball_l",
+    "DG_HeelContact_R": "foot_r", "DG_ToeContact_R": "ball_r"
+  },
+  "required_curves": ["DG_COM_X_CM", "DG_COM_Y_CM", "DG_COM_Z_CM", "DG_SupportPolygonMarginCm"],
+  "review": {
+    "status": "TEMPLATE_NOT_REVIEWED",
+    "reviewer": "UNASSIGNED",
+    "reviewed_at_utc": null,
+    "phase_basis": "UNMEASURED"
+  },
+  "status": "TEMPLATE_REQUIRES_MEASURED_PHASES_AXES_GROUND_AUTHORED_CONTACT_CHANNELS_AND_NAMED_REVIEW"
+}

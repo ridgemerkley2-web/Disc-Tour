@@ -80,6 +80,8 @@ struct FDiscTrajectorySummary
     UPROPERTY(BlueprintReadOnly) FString CapturedUtc;
     UPROPERTY(BlueprintReadOnly) FName PresetId = NAME_None;
     UPROPERTY(BlueprintReadOnly) int32 RenderFps = 0;
+    UPROPERTY(BlueprintReadOnly) EDGHandedness Handedness = EDGHandedness::Right;
+    UPROPERTY(BlueprintReadOnly) float WindPhaseOriginSeconds = 0.0f;
     UPROPERTY(BlueprintReadOnly) int32 SampleCount = 0;
     UPROPERTY(BlueprintReadOnly) int32 GroundTransitionCount = 0;
     UPROPERTY(BlueprintReadOnly) float DurationSeconds = 0.0f;

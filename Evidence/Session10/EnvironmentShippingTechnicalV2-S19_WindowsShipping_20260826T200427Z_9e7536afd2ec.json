@@ -1,0 +1,343 @@
+{
+  "schema": "DiscGolfTour.Session10EnvironmentShippingTechnicalEvidence.v4",
+  "schemaVersion": 4,
+  "session": 10,
+  "milestone": "v0.5",
+  "candidateId": "S19_WindowsShipping_20260826T200427Z_9e7536afd2ec",
+  "authority": "ADDITIVE_CANDIDATE_BOUND_TECHNICAL_EVIDENCE_NOT_VISUAL_PERFORMANCE_PROVENANCE_LEGAL_OWNER_OR_RELEASE_APPROVAL",
+  "state": "PASS_BOUNDED_ENVIRONMENT_16_CATEGORY_CONTRACT_SLOT_PROXY_QUARANTINE_AND_SCREENSHOT_TECHNICAL_EVIDENCE",
+  "policy": {
+    "path": "Config/DG_Session10EnvironmentShippingTechnicalPolicy-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+    "bytes": 13064,
+    "sha256": "BB711D9342B09B6AFC2B0FEBB45842F74D33B999567FF9F7BC083DD7AD0E26C0"
+  },
+  "bindings": {
+    "session10EnvironmentContract": {
+      "path": "Config/DG_Session10EnvironmentContract.json",
+      "bytes": 19976,
+      "sha256": "05931329CE877E80D4D36691D9091BBD6DDACE8F3F40612C5BE11B47744CDDC5"
+    },
+    "candidateContentAudit": {
+      "path": "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+      "bytes": 26660,
+      "sha256": "8237F4DAF5FD668BDC6ED2A89106847DEE6C3C5420765EF673DA53AE8C7706A7"
+    },
+    "candidateVerification": {
+      "path": "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+      "bytes": 6452,
+      "sha256": "9D7F82CFC86843C6B3C3F6265BFD7EE04DBB05DFC6E89A1F84BDFFC7839431A3"
+    },
+    "externalTechnicalValidation": {
+      "path": "Evidence/Session19/ExternalTechnicalEvidence-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+      "bytes": 800,
+      "sha256": "8EC891C32D839C8DBEAB03223F56866A4B395322764E20669D564D349BB295CC"
+    },
+    "assignedSlotReport": {
+      "path": "Saved/Developer/EnvironmentAssetBindingReport.json",
+      "bytes": 13853,
+      "sha256": "A79D1BA42AC422C7895E4A1017E815C987AA90DA6F1DA38F85E336DC58F4F403"
+    },
+    "hole1RuntimeStatistics": {
+      "path": "Saved/EnvironmentReports/PineRidgeHole1EnvironmentStatistics.json",
+      "bytes": 836,
+      "sha256": "4C3DE78855CBF7A5F3264861EAA2039BFB492462D718517A42408420FD524E51"
+    },
+    "presentationContract": {
+      "path": "Data/PineRidgePresentation.json",
+      "bytes": 2184,
+      "sha256": "0B259E50B353B59BA2F940FB76C121CE69487BEB435D41E9CF21337219B2E8B0"
+    },
+    "hole1Definition": {
+      "path": "Data/PineRidgeHole1.json",
+      "bytes": 7740,
+      "sha256": "CD1991551FD3F13465A5C6737871A2D4B91A31E078CAD1C97F458A7A5081F317"
+    },
+    "hole2Definition": {
+      "path": "Data/PineRidgeHole2.json",
+      "bytes": 8586,
+      "sha256": "AB55ACE68264C270DE932DC0E0DEA644B844AEBB29F6CC0E994614789CA96F2E"
+    },
+    "hole3Definition": {
+      "path": "Data/PineRidgeHole3.json",
+      "bytes": 8509,
+      "sha256": "A1FC744234E94FBE383F5AED21DCEF9D84A4213CF9E8625B57CA4C3339EC46A2"
+    },
+    "environmentAssetSet": {
+      "path": "Content/Environment/Forest/DA_TemperateMountainForest_Assets.uasset",
+      "bytes": 10388,
+      "sha256": "ECE5EE0D5750585A702F333C93E71C82B88981C37D4FFF35AEFE288B9D63D9B9"
+    },
+    "environmentPreset": {
+      "path": "Content/Environment/Forest/DA_TemperateMountainForest.uasset",
+      "bytes": 2758,
+      "sha256": "1E20257AAF6A43E6FBE67F4C39263D284FBA6D73ABDC3AEA4BDE037F7C84A4BC"
+    },
+    "environmentWind": {
+      "path": "Content/Environment/Forest/Materials/MPC_EnvironmentWind.uasset",
+      "bytes": 2201,
+      "sha256": "38E994B9B79144269272A5D0A3E41314524DF931457446AEC39993FB9D5FA9C9"
+    },
+    "environmentPcgGraph": {
+      "path": "Content/Environment/Forest/PCG/PCG_TemperateMountainForest.uasset",
+      "bytes": 705957,
+      "sha256": "86DF264918903F0F18832D6B078F4AFE032B3DFC31D64134F2B2CD2F3B17D159"
+    },
+    "categoryTechnicalPlan": {
+      "path": "Config/DG_Session10EnvironmentCategoryTechnicalPlan.json",
+      "bytes": 21024,
+      "sha256": "A4DCB8CD0D685A0DE31BFC8518C43AF783C68DCB2FD2A1D42037AD8CA8C12C8D"
+    },
+    "freshUserDirValidation": {
+      "path": "Evidence/Session19/FreshUserDir-S19_WindowsShipping_20260826T200427Z_9e7536afd2ec.json",
+      "bytes": 3919,
+      "sha256": "645F29D92186AAFC8F2EB7C1830568E68FD084410656AF8F5B21FF1612541024"
+    }
+  },
+  "observations": {
+    "archive": {
+      "fileCount": 31,
+      "bytes": 1246018071,
+      "canonicalManifestSha256": "362CA24911629BE4EEC5076F6A0D5C0DCD6F7071C1DD2BAB102D86CF7807A184"
+    },
+    "containerInventories": [
+      {
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.pak",
+        "method": "UnrealPak positional -List",
+        "entryCount": 1665,
+        "canonicalIdentitySha256": "32E6ED5D33DE109F47B8644015D82D54A38334AE8BEFC76D3BA287C64FD6DC64"
+      },
+      {
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.utoc",
+        "method": "UnrealPak -ListContainer CSV",
+        "chunkCount": 2623,
+        "namedEntryCount": 1082,
+        "anonymousChunkCount": 1541,
+        "canonicalIdentitySha256": "394A7A88F036C62C7AB02307E8F16B5BFD63F7935D83700228043D73E35968BC"
+      },
+      {
+        "path": "DiscGolfTour/Content/Paks/global.utoc",
+        "method": "UnrealPak -ListContainer CSV",
+        "chunkCount": 1,
+        "namedEntryCount": 0,
+        "anonymousChunkCount": 1,
+        "canonicalIdentitySha256": "E6A30160BF5FB7F4167FAB794EAB5D06A390C7C9745CD5ADCDB2AC5E564E6507"
+      }
+    ],
+    "shippingPresence": {
+      "environmentDataAssetCount": 3,
+      "boundVisualVariantCount": 5,
+      "shippingExcludedEnvironmentPcgAssetCount": 1,
+      "allRequiredInUfsManifest": true,
+      "allRequiredInFinalContainerNamedInventory": true,
+      "allShippingExcludedEnvironmentPcgAbsentFromUfsManifest": true,
+      "allShippingExcludedEnvironmentPcgAbsentFromFinalContainerNamedInventory": true
+    },
+    "slotBinding": {
+      "categoryCount": 16,
+      "populatedCategoryCount": 3,
+      "boundVariantCount": 5,
+      "missingCategoryCount": 13,
+      "readyCategoryCount": 0,
+      "populatedCategories": [
+        {
+          "slot": "TreeConiferYoung",
+          "collisionMode": "TrunkOrBranchBlocking",
+          "variantObjectPaths": [
+            "/Game/Presentation/Course/PineRidge/Foliage/PolyHaven/FirSapling/fir_sapling_a.fir_sapling_a",
+            "/Game/Presentation/Course/PineRidge/Foliage/PolyHaven/FirSapling/fir_sapling_b.fir_sapling_b",
+            "/Game/Presentation/Course/PineRidge/Foliage/PolyHaven/FirSapling/fir_sapling_c.fir_sapling_c"
+          ],
+          "dedicatedProxyPathsComplete": false,
+          "productionReady": false
+        },
+        {
+          "slot": "Shrub",
+          "collisionMode": "ShrubOverlap",
+          "variantObjectPaths": [
+            "/Game/Presentation/Course/PineRidge/Fixtures/PolyHaven/Shrub04/shrub_04_1k.shrub_04_1k"
+          ],
+          "dedicatedProxyPathsComplete": false,
+          "productionReady": false
+        },
+        {
+          "slot": "RockLarge",
+          "collisionMode": "SolidBlocking",
+          "variantObjectPaths": [
+            "/Game/Presentation/Course/PineRidge/Fixtures/PolyHaven/Boulder01/boulder_01_1k.boulder_01_1k"
+          ],
+          "dedicatedProxyPathsComplete": false,
+          "productionReady": false
+        }
+      ],
+      "allSixteenProductionSlotsBound": false
+    },
+    "categoryTechnicalPlan": {
+      "categoryTechnicalContractCount": 16,
+      "categoryTechnicalContractsComplete": 16,
+      "baseCullingMetadataCompleteCategoryCount": 16,
+      "qualityScalingMetadataCompleteTierCount": 3,
+      "blockingProxyRequiredCategoryCount": 9,
+      "blockingProxyRequirementSatisfiedCategoryCount": 0,
+      "interactionProxyRequiredCategoryCount": 2,
+      "interactionProxyRequirementSatisfiedCategoryCount": 0,
+      "windRequiredCategoryCount": 10,
+      "windVerifiedCategoryCount": 0,
+      "lodOrNaniteVerifiedCategoryCount": 2,
+      "lodOrNaniteUnresolvedCategoryCount": 14,
+      "allSixteenProductionSlotsReady": false,
+      "claimBoundary": {
+        "allSixteenCategoryTechnicalContractsAccepted": true,
+        "collisionModeMetadataAccepted": true,
+        "proxyRequirementMetadataAccepted": true,
+        "lodWindAndCullingMetadataAccepted": true,
+        "sourceBindingsAccepted": true,
+        "allSixteenProductionSlotsBound": false,
+        "allRequiredDedicatedProxiesAuthored": false,
+        "allRequiredWindMaterialsBound": false,
+        "allRequiredLodOrNaniteVerified": false,
+        "visualQualityAccepted": false,
+        "performanceApproval": false,
+        "provenanceApproval": false,
+        "legalApproval": false,
+        "ownerApproval": false,
+        "releaseApproval": false,
+        "releaseReady": false
+      }
+    },
+    "proxyCoverage": {
+      "holes": [
+        {
+          "holeNumber": 1,
+          "treeBlockingProxies": 12,
+          "fixtureBlockingProxies": 2,
+          "interactionVolumes": 1,
+          "blockingFixtureTypes": [
+            "Rock",
+            "Sign"
+          ],
+          "interactionFixtureTypes": [
+            "DenseGrass"
+          ]
+        },
+        {
+          "holeNumber": 2,
+          "treeBlockingProxies": 18,
+          "fixtureBlockingProxies": 2,
+          "interactionVolumes": 1,
+          "blockingFixtureTypes": [
+            "Rock",
+            "Sign"
+          ],
+          "interactionFixtureTypes": [
+            "DenseGrass"
+          ]
+        },
+        {
+          "holeNumber": 3,
+          "treeBlockingProxies": 14,
+          "fixtureBlockingProxies": 2,
+          "interactionVolumes": 1,
+          "blockingFixtureTypes": [
+            "Rock",
+            "Sign"
+          ],
+          "interactionFixtureTypes": [
+            "DenseGrass"
+          ]
+        }
+      ],
+      "authoredBlockingProxyCount": 50,
+      "authoredInteractionVolumeCount": 3,
+      "hole1RuntimeStatisticsCorroborated": true,
+      "allThreeHolesLiveCollisionExerciseProven": false,
+      "productionSlotProxyApproval": false
+    },
+    "quarantine": {
+      "authoritativeMatchCount": 0,
+      "matches": [],
+      "candidateContentCategoryPassed": true
+    },
+    "externalRuntimeEvidence": {
+      "manifestSha256": "B44F91DE99EA595FF51962D65F6064EA3BEC5075591FCB1FF681AE902A2656D9",
+      "screenshotCount": 10,
+      "selectedEnvironmentScreenshots": [
+        {
+          "milestone": "HOLE_1_TEE_ENVIRONMENT_RENDERED",
+          "relativePath": "Screenshots/002_hole1_tee.png",
+          "bytes": 2150001,
+          "sha256": "0F33E49491AB712642630DAA592974169E0B6455575A08DB1FF5146F29A041DC",
+          "width": 1922,
+          "height": 1128
+        },
+        {
+          "milestone": "HOLE_1_RECOVERED_LIE_ENVIRONMENT_RENDERED",
+          "relativePath": "Screenshots/003_hole1_recovered_lie.png",
+          "bytes": 2286729,
+          "sha256": "412C3BE3A287BE7CF8F1C00E6FAFE0DB48B5C489A694D779062482C14AA91698",
+          "width": 1922,
+          "height": 1128
+        },
+        {
+          "milestone": "HOLE_3_TEE_ENVIRONMENT_RENDERED",
+          "relativePath": "Screenshots/008_hole3_tee.png",
+          "bytes": 1908679,
+          "sha256": "83985A6F8B50EB006DA0C1A80480E1DD0F5630D3F5A3141BE37462E5C1FC9313",
+          "width": 1922,
+          "height": 1128
+        }
+      ],
+      "technicalArtifactCollectionOnly": true,
+      "actualRenderedRhiAttested": false,
+      "visualQualityApproved": false,
+      "runtimeCheckpointJournal": {
+        "schema": "DiscGolfTour.Session19ThreeHoleRuntimeJournal.v1",
+        "userDirRelativePath": "Saved/TechnicalEvidence/three-hole-runtime-journal-v1.jsonl",
+        "bytes": 3228,
+        "sha256": "1D11D674E8B3EB0C571AE792B3FBF855F6AB1DFE5C101247D7F14210876CD8F5",
+        "captureNonce": "4db99437-eb0d-4977-8dbb-8a3b2283394a",
+        "roundId": "308e311a-438a-4525-afe3-edbd8e12019d",
+        "eventCount": 12,
+        "firstSequence": 1,
+        "lastSequence": 12,
+        "modifiedWithinRunWindow": true,
+        "validationState": "PASS_GAME_EMITTED_THREE_HOLE_RUNTIME_JOURNAL",
+        "independentValidationState": "PASS_CANDIDATE_BOUND_EXTERNAL_TECHNICAL_EVIDENCE",
+        "launchRecordSha256": "0B0B6A2AA9550C86DDCE6E6D4B07418AD6F2D1935104609B53699874DAE97E97",
+        "technicalEvidenceManifestSha256": "B44F91DE99EA595FF51962D65F6064EA3BEC5075591FCB1FF681AE902A2656D9",
+        "executableSha256": "BA88E76589A25D5EC1E6072EC68CF983A116012BDD7BCE1F75E7CB46CE319754",
+        "archiveManifestSha256": "362CA24911629BE4EEC5076F6A0D5C0DCD6F7071C1DD2BAB102D86CF7807A184",
+        "trustBoundary": {
+          "evidenceTrustModel": "BOUNDED_OPERATIONAL_PROCESS_EVIDENCE_NOT_CRYPTOGRAPHIC_ATTESTATION",
+          "cryptographicProcessAttestation": false,
+          "tamperProofEvidence": false,
+          "hostileSameUserForgeryResistance": false
+        }
+      }
+    }
+  },
+  "claimBoundary": {
+    "candidateBoundTechnicalSlotBindingAccepted": true,
+    "allSixteenCategoryTechnicalContractsAccepted": true,
+    "collisionModeMetadataAccepted": true,
+    "proxyRequirementMetadataAccepted": true,
+    "lodWindAndCullingMetadataAccepted": true,
+    "authoredCollisionInteractionProxyCoverageAccepted": true,
+    "forbiddenQuarantinedContentAbsenceAccepted": true,
+    "shippingPcgGraphAbsenceAccepted": true,
+    "candidateScreenshotHashBindingAccepted": true,
+    "allSixteenProductionSlotsBound": false,
+    "allRequiredDedicatedProxiesAuthored": false,
+    "allRequiredWindMaterialsBound": false,
+    "allRequiredLodOrNaniteVerified": false,
+    "allThreeHolesLiveCollisionExerciseAccepted": false,
+    "actualRenderedRhiAccepted": false,
+    "visualQualityAccepted": false,
+    "performanceApproval": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "ownerApproval": false,
+    "releaseApproval": false,
+    "releaseReady": false
+  },
+  "issues": []
+}

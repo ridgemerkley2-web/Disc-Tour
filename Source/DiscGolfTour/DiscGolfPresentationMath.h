@@ -18,8 +18,41 @@ struct FDiscReplayFrame
     float SegmentAlpha = 0.0f;
 };
 
+/** Bounds for retaining actual solver samples for presentation without resimulation. */
+struct FDiscActualReplaySelectionPolicy
+{
+    int32 MaxSourceSamples = 28800;
+    int32 MaxOutputSamples = 2400;
+    float MaxSampleRateHz = 60.0f;
+    float MaxDurationSeconds = 120.0f;
+};
+
 namespace DiscGolfPresentationMath
 {
+    /**
+     * Validates the native capture consumed by replay/tracer presentation.
+     * Samples must remain finite and time ordered. A same-time native terminal
+     * state transition is accepted only at the same world position; the bounded
+     * actor input canonicalizes that cluster to its later actual sample.
+     */
+    DISCGOLFTOUR_API bool ValidateActualReplaySource(
+        const TArray<FDiscTrajectorySample>& Source,
+        const TArray<FDiscGroundTransition>& Transitions,
+        const FDiscActualReplaySelectionPolicy& Policy,
+        FString& OutError);
+
+    /**
+     * Selects source indices only. Endpoints, sample state/contact/surface
+     * boundaries, and the closest actual sample to every explicit transition are
+     * mandatory. No synthetic trajectory sample is created.
+     */
+    DISCGOLFTOUR_API bool BuildBoundedActualReplaySamples(
+        const TArray<FDiscTrajectorySample>& Source,
+        const TArray<FDiscGroundTransition>& Transitions,
+        const FDiscActualReplaySelectionPolicy& Policy,
+        TArray<FDiscTrajectorySample>& OutSamples,
+        FString& OutError);
+
     inline FQuat ReplayRotation(const FVector& VelocityMps, const FVector& DiscNormalWorld)
     {
         const FVector Normal = DiscNormalWorld.GetSafeNormal(SMALL_NUMBER, FVector::UpVector);
@@ -110,7 +143,9 @@ namespace DiscGolfPresentationMath
             const FDiscTrajectorySample& Last = Samples[LastAccepted];
             const FDiscTrajectorySample& Previous = Samples[Index - 1];
             const bool bStateBoundary = Sample.GroundState != Previous.GroundState
-                || Sample.GroundContactCount != Previous.GroundContactCount;
+                || Sample.GroundContactCount != Previous.GroundContactCount
+                || Sample.GroundSurface != Previous.GroundSurface
+                || Sample.CourseSurface != Previous.CourseSurface;
             const bool bFarEnough = FVector::DistSquared(Sample.WorldLocationCm, Last.WorldLocationCm) >= SafeDistanceSq;
             const bool bOldEnough = Sample.TimeSeconds - Last.TimeSeconds >= SafeTimeGap;
             if (bStateBoundary || bFarEnough || bOldEnough)

@@ -1,0 +1,171 @@
+{
+  "schema": "DiscGolfTour.Session19SustainedShippingPerformanceCertificationPolicy.v2",
+  "schemaVersion": 2,
+  "session": 19,
+  "policyId": "windows_shipping_external_sustained_performance_certification_v2",
+  "purpose": "PREDECLARED_EXTERNAL_TECHNICAL_EVIDENCE_CONTRACT_HUMAN_PERFORMANCE_AND_RELEASE_APPROVAL_EXCLUDED",
+  "target": {
+    "platform": "Windows",
+    "configuration": "Shipping",
+    "archiveLeaf": "Windows",
+    "shippingExecutablePath": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+    "candidateIdPattern": "^S19_WindowsShipping_[0-9]{8}T[0-9]{6}Z_[0-9a-f]{12}$"
+  },
+  "predeclaration": {
+    "minimumDurationSeconds": 900,
+    "maximumDurationSeconds": 7200,
+    "defaultDurationSeconds": 1800,
+    "declarationMustPrecedeEveryCapturedArtifact": true,
+    "candidateArchiveAndThreeHoleReceiptImmutableAfterDeclaration": true,
+    "certificationRunIdKind": "LOWERCASE_RFC4122_UUID_V4",
+    "externalOnly": true,
+    "appendOnly": true
+  },
+  "requiredArtifacts": {
+    "runManifest": "RunManifest.json",
+    "archivePre": "ArchiveSnapshot.Pre.json",
+    "archivePost": "ArchiveSnapshot.Post.json",
+    "hostPre": "HostSnapshot.Pre.json",
+    "hostPost": "HostSnapshot.Post.json",
+    "nvidiaSensorCapture": "NvidiaSensorCapture.json",
+    "nvidiaSensors": "NvidiaSensors.csv",
+    "presentMonCapture": "PresentMonCapture.json",
+    "presentMonCsv": "PresentMon.csv",
+    "threadProfile": "ThreadProfile.json",
+    "unrealInsightsTrace": "UnrealInsights.utrace",
+    "unrealInsightsTimingCsv": "UnrealInsightsTiming.csv"
+  },
+  "schemas": {
+    "declaration": "DiscGolfTour.Session19SustainedShippingPerformanceDeclaration.v2",
+    "runManifest": "DiscGolfTour.Session19SustainedShippingPerformanceRunManifest.v1",
+    "archiveSnapshot": "DiscGolfTour.Session19SustainedShippingPerformanceArchiveSnapshot.v1",
+    "hostSnapshot": "DiscGolfTour.Session19SustainedShippingPerformanceHostSnapshot.v1",
+    "nvidiaSensorCapture": "DiscGolfTour.Session19SustainedShippingNvidiaSensorCapture.v1",
+    "presentMonCapture": "DiscGolfTour.Session19SustainedShippingPresentMonCapture.v1",
+    "threadProfile": "DiscGolfTour.Session19SustainedShippingThreadProfile.v1",
+    "technicalReceipt": "DiscGolfTour.Session19SustainedShippingPerformanceTechnicalReceipt.v1"
+  },
+  "hostSnapshotContract": {
+    "requiredPhases": [
+      "PRE",
+      "POST"
+    ],
+    "requireSameGpuUuid": true,
+    "requireSameGpuDriver": true,
+    "requireSameActivePowerScheme": true,
+    "requireAcOnline": true,
+    "requireBatterySaverOff": true,
+    "requireGpuPowerDrawAndLimit": true,
+    "minimumFreeBytes": 21474836480
+  },
+  "nvidiaSensorContract": {
+    "nominalIntervalMilliseconds": 1000,
+    "minimumIntervalMilliseconds": 500,
+    "maximumIntervalMilliseconds": 1500,
+    "minimumSampleCoverageRatio": 0.98,
+    "minimumTemperatureC": 0.0,
+    "maximumTemperatureC": 87.0,
+    "minimumUtilizationPercent": 0.0,
+    "maximumUtilizationPercent": 100.0,
+    "minimumClockMHz": 1.0,
+    "maximumPowerOverLimitRatio": 1.1,
+    "effectivePowerLimitQueryField": "enforced.power.limit",
+    "requiredNvidiaSmiQueryFields": [
+      "uuid",
+      "name",
+      "driver_version",
+      "temperature.gpu",
+      "power.draw",
+      "enforced.power.limit",
+      "utilization.gpu",
+      "clocks.current.graphics",
+      "clocks.current.memory",
+      "pstate"
+    ],
+    "requiredCsvColumns": [
+      "sampleIndex",
+      "timestampUtc",
+      "gpuUuid",
+      "gpuName",
+      "driverVersion",
+      "temperatureC",
+      "powerDrawW",
+      "powerLimitW",
+      "utilizationGpuPercent",
+      "graphicsClockMHz",
+      "memoryClockMHz",
+      "pstate"
+    ]
+  },
+  "presentMonContract": {
+    "requiredCsvColumns": [
+      "Application",
+      "ProcessID",
+      "TimeInSeconds",
+      "MsBetweenPresents",
+      "PresentMode",
+      "Dropped"
+    ],
+    "minimumPresentRateHz": 10.0,
+    "maximumContinuityGapMilliseconds": 1000.0,
+    "maximumDroppedRatio": 0.01,
+    "timeDeltaToleranceMilliseconds": 10.0,
+    "requiredApplication": "DiscGolfTour-Win64-Shipping.exe"
+  },
+  "profileContract": {
+    "captureKind": "UNREAL_INSIGHTS_TIMING_AND_GPU_TRACE",
+    "requiredTraceChannels": [
+      "cpu",
+      "frame",
+      "gpu"
+    ],
+    "requiredThreadRoles": [
+      "GPU",
+      "GameThread",
+      "RenderThread",
+      "RHIThread"
+    ],
+    "minimumProfileDurationSeconds": 60,
+    "minimumEventsPerRole": 60,
+    "minimumTraceBytes": 1048576,
+    "requiredTraceMagicAscii": [
+      "2CRT",
+      "ECRT"
+    ],
+    "minimumDistinctTraceByteValues": 32,
+    "minimumTraceNonZeroRatio": 0.05,
+    "requiredTimingCsvColumns": [
+      "ThreadRole",
+      "ThreadName",
+      "StartSeconds",
+      "DurationMilliseconds"
+    ]
+  },
+  "chronologyContract": {
+    "futureTimestampToleranceSeconds": 2,
+    "captureBoundaryToleranceSeconds": 2,
+    "declarationMustPrecedePreSnapshots": true,
+    "preSnapshotsMustNotFollowRunStart": true,
+    "postSnapshotsMustNotPrecedeRunFinish": true,
+    "manifestMustFollowPostSnapshots": true
+  },
+  "technicalPassState": "PASS_SUSTAINED_EXTERNAL_SHIPPING_PERFORMANCE_EVIDENCE_HUMAN_APPROVALS_PENDING",
+  "failState": "FAIL_CLOSED",
+  "claimBoundary": {
+    "candidateArchiveBound": true,
+    "threeHoleRenderedPerformanceReceiptBound": true,
+    "prePostHostStateRecorded": true,
+    "continuousNvidiaSensorSeriesRecorded": true,
+    "presentMonContinuityRecorded": true,
+    "gpuGameRenderRhiProfileRecorded": true,
+    "archiveIdentityPreserved": true,
+    "operationalEvidenceOnly": true,
+    "cryptographicProcessAttestation": false,
+    "hostileSameUserForgeryResistance": false,
+    "humanPerformanceAcceptance": false,
+    "productOwnerApproval": false,
+    "releaseApproval": false,
+    "releaseReady": false,
+    "evidenceTrustModel": "BOUNDED_OPERATIONAL_PROCESS_EVIDENCE_NOT_CRYPTOGRAPHIC_ATTESTATION"
+  }
+}

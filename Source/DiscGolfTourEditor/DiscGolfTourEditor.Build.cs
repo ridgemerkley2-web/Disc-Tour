@@ -17,7 +17,8 @@ public class DiscGolfTourEditor : ModuleRules
             "CoreUObject",
             "Engine",
             "PhysicsCore",
-            "DiscGolfTour"
+            "DiscGolfTour",
+            "DiscGolfRuntimeFoundation"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[]
@@ -28,11 +29,12 @@ public class DiscGolfTourEditor : ModuleRules
             "BlueprintGraph",
             "ControlRig",
             "ControlRigDeveloper",
-            "DiscGolfCharacterFramework",
             "IKRig",
             "IKRigEditor",
             "Json",
             "JsonUtilities",
+            "MetaHumanSDKRuntime",
+            "PCG",
             "Projects",
             "RigVM",
             "RigVMDeveloper",

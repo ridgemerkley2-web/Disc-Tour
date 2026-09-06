@@ -1,0 +1,180 @@
+{
+  "schema": "DiscGolfTour.Session19V05CareerAiThrowLabShippingExclusionPolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "policyId": "v05_windows_shipping_career_ai_throw_lab_exclusion_v1",
+  "target": {
+    "platform": "Win64",
+    "configuration": "Shipping",
+    "milestone": "v0.5"
+  },
+  "candidateBinding": {
+    "requireCandidateVerification": true,
+    "requireIndependentArchiveCanonicalManifest": true,
+    "requireCandidateContentReceipt": true,
+    "requireActualArchivedExecutableScan": true,
+    "requireShippingBinaryReceipt": true,
+    "requireFreshUserDirManifest": true,
+    "hostPathsMayBeRecorded": false
+  },
+  "requiredArchiveFiles": [
+    "DiscGolfTour.exe",
+    "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+    "Manifest_UFSFiles_Win64.txt",
+    "Manifest_NonUFSFiles_Win64.txt"
+  ],
+  "contentReceipt": {
+    "schema": "DiscGolfTour.Session19CandidateContentAuditReceipt.v1",
+    "passState": "PASS_BOUNDED_STAGED_CONTENT_AUDIT",
+    "requiredZeroMatchCategories": [
+      "CAREER_AI",
+      "THROW_LAB"
+    ],
+    "requireZeroAuthoritativeMatches": true,
+    "requireZeroManifestDiagnosticMatches": true,
+    "requireNoIssues": true
+  },
+  "binaryReceipt": {
+    "schema": "DiscGolfTour.Session19ShippingBinaryEvidence.v1",
+    "passState": "PASS_BINARY_MARKER_POLICY_ONLY",
+    "requirePassed": true,
+    "requireZeroErrors": true,
+    "requireZeroForbiddenMatches": true
+  },
+  "freshUserDirManifest": {
+    "schema": "DiscGolfTour.Session19FreshUserDirValidation.v1",
+    "passState": "PASS_FRESH_SHIPPING_USERDIR_ALLOWLIST",
+    "requireZeroFailures": true,
+    "requireZeroUnknownFiles": true,
+    "requireZeroForbiddenArtifacts": true,
+    "requiredProductionProfile": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+    "forbiddenPathMarkers": [
+      "DGT_Career_",
+      "DGT_ThrowLab",
+      "CareerProgress",
+      "AIGolfer",
+      "AIShotPlanner",
+      "ThrowLab"
+    ]
+  },
+  "archiveForbiddenPathMarkers": [
+    "DiscGolfTourDeveloper",
+    "/Career/",
+    "/CareerAI/",
+    "/ThrowLab/",
+    "DiscGolfCareer",
+    "DiscGolfCompetitionRuntime",
+    "DiscGolfAIPlanner",
+    "DiscGolfAIGolfer",
+    "DiscGolfAIShotPlanner",
+    "DiscThrowLab",
+    "DGT_Career_",
+    "DGT_ThrowLab"
+  ],
+  "binaryScan": {
+    "caseInsensitive": true,
+    "encodings": [
+      "ascii",
+      "utf-16le"
+    ],
+    "matchMode": "literal-substring",
+    "forbiddenGroups": [
+      {
+        "id": "developer_module",
+        "claim": "No development-only module identity survives in the Shipping executable.",
+        "markers": [
+          "DiscGolfTourDeveloper",
+          "/Script/DiscGolfTourDeveloper"
+        ]
+      },
+      {
+        "id": "career_entrypoints_saves_and_symbols",
+        "claim": "No Career entrypoint, save-domain, subsystem, competition runtime, or progress identity survives.",
+        "markers": [
+          "DGT_Career_",
+          "DiscGolfCareerSubsystem",
+          "DiscGolfCareerProgressSaveGame",
+          "DiscGolfCompetitionRuntime",
+          "DGCareerProgress",
+          "DGSponsorshipProgress",
+          "DGTournamentRoundDefinition",
+          "DGRoundScorecard",
+          "DGScorecardHole",
+          "SaveCareer",
+          "LoadCareer"
+        ]
+      },
+      {
+        "id": "ai_entrypoints_spawn_and_symbols",
+        "claim": "No AI-opponent entrypoint, planner/profile identity, packaged runner, or spawn-capability identity survives.",
+        "markers": [
+          "Session14AIGolferSmokeTest",
+          "Session14AIGolferSmoke",
+          "DiscGolfSession14AISmokeRunner",
+          "DiscGolfAIPlannerAdapter",
+          "DiscGolfAIGolferProfile",
+          "DiscGolfAIShotPlannerComponent",
+          "DGAISkillProfile",
+          "DGAIShotContext",
+          "DGAIShotCandidate",
+          "BuildGenericProofProfile",
+          "SelectMeasuredShot"
+        ]
+      },
+      {
+        "id": "throw_lab_entrypoints_saves_and_symbols",
+        "claim": "No Throw Lab UI/console entrypoint, save domain, subsystem, record, or replay identity survives.",
+        "markers": [
+          "ThrowLab",
+          "DiscThrowLabSubsystem",
+          "DiscThrowLabSaveGame",
+          "DiscThrowLabRecord",
+          "DGT_ThrowLab",
+          "DGT_ToggleThrowLab",
+          "DGT_ThrowLabPrevious",
+          "DGT_ThrowLabNext",
+          "DGT_ThrowLabPin",
+          "DGT_ThrowLabDelete",
+          "DGT_ThrowLabCompareLatest",
+          "DGT_ThrowLabReplay",
+          "DGT_ThrowLabSave",
+          "DGT_ThrowLabLoad",
+          "THROW LAB // DEVELOPMENT"
+        ]
+      }
+    ]
+  },
+  "technicalAssertions": {
+    "careerShippingEntrypointAbsent": true,
+    "careerShippingSaveAbsent": true,
+    "careerModuleAndSymbolIdentityAbsent": true,
+    "aiShippingEntrypointAbsent": true,
+    "aiSpawnCapabilityIdentityAbsent": true,
+    "aiSpawnFreshUserDirSideEffectAbsent": true,
+    "throwLabShippingEntrypointAbsent": true,
+    "throwLabShippingSaveAbsent": true,
+    "throwLabModuleSymbolAndContentIdentityAbsent": true
+  },
+  "claimBoundary": {
+    "authority": "CANDIDATE_BOUND_TECHNICAL_EXCLUSION_EVIDENCE_ONLY",
+    "aiSpawnInference": "Transitive bounded proof from zero archived AI entrypoint/module/symbol/content identity plus zero fresh-UserDir AI side effect; this is not a human observation of every runtime world state.",
+    "publicCareerClaimAllowed": false,
+    "publicAiOpponentClaimAllowed": false,
+    "publicThrowLabClaimAllowed": false,
+    "manualGameplayReviewRequired": true,
+    "manualGameplayReviewComplete": false,
+    "humanPlayFeelApproval": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "releaseReady": false,
+    "blockersClosed": []
+  },
+  "evidenceContract": {
+    "passState": "PASS_CANDIDATE_BOUND_V05_CAREER_AI_THROW_LAB_EXCLUSION",
+    "failState": "FAIL_CANDIDATE_BOUND_V05_CAREER_AI_THROW_LAB_EXCLUSION",
+    "writeOnlyWithExplicitOutputArgument": true,
+    "immutableOutput": true,
+    "releaseReady": false,
+    "disclaimer": "This receipt proves only the bounded technical exclusion assertions for one immutable candidate. Public product claims, manual gameplay review, human play-feel approval, legal approval, distribution clearance, blocker closure, and release readiness remain pending."
+  }
+}

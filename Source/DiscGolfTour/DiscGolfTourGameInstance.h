@@ -12,6 +12,18 @@ class UDiscGolfSaveGame;
 
 namespace DiscGolfProfilePersistence
 {
+    struct FProcessPolicy
+    {
+        bool bLoadExistingProfile = true;
+        bool bAllowProfileWrites = true;
+
+        /** Suppressed writes are successful in-memory commits, not failures. */
+        bool AcceptsProfileWritesInMemoryOnly() const
+        {
+            return !bAllowProfileWrites;
+        }
+    };
+
     enum class EMigrationResult : uint8
     {
         AlreadyCurrent,
@@ -23,18 +35,26 @@ namespace DiscGolfProfilePersistence
     DISCGOLFTOUR_API EMigrationResult MigrateToCurrent(UDiscGolfSaveGame& InOutProfile);
 
     /**
-     * Resolves the narrowly gated Session 6 validation slot override.
-     * Returns false and clears OutSaveSlot unless the visual-capture and
-     * no-save guards are both present and the requested slot is safe.
+     * Pure command-line policy for normal persistence versus ephemeral profile
+     * runs. Shipping treats every release-performance attempt as ephemeral
+     * before GameMode performs the stricter launch validation.
      */
+    DISCGOLFTOUR_API FProcessPolicy ResolveProcessPolicy(
+        const TCHAR* CommandLine,
+        bool bProtectReleasePerformanceAttempt =
+            (DG_WITH_RELEASE_PERFORMANCE_CAPTURE != 0));
+
+#if DG_WITH_DEVELOPMENT_CONTENT
+    /** Resolves the narrowly gated development-only validation slot override. */
     DISCGOLFTOUR_API bool TryResolveSession6OutfitValidationSaveSlot(
         const TCHAR* CommandLine,
         FString& OutSaveSlot);
 
-    /** Strict isolated-slot grammar for Session 7 visual and throw validation. */
+    /** Strict isolated-slot grammar for full-character development validation. */
     DISCGOLFTOUR_API bool TryResolveSession7FullCharacterValidationSaveSlot(
         const TCHAR* CommandLine,
         FString& OutSaveSlot);
+#endif
 }
 
 UCLASS()
@@ -56,7 +76,7 @@ public:
     UFUNCTION(BlueprintPure)
     FDGFullCharacterCustomization GetFullCharacterCustomization() const;
 
-    /** Sole schema-9 full-character save transaction. */
+    /** Sole schema-10 full-character save transaction. */
     UFUNCTION(BlueprintCallable)
     bool UpdateFullCharacterCustomization(
         const FDGFullCharacterCustomization& CharacterCustomization);
@@ -84,7 +104,8 @@ public:
         const FDiscGolfCharacterProfileSaveData& CharacterProfile,
         const FDGOutfitLoadout& OutfitLoadout);
 
-    /** Empty in normal gameplay; read-only C++ seam for Session 6 cleanup/proof. */
+#if DG_WITH_DEVELOPMENT_CONTENT
+    /** Empty in normal gameplay; read-only C++ seam for development cleanup/proof. */
     FString GetSession6OutfitValidationSaveSlot() const
     {
         return bUsingSession6OutfitValidationSaveSlot ? SaveSlot : FString();
@@ -95,11 +116,15 @@ public:
     {
         return bUsingSession7FullCharacterValidationSaveSlot ? SaveSlot : FString();
     }
+#endif
 
 private:
     bool SaveProfileInternal();
     UPROPERTY() TObjectPtr<UDiscGolfSaveGame> Profile;
     FString SaveSlot = TEXT("DiscGolfTour_Profile_0");
+    DiscGolfProfilePersistence::FProcessPolicy ProcessPersistencePolicy;
+#if DG_WITH_DEVELOPMENT_CONTENT
     bool bUsingSession6OutfitValidationSaveSlot = false;
     bool bUsingSession7FullCharacterValidationSaveSlot = false;
+#endif
 };

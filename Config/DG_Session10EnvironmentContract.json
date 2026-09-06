@@ -1,0 +1,437 @@
+{
+  "schema": "DiscGolfTour.Session10EnvironmentContract.v1",
+  "schema_version": 1,
+  "contract_id": "session10_environment_fallback_v1",
+  "audit_scope": "TECHNICAL_ENVIRONMENT_SOURCE_AND_EDITOR_AUTHORING_GATE_NOT_PRODUCTION_ART_OR_RELEASE_APPROVAL",
+  "normal_status": "PASS_TECHNICAL_ENVIRONMENT_CONTRACT_RELEASE_BLOCKED",
+  "release_status": "BLOCKED_PENDING_SESSION9_PROVENANCE_AND_ENVIRONMENT_READINESS",
+  "authority": "ENVIRONMENT_PRESENTATION_ONLY_NO_GAMEPLAY_PHYSICS_RULES_OR_RELEASE_AUTHORITY",
+  "source_environment_inventory": {
+    "root": "Content/Environment/Forest",
+    "expected_file_count": 4,
+    "expected_total_bytes": 721304,
+    "content_status": "DEVELOPMENT_FALLBACK_ENVIRONMENT_PENDING_PRODUCTION_READINESS",
+    "production_environment_ready": false,
+    "release_use_allowed": false,
+    "exact_assets": [
+      {
+        "asset_id": "temperate_mountain_forest_asset_set",
+        "disk_path": "Content/Environment/Forest/DA_TemperateMountainForest_Assets.uasset",
+        "package": "/Game/Environment/Forest/DA_TemperateMountainForest_Assets",
+        "object": "/Game/Environment/Forest/DA_TemperateMountainForest_Assets.DA_TemperateMountainForest_Assets",
+        "expected_bytes": 10388,
+        "sha256": "ECE5EE0D5750585A702F333C93E71C82B88981C37D4FFF35AEFE288B9D63D9B9",
+        "status": "DEVELOPMENT_ONLY_PENDING_BINDING_AND_PROVENANCE_CLOSURE",
+        "release_use_allowed": false
+      },
+      {
+        "asset_id": "temperate_mountain_forest_preset",
+        "disk_path": "Content/Environment/Forest/DA_TemperateMountainForest.uasset",
+        "package": "/Game/Environment/Forest/DA_TemperateMountainForest",
+        "object": "/Game/Environment/Forest/DA_TemperateMountainForest.DA_TemperateMountainForest",
+        "expected_bytes": 2758,
+        "sha256": "1E20257AAF6A43E6FBE67F4C39263D284FBA6D73ABDC3AEA4BDE037F7C84A4BC",
+        "status": "DEVELOPMENT_ONLY_PENDING_BINDING_AND_PROVENANCE_CLOSURE",
+        "release_use_allowed": false
+      },
+      {
+        "asset_id": "environment_wind_parameter_collection",
+        "disk_path": "Content/Environment/Forest/Materials/MPC_EnvironmentWind.uasset",
+        "package": "/Game/Environment/Forest/Materials/MPC_EnvironmentWind",
+        "object": "/Game/Environment/Forest/Materials/MPC_EnvironmentWind.MPC_EnvironmentWind",
+        "expected_bytes": 2201,
+        "sha256": "38E994B9B79144269272A5D0A3E41314524DF931457446AEC39993FB9D5FA9C9",
+        "status": "DEVELOPMENT_ONLY_PENDING_BINDING_AND_PROVENANCE_CLOSURE",
+        "release_use_allowed": false
+      },
+      {
+        "asset_id": "temperate_mountain_forest_pcg_graph",
+        "disk_path": "Content/Environment/Forest/PCG/PCG_TemperateMountainForest.uasset",
+        "package": "/Game/Environment/Forest/PCG/PCG_TemperateMountainForest",
+        "object": "/Game/Environment/Forest/PCG/PCG_TemperateMountainForest.PCG_TemperateMountainForest",
+        "expected_bytes": 705957,
+        "sha256": "86DF264918903F0F18832D6B078F4AFE032B3DFC31D64134F2B2CD2F3B17D159",
+        "status": "DEVELOPMENT_ONLY_DORMANT_ON_DEMAND_PENDING_BINDING_REVIEW",
+        "release_use_allowed": false
+      }
+    ]
+  },
+  "presentation_contract": {
+    "path": "Data/PineRidgePresentation.json",
+    "sha256": "0B259E50B353B59BA2F940FB76C121CE69487BEB435D41E9CF21337219B2E8B0",
+    "schema": "disc_golf_course_presentation",
+    "schema_version": 1,
+    "course_id": "PineRidgeChampionship",
+    "layout_id": "Championship",
+    "collision_profile_id": "PineRidgeCompetitiveV2_Fixtures",
+    "collision_invariant_across_quality": true,
+    "assets_ready_expected": false,
+    "required_forest_reference_ids": [
+      "OpeningBroadTreeLine",
+      "NeedleCanopyCompression",
+      "GalleryLakeFrame"
+    ]
+  },
+  "runtime_pcg_contract": {
+    "runtime_controller_source": "Source/DiscGolfTour/DiscGolfEnvironmentController.cpp",
+    "editor_authoring_controller_source": "Source/DiscGolfTourEditor/DiscGolfPcgAuthoringController.cpp",
+    "runtime_source_root": "Source/DiscGolfTour",
+    "runtime_module_rules": "Source/DiscGolfTour/DiscGolfTour.Build.cs",
+    "editor_module_rules": "Source/DiscGolfTourEditor/DiscGolfTourEditor.Build.cs",
+    "generation_trigger": "GenerateOnDemand",
+    "generate_on_drop_when_on_demand": false,
+    "expected_runtime_generate_forest_callsite_count": 0,
+    "expected_generated_instance_count": 0,
+    "runtime_pcg_module_dependency_allowed": false,
+    "runtime_pcg_component_or_generation_api_allowed": false,
+    "editor_pcg_module_dependency_required": true,
+    "plugin_target_allow_list": ["Editor"],
+    "shipping_never_cook_directory": "/Game/Environment/Forest/PCG",
+    "runtime_status": "AUTHORED_DATA_RUNTIME_EDITOR_ONLY_ON_DEMAND_PCG_PENDING_FINAL_ASSET_BINDINGS",
+    "authored_environment_fallback_active": true,
+    "release_use_allowed": false
+  },
+  "assigned_readiness_contract": {
+    "report_path": "Saved/Developer/EnvironmentAssetBindingReport.json",
+    "report_sha256": "A79D1BA42AC422C7895E4A1017E815C987AA90DA6F1DA38F85E336DC58F4F403",
+    "schema": "disc_golf_environment_asset_binding_report",
+    "schema_version": 2,
+    "readiness_evaluated": true,
+    "structurally_complete": true,
+    "production_ready": false,
+    "expected_slot_count": 16,
+    "expected_populated_slot_count": 3,
+    "expected_missing_slot_count": 13,
+    "expected_ready_slot_count": 0,
+    "status": "BLOCKED_PENDING_APPROVED_VISUAL_COLLISION_INTERACTION_WIND_AND_LOD_BINDINGS"
+  },
+  "runtime_statistics_contract": {
+    "report_path": "Saved/EnvironmentReports/PineRidgeHole1EnvironmentStatistics.json",
+    "report_sha256": "4C3DE78855CBF7A5F3264861EAA2039BFB492462D718517A42408420FD524E51",
+    "asset_mode": "PROVISIONAL_CC0_AND_ENGINE_CONTENT",
+    "visual_acceptance": "PENDING_FINAL_FAB_IMPORT",
+    "pcg_generated_instances": 0,
+    "pcg_generation_on_demand": true,
+    "collision_quality_invariant": true
+  },
+  "runtime_integration_contract": {
+    "authority": "SOURCE_SEMANTIC_GATE_FOR_PRESENTATION_ONLY_ENVIRONMENT_INTEGRATION",
+    "release_use_allowed": false,
+    "required_files": [
+      "Source/DiscGolfTour/DiscGolfQualityAdapter.h",
+      "Source/DiscGolfTour/DiscGolfQualityAdapter.cpp",
+      "Source/DiscGolfTour/DiscGolfBuiltInEnvironmentProvider.h",
+      "Source/DiscGolfTour/DiscGolfBuiltInEnvironmentProvider.cpp",
+      "Source/DiscGolfTour/DevCourseBootstrap.h",
+      "Source/DiscGolfTour/DevCourseBootstrap.cpp",
+      "Source/DiscGolfTour/DiscGolfEnvironmentController.h",
+      "Source/DiscGolfTour/DiscGolfEnvironmentController.cpp",
+      "Source/DiscGolfTour/DiscGolfTourGameMode.h",
+      "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "Source/DiscGolfTour/DiscGolfTour.Build.cs",
+      "Source/DiscGolfTour/Tests/DiscGolfQualityAdapterTests.cpp",
+      "Source/DiscGolfTour/Tests/DiscGolfBuiltInEnvironmentProviderTests.cpp",
+      "Source/DiscGolfTour/Tests/DiscGolfSession10EnvironmentContractTests.cpp",
+      "Source/DiscGolfTourEditor/DiscGolfEnvironmentAssetBinder.h",
+      "Source/DiscGolfTourEditor/DiscGolfEnvironmentAssetBinder.cpp",
+      "Source/DiscGolfTourEditor/Tests/DiscGolfEnvironmentAssetBinderTests.cpp",
+      "Scripts/run-environment-asset-binding-workflow.py"
+    ],
+    "frozen_file_hashes": [
+      {
+        "path": "Source/DiscGolfTour/DiscGolfQualityAdapter.h",
+        "sha256": "B0EC1C45BA9B49579B8DE933CC5385355D9A4DE84108B4F51D19D856FD45C16F"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfQualityAdapter.cpp",
+        "sha256": "2B467179C891CB21AEE63F2AE1B65F6FADB144809BCDC1237E3227166E4F7BAC"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfBuiltInEnvironmentProvider.h",
+        "sha256": "630E975EA0CE8E4C5AFEDA070EDF1724E84DC9B9F43C5A5B71A60E2A1D164604"
+      },
+      {
+        "path": "Source/DiscGolfTour/DiscGolfBuiltInEnvironmentProvider.cpp",
+        "sha256": "F4066C96DE58992EE1D69177F0EB29307B08E5E6A2593A74C8D1554DAD49CD0D"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfQualityAdapterTests.cpp",
+        "sha256": "70C8BC64839CBF307FE54738FBD242125A98144F51075601F3A23B6FA17D7C8F"
+      },
+      {
+        "path": "Source/DiscGolfTour/Tests/DiscGolfBuiltInEnvironmentProviderTests.cpp",
+        "sha256": "3283F60B05BF3E392DACDE93661468C36A29A874A5A36DFC5867EB4DD7577BF9"
+      }
+    ],
+    "quality_adapter": {
+      "player_profile_order": [
+        "Performance",
+        "Medium",
+        "High",
+        "Cinematic"
+      ],
+      "course_visual_tier_order": [
+        "Low",
+        "Medium",
+        "High",
+        "High"
+      ],
+      "environment_quality_order": [
+        "Performance",
+        "Performance",
+        "High",
+        "Cinematic"
+      ],
+      "medium_to_performance_deliberately_frozen": true,
+      "omen_profile_id": "OmenGameplay1080pHighFoliageV1",
+      "omen_resolution_quality": 100.0,
+      "omen_quality_two_fields": [
+        "ViewDistanceQuality",
+        "AntiAliasingQuality",
+        "ShadowQuality",
+        "GlobalIlluminationQuality",
+        "ReflectionQuality",
+        "PostProcessQuality",
+        "TextureQuality",
+        "EffectsQuality",
+        "ShadingQuality"
+      ],
+      "omen_foliage_quality": 3,
+      "omen_landscape_policy": "PRESERVE_CALLER_BASELINE",
+      "omen_course_visual_tier": "High",
+      "omen_environment_quality": "High",
+      "mutates_global_scalability": false
+    },
+    "built_in_provider": {
+      "default_time_of_day_hours": 14.0,
+      "default_sun_rotation": [
+        -38.0,
+        -35.0,
+        0.0
+      ],
+      "default_sun_intensity": 1.25,
+      "default_sky_light_intensity": 0.72,
+      "supported_modes": [
+        "Clear",
+        "Overcast"
+      ],
+      "precipitation_fallback_status": "UNSUPPORTED_PRECIPITATION_FALLBACK_OVERCAST_NO_GAMEPLAY_EFFECTS",
+      "non_finite_input_policy": "REJECT",
+      "gameplay_neutral": true,
+      "tick_enabled": false
+    },
+    "bootstrap_ownership": {
+      "spawn_lighting_returns_success": true,
+      "spawn_failure_blocks_course_build": true,
+      "provider_owner_is_bootstrap": true,
+      "provider_stored_only_after_apply_success": true,
+      "end_play_destroys_provider": true,
+      "end_play_clears_provider_and_lighting_state": true,
+      "quality_snapshot_drives_course_and_environment_presentation": true
+    },
+    "game_mode_integration": {
+      "omen_profile_applied_before_course_assembly": true,
+      "resolved_quality_snapshot_passed_to_persistent_course": true,
+      "performance_profile_id_comes_from_adapter": true,
+      "automatically_invokes_environment_wind_synchronization": false
+    },
+    "controller_gameplay_neutrality": {
+      "default_disc_flight_wind_synchronization_enabled": false,
+      "bootstrapped_disc_flight_wind_synchronization_enabled": false,
+      "production_required_binding_slot_count": 16,
+      "production_requires_all_slots_populated": true,
+      "editor_authoring_readiness_requires_graph": true,
+      "shipping_runtime_readiness_uses_graph": false,
+      "focused_test_name": "DiscGolfTour.Session10.Environment.ContractFailClosed",
+      "focused_test_asserts_default_sync_disabled": true,
+      "focused_test_asserts_incomplete_bindings_rejected": true,
+      "focused_test_asserts_complete_bindings_with_graph_accepted": true
+    },
+    "required_runtime_test_names": [
+      "DiscGolfTour.Quality.Adapter.PlayerPresetMapping",
+      "DiscGolfTour.Quality.Adapter.OmenCaptureContract",
+      "DiscGolfTour.Quality.Adapter.CurrentProfileResolution",
+      "DiscGolfTour.Quality.Adapter.PureResolutionNoGlobalMutation",
+      "DiscGolfTour.Quality.Adapter.CollisionAuthorityInvariant",
+      "DiscGolfTour.Environment.BuiltInProvider.ClearContract",
+      "DiscGolfTour.Environment.BuiltInProvider.OvercastContract",
+      "DiscGolfTour.Environment.BuiltInProvider.UnsupportedWeatherFailsSafe",
+      "DiscGolfTour.Session10.Environment.ContractFailClosed"
+    ],
+    "binder_contract": {
+      "approved_project_runtime_root": "/Game/Presentation/Course/PineRidge",
+      "approved_engine_primitive_root": "/Engine/BasicShapes",
+      "quarantined_roots": [
+        "/Game/PN_interactiveSpruceForest",
+        "/Game/Stump_Scanned",
+        "/Game/WaterMaterials"
+      ],
+      "scan_roots_fail_closed_before_registry_query": true,
+      "scanned_assets_rechecked_by_runtime_path_policy": true,
+      "assigned_variants_rechecked_by_runtime_path_policy": true,
+      "apply_validates_all_paths_before_mutation": true,
+      "scan_and_proposal_are_nonmutating": true,
+      "structural_category_count": 16,
+      "structural_category_range_inclusive": [
+        0,
+        15
+      ],
+      "structural_categories_must_be_unique_and_complete": true,
+      "required_test_names": [
+        "DiscGolfTour.Environment.AssetBinder.ProvenanceGateFailsClosed",
+        "DiscGolfTour.Environment.AssetBinder.ScanDoesNotMutate",
+        "DiscGolfTour.Environment.AssetBinder.InvalidApprovalIsAtomic",
+        "DiscGolfTour.Environment.AssetBinder.StructuralCompletenessRejectsInvalidCategories"
+      ]
+    },
+    "workflow_contract": {
+      "exact_approved_runtime_roots": [
+        "/Game/Presentation/Course/PineRidge"
+      ],
+      "environment_override_allowed": false,
+      "scan_requires_provenance_accepted": true,
+      "proposal_requires_provenance_accepted": true,
+      "invokes_apply_approved_bindings": false
+    }
+  },
+  "quarantine_contract": {
+    "never_cook_config": "Config/DefaultGame.ini",
+    "never_cook_policy": "REQUIRE_EACH_QUARANTINED_ROOT_EXACTLY_ONCE_ALLOW_ADDITIVE_LATER_SESSION_EXCLUSIONS",
+    "runtime_reference_policy": "DENY_EXCEPT_EXPLICIT_NEVERCOOK_DECLARATIONS_AND_PRIVATE_AUDIT_EVIDENCE",
+    "exact_imports": [
+      {
+        "source_id": "fab_project_nature_spruce_forest",
+        "disk_root": "Content/PN_interactiveSpruceForest",
+        "package_root": "/Game/PN_interactiveSpruceForest",
+        "release_use_allowed": false
+      },
+      {
+        "source_id": "fab_greenbuggames_stump_scanned",
+        "disk_root": "Content/Stump_Scanned",
+        "package_root": "/Game/Stump_Scanned",
+        "release_use_allowed": false
+      },
+      {
+        "source_id": "fab_tharlevfx_water_materials",
+        "disk_root": "Content/WaterMaterials",
+        "package_root": "/Game/WaterMaterials",
+        "release_use_allowed": false
+      }
+    ]
+  },
+  "session9_continuity": {
+    "contract_path": "Config/DG_BrandLicenseContract.json",
+    "contract_sha256": "3EF3CBAD7E66D89D41CFB8C8FF59516484D8258995CAFAF28F8D58C4D8EB2001",
+    "validator_path": "Scripts/validate_dg_session9_brand_license.py",
+    "validator_sha256": "69867A9CE89D8F7720E2A124BEEB09CE4FFDC02D6F95BED8A11D281EF0EB7550",
+    "expected_release_ready": false,
+    "expected_release_blocker_count": 8,
+    "release_blockers": [
+      "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+      "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+      "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+      "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+      "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+      "POLY_HAVEN_DERIVED_RUNTIME_PROVENANCE_RECEIPT_INCOMPLETE",
+      "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+      "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED"
+    ]
+  },
+  "staged_closure": {
+    "status": "ACCEPTED_FRESH_DEVELOPMENT_PACKAGE_CLOSURE",
+    "closure_id": "5ea6982a-a89f-4948-a49c-212c4a889207",
+    "build_configuration": "Development",
+    "observed_stage_root": "C:/DGTour_Packages/S10_EnvironmentClosure_5ea6982a-a89f-4948-a49c-212c4a889207/Windows",
+    "observed_nonufs_manifest": "C:/DGTour_Packages/S10_EnvironmentClosure_5ea6982a-a89f-4948-a49c-212c4a889207/Windows/Manifest_NonUFSFiles_Win64.txt",
+    "observed_nonufs_manifest_bytes": 3322,
+    "observed_nonufs_manifest_sha256": "DC946BC259C1E9680D6F17B4506D837A3D5E171923B64590D68686F34296BDB5",
+    "observed_ufs_manifest": "C:/DGTour_Packages/S10_EnvironmentClosure_5ea6982a-a89f-4948-a49c-212c4a889207/Windows/Manifest_UFSFiles_Win64.txt",
+    "observed_ufs_manifest_bytes": 300050,
+    "observed_ufs_manifest_sha256": "FCDC543D72E550507C8E246445EC4CF41E5F2E931C7183E46CA0AC9A5229EC09",
+    "observed_presentation_path": "C:/DGTour_Packages/S10_EnvironmentClosure_5ea6982a-a89f-4948-a49c-212c4a889207/Windows/DiscGolfTour/Data/PineRidgePresentation.json",
+    "observed_presentation_bytes": 2184,
+    "source_presentation_sha256": "0B259E50B353B59BA2F940FB76C121CE69487BEB435D41E9CF21337219B2E8B0",
+    "observed_staged_presentation_sha256": "0B259E50B353B59BA2F940FB76C121CE69487BEB435D41E9CF21337219B2E8B0",
+    "expected_environment_packages": [
+      "/Game/Environment/Forest/DA_TemperateMountainForest",
+      "/Game/Environment/Forest/DA_TemperateMountainForest_Assets",
+      "/Game/Environment/Forest/Materials/MPC_EnvironmentWind",
+      "/Game/Environment/Forest/PCG/PCG_TemperateMountainForest"
+    ],
+    "observed_environment_packages": [
+      "/Game/Environment/Forest/DA_TemperateMountainForest",
+      "/Game/Environment/Forest/DA_TemperateMountainForest_Assets",
+      "/Game/Environment/Forest/Materials/MPC_EnvironmentWind",
+      "/Game/Environment/Forest/PCG/PCG_TemperateMountainForest"
+    ],
+    "observed_staged_environment_asset_count": 4,
+    "expected_fresh_environment_asset_count": 4,
+    "observed_staged_contains_forbidden_legacy_reference_ids": false,
+    "observed_quarantined_package_roots": [],
+    "package_listing_evidence": "UFS_MANIFEST_CORROBORATED_BY_UNREALPAK_IOSTORE_LIST",
+    "uat_log_path": "Saved/Logs/Session10/5ea6982a-a89f-4948-a49c-212c4a889207/UAT_Session10_EnvironmentClosure.log",
+    "uat_log_bytes": 86126,
+    "uat_log_sha256": "BB09C8D5C1D877853857DFB54EF7618C3675BEC14933719525973CFFF3F0C032",
+    "cook_packages": 984,
+    "cook_incrementally_skipped": 0,
+    "cook_skipped_by_platform": 7,
+    "cook_total_packages": 991,
+    "container_files": [
+      {
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.pak",
+        "bytes": 11317153,
+        "sha256": "59038C419FADEE64DC6A8B8AC69C37BC1AA3AF4C10F8415983A435C08895298F"
+      },
+      {
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.ucas",
+        "bytes": 1038756432,
+        "sha256": "0EBD10D81993F165AF2D488CE1BC2D8B6A7AB45B7D99A70D3FC5E0801077DFEE"
+      },
+      {
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.utoc",
+        "bytes": 524578,
+        "sha256": "76329E10AA34166C917E2E85DDF9E0DBDE85EF3D8ABDBB38D960AFFAFF945CA0"
+      },
+      {
+        "path": "DiscGolfTour/Content/Paks/global.ucas",
+        "bytes": 3521664,
+        "sha256": "2277FDA0498C6C9C4BA81CC60B8CF41BF13276A43B34202CB14545FA75A4DF28"
+      },
+      {
+        "path": "DiscGolfTour/Content/Paks/global.utoc",
+        "bytes": 842,
+        "sha256": "D0129C11FEC4FE3D5A255BB586210FDEC029830F109FF1B115C06D30CB78E6CE"
+      }
+    ],
+    "fresh_package_closure_accepted": true,
+    "release_use_allowed": false
+  },
+  "optional_adapters": [
+    {
+      "adapter_id": "ultra_dynamic_sky",
+      "status": "NOT_ACQUIRED_NOT_INTEGRATED",
+      "runtime_required": false,
+      "release_use_allowed": false
+    },
+    {
+      "adapter_id": "brushify_forest",
+      "status": "NOT_ACQUIRED_NOT_INTEGRATED",
+      "runtime_required": false,
+      "release_use_allowed": false
+    }
+  ],
+  "session10_release_blockers": [
+    "SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY"
+  ],
+  "release_blockers": [
+    "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+    "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+    "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+    "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+    "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+    "POLY_HAVEN_DERIVED_RUNTIME_PROVENANCE_RECEIPT_INCOMPLETE",
+    "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+    "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED",
+    "SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY"
+  ]
+}

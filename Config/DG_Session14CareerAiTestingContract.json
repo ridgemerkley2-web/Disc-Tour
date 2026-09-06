@@ -1,0 +1,388 @@
+{
+  "schema": "dg.session14.career_ai_testing.contract",
+  "schema_version": 1,
+  "contract_id": "DG_SESSION14_CAREER_AI_SETTINGS_AUTOMATION_V1",
+  "audit_scope": "BOUNDED_GENERIC_CAREER_MEASURED_AI_AND_AUTOMATION_FOUNDATION",
+  "normal_status": "PASS_TECHNICAL_CAREER_AI_TESTING_CONTRACT_RELEASE_BLOCKED",
+  "implementation_status": "BOUNDED_CAREER_AI_SETTINGS_AUTOMATION_FOUNDATION_ACCEPTED_PRODUCTION_READINESS_PENDING",
+  "release_status": "BLOCKED_PENDING_SESSION9_TO_SESSION14_PRODUCTION_CLOSURE",
+  "bounded_technical_feature_complete": true,
+  "full_career_mode_complete": false,
+  "production_ai_complete": false,
+  "releaseBlocked": true,
+  "release_ready": false,
+  "release_use_allowed": false,
+  "authority": {
+    "player_profile": "UDiscGolfSaveGame_SCHEMA_10_UNCHANGED",
+    "settings": "FDiscGolfPlayerSettings_EXISTING_NORMALIZED_PERSISTENCE",
+    "career": "UDiscGolfCareerProgressSaveGame_ISOLATED_SCHEMA_1",
+    "score": "FDiscGolfRoundState_WITH_FRAMEWORK_VALUE_CONVERSION",
+    "ai_profile": "TRANSIENT_GENERIC_UDiscGolfAIGolferProfile",
+    "ai_candidate_source": "MEASURED_PROJECT_OWNED_ACTUAL_FLIGHT_OUTCOMES",
+    "ai_selector": "UDiscGolfAIShotPlannerComponent",
+    "release_execution": "ADiscGolfTourGameMode_RequestThrow",
+    "flight": "UDiscFlightComponent_FIXED_STEP_240_HZ_SI"
+  },
+  "tournament_proof": {
+    "event_id": "PineRidgeChampionship",
+    "display_name": "Pine Ridge Championship",
+    "course_id": "PineRidgeChampionship",
+    "tee_set_id": "Championship",
+    "presenting_brand_id": "dg_generic",
+    "format": "StrokePlay",
+    "round_count": 1,
+    "hole_count": 3,
+    "hole_pars": [3, 4, 4],
+    "project_strokes_include_penalties": true,
+    "framework_base_strokes_subtract_penalties": true,
+    "framework_total_and_to_par_crosscheck_required": true,
+    "result_persisted": true,
+    "season_simulation_complete": false,
+    "economy_complete": false,
+    "world_ranking_simulation_complete": false,
+    "large_field_simulation_complete": false
+  },
+  "career_save_contract": {
+    "schema_version": 1,
+    "slot": "DGT_Career_Dev_v1",
+    "separate_from_profile_and_settings": true,
+    "profile_slot_touched": false,
+    "stable_ids_required": true,
+    "atomic_failed_load": true,
+    "future_schema_rejected": true,
+    "duplicate_results_rejected": true,
+    "max_completed_events": 128,
+    "max_round_history": 128,
+    "max_sponsorships": 32,
+    "live_proof_uses_disposable_guid_slot": true,
+    "live_proof_round_source": "LOCAL_SYNTHETIC_COMPLETED_ROUND_NOT_GAMEPLAY_ROUND",
+    "live_gameplay_round_mutated_by_career_proof": false
+  },
+  "settings_contract": {
+    "new_settings_subsystem_added": false,
+    "existing_normalization_preserved": true,
+    "existing_schema10_profile_persistence_preserved": true,
+    "production_profile_mutation_allowed_in_automation": false
+  },
+  "ai_proof": {
+    "profile_count": 1,
+    "golfer_id": "dg_generic_ai_proof",
+    "finite_skill_count": 6,
+    "validated_generic_default_loadout": true,
+    "minimum_measured_candidates": 3,
+    "accepted_live_candidate_count": 4,
+    "candidate_source": "DETACHED_ADiscActor_ACTUAL_FLIGHT_OUTCOMES",
+    "preview_game_mode_delegates_bound": false,
+    "preview_mutates_score_save_or_presentation": false,
+    "analytic_alternate_solver_allowed": false,
+    "deterministic_stable_ties": true,
+    "invalid_input_mutates_output": false,
+    "authoritative_request_count": 1,
+    "authoritative_stroke_delta": 1,
+    "state_tree_status": "OPTIONAL_NOT_INTEGRATED",
+    "production_strategy_complete": false,
+    "large_visible_ai_field_complete": false
+  },
+  "automation_foundation": {
+    "catalog_ids_and_plastics_unique": true,
+    "starter_bag_resolves": true,
+    "score_calculations_crosschecked": true,
+    "course_validator_runs": true,
+    "career_save_serialization_runs": true,
+    "uncalibrated_donor_flight_ranges_are_authoritative": false,
+    "new_calibrated_physics_range_added": false
+  },
+  "continuity": {
+    "frozen_files": [
+      {
+        "path": "Config/DG_BrandLicenseContract.json",
+        "bytes": 9267,
+        "sha256": "3EF3CBAD7E66D89D41CFB8C8FF59516484D8258995CAFAF28F8D58C4D8EB2001"
+      },
+      {
+        "path": "Scripts/validate_dg_session9_brand_license.py",
+        "bytes": 74292,
+        "sha256": "69867A9CE89D8F7720E2A124BEEB09CE4FFDC02D6F95BED8A11D281EF0EB7550"
+      },
+      {
+        "path": "Config/DG_Session10EnvironmentContract.json",
+        "bytes": 19976,
+        "sha256": "05931329CE877E80D4D36691D9091BBD6DDACE8F3F40612C5BE11B47744CDDC5"
+      },
+      {
+        "path": "Scripts/validate_dg_session10_environment.py",
+        "bytes": 76608,
+        "sha256": "13F3AECBB569466B6E3E8C49E0B3FA599EF57B13CE23604602CDC3158809112A"
+      },
+      {
+        "path": "Config/DG_Session11EquipmentThrowLabContract.json",
+        "bytes": 20213,
+        "sha256": "5306B7C1354775A896332474711B5E6E92C44B44F7EFDE0D9353EB4E9DBCA79D"
+      },
+      {
+        "path": "Scripts/validate_dg_session11_equipment_throw_lab.py",
+        "bytes": 36254,
+        "sha256": "E9D262E61122176EB4515D4AA2A4854D6354EADA2871B3A01299B17B13179D8A"
+      },
+      {
+        "path": "Config/DG_Session12PresentationContract.json",
+        "bytes": 14978,
+        "sha256": "B8385D58B102C06AC19A986B14E2858C1906F7BD79D28D48C9AB555D0EB4AB3F"
+      },
+      {
+        "path": "Scripts/validate_dg_session12_presentation.py",
+        "bytes": 30684,
+        "sha256": "D2FCEE88310BF00B3A7F0EE1803E8F2216D5E42C15161B631E8A473A683B5388"
+      },
+      {
+        "path": "Config/DG_Session13CourseAuthoringPcgContract.json",
+        "bytes": 17700,
+        "sha256": "64554C71530F09CE4AC6F779A65A720C195112617DDEA7D08E574F4258A044F0"
+      },
+      {
+        "path": "Scripts/validate_dg_session13_course_authoring_pcg.py",
+        "bytes": 51940,
+        "sha256": "ABD65FA427ACB7099E603CC045C5333D3E3BD26C8C8E5EF6A07C3406B3A03E2F"
+      }
+    ],
+    "protected_profile": {
+      "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+      "bytes": 5212,
+      "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14",
+      "writes_allowed": false
+    }
+  },
+  "donor_reference": {
+    "policy": "READ_ONLY_REFERENCE_NEVER_RUNTIME_AUTHORITY",
+    "bindings": [
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/CODEX/14_CAREER_AI_SETTINGS_TESTING.md",
+        "bytes": 1455,
+        "sha256": "FE205223186C2F35A8FED0B2671301623C383D1AFB98C32C37ABBC133CE0E58A"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Docs/42_AUTOMATION_AND_FLIGHT_REGRESSION.md",
+        "bytes": 1333,
+        "sha256": "D989306A6D700976735EFD511A668337477E0A8AE04D59AD63A4D3A9382720AC"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Docs/43_CAREER_TOURNAMENT_CONTRACTS.md",
+        "bytes": 1072,
+        "sha256": "FA195708C5FAE52F230ABDBBA1C655E4512A8E193B0A736BA512CD13D017934A"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Docs/44_AI_GOLFER_FRAMEWORK.md",
+        "bytes": 1248,
+        "sha256": "8013C9104B29237E6BA854239C97C3E8687CA004BA30EF688121C6FA0AF7E38F"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Docs/45_SAVE_ARCHITECTURE.md",
+        "bytes": 943,
+        "sha256": "600AC3D11E909455310C31D6531744D83794DC5A49E3079F613F7B9EB708534A"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Config/DG_CareerTournamentSchema.json",
+        "bytes": 371,
+        "sha256": "DFFA214B99E7985032E5552AD9DFEA33841DCEBE84E732F73B5528B0BCABF5E0"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Config/DG_AIGolferSchema.json",
+        "bytes": 536,
+        "sha256": "5DA1BCB55F5F2CB24E8215FDB5F63995B5F8ED2117BE4565B1C53DD7BF7FDEEA"
+      },
+      {
+        "path": "_BuildKit/DiscGolfCorePlayabilityKit_v1.5/Config/DG_FlightRegressionSchema.json",
+        "bytes": 460,
+        "sha256": "50246664BB1C723E0B9B6F947DCB2357B7EE3E2A4117DF44027E9B1F5740739A"
+      }
+    ]
+  },
+  "required_files": [
+    "Source/DiscGolfTour/DiscGolfCompetitionRuntime.h",
+    "Source/DiscGolfTour/DiscGolfCompetitionRuntime.cpp",
+    "Source/DiscGolfTour/DiscGolfCareerProgressSaveGame.h",
+    "Source/DiscGolfTour/DiscGolfCareerSubsystem.h",
+    "Source/DiscGolfTour/DiscGolfCareerSubsystem.cpp",
+    "Source/DiscGolfTour/DiscGolfAIPlannerAdapter.h",
+    "Source/DiscGolfTour/DiscGolfAIPlannerAdapter.cpp",
+    "Source/DiscGolfTour/DiscGolfSession14AISmokeRunner.h",
+    "Source/DiscGolfTour/DiscGolfSession14AISmokeRunner.cpp",
+    "Source/DiscGolfTour/Tests/DiscGolfSession14CompetitionCareerTests.cpp",
+    "Source/DiscGolfTour/Tests/DiscGolfSession14AITests.cpp",
+    "Source/DiscGolfTour/Tests/DiscGolfSession14SmokeFoundationTests.cpp",
+    "Source/DiscGolfTour/DiscGolfTourGameMode.h",
+    "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+    "Source/DiscGolfTour/DiscGolfSaveGame.h",
+    "Source/DiscGolfTour/DiscGolfTourGameInstance.h",
+    "Source/DiscGolfTour/DiscGolfTourGameInstance.cpp",
+    "Source/DiscGolfTour/DiscBagComponent.h",
+    "Source/DiscGolfTour/DiscBagComponent.cpp",
+    "Source/DiscGolfTour/DiscGolfRoundState.h",
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/Public/DiscGolfCompetitionTypes.h",
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/Public/DiscGolfTournamentDefinition.h",
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/Public/DiscGolfAIGolferProfile.h",
+    "Plugins/DiscGolfCharacterFramework/Source/DiscGolfCharacterFramework/Public/DiscGolfAIShotPlannerComponent.h",
+    "Config/DG_Session14CareerAiTestingContract.json",
+    "Scripts/validate_dg_session14_career_ai.py",
+    "Docs/DG_SESSION14_CAREER_AI_TESTING_AUDIT.md"
+  ],
+  "implementation_capabilities": [
+    {"id": "generic_single_event_stroke_play_contract", "status": "TECHNICAL_PASS"},
+    {"id": "project_round_to_framework_scorecard_conversion", "status": "TECHNICAL_PASS"},
+    {"id": "isolated_schema_v1_career_persistence", "status": "TECHNICAL_PASS"},
+    {"id": "existing_profile_and_settings_authority_preserved", "status": "TECHNICAL_PASS"},
+    {"id": "measured_real_flight_ai_candidates", "status": "TECHNICAL_PASS"},
+    {"id": "framework_planner_deterministic_selection", "status": "TECHNICAL_PASS"},
+    {"id": "selected_ai_command_existing_release_flight_execution", "status": "TECHNICAL_PASS"},
+    {"id": "fast_data_score_course_save_smoke_foundation", "status": "TECHNICAL_PASS"},
+    {"id": "build_automation_and_package_regression", "status": "TECHNICAL_PASS"}
+  ],
+  "test_contract": {
+    "focused_session14_filter": "DiscGolfTour.Session14.*",
+    "focused_competition_career_filter": "DiscGolfTour.Session14.CompetitionCareer.*",
+    "focused_ai_filter": "DiscGolfTour.Session14.AI.*",
+    "focused_smoke_filter": "DiscGolfTour.Session14.Smoke.*",
+    "full_filter": "DiscGolfTour.*",
+    "expected_session14_succeeded": 17,
+    "expected_career_succeeded": 7,
+    "expected_ai_succeeded": 5,
+    "expected_smoke_succeeded": 5,
+    "expected_full_succeeded": 223,
+    "uncalibrated_flight_ranges_enforced": false,
+    "editor_and_game_development_builds_required": true,
+    "reference_flight_required": true,
+    "fresh_non_iterative_package_required": true,
+    "packaged_ai_career_smoke_required": true,
+    "protected_profile_hash_required_after_all_runs": true
+  },
+  "closure_evidence": {
+    "editor_development_build": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session14EditorBuildFinal.log",
+      "bytes": 10462,
+      "sha256": "28DDFEBC143DFF6FC014C56E3EADF3227AE192E235D85BCD0AFD433AF188376A"
+    },
+    "game_development_build": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session14GameBuildFinal.log",
+      "bytes": 14650,
+      "sha256": "D694EC9DE181ECF7BAB2D701038EA1C6DFF8641EFD3BD44CD21E5436DB18A2A1"
+    },
+    "focused_session14_automation": {
+      "status": "PASS",
+      "path": "Saved/Automation/Session14FocusedFinal_e06b4a59-f773-4ca6-9457-4cc57b0486fa/index.json",
+      "bytes": 7681,
+      "sha256": "09FD3116BE695F2300EA06067E8739E2414FF16316D995CD5807E2406696E14C",
+      "succeeded": 17,
+      "failed": 0,
+      "not_run": 0
+    },
+    "focused_competition_career_automation": {
+      "status": "PASS",
+      "path": "Saved/Automation/Session14CareerFocusedFinal_187a05fc-2086-47d9-a1d9-5f5752dd03b8/index.json",
+      "bytes": 3633,
+      "sha256": "0B3797DE4221475F68C7459C81D6908B8A4DB3668AA74E5165A92BF409F176E8",
+      "succeeded": 7,
+      "failed": 0,
+      "not_run": 0
+    },
+    "focused_ai_automation": {
+      "status": "PASS",
+      "path": "Saved/Automation/Session14AI_5d4b9209-feab-4374-b95a-bb029269b0d2/index.json",
+      "bytes": 2741,
+      "sha256": "2CEAD40910F3B598EE68B761D3EDF52E3AF3727CFC984CC7F57FEC1DD8127A31",
+      "succeeded": 5,
+      "failed": 0,
+      "not_run": 0
+    },
+    "full_automation": {
+      "status": "PASS",
+      "path": "Saved/Automation/Session14FullFinal_133d78f7-5f28-4a0a-b104-865540d4e3d8/index.json",
+      "bytes": 89753,
+      "sha256": "F266591AC4BC297903B4C43A1626350409403E7CE98C88337FD29F8640406E3F",
+      "succeeded": 223,
+      "failed": 0,
+      "not_run": 0
+    },
+    "project_validation": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session14ProjectValidationFinal.log",
+      "bytes": 167,
+      "sha256": "0A9ABBA4E88F9DB313DD340670F8D120638A275B747AACF1BA56474B10B66826"
+    },
+    "reference_flight": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session14ReferenceFlightFinal.log",
+      "bytes": 306,
+      "sha256": "63C46453999F512611062B611FB06E40185E2B913B537632E2C2E7F019129C06",
+      "carry_m": 84.5
+    },
+    "editor_live_smoke": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session14EditorLiveFinal_9d148f0d-3a52-47b9-a970-2b4c8238027f.log",
+      "bytes": 208990,
+      "sha256": "C1DCB68E13CBF22F94895885C98A6B93A52D44A105A8907D04B30779BBDD76CF"
+    },
+    "live_smoke_report": {
+      "status": "PASS",
+      "path": "Saved/Session14Reports/Session14AIGolferPackagedSmoke_f9872bf4-8319-4625-8426-224fed282076.json",
+      "bytes": 4041,
+      "sha256": "91E62B3F4D00CF00D5FE1A0E1E86F9A26B341BBAE20FCABFC7BD752E2395D95A"
+    },
+    "fresh_package": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session14Package_c84db54d-7d6e-490e-a24b-9f0b0a20f413.log",
+      "bytes": 323130,
+      "sha256": "BA52FE227E2758DEA1CFBBE4745CA8764C9E39C221F231E5B72183960D51EBC7",
+      "archive_path": "C:\\DGTour_Packages\\S14_CareerAI_c84db54d-7d6e-490e-a24b-9f0b0a20f413",
+      "cooked_packages": 985,
+      "incrementally_skipped": 0,
+      "skipped_by_platform": 7,
+      "total_packages": 992,
+      "archive_file_count": 54,
+      "archive_total_bytes": 1916110012,
+      "archive_manifest": {
+        "path": "Saved/Session14Reports/Session14PackageManifest_c84db54d-7d6e-490e-a24b-9f0b0a20f413.json",
+        "bytes": 11115,
+        "sha256": "D88146A3EB83BD911F50A7556C18714192F27B29B12874877ED53AE627397D66"
+      }
+    },
+    "packaged_live": {
+      "status": "PASS",
+      "path": "Saved/Logs/Session14PackagedLive_f9872bf4-8319-4625-8426-224fed282076.log",
+      "bytes": 72241,
+      "sha256": "25ED50B651FD48FF26E0682CF287D53FE5B0CACF5ACDBD6FC63AFE756C409004",
+      "authoritative_request_count": 1,
+      "authoritative_stroke_delta": 1,
+      "preview_candidate_count": 4,
+      "requested_exit_status": 0
+    },
+    "protected_profile_after_all_runs": {
+      "status": "PASS",
+      "path": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+      "bytes": 5212,
+      "sha256": "A9996D3A3368C929437A913FB8ADF3E1BCF947711D9F0867976C3BB30A491A14"
+    }
+  },
+  "exit_gate": {
+    "status": "TECHNICAL_EXIT_ACCEPTED_PRODUCTION_READINESS_PENDING",
+    "all_capabilities_technical_pass": true,
+    "production_readiness_approved": false
+  },
+  "session14_release_blocker": "SESSION14_CAREER_AI_PRODUCTION_READINESS_PENDING",
+  "release_blockers": [
+    "FINAL_PUBLIC_TITLE_NOT_LOCKED_OR_CLEARED",
+    "EQUIPMENT_AND_COURSE_DISPLAY_NAMES_PENDING_CLEARANCE",
+    "CHARACTER_FRAMEWORK_SOURCE_DISTRIBUTION_RIGHTS_UNRESOLVED",
+    "DEVELOPMENT_DO_NOT_SHIP_CONTENT_PRESENT_IN_RUNTIME_CLOSURE",
+    "QUARANTINED_IMPORT_RECEIPTS_PENDING",
+    "POLY_HAVEN_DERIVED_RUNTIME_PROVENANCE_RECEIPT_INCOMPLETE",
+    "ACTUAL_STAGED_PACKAGE_PROVENANCE_CLOSURE_NOT_IMPLEMENTED",
+    "MANUAL_VISUAL_LOGO_AND_TRADE_DRESS_REVIEW_REQUIRED",
+    "SESSION10_ENVIRONMENT_BINDINGS_NOT_PRODUCTION_READY",
+    "SESSION11_EQUIPMENT_PHYSICS_AND_PRODUCTION_READINESS_PENDING",
+    "SESSION12_PRESENTATION_INPUT_AUDIO_PRODUCTION_READINESS_PENDING",
+    "SESSION13_COURSE_AUTHORING_PCG_PRODUCTION_READINESS_PENDING",
+    "SESSION14_CAREER_AI_PRODUCTION_READINESS_PENDING"
+  ]
+}

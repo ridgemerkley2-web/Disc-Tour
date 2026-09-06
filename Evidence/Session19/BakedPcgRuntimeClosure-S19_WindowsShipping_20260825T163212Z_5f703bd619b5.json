@@ -1,0 +1,336 @@
+{
+  "schema": "DiscGolfTour.Session19BakedPcgRuntimeClosureReceipt.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "candidateId": "S19_WindowsShipping_20260825T163212Z_5f703bd619b5",
+  "verifiedUtc": "2026-08-25T17:50:45.040724Z",
+  "state": "PASS_PARTIAL_CANDIDATE_BOUND_PCG_RUNTIME_CLOSURE",
+  "policy": {
+    "path": "Config/DG_Session19BakedPcgRuntimeClosurePolicy.json",
+    "bytes": 11564,
+    "sha256": "CEF4F6AB78185DD7AD5B80FE34332DA42861D2F9A1EDA9B12E7AFD15CFCAD0EA"
+  },
+  "validator": {
+    "path": "Scripts/validate_dg_session19_baked_pcg_runtime_closure.py",
+    "bytes": 62815,
+    "sha256": "64EB401F80C803B4E989589BF12D4985AD82E124E1A97084D225954153BDCE59"
+  },
+  "candidate": {
+    "archive": {
+      "hostPathRecorded": false,
+      "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260825T163212Z_5f703bd619b5/Windows",
+      "fileCount": 31,
+      "bytes": 1253525849,
+      "canonicalManifestSha256": "25BF5FCC04D9D0D78B5314AF49AA7F3F274FF4A2593DC4EEA2D09EED01027EB3",
+      "liveRevalidationPass": true
+    },
+    "shippingExecutable": {
+      "path": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+      "bytes": 170326528,
+      "sha256": "B88FBDE526A6768B608DEF63341DE316DE3EB11C1DF40C2E3DDEA68DF81AB349"
+    },
+    "containers": [
+      {
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.pak",
+        "bytes": 10478025,
+        "sha256": "C44103EBC790DAE95331C7F309BA082ADF969E88894B7898907C545D7FD1427C"
+      },
+      {
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.ucas",
+        "bytes": 1008555056,
+        "sha256": "8A2FB062F3830C4DD5BCC9DB0BF682C68DFAD4CF1E638DD855AB916D9CFC185C"
+      },
+      {
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.utoc",
+        "bytes": 480541,
+        "sha256": "403DD802F6EAD8EEBF63475CF7CCF1DB57A4E2AA974BDEDC354BB6ABE53391B4"
+      },
+      {
+        "path": "DiscGolfTour/Content/Paks/global.ucas",
+        "bytes": 3520048,
+        "sha256": "324D543E314032E1100CCE49F69B32A509E84860842B7F5EB82600FA9DD3C12F"
+      },
+      {
+        "path": "DiscGolfTour/Content/Paks/global.utoc",
+        "bytes": 842,
+        "sha256": "ABD797A0D8569333B2C6B214B623C4754792D4FD5566A63A934954B3FB950AC5"
+      }
+    ]
+  },
+  "tooling": {
+    "hostPathsRecorded": false,
+    "unrealPak": {
+      "name": "UnrealPak.exe",
+      "bytes": 160696,
+      "sha256": "77BAB732FC3315727265CBD5673008D45ABBED332980599CEE05BEB03C07F01F"
+    },
+    "unrealEditorCommandlet": {
+      "name": "UnrealEditor-Cmd.exe",
+      "bytes": 512952,
+      "sha256": "0FB325CF215CC800CE260A1890AF3F3DC314B8CC6331061D4E7E7246489AF2E0"
+    }
+  },
+  "evidenceChain": {
+    "bindings": [
+      {
+        "role": "SHIPPING_BUILD_RECEIPT",
+        "path": "Evidence/Session19/ShippingCandidate-S19_WindowsShipping_20260825T163212Z_5f703bd619b5.json",
+        "bytes": 4745,
+        "sha256": "C9306FD36037BD06271DBF0C671737FE60743CFB37B28CADCD4739C24B92D516",
+        "identityPass": true
+      },
+      {
+        "role": "SHIPPING_CANDIDATE_VERIFICATION",
+        "path": "Evidence/Session19/ShippingCandidateVerification-S19_WindowsShipping_20260825T163212Z_5f703bd619b5.json",
+        "bytes": 4902,
+        "sha256": "846BB1DC49D3994AB137008B1A556A1E2F6621396447ADA789B1B20563A8C80E",
+        "identityPass": true
+      },
+      {
+        "role": "BAKED_PCG_PREBUILD_SOURCE_CLOSURE",
+        "path": "Evidence/Session19/BakedPcgSourceClosurePreBuild-S19_WindowsShipping_20260825T163212Z_5f703bd619b5.json",
+        "bytes": 44336,
+        "sha256": "664DC7D6C7FF42A8573D77F5608614590E3BBA9B9AA9D019F1D1C5FE0F51F6B2",
+        "identityPass": true
+      },
+      {
+        "role": "BAKED_PCG_CANDIDATE_ARCHIVE_BINDING",
+        "path": "Evidence/Session19/BakedPcgCandidateVerification-S19_WindowsShipping_20260825T163212Z_5f703bd619b5.json",
+        "bytes": 4131,
+        "sha256": "AE08B450AFD5A5F7B09314168156BD8D3FF046BC2A5829521402F865D01F05F3",
+        "identityPass": true
+      },
+      {
+        "role": "CANDIDATE_CONTENT_AUDIT",
+        "path": "Evidence/Session19/CandidateContent-S19_WindowsShipping_20260825T163212Z_5f703bd619b5.json",
+        "bytes": 27368,
+        "sha256": "4CFE4E7BF4A36F17D2FC8171846BA0B79B006D365D9F3393275C270B0FCA4509",
+        "identityPass": true
+      },
+      {
+        "role": "EXTERNAL_TECHNICAL_EVIDENCE",
+        "path": "Evidence/Session19/ExternalTechnicalEvidence-S19_WindowsShipping_20260825T163212Z_5f703bd619b5.json",
+        "bytes": 800,
+        "sha256": "128D041277F66B56CD0D60A90941E1B6FC8E66DE36E81404903D9037A8817D05",
+        "identityPass": true
+      },
+      {
+        "role": "THREE_HOLE_TECHNICAL_ACCEPTANCE",
+        "path": "Evidence/Session19/ThreeHoleTechnicalAcceptance-S19_WindowsShipping_20260825T163212Z_5f703bd619b5.json",
+        "bytes": 9357,
+        "sha256": "7CC6A99E69DCEE66C7274798F24845C4FE55D9F694670E7AA1EB41B4C26B8C11",
+        "identityPass": true
+      },
+      {
+        "role": "FRESH_USERDIR_VALIDATION",
+        "path": "Evidence/Session19/FreshUserDir-S19_WindowsShipping_20260825T163212Z_5f703bd619b5.json",
+        "bytes": 2721,
+        "sha256": "3DCF7EEAD5CAB10807978465740D67C42E091DB8FB9CBE46532A88B5F77362C9",
+        "identityPass": true
+      },
+      {
+        "role": "BUILD_COOK_RUN_LOG",
+        "path": "Evidence/Session19/ShippingBuildCookRun-S19_WindowsShipping_20260825T163212Z_5f703bd619b5.log",
+        "bytes": 112670,
+        "sha256": "3FEF7E15005754DF75C68C424698FEAA98DF90CC744AA3C9392BD441A3D8AE46",
+        "identityPass": true
+      }
+    ]
+  },
+  "sourceControlFlow": {
+    "shippingInvalidOrMissingAuthoredDataFailsClosed": true,
+    "allThreeDefinitionsRequiredBeforeRoundInitialization": true,
+    "explicitOrderedTreesConsumedForCollisionAndVisuals": true,
+    "externalGenerateForestCallCount": 0,
+    "externalGenerateLocalCallCount": 0,
+    "dormantGenerateLocalCallCount": 1,
+    "runtimePcgComponentPresent": true,
+    "runtimeForestGraphAssignmentPresent": true,
+    "generationTrigger": "GenerateOnDemand",
+    "generateOnDrop": false,
+    "reflectedGenerateForestApiRetained": true
+  },
+  "authoredRuntimeData": {
+    "files": [
+      {
+        "sourcePath": "Data/PineRidgeCourse.json",
+        "archivePath": "DiscGolfTour/Data/PineRidgeCourse.json",
+        "bytes": 668,
+        "sha256": "67C7EE82B3A9734724CAA3F7AD37EE46E77DBF736F25F93EF3CE49FDF97150CF",
+        "sourceAuthorityMatch": true,
+        "archiveAuthorityMatch": true,
+        "nonUfsManifestOccurrenceCount": 1,
+        "ufsManifestOccurrenceCount": 0
+      },
+      {
+        "sourcePath": "Data/PineRidgeHole1.json",
+        "archivePath": "DiscGolfTour/Data/PineRidgeHole1.json",
+        "holeNumber": 1,
+        "treeCount": 12,
+        "bytes": 7740,
+        "sha256": "CD1991551FD3F13465A5C6737871A2D4B91A31E078CAD1C97F458A7A5081F317",
+        "sourceAuthorityMatch": true,
+        "archiveAuthorityMatch": true,
+        "nonUfsManifestOccurrenceCount": 1,
+        "ufsManifestOccurrenceCount": 0
+      },
+      {
+        "sourcePath": "Data/PineRidgeHole2.json",
+        "archivePath": "DiscGolfTour/Data/PineRidgeHole2.json",
+        "holeNumber": 2,
+        "treeCount": 18,
+        "bytes": 8586,
+        "sha256": "AB55ACE68264C270DE932DC0E0DEA644B844AEBB29F6CC0E994614789CA96F2E",
+        "sourceAuthorityMatch": true,
+        "archiveAuthorityMatch": true,
+        "nonUfsManifestOccurrenceCount": 1,
+        "ufsManifestOccurrenceCount": 0
+      },
+      {
+        "sourcePath": "Data/PineRidgeHole3.json",
+        "archivePath": "DiscGolfTour/Data/PineRidgeHole3.json",
+        "holeNumber": 3,
+        "treeCount": 14,
+        "bytes": 8509,
+        "sha256": "A1FC744234E94FBE383F5AED21DCEF9D84A4213CF9E8625B57CA4C3339EC46A2",
+        "sourceAuthorityMatch": true,
+        "archiveAuthorityMatch": true,
+        "nonUfsManifestOccurrenceCount": 1,
+        "ufsManifestOccurrenceCount": 0
+      }
+    ],
+    "manifestSelectsExactThreeHoles": true,
+    "combinedCanonicalTreePayload": {
+      "treeCount": 44,
+      "bytes": 2982,
+      "sha256": "98D9B1F10A683D1C90EC25F766A3224B00AC550F9C379F2051535F9B82638BF6"
+    },
+    "canonicalSerializeReopen": {
+      "pass": true,
+      "firstSha256": "98D9B1F10A683D1C90EC25F766A3224B00AC550F9C379F2051535F9B82638BF6",
+      "reopenedSha256": "98D9B1F10A683D1C90EC25F766A3224B00AC550F9C379F2051535F9B82638BF6",
+      "byteIdentityMatch": true,
+      "unrealPcgBakeSaveReopenClaimed": false
+    }
+  },
+  "cookedRuntimeInspection": {
+    "assetRegistry": {
+      "identity": {
+        "bytes": 403776,
+        "sha256": "23B12F80B6E16D9362BAF864F0E79D6CFB8486F08BFD3034CE13CBCDBF349D82"
+      },
+      "dumpPageCount": 9,
+      "dumpCanonicalPageIdentitySha256": "A02F573D0B1635A983A0C72F23C068A96A40A3B381CD6F39105ECF7668A25A6E",
+      "assetCount": 824,
+      "packageCount": 812,
+      "dependencyNodeCount": 0,
+      "pcgGraphClassAssetCount": 1,
+      "pcgGraphObjectPath": "/Game/Environment/Forest/PCG/PCG_TemperateMountainForest.PCG_TemperateMountainForest",
+      "pcgComponentClassAssetCount": 0,
+      "dependencyAbsenceClaimed": false
+    },
+    "ioStore": {
+      "chunkCount": 2596,
+      "namedEntryCount": 1055,
+      "anonymousChunkCount": 1541,
+      "projectUassetExportBundleCount": 321,
+      "graphEntry": {
+        "filename": "../../../DiscGolfTour/Content/Environment/Forest/PCG/PCG_TemperateMountainForest.uasset",
+        "bytes": 161673,
+        "sha1": "1891578EEF8B8F4E25D2D5215C5E3ACBCE5858D7"
+      },
+      "forestPresetEntry": {
+        "filename": "../../../DiscGolfTour/Content/Environment/Forest/DA_TemperateMountainForest.uasset",
+        "bytes": 1084,
+        "sha1": "E31568B883B9428F035BD4DC42F02AC7F904DA38"
+      }
+    },
+    "projectAssets": {
+      "fileCount": 642,
+      "bytes": 103501277,
+      "canonicalFileIdentitySha256": "470ECDFA40A08719A75FEE1C8374ACC5132FACCE732B0BA612A5A34AA6995251",
+      "graphReferenceFiles": [
+        "DiscGolfTour/Content/Environment/Forest/DA_TemperateMountainForest.uheader",
+        "DiscGolfTour/Content/Environment/Forest/PCG/PCG_TemperateMountainForest.uheader"
+      ],
+      "graphReferenceConsumerFiles": [
+        "DiscGolfTour/Content/Environment/Forest/DA_TemperateMountainForest.uheader"
+      ],
+      "serializedGenerateForestMarkerCount": 0,
+      "serializedGenerateLocalMarkerCount": 0,
+      "serializedPcgComponentClassMarkerCount": 0,
+      "noSerializedGenerationInvocationPass": true,
+      "cookedGraphAssetPresent": true,
+      "cookedGraphReferenceConsumerAssetCount": 1,
+      "cookedRuntimePcgConsumerAbsenceProven": false
+    }
+  },
+  "technicalBoundary": {
+    "candidateBoundAuthoredRuntimeSelectionByFailClosedCompletionChainProven": true,
+    "noProjectAuthoredGenerationInvocationProven": true,
+    "canonicalAuthoredPayloadSerializeReopenProven": true,
+    "cookedPcgGraphAssetPresent": true,
+    "cookedGraphReferenceConsumerAssetCount": 1,
+    "runtimePcgComponentAndGraphAssignmentPresent": true,
+    "reflectedGenerateForestApiRetained": true,
+    "cookedRuntimePcgConsumerAbsenceProven": false,
+    "absoluteRuntimeGenerationReachabilityAbsenceProven": false,
+    "unrealPcgBakeSaveReopenProven": false,
+    "technicalThreeHoleAcceptance": true,
+    "collisionVisualProductApproval": false,
+    "quantitativePerformanceAcceptance": false,
+    "soakAcceptance": false
+  },
+  "acceptedTechnicalProof": [
+    "EXACT_FINAL_ARCHIVE_AND_CONTAINER_IDENTITIES_REVALIDATED",
+    "SHIPPING_SOURCE_CLOSURE_PREBUILD_POSTBUILD_MATCHED",
+    "SHIPPING_FAIL_CLOSED_AUTHORED_DATA_CONTROL_FLOW",
+    "FRESH_SHIPPING_THREE_HOLE_COMPLETION_REQUIRES_VALID_MANIFEST_AND_ALL_THREE_VALID_HOLE_JSON_FILES",
+    "NO_PROJECT_AUTHORED_SOURCE_OR_SERIALIZED_ASSET_GENERATION_INVOCATION",
+    "CANONICAL_AUTHORED_TREE_PAYLOAD_SERIALIZE_REOPEN_IDENTITY"
+  ],
+  "explicitNonClaims": [
+    "COOKED_PCG_GRAPH_ASSET_ABSENT",
+    "COOKED_RUNTIME_PCG_CONSUMER_ABSENT",
+    "REFLECTED_GENERATE_FOREST_API_ABSENT",
+    "UNREAL_PCG_GRAPH_BAKE_SAVE_REOPEN_IDENTITY",
+    "ABSOLUTE_RUNTIME_REACHABILITY_ABSENCE_AGAINST_ENGINE_OR_REFLECTION_INVOKERS",
+    "THREE_HOLE_COLLISION_VISUAL_PRODUCT_APPROVAL",
+    "QUANTITATIVE_PERFORMANCE_OR_SOAK_ACCEPTANCE",
+    "SESSION13_RELEASE_BLOCKER_CLOSED",
+    "LEGAL_OR_DISTRIBUTION_CLEARANCE",
+    "RELEASE_APPROVAL"
+  ],
+  "remainingTechnicalBlockers": [
+    "COOKED_RUNTIME_PCG_CONSUMER_PRESENT_GRAPH_IS_ASSIGNED_TO_ON_DEMAND_COMPONENT",
+    "REFLECTED_GENERATE_FOREST_API_RETAINED_IN_SHIPPING",
+    "COOKED_ASSET_REGISTRY_OMITS_DEPENDENCY_NODES_SO_DEPENDENCY_ABSENCE_CANNOT_BE_CLAIMED",
+    "UNREAL_PCG_GRAPH_BAKE_SAVE_REOPEN_IDENTITY_NOT_PROVEN",
+    "THREE_HOLE_COLLISION_VISUAL_AND_QUANTITATIVE_PERFORMANCE_SOAK_ACCEPTANCE_PENDING"
+  ],
+  "claimBoundary": {
+    "candidateBoundAuthoredRuntimeSelectionTechnicalProof": true,
+    "noProjectAuthoredGenerationInvocationTechnicalProof": true,
+    "canonicalPayloadSerializeReopenTechnicalProof": true,
+    "cookedRuntimePcgConsumerAbsence": false,
+    "absoluteRuntimeGenerationReachabilityAbsence": false,
+    "unrealPcgBakeSaveReopen": false,
+    "technicalThreeHoleAcceptance": true,
+    "visualQualityApproval": false,
+    "collisionVisualApproval": false,
+    "performanceAcceptance": false,
+    "soakAcceptance": false,
+    "manualGameplayAcceptance": false,
+    "humanPlayFeelApproval": false,
+    "accessibilityApproval": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "releaseApproval": false,
+    "session13BlockerClosed": false,
+    "releaseReady": false
+  },
+  "session13BlockerClosed": false,
+  "releaseReady": false,
+  "receiptPath": "Evidence/Session19/BakedPcgRuntimeClosure-S19_WindowsShipping_20260825T163212Z_5f703bd619b5.json"
+}

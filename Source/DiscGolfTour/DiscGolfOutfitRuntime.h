@@ -43,8 +43,12 @@ struct DISCGOLFTOUR_API FDiscGolfOutfitResolution
 
 namespace DiscGolfOutfitRuntime
 {
+#if DG_WITH_DEVELOPMENT_CONTENT
     inline constexpr const TCHAR* CatalogObjectPath =
         TEXT("/Game/DiscGolf/Outfits/Data/DA_DG_OutfitCatalog.DA_DG_OutfitCatalog");
+#else
+    inline constexpr const TCHAR* CatalogObjectPath = TEXT("");
+#endif
 
     /** Frozen v1 order. EDGOutfitSlot is serialized as an enum byte, so additions must be append-only. */
     DISCGOLFTOUR_API const TArray<EDGOutfitSlot>& GetOrderedSlots();

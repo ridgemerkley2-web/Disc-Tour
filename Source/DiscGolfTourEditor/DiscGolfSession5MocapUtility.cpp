@@ -73,9 +73,9 @@ const TCHAR* FinalSequencePath = TEXT("/Game/DiscGolf/Animation/Mocap/Production
 const TCHAR* FinalMontagePath = TEXT("/Game/DiscGolf/Animation/Mocap/Production/AM_DG_RHBH_SyntheticPipelineTest_v001.AM_DG_RHBH_SyntheticPipelineTest_v001");
 const TCHAR* LibraryPath = TEXT("/Game/DiscGolf/Animation/Mocap/Production/DA_DG_AnimationLibrary.DA_DG_AnimationLibrary");
 
-const TCHAR* PhaseNotifyClassPath = TEXT("/Script/DiscGolfCharacterFramework.AnimNotify_ThrowPhase");
-const TCHAR* ReleaseNotifyClassPath = TEXT("/Script/DiscGolfCharacterFramework.AnimNotify_DiscRelease");
-const TCHAR* FinishNotifyClassPath = TEXT("/Script/DiscGolfCharacterFramework.AnimNotify_ThrowFinished");
+const TCHAR* PhaseNotifyClassPath = TEXT("/Script/DiscGolfRuntimeFoundation.AnimNotify_ThrowPhase");
+const TCHAR* ReleaseNotifyClassPath = TEXT("/Script/DiscGolfRuntimeFoundation.AnimNotify_DiscRelease");
+const TCHAR* FinishNotifyClassPath = TEXT("/Script/DiscGolfRuntimeFoundation.AnimNotify_ThrowFinished");
 const FName DefaultSlot(TEXT("DefaultSlot"));
 const FName SyntheticStyleId(TEXT("SyntheticTest_DO_NOT_SHIP"));
 
@@ -2304,7 +2304,7 @@ bool EnsureMontage(UAnimSequence* Sequence, USkeleton* Skeleton, USkeletalMesh* 
     UClass* FinishClass = LoadObject<UClass>(nullptr, FinishNotifyClassPath);
     if (!PhaseClass || !ReleaseClass || !FinishClass)
     {
-        Error = TEXT("DiscGolfCharacterFramework notify classes did not load");
+        Error = TEXT("DiscGolfRuntimeFoundation notify classes did not load");
         return false;
     }
     int32 Ordinal = 1;

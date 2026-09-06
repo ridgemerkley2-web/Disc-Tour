@@ -1,0 +1,247 @@
+{
+  "schema": "dg.session12.audio.event_coverage",
+  "schemaVersion": 1,
+  "manifestId": "DG_SESSION12_SEMANTIC_AUDIO_RUNTIME_HOOK_COVERAGE_V1",
+  "authority": {
+    "semanticResolver": "DiscGolfPresentationAudio",
+    "lifecycleOwner": "ADiscGolfTourGameMode",
+    "providerRouter": "UDiscGolfPresentationAudioRouterComponent",
+    "gameplayMutationAllowed": false
+  },
+  "coverageState": "SOURCE_CONTROLLED_RUNTIME_HOOK_COVERAGE_COMPLETE_ASSET_COVERAGE_ABSENT",
+  "categoryCount": 12,
+  "runtimeHookCoverageComplete": true,
+  "productionAssetCoverageComplete": false,
+  "intentionalSilenceCategoryCount": 0,
+  "unboundProductionAssetCategoryCount": 12,
+  "categories": [
+    {
+      "category": "ThrowRelease",
+      "resolver": "ResolveThrowRelease",
+      "hookFile": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "hookMarkers": [
+        "RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveThrowRelease("
+      ],
+      "lifecycle": "AUTHORITATIVE_RELEASE_ACCEPTED",
+      "providerType": "ThrowRelease",
+      "runtimeDisposition": "ROUTE_TO_PROVIDER_OR_EXPLICIT_SILENT_FALLBACK",
+      "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+      "productionAssetPath": null,
+      "intentionalSilence": false,
+      "technicalHookValidated": true,
+      "audibleAssetValidated": false
+    },
+    {
+      "category": "AirborneFlight",
+      "resolver": "ResolveAirborneFlight",
+      "hookFile": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "hookMarkers": [
+        "RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveAirborneFlight("
+      ],
+      "lifecycle": "AUTHORITATIVE_RELEASE_AIRBORNE_START",
+      "providerType": "DiscFlightLoop",
+      "runtimeDisposition": "ROUTE_TO_PROVIDER_OR_EXPLICIT_SILENT_FALLBACK",
+      "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+      "productionAssetPath": null,
+      "intentionalSilence": false,
+      "technicalHookValidated": true,
+      "audibleAssetValidated": false
+    },
+    {
+      "category": "GroundContact",
+      "resolver": "ResolveCourseSurfaceContact",
+      "hookFile": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "hookMarkers": [
+        "RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveCourseSurfaceContact("
+      ],
+      "lifecycle": "RECORDED_GROUND_TRANSITION_CONTACT",
+      "providerType": "DiscImpact",
+      "runtimeDisposition": "ROUTE_TO_PROVIDER_OR_EXPLICIT_SILENT_FALLBACK",
+      "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+      "productionAssetPath": null,
+      "intentionalSilence": false,
+      "technicalHookValidated": true,
+      "audibleAssetValidated": false
+    },
+    {
+      "category": "GroundState",
+      "resolver": "ResolveGroundState",
+      "hookFile": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "hookMarkers": [
+        "RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveGroundState("
+      ],
+      "lifecycle": "RECORDED_NON_IMPACT_GROUND_STATE_TRANSITION",
+      "providerType": "DiscImpact",
+      "runtimeDisposition": "ROUTE_TO_PROVIDER_OR_EXPLICIT_SILENT_FALLBACK",
+      "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+      "productionAssetPath": null,
+      "intentionalSilence": false,
+      "technicalHookValidated": true,
+      "audibleAssetValidated": false
+    },
+    {
+      "category": "BasketOutcome",
+      "resolver": "ResolveBasketOutcome",
+      "hookFile": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "hookMarkers": [
+        "RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveBasketOutcome("
+      ],
+      "lifecycle": "AUTHORITATIVE_BASKET_RESULT_RECORDED",
+      "providerType": "BasketChainsOrCage",
+      "runtimeDisposition": "ROUTE_TO_PROVIDER_OR_EXPLICIT_SILENT_FALLBACK",
+      "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+      "productionAssetPath": null,
+      "intentionalSilence": false,
+      "technicalHookValidated": true,
+      "audibleAssetValidated": false
+    },
+    {
+      "category": "Penalty",
+      "resolver": "ResolvePenalty",
+      "hookFile": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "hookMarkers": [
+        "RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolvePenalty("
+      ],
+      "lifecycle": "AUTHORITATIVE_LIE_PENALTY_RESOLVED",
+      "providerType": "CrowdReaction",
+      "runtimeDisposition": "ROUTE_TO_PROVIDER_OR_EXPLICIT_SILENT_FALLBACK",
+      "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+      "productionAssetPath": null,
+      "intentionalSilence": false,
+      "technicalHookValidated": true,
+      "audibleAssetValidated": false
+    },
+    {
+      "category": "HoleStart",
+      "resolver": "ResolveHoleStart",
+      "hookFile": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "hookMarkers": [
+        "RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveHoleStart("
+      ],
+      "lifecycle": "HOLE_INTRO_STARTED",
+      "providerType": "EnvironmentAmbience",
+      "runtimeDisposition": "ROUTE_TO_PROVIDER_OR_EXPLICIT_SILENT_FALLBACK",
+      "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+      "productionAssetPath": null,
+      "intentionalSilence": false,
+      "technicalHookValidated": true,
+      "audibleAssetValidated": false
+    },
+    {
+      "category": "HoleCompletion",
+      "resolver": "ResolveHoleCompletion",
+      "hookFile": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "hookMarkers": [
+        "RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveHoleCompletion("
+      ],
+      "lifecycle": "AUTHORITATIVE_HOLE_OUT_RECORDED",
+      "providerType": "CrowdReaction",
+      "runtimeDisposition": "ROUTE_TO_PROVIDER_OR_EXPLICIT_SILENT_FALLBACK",
+      "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+      "productionAssetPath": null,
+      "intentionalSilence": false,
+      "technicalHookValidated": true,
+      "audibleAssetValidated": false
+    },
+    {
+      "category": "HoleTransition",
+      "resolver": "ResolveHoleTransition",
+      "hookFile": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "hookMarkers": [
+        "RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveHoleTransition("
+      ],
+      "lifecycle": "SEAMLESS_AUTHORED_HOLE_ACTIVATION",
+      "providerType": "EnvironmentAmbience",
+      "runtimeDisposition": "ROUTE_TO_PROVIDER_OR_EXPLICIT_SILENT_FALLBACK",
+      "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+      "productionAssetPath": null,
+      "intentionalSilence": false,
+      "technicalHookValidated": true,
+      "audibleAssetValidated": false
+    },
+    {
+      "category": "RoundCompletion",
+      "resolver": "ResolveRoundCompletion",
+      "hookFile": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "hookMarkers": [
+        "RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveRoundCompletion("
+      ],
+      "lifecycle": "AUTHORITATIVE_ROUND_COMPLETE_RECORDED",
+      "providerType": "CrowdReaction",
+      "runtimeDisposition": "ROUTE_TO_PROVIDER_OR_EXPLICIT_SILENT_FALLBACK",
+      "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+      "productionAssetPath": null,
+      "intentionalSilence": false,
+      "technicalHookValidated": true,
+      "audibleAssetValidated": false
+    },
+    {
+      "category": "Replay",
+      "resolver": "ResolveReplay",
+      "hookFile": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "hookMarkers": [
+        "RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveReplay("
+      ],
+      "lifecycle": "ACTUAL_SAMPLE_REPLAY_START_STOP",
+      "providerType": "EnvironmentAmbience",
+      "runtimeDisposition": "ROUTE_TO_PROVIDER_OR_EXPLICIT_SILENT_FALLBACK",
+      "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+      "productionAssetPath": null,
+      "intentionalSilence": false,
+      "technicalHookValidated": true,
+      "audibleAssetValidated": false
+    },
+    {
+      "category": "Flyover",
+      "resolver": "ResolveFlyover",
+      "hookFile": "Source/DiscGolfTour/DiscGolfTourGameMode.cpp",
+      "hookMarkers": [
+        "RecordPresentationAudioEvent(DiscGolfPresentationAudio::ResolveFlyover("
+      ],
+      "lifecycle": "AUTHORED_FLYOVER_START_STOP_OR_SKIP",
+      "providerType": "EnvironmentAmbience",
+      "runtimeDisposition": "ROUTE_TO_PROVIDER_OR_EXPLICIT_SILENT_FALLBACK",
+      "assetDisposition": "UNBOUND_PRODUCTION_ASSET",
+      "productionAssetPath": null,
+      "intentionalSilence": false,
+      "technicalHookValidated": true,
+      "audibleAssetValidated": false
+    }
+  ],
+  "routerEvidence": {
+    "sourceFile": "Source/DiscGolfTour/DiscGolfPresentationAudioRouterComponent.cpp",
+    "requiredMarkers": [
+      "ResolveProviderType",
+      "ResolveProviderSurface",
+      "RoutePresentationAudioEvent(Route)",
+      "SILENT ASSET FALLBACK",
+      "RequestAsyncLoad",
+      "PlaySoundAtLocation"
+    ],
+    "semanticIdPreserved": true,
+    "duplicateSuppression": true,
+    "boundedRouteTrace": 64,
+    "synchronousLoadDuringRouting": false,
+    "missingAssetIsExplicitSilentFallback": true
+  },
+  "assetTruth": {
+    "rawProductionAudioFileCount": 0,
+    "authoredFallbackBindingCount": 0,
+    "candidateAudibleAssetCoverageProven": false,
+    "licensedAudioInventoryPresent": false,
+    "intentionalSilenceDesignApproved": false,
+    "manualMixApproved": false,
+    "productOwnerApproved": false
+  },
+  "claimBoundary": {
+    "sourceControlledSemanticVocabularyValidated": true,
+    "runtimeLifecycleHooksValidated": true,
+    "providerRoutingSurfaceValidated": true,
+    "audibleProductionAssetsClaimed": false,
+    "audioLicensingClaimed": false,
+    "manualMixApprovalClaimed": false,
+    "intentionalSilenceApprovalClaimed": false,
+    "blockerClosed": false,
+    "releaseReady": false
+  }
+}

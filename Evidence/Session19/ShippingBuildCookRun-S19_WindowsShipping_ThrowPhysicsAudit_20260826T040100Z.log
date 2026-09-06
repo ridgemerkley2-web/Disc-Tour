@@ -1,0 +1,1296 @@
+Running AutomationTool...
+Using bundled DotNet SDK version: 10.0 win-x64
+Starting AutomationTool...
+Parsing command line: BuildCookRun -project=C:\DGTour\DiscGolfTour.uproject -noP4 -platform=Win64 -clientconfig=Shipping -build -cook -stage -pak -iostore -archive -archivedirectory=C:\DGTour_Packages\S19_WindowsShipping_ThrowPhysicsAudit_20260826T040100Z -clean -distribution -nodebuginfo -utf8output
+Initializing script modules...
+Total script module initialization time: 0.18 s.
+Using C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe
+Executing commands...
+Setting up ProjectParams for C:\DGTour\DiscGolfTour.uproject
+********** BUILD COMMAND STARTED **********
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" DiscGolfTourEditor Win64 Development -Project="C:\DGTour\DiscGolfTour.uproject" -Clean -NoHotReload "C:\DGTour\DiscGolfTour.uproject" -NoUBTMakefiles  -log="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development.txt"
+Log file: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development.txt
+Cleaning DiscGolfTourEditor binaries...
+Trace written to file C:\Users\ridge\AppData\Local\UnrealBuildTool\Trace.uba with size 582b
+Took 0.89s to run dotnet.exe, ExitCode=0
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" DiscGolfTour Win64 Shipping -Project="C:\DGTour\DiscGolfTour.uproject" -Clean -NoHotReload "C:\DGTour\DiscGolfTour.uproject" -NoUBTMakefiles  -remoteini="C:\DGTour"  -distribution  -log="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTour-Win64-Shipping.txt"
+Log file: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTour-Win64-Shipping.txt
+Cleaning DiscGolfTour binaries...
+Trace written to file C:\Users\ridge\AppData\Local\UnrealBuildTool\Trace.uba with size 583b
+Took 0.81s to run dotnet.exe, ExitCode=0
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Target="DiscGolfTourEditor Win64 Development -Project=C:\DGTour\DiscGolfTour.uproject" -Target="DiscGolfTour Win64 Shipping -Project=C:\DGTour\DiscGolfTour.uproject  -remoteini=\"C:\DGTour\"  -distribution " -log="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development_2.txt"
+Log file: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development_2.txt
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+Using 'git status' to determine working set for adaptive non-unity build (C:\DGTour).
+Creating makefile for DiscGolfTourEditor (no existing makefile)
+Creating makefile for DiscGolfTour (no existing makefile)
+UbaServer - Listening on 0.0.0.0:1345
+UHT compiled-in object format Default
+Building DiscGolfTour and DiscGolfTourEditor...
+===== Toolchain Information =====
+DiscGolfTour Win64 Shipping:
+  Using ISPC compiler (C:\Program Files\Epic Games\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+    Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+  Using Visual Studio 14.44.35228 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  [Adaptive Build] Excluded from DiscGolfRuntimeFoundation unity file: DiscGolfAnimInstance.cpp, DiscGolfAnimNotifies.cpp, DiscGolfAppearanceComponent.cpp, DiscGolfAvatarBackendComponent.cpp, DiscGolfCharacterCustomizationComponent.cpp, DiscGolfCosmeticCatalog.cpp, DiscGolfCourseValidatorLibrary.cpp, DiscGolfOutfitCatalog.cpp, DiscGolfOutfitComponent.cpp, DiscGolfOutfitItem.cpp, DiscGolfPlayabilityLibrary.cpp, DiscGolfPlayabilityMonitorComponent.cpp, DiscGolfRuntimeFoundation.cpp, DiscGolfThrowComponent.cpp
+  [Adaptive Build] Excluded from DiscGolfTour unity file: BasketActor.cpp, DevCourseBootstrap.cpp, DiscActor.cpp, DiscBagComponent.cpp, DiscCatalogSubsystem.cpp, DiscFlightComponent.cpp, DiscGolfBuiltInEnvironmentProvider.cpp, DiscGolfCameraViewContract.cpp, DiscGolfCharacterCreatorWidget.cpp, DiscGolfCharacterRigUnits.cpp, DiscGolfCourseDefinition.cpp, DiscGolfCoursePresentationDefinition.cpp, DiscGolfCourseRules.cpp, DiscGolfEnvironmentController.cpp, DiscGolfEnvironmentDataAssets.cpp, DiscGolfEnvironmentZoneActor.cpp, DiscGolferPawn.cpp, DiscGolfFixtureQaRunner.cpp, DiscGolfFullCharacterRuntime.cpp, DiscGolfHUD.cpp, DiscGolfInputConfig.cpp, DiscGolfMetaHumanAvatarBackendComponent.cpp, DiscGolfMetaHumanOutfitRequiredBonesComponent.cpp, DiscGolfMetaHumanRetargetAnimInstance.cpp, DiscGolfOutfitRuntime.cpp, DiscGolfPlayerExperience.cpp, DiscGolfPresentationAudioRouterComponent.cpp, DiscGolfPresentationMath.cpp, DiscGolfQualityAdapter.cpp, DiscGolfRHBHThrowAdapterComponent.cpp, DiscGolfRoundFlowPresentation.cpp, DiscGolfRoundFlowWidget.cpp, DiscGolfRuntimeCookManifest.cpp, DiscGolfSession16CorePlayabilityContract.cpp, DiscGolfTerrainPresentationActor.cpp, DiscGolfTour.cpp, DiscGolfTourGameInstance.cpp, DiscGolfTourGameMode.cpp, DiscGolfTourPlayerController.cpp, DiscGolfVegetationInteractionActor.cpp, DiscGolfWindZoneActor.cpp, DiscReplayActor.cpp, DiscTrajectorySubsystem.cpp, ThrowControllerComponent.cpp, WindDirector.cpp, DiscCatalogTests.cpp, DiscEquipmentSession11Tests.cpp, DiscFlightBoundaryTests.cpp, DiscGolfAnimInstanceBridgeTests.cpp, DiscGolfAuthoredInputValidationTests.cpp, DiscGolfAvatarBackendRuntimeTests.cpp, DiscGolfBasketContactMathTests.cpp, DiscGolfBrandLicenseTests.cpp, DiscGolfBuiltInEnvironmentProviderTests.cpp, DiscGolfCharacterProfileRuntimeTests.cpp, DiscGolfCourseDefinitionTests.cpp, DiscGolfCourseRulesTests.cpp, DiscGolfEnvironmentTests.cpp, DiscGolfFullCharacterRuntimeTests.cpp, DiscGolfGameInstancePersistencePolicyTests.cpp, DiscGolfGameplayGateTests.cpp, DiscGolfInputTests.cpp, DiscGolfMetaHumanRetargetPolicyTests.cpp, DiscGolfNonAuthorityThrowIngressTests.cpp, DiscGolfOutfitRuntimeTests.cpp, DiscGolfPresentationTests.cpp, DiscGolfProductionMotionTests.cpp, DiscGolfPuttingTests.cpp, DiscGolfQualityAdapterTests.cpp, DiscGolfReleaseTests.cpp, DiscGolfRuntimeCookManifestTests.cpp, DiscGolfSaveSchemaTests.cpp, DiscGolfSession10EnvironmentContractTests.cpp, DiscGolfSession12AudioRouterTests.cpp, DiscGolfSession12CameraReplayTests.cpp, DiscGolfSession12InputUiTests.cpp, DiscGolfSession12PresentationContractTests.cpp, DiscGolfSession13CourseJsonTests.cpp, DiscGolfSession16CorePlayabilityTests.cpp, DiscGolfSession17RoundFlowUiTests.cpp, DiscGolfSession18ProvenanceTests.cpp, DiscGolfSession19AudioCandidateTests.cpp, DiscGolfSession3ThrowTransactionTests.cpp, DiscGolfSolverInputValidationTests.cpp, DiscGolfThrowIngressTests.cpp, DiscTrajectoryTests.cpp
+DiscGolfTourEditor Win64 Development:
+  Using ISPC compiler (C:\Program Files\Epic Games\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+    Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+  Using Visual Studio 14.44.35228 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  [Adaptive Build] Excluded from DiscGolfTour unity file: BasketActor.cpp, DevCourseBootstrap.cpp, DiscActor.cpp, DiscBagComponent.cpp, DiscCatalogSubsystem.cpp, DiscFlightComponent.cpp, DiscGolfBuiltInEnvironmentProvider.cpp, DiscGolfCameraViewContract.cpp, DiscGolfCharacterCreatorWidget.cpp, DiscGolfCharacterRigUnits.cpp, DiscGolfCourseDefinition.cpp, DiscGolfCoursePresentationDefinition.cpp, DiscGolfCourseRules.cpp, DiscGolfEnvironmentController.cpp, DiscGolfEnvironmentDataAssets.cpp, DiscGolfEnvironmentZoneActor.cpp, DiscGolferPawn.cpp, DiscGolfFixtureQaRunner.cpp, DiscGolfFullCharacterRuntime.cpp, DiscGolfHUD.cpp, DiscGolfInputConfig.cpp, DiscGolfMetaHumanAvatarBackendComponent.cpp, DiscGolfMetaHumanOutfitRequiredBonesComponent.cpp, DiscGolfMetaHumanRetargetAnimInstance.cpp, DiscGolfOutfitRuntime.cpp, DiscGolfPlayerExperience.cpp, DiscGolfPresentationAudioRouterComponent.cpp, DiscGolfPresentationMath.cpp, DiscGolfQualityAdapter.cpp, DiscGolfRHBHThrowAdapterComponent.cpp, DiscGolfRoundFlowPresentation.cpp, DiscGolfRoundFlowWidget.cpp, DiscGolfRuntimeCookManifest.cpp, DiscGolfSession16CorePlayabilityContract.cpp, DiscGolfTerrainPresentationActor.cpp, DiscGolfTour.cpp, DiscGolfTourGameInstance.cpp, DiscGolfTourGameMode.cpp, DiscGolfTourPlayerController.cpp, DiscGolfVegetationInteractionActor.cpp, DiscGolfWindZoneActor.cpp, DiscReplayActor.cpp, DiscTrajectorySubsystem.cpp, ThrowControllerComponent.cpp, WindDirector.cpp, DiscCatalogTests.cpp, DiscEquipmentSession11Tests.cpp, DiscFlightBoundaryTests.cpp, DiscGolfAnimInstanceBridgeTests.cpp, DiscGolfAuthoredInputValidationTests.cpp, DiscGolfAvatarBackendRuntimeTests.cpp, DiscGolfBasketContactMathTests.cpp, DiscGolfBrandLicenseTests.cpp, DiscGolfBuiltInEnvironmentProviderTests.cpp, DiscGolfCharacterProfileRuntimeTests.cpp, DiscGolfCourseDefinitionTests.cpp, DiscGolfCourseRulesTests.cpp, DiscGolfEnvironmentTests.cpp, DiscGolfFullCharacterRuntimeTests.cpp, DiscGolfGameInstancePersistencePolicyTests.cpp, DiscGolfGameplayGateTests.cpp, DiscGolfInputTests.cpp, DiscGolfMetaHumanRetargetPolicyTests.cpp, DiscGolfNonAuthorityThrowIngressTests.cpp, DiscGolfOutfitRuntimeTests.cpp, DiscGolfPresentationTests.cpp, DiscGolfProductionMotionTests.cpp, DiscGolfPuttingTests.cpp, DiscGolfQualityAdapterTests.cpp, DiscGolfReleaseTests.cpp, DiscGolfRuntimeCookManifestTests.cpp, DiscGolfSaveSchemaTests.cpp, DiscGolfSession10EnvironmentContractTests.cpp, DiscGolfSession12AudioRouterTests.cpp, DiscGolfSession12CameraReplayTests.cpp, DiscGolfSession12InputUiTests.cpp, DiscGolfSession12PresentationContractTests.cpp, DiscGolfSession13CourseJsonTests.cpp, DiscGolfSession16CorePlayabilityTests.cpp, DiscGolfSession17RoundFlowUiTests.cpp, DiscGolfSession18ProvenanceTests.cpp, DiscGolfSession19AudioCandidateTests.cpp, DiscGolfSession3ThrowTransactionTests.cpp, DiscGolfSolverInputValidationTests.cpp, DiscGolfThrowIngressTests.cpp, DiscTrajectoryTests.cpp
+  [Adaptive Build] Excluded from DiscGolfTourDeveloper unity file: DiscGolfAIPlannerAdapter.cpp, DiscGolfAIShotPlannerComponent.cpp, DiscGolfCareerSubsystem.cpp, DiscGolfCompetitionRuntime.cpp, DiscGolfLevelDesignReviewActor.cpp, DiscGolfScoringLibrary.cpp, DiscGolfSession14AISmokeRunner.cpp, DiscGolfSession15VerticalSliceContract.cpp, DiscGolfSession15VerticalSliceRunner.cpp, DiscGolfSession3SmokeRunner.cpp, DiscGolfSession3VisualCaptureRunner.cpp, DiscGolfSession4VisualCaptureRunner.cpp, DiscGolfSession5MocapSmokeRunner.cpp, DiscGolfSession5MocapVisualCaptureRunner.cpp, DiscGolfSession6OutfitSmokeRunner.cpp, DiscGolfSession6OutfitVisualCaptureRunner.cpp, DiscGolfSession7FullCharacterSmokeRunner.cpp, DiscGolfSession7FullCharacterVisualCaptureRunner.cpp, DiscGolfSession8BMetaHumanPackagedRunner.cpp, DiscGolfSession8CookClosureRunner.cpp, DiscGolfTourDeveloperModule.cpp, DiscThrowLabSubsystem.cpp, DiscGolfLevelDesignReviewTests.cpp, DiscGolfSession14AITests.cpp, DiscGolfSession14CompetitionCareerTests.cpp, DiscGolfSession14SmokeFoundationTests.cpp, DiscGolfSession15VerticalSliceTests.cpp, DiscThrowLabSession11Tests.cpp
+  [Adaptive Build] Excluded from DiscGolfRuntimeFoundation unity file: DiscGolfAnimInstance.cpp, DiscGolfAnimNotifies.cpp, DiscGolfAppearanceComponent.cpp, DiscGolfAvatarBackendComponent.cpp, DiscGolfCharacterCustomizationComponent.cpp, DiscGolfCosmeticCatalog.cpp, DiscGolfCourseValidatorLibrary.cpp, DiscGolfOutfitCatalog.cpp, DiscGolfOutfitComponent.cpp, DiscGolfOutfitItem.cpp, DiscGolfPlayabilityLibrary.cpp, DiscGolfPlayabilityMonitorComponent.cpp, DiscGolfRuntimeFoundation.cpp, DiscGolfThrowComponent.cpp
+  [Adaptive Build] Excluded from DiscGolfTourEditor unity file: DiscGolfCourseAuthoringActors.cpp, DiscGolfCourseAuthoringExporter.cpp, DiscGolfCourseAuthoringPcgAdapter.cpp, DiscGolfCourseAuthoringValidation.cpp, DiscGolfEnvironmentAssetBinder.cpp, DiscGolfPcgAuthoringController.cpp, DiscGolfProductionMotionAuthoringUtility.cpp, DiscGolfSession3AssetUtility.cpp, DiscGolfSession4AssetUtility.cpp, DiscGolfSession5MocapUtility.cpp, DiscGolfSession8BMetaHumanUtility.cpp, PCGDiscGolfZoneDensity.cpp, DiscGolfCourseAuthoringActorsTests.cpp, DiscGolfCourseAuthoringExporterTests.cpp, DiscGolfCourseAuthoringPcgAdapterTests.cpp, DiscGolfCourseAuthoringValidationTests.cpp, DiscGolfEnvironmentAssetBinderTests.cpp, DiscGolfPcgShippingSeparationTests.cpp, DiscGolfSession13CourseAuthoringFixtureTests.cpp
+=================================
+Using Unreal Build Accelerator local executor to run 283 action(s)
+  CPU 8 physical cores, 16 logical cores
+  Memory 15.05 GB physical, 31.76 GB/36.17 GB committed
+  UBA Storage capacity 40 GB
+** For DiscGolfTourEditor-Win64-Development **
+[1/283] Compile [x64] SharedPCH.UnrealEd.Project.ValApi.ValExpApi.Cpp20.cpp
+** For DiscGolfTour-Win64-Shipping **
+[2/283] Compile [x64] SharedPCH.Engine.Project.ValApi.ValExpApi.Cpp20.cpp
+[3/283] Copy DiscGolfTour-Win64-Shipping-Default.rc2
+** For DiscGolfTourEditor-Win64-Development **
+[4/283] Compile [x64] DiscGolfAnimInstance.cpp
+[5/283] Compile [x64] DiscGolfAnimNotifies.cpp
+[6/283] Compile [x64] DiscGolfAppearanceComponent.cpp
+[7/283] Compile [x64] DiscGolfAvatarBackendComponent.cpp
+[8/283] Compile [x64] DiscGolfCharacterCustomizationComponent.cpp
+[9/283] Compile [x64] DiscGolfCosmeticCatalog.cpp
+[10/283] Compile [x64] DiscGolfCourseValidatorLibrary.cpp
+[11/283] Compile [x64] DiscGolfOutfitCatalog.cpp
+[12/283] Compile [x64] DiscGolfOutfitComponent.cpp
+[13/283] Compile [x64] DiscGolfOutfitItem.cpp
+[14/283] Compile [x64] DiscGolfPlayabilityLibrary.cpp
+[15/283] Compile [x64] DiscGolfPlayabilityMonitorComponent.cpp
+[16/283] Compile [x64] DiscGolfRuntimeFoundation.cpp
+[17/283] Compile [x64] DiscGolfThrowComponent.cpp
+[18/283] Compile [x64] Module.DiscGolfRuntimeFoundation.cpp
+[19/283] Link [x64] UnrealEditor-DiscGolfRuntimeFoundation.lib
+[20/283] Compile [x64] BasketActor.cpp
+[21/283] Compile [x64] DevCourseBootstrap.cpp
+[22/283] Compile [x64] DiscActor.cpp
+[23/283] Compile [x64] DiscBagComponent.cpp
+[24/283] Compile [x64] DiscCatalogSubsystem.cpp
+[25/283] Compile [x64] DiscCatalogTests.cpp
+[26/283] Compile [x64] DiscEquipmentSession11Tests.cpp
+[27/283] Compile [x64] DiscFlightBoundaryTests.cpp
+[28/283] Compile [x64] DiscFlightComponent.cpp
+[29/283] Compile [x64] DiscGolfAnimInstanceBridgeTests.cpp
+[30/283] Compile [x64] DiscGolfAuthoredInputValidationTests.cpp
+[31/283] Compile [x64] DiscGolfAvatarBackendRuntimeTests.cpp
+[32/283] Compile [x64] DiscGolfBasketContactMathTests.cpp
+[33/283] Compile [x64] DiscGolfBrandLicenseTests.cpp
+[34/283] Compile [x64] DiscGolfBuiltInEnvironmentProvider.cpp
+[35/283] Compile [x64] DiscGolfBuiltInEnvironmentProviderTests.cpp
+[36/283] Compile [x64] DiscGolfCameraViewContract.cpp
+[37/283] Compile [x64] DiscGolfCharacterCreatorWidget.cpp
+[38/283] Compile [x64] DiscGolfCharacterProfileRuntimeTests.cpp
+[39/283] Compile [x64] DiscGolfCharacterRigUnits.cpp
+[40/283] Compile [x64] DiscGolfCourseDefinition.cpp
+[41/283] Compile [x64] DiscGolfCourseDefinitionTests.cpp
+[42/283] Compile [x64] DiscGolfCoursePresentationDefinition.cpp
+[43/283] Compile [x64] DiscGolfCourseRules.cpp
+[44/283] Compile [x64] DiscGolfCourseRulesTests.cpp
+[45/283] Compile [x64] DiscGolfEnvironmentController.cpp
+[46/283] Compile [x64] DiscGolfEnvironmentDataAssets.cpp
+[47/283] Compile [x64] DiscGolfEnvironmentTests.cpp
+[48/283] Compile [x64] DiscGolfEnvironmentZoneActor.cpp
+[49/283] Compile [x64] DiscGolfFixtureQaRunner.cpp
+[50/283] Compile [x64] DiscGolfFullCharacterRuntime.cpp
+[51/283] Compile [x64] DiscGolfFullCharacterRuntimeTests.cpp
+[52/283] Compile [x64] DiscGolfGameInstancePersistencePolicyTests.cpp
+[53/283] Compile [x64] DiscGolfGameplayGateTests.cpp
+[54/283] Compile [x64] DiscGolfHUD.cpp
+[55/283] Compile [x64] DiscGolfInputConfig.cpp
+[56/283] Compile [x64] DiscGolfInputTests.cpp
+[57/283] Compile [x64] DiscGolfMetaHumanAvatarBackendComponent.cpp
+[58/283] Compile [x64] DiscGolfMetaHumanOutfitRequiredBonesComponent.cpp
+[59/283] Compile [x64] DiscGolfMetaHumanRetargetAnimInstance.cpp
+[60/283] Compile [x64] DiscGolfMetaHumanRetargetPolicyTests.cpp
+[61/283] Compile [x64] DiscGolfNonAuthorityThrowIngressTests.cpp
+[62/283] Compile [x64] DiscGolfOutfitRuntime.cpp
+[63/283] Compile [x64] DiscGolfOutfitRuntimeTests.cpp
+[64/283] Compile [x64] DiscGolfPlayerExperience.cpp
+[65/283] Compile [x64] DiscGolfPresentationAudioRouterComponent.cpp
+[66/283] Compile [x64] DiscGolfPresentationMath.cpp
+[67/283] Compile [x64] DiscGolfPresentationTests.cpp
+[68/283] Compile [x64] DiscGolfProductionMotionTests.cpp
+[69/283] Compile [x64] DiscGolfPuttingTests.cpp
+[70/283] Compile [x64] DiscGolfQualityAdapter.cpp
+[71/283] Compile [x64] DiscGolfQualityAdapterTests.cpp
+[72/283] Compile [x64] DiscGolfRHBHThrowAdapterComponent.cpp
+[73/283] Compile [x64] DiscGolfReleaseTests.cpp
+[74/283] Compile [x64] DiscGolfRoundFlowPresentation.cpp
+[75/283] Compile [x64] DiscGolfRoundFlowWidget.cpp
+[76/283] Compile [x64] DiscGolfRuntimeCookManifest.cpp
+[77/283] Compile [x64] DiscGolfRuntimeCookManifestTests.cpp
+[78/283] Compile [x64] DiscGolfSaveSchemaTests.cpp
+[79/283] Compile [x64] DiscGolfSession10EnvironmentContractTests.cpp
+[80/283] Compile [x64] DiscGolfSession12AudioRouterTests.cpp
+[81/283] Compile [x64] DiscGolfSession12CameraReplayTests.cpp
+[82/283] Compile [x64] DiscGolfSession12InputUiTests.cpp
+[83/283] Compile [x64] DiscGolfSession12PresentationContractTests.cpp
+[84/283] Compile [x64] DiscGolfSession13CourseJsonTests.cpp
+[85/283] Compile [x64] DiscGolfSession16CorePlayabilityContract.cpp
+[86/283] Compile [x64] DiscGolfSession16CorePlayabilityTests.cpp
+[87/283] Compile [x64] DiscGolfSession17RoundFlowUiTests.cpp
+[88/283] Compile [x64] DiscGolfSession18ProvenanceTests.cpp
+[89/283] Compile [x64] DiscGolfSession19AudioCandidateTests.cpp
+[90/283] Compile [x64] DiscGolfSession3ThrowTransactionTests.cpp
+[91/283] Compile [x64] DiscGolfSolverInputValidationTests.cpp
+[92/283] Compile [x64] DiscGolfTerrainPresentationActor.cpp
+[93/283] Compile [x64] DiscGolfThrowIngressTests.cpp
+[94/283] Compile [x64] DiscGolfTour.cpp
+[95/283] Compile [x64] DiscGolfTourGameInstance.cpp
+[96/283] Compile [x64] DiscGolfTourGameMode.cpp
+[97/283] Compile [x64] DiscGolfTourPlayerController.cpp
+[98/283] Compile [x64] DiscGolfVegetationInteractionActor.cpp
+[99/283] Compile [x64] DiscGolfWindZoneActor.cpp
+[100/283] Compile [x64] DiscGolferPawn.cpp
+[101/283] Compile [x64] DiscReplayActor.cpp
+[102/283] Compile [x64] DiscTrajectorySubsystem.cpp
+[103/283] Compile [x64] DiscTrajectoryTests.cpp
+[104/283] Compile [x64] Module.DiscGolfTour.1.cpp
+[105/283] Compile [x64] Module.DiscGolfTour.2.cpp
+[106/283] Compile [x64] Module.DiscGolfTour.3.cpp
+[107/283] Compile [x64] Module.DiscGolfTour.4.cpp
+[108/283] Compile [x64] Module.DiscGolfTour.5.cpp
+[109/283] Compile [x64] Module.DiscGolfTour.6.cpp
+[110/283] Compile [x64] ThrowControllerComponent.cpp
+[111/283] Compile [x64] WindDirector.cpp
+[112/283] Link [x64] UnrealEditor-DiscGolfTour.lib
+[113/283] Compile [x64] DiscGolfAIPlannerAdapter.cpp
+[114/283] Compile [x64] DiscGolfAIShotPlannerComponent.cpp
+[115/283] Compile [x64] DiscGolfCareerSubsystem.cpp
+[116/283] Compile [x64] DiscGolfCompetitionRuntime.cpp
+[117/283] Compile [x64] DiscGolfLevelDesignReviewActor.cpp
+[118/283] Compile [x64] DiscGolfLevelDesignReviewTests.cpp
+[119/283] Compile [x64] DiscGolfScoringLibrary.cpp
+[120/283] Compile [x64] DiscGolfSession14AISmokeRunner.cpp
+[121/283] Compile [x64] DiscGolfSession14AITests.cpp
+[122/283] Compile [x64] DiscGolfSession14CompetitionCareerTests.cpp
+[123/283] Compile [x64] DiscGolfSession14SmokeFoundationTests.cpp
+[124/283] Compile [x64] DiscGolfSession15VerticalSliceContract.cpp
+[125/283] Compile [x64] DiscGolfSession15VerticalSliceRunner.cpp
+[126/283] Compile [x64] DiscGolfSession15VerticalSliceTests.cpp
+[127/283] Compile [x64] DiscGolfSession3SmokeRunner.cpp
+[128/283] Compile [x64] DiscGolfSession3VisualCaptureRunner.cpp
+[129/283] Compile [x64] DiscGolfSession4VisualCaptureRunner.cpp
+[130/283] Compile [x64] DiscGolfSession5MocapSmokeRunner.cpp
+[131/283] Compile [x64] DiscGolfSession5MocapVisualCaptureRunner.cpp
+[132/283] Compile [x64] DiscGolfSession6OutfitSmokeRunner.cpp
+[133/283] Compile [x64] DiscGolfSession6OutfitVisualCaptureRunner.cpp
+[134/283] Compile [x64] DiscGolfSession7FullCharacterSmokeRunner.cpp
+[135/283] Compile [x64] DiscGolfSession7FullCharacterVisualCaptureRunner.cpp
+[136/283] Compile [x64] DiscGolfSession8BMetaHumanPackagedRunner.cpp
+[137/283] Compile [x64] DiscGolfSession8CookClosureRunner.cpp
+[138/283] Compile [x64] DiscGolfTourDeveloperModule.cpp
+[139/283] Compile [x64] DiscThrowLabSession11Tests.cpp
+[140/283] Compile [x64] DiscThrowLabSubsystem.cpp
+[141/283] Compile [x64] Module.DiscGolfTourDeveloper.cpp
+[142/283] Link [x64] UnrealEditor-DiscGolfTourDeveloper.lib
+[143/283] Compile [x64] DiscGolfCourseAuthoringActors.cpp
+[144/283] Compile [x64] DiscGolfCourseAuthoringActorsTests.cpp
+[145/283] Compile [x64] DiscGolfCourseAuthoringExporter.cpp
+[146/283] Compile [x64] DiscGolfCourseAuthoringExporterTests.cpp
+[147/283] Compile [x64] DiscGolfCourseAuthoringPcgAdapter.cpp
+[148/283] Compile [x64] DiscGolfCourseAuthoringPcgAdapterTests.cpp
+[149/283] Compile [x64] DiscGolfCourseAuthoringValidation.cpp
+[150/283] Compile [x64] DiscGolfCourseAuthoringValidationTests.cpp
+[151/283] Compile [x64] DiscGolfEnvironmentAssetBinder.cpp
+[152/283] Compile [x64] DiscGolfEnvironmentAssetBinderTests.cpp
+[153/283] Compile [x64] DiscGolfPcgAuthoringController.cpp
+[154/283] Compile [x64] DiscGolfPcgShippingSeparationTests.cpp
+[155/283] Compile [x64] DiscGolfProductionMotionAuthoringUtility.cpp
+[156/283] Compile [x64] DiscGolfSession13CourseAuthoringFixtureTests.cpp
+[157/283] Compile [x64] DiscGolfSession3AssetUtility.cpp
+[158/283] Compile [x64] DiscGolfSession4AssetUtility.cpp
+[159/283] Compile [x64] DiscGolfSession5MocapUtility.cpp
+[160/283] Compile [x64] DiscGolfSession8BMetaHumanUtility.cpp
+[161/283] Compile [x64] Module.DiscGolfTourEditor.1.cpp
+[162/283] Compile [x64] Module.DiscGolfTourEditor.2.cpp
+[163/283] Compile [x64] PCGDiscGolfZoneDensity.cpp
+[164/283] Link [x64] UnrealEditor-DiscGolfTourEditor.lib
+** For DiscGolfTour-Win64-Shipping **
+[165/283] Compile [x64] DiscGolfAnimInstance.cpp
+[166/283] Compile [x64] DiscGolfAnimNotifies.cpp
+[167/283] Compile [x64] DiscGolfAppearanceComponent.cpp
+[168/283] Compile [x64] DiscGolfAvatarBackendComponent.cpp
+[169/283] Compile [x64] DiscGolfCharacterCustomizationComponent.cpp
+[170/283] Compile [x64] DiscGolfCosmeticCatalog.cpp
+[171/283] Compile [x64] DiscGolfCourseValidatorLibrary.cpp
+[172/283] Compile [x64] DiscGolfOutfitCatalog.cpp
+[173/283] Compile [x64] DiscGolfOutfitComponent.cpp
+[174/283] Compile [x64] DiscGolfOutfitItem.cpp
+[175/283] Compile [x64] DiscGolfPlayabilityLibrary.cpp
+[176/283] Compile [x64] DiscGolfPlayabilityMonitorComponent.cpp
+[177/283] Compile [x64] DiscGolfRuntimeFoundation.cpp
+[178/283] Compile [x64] DiscGolfThrowComponent.cpp
+[179/283] Compile [x64] Module.DiscGolfRuntimeFoundation.cpp
+[180/283] Compile [x64] BasketActor.cpp
+[181/283] Compile [x64] DevCourseBootstrap.cpp
+[182/283] Compile [x64] DiscActor.cpp
+[183/283] Compile [x64] DiscBagComponent.cpp
+[184/283] Compile [x64] DiscCatalogSubsystem.cpp
+[185/283] Compile [x64] DiscCatalogTests.cpp
+[186/283] Compile [x64] DiscEquipmentSession11Tests.cpp
+[187/283] Compile [x64] DiscFlightBoundaryTests.cpp
+[188/283] Compile [x64] DiscFlightComponent.cpp
+[189/283] Compile [x64] DiscGolfAnimInstanceBridgeTests.cpp
+[190/283] Compile [x64] DiscGolfAuthoredInputValidationTests.cpp
+[191/283] Compile [x64] DiscGolfAvatarBackendRuntimeTests.cpp
+[192/283] Compile [x64] DiscGolfBasketContactMathTests.cpp
+[193/283] Compile [x64] DiscGolfBrandLicenseTests.cpp
+[194/283] Compile [x64] DiscGolfBuiltInEnvironmentProvider.cpp
+[195/283] Compile [x64] DiscGolfBuiltInEnvironmentProviderTests.cpp
+[196/283] Compile [x64] DiscGolfCameraViewContract.cpp
+[197/283] Compile [x64] DiscGolfCharacterCreatorWidget.cpp
+[198/283] Compile [x64] DiscGolfCharacterProfileRuntimeTests.cpp
+[199/283] Compile [x64] DiscGolfCharacterRigUnits.cpp
+[200/283] Compile [x64] DiscGolfCourseDefinition.cpp
+[201/283] Compile [x64] DiscGolfCourseDefinitionTests.cpp
+[202/283] Compile [x64] DiscGolfCoursePresentationDefinition.cpp
+[203/283] Compile [x64] DiscGolfCourseRules.cpp
+[204/283] Compile [x64] DiscGolfCourseRulesTests.cpp
+[205/283] Compile [x64] DiscGolfEnvironmentController.cpp
+[206/283] Compile [x64] DiscGolfEnvironmentDataAssets.cpp
+[207/283] Compile [x64] DiscGolfEnvironmentTests.cpp
+[208/283] Compile [x64] DiscGolfEnvironmentZoneActor.cpp
+[209/283] Compile [x64] DiscGolfFixtureQaRunner.cpp
+[210/283] Compile [x64] DiscGolfFullCharacterRuntime.cpp
+[211/283] Compile [x64] DiscGolfFullCharacterRuntimeTests.cpp
+[212/283] Compile [x64] DiscGolfGameInstancePersistencePolicyTests.cpp
+[213/283] Compile [x64] DiscGolfGameplayGateTests.cpp
+[214/283] Compile [x64] DiscGolfHUD.cpp
+[215/283] Compile [x64] DiscGolfInputConfig.cpp
+[216/283] Compile [x64] DiscGolfInputTests.cpp
+[217/283] Compile [x64] DiscGolfMetaHumanAvatarBackendComponent.cpp
+[218/283] Compile [x64] DiscGolfMetaHumanOutfitRequiredBonesComponent.cpp
+[219/283] Compile [x64] DiscGolfMetaHumanRetargetAnimInstance.cpp
+[220/283] Compile [x64] DiscGolfMetaHumanRetargetPolicyTests.cpp
+[221/283] Compile [x64] DiscGolfNonAuthorityThrowIngressTests.cpp
+[222/283] Compile [x64] DiscGolfOutfitRuntime.cpp
+[223/283] Compile [x64] DiscGolfOutfitRuntimeTests.cpp
+[224/283] Compile [x64] DiscGolfPlayerExperience.cpp
+[225/283] Compile [x64] DiscGolfPresentationAudioRouterComponent.cpp
+[226/283] Compile [x64] DiscGolfPresentationMath.cpp
+[227/283] Compile [x64] DiscGolfPresentationTests.cpp
+[228/283] Compile [x64] DiscGolfProductionMotionTests.cpp
+[229/283] Compile [x64] DiscGolfPuttingTests.cpp
+[230/283] Compile [x64] DiscGolfQualityAdapter.cpp
+[231/283] Compile [x64] DiscGolfQualityAdapterTests.cpp
+[232/283] Compile [x64] DiscGolfRHBHThrowAdapterComponent.cpp
+[233/283] Compile [x64] DiscGolfReleaseTests.cpp
+[234/283] Compile [x64] DiscGolfRoundFlowPresentation.cpp
+[235/283] Compile [x64] DiscGolfRoundFlowWidget.cpp
+[236/283] Compile [x64] DiscGolfRuntimeCookManifest.cpp
+[237/283] Compile [x64] DiscGolfRuntimeCookManifestTests.cpp
+[238/283] Compile [x64] DiscGolfSaveSchemaTests.cpp
+[239/283] Compile [x64] DiscGolfSession10EnvironmentContractTests.cpp
+[240/283] Compile [x64] DiscGolfSession12AudioRouterTests.cpp
+[241/283] Compile [x64] DiscGolfSession12CameraReplayTests.cpp
+[242/283] Compile [x64] DiscGolfSession12InputUiTests.cpp
+[243/283] Compile [x64] DiscGolfSession12PresentationContractTests.cpp
+[244/283] Compile [x64] DiscGolfSession13CourseJsonTests.cpp
+[245/283] Compile [x64] DiscGolfSession16CorePlayabilityContract.cpp
+[246/283] Compile [x64] DiscGolfSession16CorePlayabilityTests.cpp
+[247/283] Compile [x64] DiscGolfSession17RoundFlowUiTests.cpp
+[248/283] Compile [x64] DiscGolfSession18ProvenanceTests.cpp
+[249/283] Compile [x64] DiscGolfSession19AudioCandidateTests.cpp
+[250/283] Compile [x64] DiscGolfSession3ThrowTransactionTests.cpp
+[251/283] Compile [x64] DiscGolfSolverInputValidationTests.cpp
+[252/283] Compile [x64] DiscGolfTerrainPresentationActor.cpp
+[253/283] Compile [x64] DiscGolfThrowIngressTests.cpp
+[254/283] Compile [x64] DiscGolfTour.cpp
+[255/283] Compile [x64] DiscGolfTourGameInstance.cpp
+[256/283] Compile [x64] DiscGolfTourGameMode.cpp
+[257/283] Compile [x64] DiscGolfTourPlayerController.cpp
+[258/283] Compile [x64] DiscGolfVegetationInteractionActor.cpp
+[259/283] Compile [x64] DiscGolfWindZoneActor.cpp
+[260/283] Compile [x64] DiscGolferPawn.cpp
+[261/283] Compile [x64] DiscReplayActor.cpp
+[262/283] Compile [x64] DiscTrajectorySubsystem.cpp
+[263/283] Compile [x64] DiscTrajectoryTests.cpp
+[264/283] Compile [x64] Module.DiscGolfTour.1.cpp
+[265/283] Compile [x64] Module.DiscGolfTour.2.cpp
+[266/283] Compile [x64] Module.DiscGolfTour.3.cpp
+[267/283] Compile [x64] Module.DiscGolfTour.4.cpp
+[268/283] Compile [x64] Module.DiscGolfTour.5.cpp
+[269/283] Compile [x64] Module.DiscGolfTour.6.cpp
+[270/283] Compile [x64] ThrowControllerComponent.cpp
+[271/283] Compile [x64] WindDirector.cpp
+[272/283] Compile Resource [x64] DiscGolfTour-Win64-Shipping-Default.rc2
+[273/283] Link [x64] DiscGolfTour-Win64-Shipping.exe
+[274/283] WriteMetadata DiscGolfTour-Win64-Shipping.target [NoUba]
+** For DiscGolfTourEditor-Win64-Development **
+[275/283] Compile Resource [x64] Default.rc2
+[276/283] Link [x64] UnrealEditor-DiscGolfRuntimeFoundation.dll
+[277/283] Compile Resource [x64] Default.rc2
+[278/283] Link [x64] UnrealEditor-DiscGolfTourDeveloper.dll
+[279/283] Compile Resource [x64] Default.rc2
+[280/283] Link [x64] UnrealEditor-DiscGolfTourEditor.dll
+[281/283] Compile Resource [x64] Default.rc2
+[282/283] Link [x64] UnrealEditor-DiscGolfTour.dll
+[283/283] WriteMetadata DiscGolfTourEditor.target [NoUba]
+
+Total time in Unreal Build Accelerator local executor: 890.21 seconds
+Output binary: C:\DGTour\Binaries\Win64\DiscGolfTour-Win64-Shipping.exe
+Output binary: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe
+
+Result: Succeeded
+Total execution time: 895.32 seconds
+Trace written to file C:\Users\ridge\AppData\Local\UnrealBuildTool\Trace.uba with size 149.0kb
+Took 895.75s to run dotnet.exe, ExitCode=0
+No build products were made
+Build command time: 897.51 s
+********** BUILD COMMAND COMPLETED **********
+********** COOK COMMAND STARTED **********
+Cleaning cooked data.
+Running UnrealEditor Cook for project C:\DGTour\DiscGolfTour.uproject
+Commandlet log file is C:\Program Files\Epic Games\UE_5.8\Engine\Programs\AutomationTool\Saved\Cook-2026.08.25-21.15.41.txt
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealEditor-Cmd.exe "C:\DGTour\DiscGolfTour.uproject" -run=Cook  -TargetPlatform=Windows  -unversioned -fileopenlog -abslog="C:\Program Files\Epic Games\UE_5.8\Engine\Programs\AutomationTool\Saved\Cook-2026.08.25-21.15.41.txt" -stdout -CrashForUAT -unattended -NoLogTimes
+LogInit: Display: Running engine for game: DiscGolfTour
+LogCore: Display: Requested channels: 'cpu,gpu,frame,log,bookmark,screenshot,region'
+LogTrace: Display: Control listening on port 1985
+LogCsvProfiler: Display: Metadata set : platform="Windows"
+LogCsvProfiler: Display: Metadata set : config="Development"
+LogCsvProfiler: Display: Metadata set : buildversion="++UE5+Release-5.8-CL-56057345"
+LogCsvProfiler: Display: Metadata set : engineversion="5.8.1-56057345+++UE5+Release-5.8"
+LogCsvProfiler: Display: Metadata set : enginereleaseversion="5.8.1"
+LogCsvProfiler: Display: Metadata set : os="Windows 11 (25H2) [10.0.26200.9168] "
+LogCsvProfiler: Display: Metadata set : cpu="AuthenticAMD|AMD Ryzen 7 8745HX with Radeon Graphics"
+LogCsvProfiler: Display: Metadata set : pgoenabled="0"
+LogCsvProfiler: Display: Metadata set : pgoprofilingenabled="0"
+LogCsvProfiler: Display: Metadata set : ltoenabled="0"
+LogCsvProfiler: Display: Metadata set : asan="0"
+LogCsvProfiler: Display: Metadata set : mergedmodules="0"
+LogCsvProfiler: Display: Metadata set : compacttset="0"
+LogCsvProfiler: Display: Metadata set : commandline="" C:\DGTour\DiscGolfTour.uproject -run=Cook -TargetPlatform=Windows -unversioned -fileopenlog -abslog="C:\Program Files\Epic Games\UE_5.8\Engine\Programs\AutomationTool\Saved\Cook-2026.08.25-21.15.41.txt" -stdout -CrashForUAT -unattended -NoLogTimes""
+LogCsvProfiler: Display: Metadata set : loginid="ddad923c4e47a3564bbcacb1d09e66cf"
+LogCsvProfiler: Display: Metadata set : llm="0"
+LogCsvProfiler: Display: Metadata set : zenstreaming="0"
+LogCsvProfiler: Display: Metadata set : systemresolution.resx="1280"
+LogCsvProfiler: Display: Metadata set : systemresolution.resy="720"
+LogConfig: Display: Loading VulkanPC ini files took 0.04 seconds
+LogConfig: Display: Loading Android ini files took 0.04 seconds
+LogConfig: Display: Loading Mac ini files took 0.04 seconds
+LogConfig: Display: Loading IOS ini files took 0.04 seconds
+LogAudio: Display: Audio Device Manager not initializing due to all audio being disabled. If this is not intentional, please check command line arguments for "-nosound".
+LogAssetRegistry: Display: FindShardedCacheFiles: 1 via .ref, 0 via migration fallback, 1 total
+LogConfig: Display: Loading Windows ini files took 0.05 seconds
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles (PreLoad): 1 .ref files found, 1 referenced binaries
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Mode=ValidatePlatforms -OutputSDKs  -AllPlatforms  -project="C:/DGTour/DiscGolfTour.uproject" -log="C:/DGTour/Saved/Logs/AutoSDKInfo.txt" -verbose -timestamps
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles: 1 total binaries, 1 referenced (kept), 0 old-style pre-migration (kept), 0 orphans deleted, 0 orphans locked (kept)
+LogAssetRegistry: Display: LoadCacheFiles: loading 1 cache files, memory-mapping=enabled
+LogConfig: Display: Loading VisionOS ini files took 0.05 seconds
+LogConfig: Display: Loading TVOS ini files took 0.05 seconds
+LogConfig: Display: Loading Unix ini files took 0.05 seconds
+LogConfig: Display: Loading Linux ini files took 0.06 seconds
+LogAssetRegistry: Display: Asset registry cache read as 131.5 MiB from ../../../../../../DGTour/Intermediate/CachedAssetRegistry/CachedAssetRegistry_0_FCE2060C4E9F0CD73B30D4926D28889E.bin (memory-mapped=yes)
+Log file: C:\DGTour\Saved\Logs\AutoSDKInfo.txt
+##PlatformValidate: Win64 VALID 10.0.22621.0
+##PlatformValidate: Mac INVALID 26.1.1
+##PlatformValidate: IOS INVALID 26.1.1
+##PlatformValidate: Android INVALID r27c
+##PlatformValidate: Linux INVALID v26_clang-20.1.8-rockylinux8
+##PlatformValidate: LinuxArm64 INVALID <UNKNOWN>
+##PlatformValidate: TVOS INVALID 26.1.1
+##PlatformValidate: VisionOS INVALID <UNKNOWN>
+Unable to find required SDK version 'MainVersion' for platform LinuxArm64. Check your SDK.json files
+Unable to find required SDK version 'MainVersion' for platform VisionOS. Check your SDK.json files
+Trace written to file C:\Users\ridge\AppData\Local\UnrealBuildTool\Trace.uba with size 318b
+LogAnalytics: Display: Provider StudioTelemetry.Provider.Log is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.CSV is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.Horde is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.Log is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.CSV is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.Horde is disabled for this application
+RenderDocPlugin: Display: RenderDoc plugin will not be loaded. Use '-AttachRenderDoc' on the cmd line or enable 'renderdoc.AutoAttach' in the plugin settings.
+LogAsyncCompilation: Display: MemorySharingInfo: UsedMemory=356MiB, MaxMemoryAvailable=39909MiB
+LogStreaming: Display: AsyncLoading2 - Created: Async Loading Thread: false, Async Post Load: false, Multithreaded: false
+LogHAL: Display: Platform has ~ 16 GB [16163020800 / 17179869184 / 16], which maps to Larger [LargestMinGB=32, LargerMinGB=12, DefaultMinGB=8, SmallerMinGB=6, SmallestMinGB=0)
+LogCsvProfiler: Display: Metadata set : extradevelopmentmemorymb="0"
+LogObj: Display: Attempting to load config data for Default__DownlinkBandwidthManagerConfig before the Class has been constructed/registered/linked (likely during module loading or early startup). This will result in the load silently failing and should be fixed.
+LogTextureFormatASTC: Display: ASTCEnc version 5.0.1 library loaded
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatASTC
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatDXT
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatETC2
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatIntelISPCTexComp
+LogTextureFormatOodle: Display: Oodle Texture TFO init; latest sdk version = 2.9.16
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.16.dll
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatOodle
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatUncompressed
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'Android'
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'IOS'
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'Linux'
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'Mac'
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'TVOS'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Windows'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsEditor'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsServer'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsClient'
+LogTargetPlatformManager: Display: Building Assets For Windows
+LogAudioDebug: Display: Lib vorbis DLL was dynamically loaded.
+LogObj: Display: Attempting to load config data for Default__SlateThemeManager before the Class has been constructed/registered/linked (likely during module loading or early startup). This will result in the load silently failing and should be fixed.
+LogCsvProfiler: Display: Metadata set : verbatimrhiname="Null"
+LogCsvProfiler: Display: Metadata set : rhiname="Null"
+LogCsvProfiler: Display: Metadata set : rhifeaturelevel="SM6"
+LogCsvProfiler: Display: Metadata set : shaderplatform="PCD3D_SM6"
+LogCsvProfiler: Display: Metadata set : gpu=""
+LogCsvProfiler: Display: Metadata set : gpudriver=""
+LogDerivedDataCache: Display: ../../../Engine/DerivedDataCache/Compressed.ddp: Opened pak cache for reading. (1670 MiB)
+LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.8/Engine/Binaries/Win64/zen.exe service status'.
+LogZenServiceInstance: Display: Writing plugin version info to 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zen_plugin_versions.json'
+LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/ridge/AppData/Local/UnrealEngine/5.8/Saved/Zen/zen.version', version: '5.8.13-202605190912-windows-x64-release-094f62c2'
+LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version', version: '5.8.13-202605190912-windows-x64-release-094f62c2'
+LogZenServiceInstance: Display: Installed service at 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe' is up to date
+LogZenServiceInstance: Display: Launching executable 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe', working dir 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install', data dir 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Data', args '--port 8558 --data-dir C:\Users\ridge\AppData\Local\UnrealEngine\Common\Zen\Data --http asio --gc-cache-duration-seconds 1209600 --gc-interval-seconds 21600 --gc-low-diskspace-threshold 2147483648 --cache-bucket-limit-overwrites --quiet --restrict-content-types --allow-external-oidctoken-exe=false --plugins-config "C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zen_plugins_v1.json" --security-config-path "C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/security-config.json" --owner-pid 10332  --child-id Zen_10332_Startup'
+LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.
+LogDerivedDataCache: Display: ZenLocal: Using ZenServer HTTP service at [::1] with namespace ue.ddc. Status: OK!.
+LogDerivedDataCache: Display: C:/Users/ridge/AppData/Local/UnrealEngine/Common/DerivedDataCache: Performance: Latency=0.17ms. RandomReadSpeed=261.13MBs, RandomWriteSpeed=216.43MBs. Assigned SpeedClass 'Local'
+LogUbaHorde: Display: UBA/Horde Configuration [Uba.Provider.Horde]: Not Enabled
+LogShaderCompilers: Display: No distributed shader compiler controller found
+LogShaderCompilers: Display: Using 13 local workers for shader compilation
+LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../DGTour/Intermediate/ShaderAutogen/PCD3D_SM6/AutogenShaderHeaders.ush
+LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+LogEditorDomain: Display: EditorDomain is Disabled
+LogAssetRegistry: Display: AssetDataGatherer spent 0.000s loading caches from ../../../../../../DGTour/Intermediate/CachedAssetRegistry.
+LogDeviceProfileManager: Display: Deviceprofile LinuxArm64Editor not found.
+LogDeviceProfileManager: Display: Deviceprofile LinuxArm64 not found.
+LogCsvProfiler: Display: Metadata set : deviceprofile="WindowsEditor"
+LogStreaming: Display: FlushAsyncLoading(1): 1 QueuedPackages, 0 AsyncPackages
+LogTextureEncodingSettings: Display: Texture Encode Speed: Final (cook).
+LogTextureEncodingSettings: Display: Oodle Texture Encode Speed settings: Fast: RDO Off Lambda=0, Effort=Normal Final: RDO Off Lambda=0, Effort=Normal
+LogTextureEncodingSettings: Display: Shared linear texture encoding: Disabled
+LogMeshReduction: Display: Using QuadricMeshReduction for automatic static mesh reduction
+LogMeshReduction: Display: Using SkeletalMeshReduction for automatic skeletal mesh reduction
+LogMeshReduction: Display: Using ProxyLODMeshReduction for automatic mesh merging
+LogMeshReduction: Display: No distributed automatic mesh merging module available
+LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../DGTour/Intermediate/ShaderAutogen/PCD3D_SM5/AutogenShaderHeaders.ush
+LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+LogVirtualization: Display: VirtualizationSystem name found in ini file: None
+LogVirtualization: Display: FNullVirtualizationSystem mounted, virtualization will be disabled
+LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize started...
+LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize took 8.884 ms
+LogLiveLinkHub: Display: LiveLinkHubModule::StartupModule - LiveLinkHub instance will not be created. (Config: 0)
+LogMetaSound: Display: MetaSound Page Target Initialized to 'Default'
+LogAudio: Display: Registering Engine Module Parameter Interfaces...
+LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+LogCsvProfiler: Display: Metadata set : largeworldcoordinates="1"
+LogCsvProfiler: Display: Metadata set : raytracing="0"
+LogCook: Display: CookProcessCount=1. CookMultiprocess is disabled and the cooker is running as a single process.
+LogCook: Display: CookSettings for Memory:
+	MemoryMaxUsedVirtual 0MiB
+	MemoryMaxUsedPhysical 0MiB
+	MemoryMinFreeVirtual 2048MiB
+	MemoryMinFreePhysical 2048MiB
+	MemoryTriggerGCAtPressureLevel None
+	SoftGCMemoryUseTrigger disabled
+	SoftGCTimeBudgetTrigger enabled (0.05 budget, 30s min period)
+LogCook: Display: SkipOnlyEditorOnly is enabled, unsolicited packages will not be cooked unless they are referenced from the cooked version of the instigator package.
+LogCook: Display: ---- Pre Content Initialisation: End ----
+LogCook: Display: ---- Post Content Initialisation: Start ----
+LogEditorDomain: Display: Cycle detected in parents of class /Script/RigVMDeveloper.RigVMUnitNode. Allow flags for editordomain and incremental cooking will be invalid.
+LogEditorDomain: Display: Cycle detected in parents of class /Script/LiveLinkGraphNode.K2Node_EvaluateLiveLinkFrameWithSpecificRole. Allow flags for editordomain and incremental cooking will be invalid.
+LogZenStore: Display: Establishing oplog 'DiscGolfTour.20bba5d6/EditorDomain'
+LogZenStore: Display: Zen project 'DiscGolfTour.20bba5d6' already exists
+LogZenStore: Display: Zen oplog 'DiscGolfTour.20bba5d6/EditorDomain' already exists
+LogCook: Display: Waiting for Asset Registry
+LogAssetRegistry: Display: Starting OnFilesLoaded.Broadcast
+LogAssetRegistry: Display: Completed OnFilesLoaded.Broadcast: 0.026s
+LogAssetRegistry: Display: Asset registry cache written as 131.5 MiB to ../../../../../../DGTour/Intermediate/CachedAssetRegistry/CachedAssetRegistry_*.ref
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles (PostWrite): 1 .ref files found, 1 referenced binaries
+LogAssetRegistry: Display:   CachedAssetRegistry_0_FCE2060C4E9F0CD73B30D4926D28889E.bin: deleted (orphaned, unreferenced by any .ref)
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles: 2 total binaries, 1 referenced (kept), 0 old-style pre-migration (kept), 1 orphans deleted, 0 orphans locked (kept)
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles (PostWrite): 1 .ref files found, 1 referenced binaries
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles: 1 total binaries, 1 referenced (kept), 0 old-style pre-migration (kept), 0 orphans deleted, 0 orphans locked (kept)
+LogCook: Display: INCREMENTAL COOK DEPENDENCIES: Enabled. Incremental Cook Dependencies are enabled in Editor.ini:[CookSettings]:LegacyIterative=false.
+LogZenStore: Display: Establishing oplog 'DiscGolfTour.20bba5d6/Windows'
+LogZenStore: Display: Zen project 'DiscGolfTour.20bba5d6' already exists
+LogStorageServerPlatformFile: Display: Found 'C:/DGTour/Saved/Cooked/Windows/ue.projectstore'
+LogStorageServerPlatformFile: Display: Using connection settings from ue.projectstore: HostAddrs='[::1]+192.168.1.16' and HostPort='8558'
+LogStorageServerPlatformFile: Display: Found 'C:/DGTour/Saved/Cooked/Windows/ue.projectstore'
+LogStorageServerPlatformFile: Display: Using password authentication from ue.projectstore
+LogStorageServerPlatformFile: Display: Using settings from ue.projectstore: ServerProject='DiscGolfTour.20bba5d6' and ServerPlatform='Windows'
+LogStorageServerConnection: Display: Creating zen store connection to [::1]:8558 ("::1").
+LogStorageServerConnection: Display: Zen store connection established to [::1]:8558.
+LogCook: Display: CalculateGlobalDependenciesHash(Windows):
+LogCook: Display: 	FGuid CookIncrementalVersion = ffa12fdc-c822-1fe2-7757-627a12f1d3a7
+LogCook: Display: 	[Editor]:CookSettings.ProjectCookIncrementalVersion = 00000000-0000-0000-0000-000000000000
+LogCook: Display: 	[Engine]:Core.System.CanStripEditorOnlyExportsAndImports = True
+LogCook: Display: 	[Engine]:Core.System.CanSkipEditorReferencedPackagesWhenCooking = False
+LogCook: Display: 	CanUseUnversionedPropertySerialization = True
+LogCook: Display: 	[Editor]:CookSettings.AutomaticOptionalInclusionAssetType = /Script/Niagara.NiagaraScript, /Script/Niagara.NiagaraEmitter, /Script/Niagara.NiagaraSystem, /Script/NiagaraEditor.NiagaraParameterDefinitions, /Script/Niagara.NiagaraEffectType, /Script/Niagara.NiagaraValidationRuleSet, /Script/OptimusCore.OptimusDeformer
+LogCook: Display: 	IsCookFlagSet(ECookInitializationFlags::Unversioned) = True
+LogCook: Display: 	FCoreRedirects::AppendHashOfGlobalRedirects = 17f35e9ff1fb6e40cac425e116dcc221aee019db6271a6fd3a1972cbe02b393e
+LogCook: Display: 	GlobalDependenciesHash(Windows) = 8c10201ee70501ed12cd31314eb8d9256a2786cb012ebd13e3056afa6644655a
+LogCook: Display: FULL COOK: Incremental Cooks are disabled by default in Editor.ini:[CookSettings]:CookIncrementalDefaultIncremental=false, and commandline did not specify -forcerecook=false. Deleting previously cooked packages for platform Windows and recooking all packages discovered in the current cook.
+LogZenStore: Display: Deleting oplog 'DiscGolfTour.20bba5d6/Windows' if it exists
+LogZenStoreWriter: Display: Deleting C:/DGTour/Saved/Cooked/Windows/...
+LogZenStore: Display: Zen oplog 'DiscGolfTour.20bba5d6/Windows' created
+LogCook: Display: Sandbox cleanup took 0.022 seconds for platforms Windows
+LogCook: Display: Compiling global changed shaders for platform 'Windows'
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'Global' (PCD3D_SM6-PCD3D_SM6) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 1, Unique Shadermaps: 498 (49800.00%)
+LogShaderLibrary: Display: Total Shaders: 8987, Unique Shaders: 8985 (99.98%)
+LogShaderLibrary: Display: Total Shader Size: 106.79mb, Unique Shaders Size: 106.79mb (100.00%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 3
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 530
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     2, 2, 1, 1, 1, 1, 1, 1, 1, 1
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Compute: 6756 shaders (75.19%), compressed size: 83.94 MB (12.72 KB avg per shader), uncompressed size: 110.68 MB (16.78 KB avg per shader)
+LogShaderLibrary: Display: SF_Pixel: 2078 shaders (23.13%), compressed size: 22.45 MB (11.06 KB avg per shader), uncompressed size: 29.48 MB (14.53 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 147 shaders (1.64%), compressed size: 0.39 MB (2.71 KB avg per shader), uncompressed size: 0.48 MB (3.38 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 3 shaders (0.03%), compressed size: 0.01 MB (2.15 KB avg per shader), uncompressed size: 0.01 MB (3.31 KB avg per shader)
+LogShaderLibrary: Display: SF_WorkGraphComputeNode: 1 shaders (0.01%), compressed size: 0.00 MB (2.75 KB avg per shader), uncompressed size: 0.00 MB (3.35 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../../DGTour/Saved/Shaders/PCD3D_SM6-PCD3D_SM6/ShaderDebug-Global-PCD3D_SM6-PCD3D_SM6/Dump.txt'
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'Global' (PCD3D_SM5-PCD3D_SM5) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 1, Unique Shadermaps: 381 (38100.00%)
+LogShaderLibrary: Display: Total Shaders: 4417, Unique Shaders: 4401 (99.64%)
+LogShaderLibrary: Display: Total Shader Size: 12.81mb, Unique Shaders Size: 12.81mb (99.95%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 2
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 309
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     3, 3, 3, 2, 2, 2, 2, 2, 2, 2
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Pixel: 1788 shaders (40.63%), compressed size: 6.72 MB (3.85 KB avg per shader), uncompressed size: 31.79 MB (18.21 KB avg per shader)
+LogShaderLibrary: Display: SF_Compute: 2490 shaders (56.58%), compressed size: 6.01 MB (2.47 KB avg per shader), uncompressed size: 23.27 MB (9.57 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 121 shaders (2.75%), compressed size: 0.07 MB (0.61 KB avg per shader), uncompressed size: 0.15 MB (1.31 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 2 shaders (0.05%), compressed size: 0.00 MB (0.49 KB avg per shader), uncompressed size: 0.00 MB (1.55 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../../DGTour/Saved/Shaders/PCD3D_SM5-PCD3D_SM5/ShaderDebug-Global-PCD3D_SM5-PCD3D_SM5/Dump.txt'
+LogShaderLibrary: Display: =================
+LogCook: Display: Discovering localized assets for cultures: en
+LogCook: Display: Found 0 localized assets
+LogCook: Display: ---- Post Content Initialisation: End ----
+LogCook: Display: Cooked packages 0 Packages Remain 583 Total 583
+LogCook: Display: Cook Diagnostics: OpenFileHandles=298, VirtualMemory=1774MiB, VirtualMemoryAvailable=6244MiB
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [SkinnedAsset] anyway! RequiredMemory = 0.000 MiB + 4608.000 MiB, MemoryLimit = 3752.429688 MiB
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [SkinnedAsset] anyway! RequiredMemory = 0.000 MiB + 4608.000 MiB, MemoryLimit = 3752.453125 MiB
+LogCook: Display: Garbage collection triggered (Soft). Triggered by conditions:
+  CookSettings.SoftGCTimeTrigger: Periodic triggering of SoftGC: No duration data.
+LogCookCommandlet: Display: GarbageCollection... (Periodic GC)
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [SkinnedAsset] anyway! RequiredMemory = 0.000 MiB + 4608.000 MiB, MemoryLimit = 3683.773438 MiB
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [SkinnedAsset] anyway! RequiredMemory = 0.000 MiB + 4608.000 MiB, MemoryLimit = 3683.773438 MiB
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [SkinnedAsset] anyway! RequiredMemory = 0.000 MiB + 4608.000 MiB, MemoryLimit = 3673.164062 MiB
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [SkinnedAsset] anyway! RequiredMemory = 0.000 MiB + 4608.000 MiB, MemoryLimit = 3673.164062 MiB
+LogCook: Display: Cooked packages 40 Packages Remain 795 Total 835
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [SkinnedAsset] anyway! RequiredMemory = 0.000 MiB + 4608.000 MiB, MemoryLimit = 3578.320312 MiB
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [SkinnedAsset] anyway! RequiredMemory = 0.000 MiB + 4608.000 MiB, MemoryLimit = 3578.320312 MiB
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [SkinnedAsset] anyway! RequiredMemory = 0.000 MiB + 4608.000 MiB, MemoryLimit = 3470.105469 MiB
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [SkinnedAsset] anyway! RequiredMemory = 0.000 MiB + 4608.000 MiB, MemoryLimit = 3470.105469 MiB
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.7.dll
+LogCook: Display: Cooked packages 192 Packages Remain 644 Total 836
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.8.dll
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.12.dll
+LogCook: Display: Cooked packages 363 Packages Remain 473 Total 836
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.15.dll
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.13.dll
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [TextureDerivedData] anyway! RequiredMemory = 0.000 MiB + 4289.000 MiB, MemoryLimit = 2895.429688 MiB
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [TextureDerivedData] anyway! RequiredMemory = 0.000 MiB + 4289.000 MiB, MemoryLimit = 2895.429688 MiB
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.11.dll
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [TextureDerivedData] anyway! RequiredMemory = 0.000 MiB + 4481.000 MiB, MemoryLimit = 2676.511719 MiB
+LogAsyncCompilation: Display: BEWARE: AssetCompile memory estimate is greater than available, but we're running it [TextureDerivedData] anyway! RequiredMemory = 0.000 MiB + 4481.000 MiB, MemoryLimit = 2676.511719 MiB
+LogCook: Display: Cooked packages 662 Packages Remain 174 Total 836
+LogCook: Display: [AssetLog] C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\PCG\Content\ComputeSources\PCGCS_ShaderUtils.uasset: Skipping package /PCG/ComputeSources/PCGCS_ShaderUtils for platform Windows. It imports class /Script/PCG.PCGComputeSource, which is in a module that is not available on the platform.
+LogCook: Display: [AssetLog] C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\PCG\Content\ComputeSources\PCGCS_ShaderUtilsInternal.uasset: Skipping package /PCG/ComputeSources/PCGCS_ShaderUtilsInternal for platform Windows. It imports class /Script/PCG.PCGComputeSource, which is in a module that is not available on the platform.
+LogCook: Display: [AssetLog] C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\PCG\Content\ComputeSources\PCGCS_Quaternion.uasset: Skipping package /PCG/ComputeSources/PCGCS_Quaternion for platform Windows. It imports class /Script/PCG.PCGComputeSource, which is in a module that is not available on the platform.
+LogCook: Display: Cooked packages 820 Packages Remain 16 Total 836
+LogCook: Display: Garbage collection triggered (Full). Triggered by conditions:
+  CookSettings.MemoryMinFreePhysical: Available physical memory 1981MiB is less than 2048MiB.
+LogCookCommandlet: Display: GarbageCollection... (Exceeded Max Memory)
+LogCook: Display: GarbageCollection Results:
+	Type: Full
+	Duration: 0.282s
+	NumObjects:
+		Capacity:           25231360
+		Before GC:             89494
+		After GC:              59480
+		Freed by GC:            33.5%
+	NumPackages:
+		Before GC:              4699
+		After GC:                931
+		Freed by GC:            80.2%
+	Virtual Memory:
+		Before GC:              4539 MB
+		After GC:               2842 MB
+		Freed by GC:            37.4%
+LogCook: Display: Cooked packages 836 Packages Remain 0 Total 836
+LogCook: Display: Cook Diagnostics: OpenFileHandles=1967, VirtualMemory=2711MiB, VirtualMemoryAvailable=5258MiB
+LogCook: Display: ---- Finalisation: Start ----
+LogCook: Display: CookArtifact 'C:/DGTour/Saved/Cooked/Windows/DiscGolfTour/Metadata/ValidationCookArtifact.json' saved.
+LogAssetRegistryGenerator: Display: Saving asset registry v24.
+LogAssetRegistryGenerator: Display: Generated development asset registry C:/DGTour/Saved/Cooked/Windows/DiscGolfTour/Metadata/DevelopmentAssetRegistry.bin num assets 848, size is 842.15kb, XxHash64[LE] = 0x3AB0C6D69E38155F, waited on hash 0.00 seconds
+LogAssetRegistryGenerator: Display: Generated asset registry num assets 839, size is 399.66kb
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'DiscGolfTour' (PCD3D_SM6-PCD3D_SM6) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 148, Unique Shadermaps: 159 (107.43%)
+LogShaderLibrary: Display: Total Shaders: 4260, Unique Shaders: 2744 (64.41%)
+LogShaderLibrary: Display: Total Shader Size: 38.98mb, Unique Shaders Size: 29.07mb (74.58%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 14
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 984
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     61, 54, 33, 33, 27, 26, 25, 24, 18, 17
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Compute: 614 shaders (22.38%), compressed size: 11.56 MB (19.29 KB avg per shader), uncompressed size: 15.45 MB (25.77 KB avg per shader)
+LogShaderLibrary: Display: SF_Pixel: 1316 shaders (47.96%), compressed size: 11.36 MB (8.84 KB avg per shader), uncompressed size: 14.98 MB (11.65 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 690 shaders (25.15%), compressed size: 4.98 MB (7.39 KB avg per shader), uncompressed size: 6.65 MB (9.87 KB avg per shader)
+LogShaderLibrary: Display: SF_Mesh: 124 shaders (4.52%), compressed size: 1.17 MB (9.63 KB avg per shader), uncompressed size: 1.41 MB (11.64 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../../DGTour/Saved/Shaders/PCD3D_SM6-PCD3D_SM6/ShaderDebug-DiscGolfTour-PCD3D_SM6-PCD3D_SM6/Dump.txt'
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'DiscGolfTour' (PCD3D_SM5-PCD3D_SM5) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 148, Unique Shadermaps: 158 (106.76%)
+LogShaderLibrary: Display: Total Shaders: 2927, Unique Shaders: 1684 (57.53%)
+LogShaderLibrary: Display: Total Shader Size: 7.83mb, Unique Shaders Size: 5.06mb (64.65%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 10
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 476
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     61, 33, 33, 25, 25, 24, 24, 18, 16, 16
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Pixel: 1059 shaders (62.89%), compressed size: 3.46 MB (3.34 KB avg per shader), uncompressed size: 12.37 MB (11.96 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 575 shaders (34.14%), compressed size: 1.48 MB (2.63 KB avg per shader), uncompressed size: 4.52 MB (8.04 KB avg per shader)
+LogShaderLibrary: Display: SF_Compute: 50 shaders (2.97%), compressed size: 0.12 MB (2.53 KB avg per shader), uncompressed size: 0.49 MB (10.13 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../../DGTour/Saved/Shaders/PCD3D_SM5-PCD3D_SM5/ShaderDebug-DiscGolfTour-PCD3D_SM5-PCD3D_SM5/Dump.txt'
+LogShaderLibrary: Display: =================
+LogCook: Display: Dependent plugin "UAF" referenced by "IK Rig" wasn't found in enabled plugins list when creating cook metadata file... skipping
+LogCook: Display: Dependent plugin "UAFAnimGraph" referenced by "IK Rig" wasn't found in enabled plugins list when creating cook metadata file... skipping
+LogCook: Display: Dependent plugin "SteamShared" referenced by "EOS Shared" wasn't found in enabled plugins list when creating cook metadata file... skipping
+LogCook: Display: Dependent plugin "MetaHumanCoreML" referenced by "MetaHuman Core Tech" wasn't found in enabled plugins list when creating cook metadata file... skipping
+LogCook: Display: Finalize package store(s)...
+LogZenStoreWriter: Display: Flushing...
+LogZenStoreWriter: Display: Saving Zen filesystem manifest 'C:/DGTour/Saved/Cooked/Windows/DiscGolfTour/Metadata/zenfs.manifest'
+LogZenStoreWriter: Display: Output:	53368 Public runtime script objects
+LogCook: Display: Cook by the book total time in tick 12.343301s total time 19.154726
+LogCook: Display: Peak Used virtual 4445 MiB Peak Used physical 4188 MiB
+LogCook: Display: Packages Cooked: 827, Packages Incrementally Skipped: 0, Packages Skipped by Platform: 9, Total Packages: 836
+LogCookStats: Display: Hierarchy Timer Information:
+LogCookStats: Display:   Root: 0.000s (0)
+LogCookStats: Display:     CleanSandbox: 0.022s (1)
+LogCookStats: Display:     CollectFilesToCook: 0.009s (1)
+LogCookStats: Display:       CookModificationDelegate: 0.000s (1)
+LogCookStats: Display:     GenerateLongPackageName: 0.001s (1)
+LogCookStats: Display:     TickMainCookLoop: 12.343s (3)
+LogCookStats: Display:       PumpPollables: 0.009s (2)
+LogCookStats: Display:       PumpRequests: 0.019s (27)
+LogCookStats: Display:       LoadPackageForCooking: 3.281s (4176)
+LogCookStats: Display:       ValidateSourcePackage: 0.000s (836)
+LogCookStats: Display:       SavingPackages: 8.865s (91)
+LogCookStats: Display:         PollPendingCookedPlatformDatas: 0.416s (2763)
+LogCookStats: Display:         PrepareSave: 0.502s (2007)
+LogCookStats: Display:         PrecachePlatformDataForNextPackage: 1.286s (833)
+LogCookStats: Display:           PrepareSave: 1.286s (1046)
+LogCookStats: Display:         SaveCookedPackage: 6.580s (836)
+LogCookStats: Display:           GEditorSavePackage: 6.349s (836)
+LogCookStats: Display:             VerifyCanCookPackage: 0.006s (827)
+LogCookStats: Display:           TargetDomainDependencies: 0.136s (836)
+LogCookStats: Display:         ClearAllCachedCookedPlatformData: 0.070s (836)
+LogCookStats: Display:       PostLoadPackageFixup: 0.000s (1)
+LogCookStats: Display:       WaitForAsync: 0.001s (1)
+LogCookStats: Display:     CookByTheBookFinished: 1.219s (1)
+LogCookStats: Display:       SavingCurrentIniSettings: 0.049s (1)
+LogCookStats: Display:         ProcessingAccessedStrings: 0.007s (1)
+LogCookStats: Display:       ChunkGeneration: 0.017s (1)
+LogCookStats: Display:       FinishPopulateShaderLibrary: 0.002s (1)
+LogCookStats: Display:       CalculateReferencedSet: 0.000s (1)
+LogCookStats: Display:       CookArtifacts.UpdateOplogPackages: 0.009s (1)
+LogCookStats: Display:       PruneShaderLibrary: 0.002s (1)
+LogCookStats: Display:       GeneratorPreSave: 0.000s (1)
+LogCookStats: Display:       BuildChunkManifest: 0.031s (1)
+LogCookStats: Display:         FixupPackageDependenciesForChunks: 0.007s (1)
+LogCookStats: Display:       SaveManifests: 0.000s (1)
+LogCookStats: Display:       SaveAssetRegistry: 0.042s (1)
+LogCookStats: Display:       WriteCookerOpenOrder: 0.004s (1)
+LogCookStats: Display:       WriteCookMetadata: 0.001s (1)
+LogCookStats: Display:       WriteReferencedSet: 0.001s (1)
+LogCookStats: Display:       FinalizePackageStore: 0.941s (1)
+LogCookStats: Display: Misc Cook Stats
+LogCookStats: Display: ===============
+LogCookStats: Display: Niagara
+LogCookStats: Display:     NiagaraScriptTranslationCount=0
+LogCookStats: Display:     NiagaraCpuScriptCompileCount=0
+LogCookStats: Display:     NiagaraCpuScriptDdcCacheHitCount=5
+LogCookStats: Display:     NiagaraCpuScriptDdcCacheMissCount=0
+LogCookStats: Display:     NiagaraGpuScriptCompileCount=0
+LogCookStats: Display:     NiagaraGpuScriptDdcCacheHitCount=2
+LogCookStats: Display:     NiagaraGpuScriptDdcCacheMissCount=0
+LogCookStats: Display:     NiagaraSystemWaitForCompilationCompleteTime=0.000019
+LogCookStats: Display: Validation
+LogCookStats: Display:     Stats=[]
+LogCookStats: Display: OpenColorIOShader.Misc
+LogCookStats: Display:     ShadersCompiled=0
+LogCookStats: Display: ComputeKernelShader.Misc
+LogCookStats: Display:     ShadersCompiled=0
+LogCookStats: Display: NiagaraShader.Misc
+LogCookStats: Display:     ShadersCompiled=0
+LogCookStats: Display: ShaderCompiler
+LogCookStats: Display:     BlockingTimeSec=0.000114
+LogCookStats: Display:     AsyncCompileTimeSec=0.000000
+LogCookStats: Display:     GlobalBeginCompileShaderTimeSec=0.000000
+LogCookStats: Display:     GlobalBeginCompileShaderCalls=0
+LogCookStats: Display:     ProcessAsyncResultsTimeSec=0.000210
+LogCookStats: Display: GlobalShader.Misc
+LogCookStats: Display:     ShadersCompiled=0
+LogCookStats: Display: Material
+LogCookStats: Display:     FinishCacheShadersSec=0.727423
+LogCookStats: Display: Cook.Profile.Params
+LogCookStats: Display:     CookProject=DiscGolfTour
+LogCookStats: Display:     CookCultures=
+LogCookStats: Display:     CookLabel=
+LogCookStats: Display:     TargetPlatforms=Windows
+LogCookStats: Display:     IsCookAll=false
+LogCookStats: Display:     IsCookOnTheFly=false
+LogCookStats: Display:     IsIncrementalCook=false
+LogCookStats: Display:     IsIterativeCook=false
+LogCookStats: Display:     IsFastCook=false
+LogCookStats: Display:     IsUnversioned=true
+LogCookStats: Display: CookOnTheFlyServer.Package.Load
+LogCookStats: Display:     NumRequestedLoads=3384
+LogCookStats: Display:     NumPackagesLoaded=3770
+LogCookStats: Display:     NumInlineLoads=386
+LogCookStats: Display: CookOnTheFlyServer.Package.Save
+LogCookStats: Display:     NumPackagesIncrementallySkipped=0
+LogCookStats: Display: CookOnTheFlyServer.QueueSize
+LogCookStats: Display:     PeakRequest=835
+LogCookStats: Display:     PeakLoad=128
+LogCookStats: Display:     PeakSave=98
+LogCookStats: Display: Package.Load
+LogCookStats: Display:     LoadPackageTimeSec=3.956126
+LogCookStats: Display: Package.Save
+LogCookStats: Display:     NumPackagesSaved=836
+LogCookStats: Display:     SavePackageTimeSec=6.316600
+LogCookStats: Display:     TagPackageExportsPresaveTimeSec=0.000000
+LogCookStats: Display:     TagPackageExportsTimeSec=0.000000
+LogCookStats: Display:     FullyLoadLoadersTimeSec=0.000000
+LogCookStats: Display:     ResetLoadersTimeSec=0.000000
+LogCookStats: Display:     TagPackageExportsGetObjectsWithOuter=0.000000
+LogCookStats: Display:     TagPackageExportsGetObjectsWithMarks=0.000000
+LogCookStats: Display:     SerializeImportsTimeSec=0.000000
+LogCookStats: Display:     SortExportsSeekfreeInnerTimeSec=0.000000
+LogCookStats: Display:     SerializeExportsTimeSec=0.000000
+LogCookStats: Display:     SerializeBulkDataTimeSec=0.006811
+LogCookStats: Display:     AsyncWriteTimeSec=0.000000
+LogCookStats: Display:     MBWritten=0.000000
+LogCookStats: Display: Package.DifferentPackagesSizeMBPerAsset
+LogCookStats: Display: Package.NumberOfDifferencesInPackagesPerAsset
+LogCookStats: Display: Package.PackageDifferencesSizeMBPerAsset
+LogCookStats: Display: Package.DiffTotal
+LogCookStats: Display:     NumberOfDifferentPackages=0
+LogCookStats: Display:     DifferentPackagesSizeMB=0.000000
+LogCookStats: Display:     NumberOfDifferencesInPackages=0
+LogCookStats: Display:     PackageDifferencesSizeMB=0.000000
+LogCookStats: Display: UnversionedProperties
+LogCookStats: Display:     SavedStructs=0
+LogCookStats: Display:     SavedMB=0
+LogCookStats: Display:     EquivalentTaggedMB=0
+LogCookStats: Display:     CompressionRatio=-nan(ind)
+LogCookStats: Display:     BitfieldWasteKB=0
+LogCookStats: Display:
+LogCookStats: Display: Cook Profile
+LogCookStats: Display: ============
+LogCookStats: Display:  0.CookWallTimeSec=36.055859
+LogCookStats: Display:  0. 0.StartupWallTimeSec=16.755029
+LogCookStats: Display:  0. 1.CookProcessingTime=19.300830
+LogCookStats: Display:  0. 1. 1.StartCookByTheBookTimeSec=5.419317
+LogCookStats: Display:  0. 1. 1. 0.BlockOnAssetRegistryTimeSec=1.066227
+LogCookStats: Display:  0. 1. 1. 1.GameCookModificationDelegateTimeSec=0.000113
+LogCookStats: Display:  0. 1. 2.TickCookOnTheSideTimeSec=12.340303
+LogCookStats: Display:  0. 1. 2. 0.TickCookOnTheSideLoadPackagesTimeSec=3.281861
+LogCookStats: Display:  0. 1. 2. 1.TickCookOnTheSideSaveCookedPackageTimeSec=6.580568
+LogCookStats: Display:  0. 1. 2. 1. 0.TickCookOnTheSideResolveRedirectorsTimeSec=0.000000
+LogCookStats: Display:  0. 1. 2. 2.TickCookOnTheSidePrepareSaveTimeSec=1.788064
+LogCookStats: Display:  0. 1. 3.TickLoopGCTimeSec=0.305969
+LogCookStats: Display:  0. 1. 4.TickLoopRecompileShaderRequestsTimeSec=0.000000
+LogCookStats: Display:  0. 1. 5.TickLoopShaderProcessAsyncResultsTimeSec=0.000009
+LogCookStats: Display:  0. 1. 6.TickLoopProcessDeferredCommandsTimeSec=0.000002
+LogCookStats: Display:  0. 1. 7.TickLoopTickCommandletStatsTimeSec=0.000001
+LogCookStats: Display:  0. 1. 8.TickLoopFlushRenderingCommandsTimeSec=0.008982
+LogCookStats: Display:  0. 1. 9.ShaderFlushTimeSec=0.000000
+LogCookStats: Display:  0. 1. 10.ValidationTimeSec=0.000167
+LogCookStats: Display:
+LogCookStats: Display: DDC Summary Stats
+LogCookStats: Display: =================
+LogCookStats: Display: BackEnd         = Installed
+LogCookStats: Display: HasLocalCache   =      true
+LogCookStats: Display: HasSharedCache  =     false
+LogCookStats: Display: HasCloudCache   =     false
+LogCookStats: Display: HasZenCache     =      true
+LogCookStats: Display: TotalGetHits    =      5975
+LogCookStats: Display: TotalGetMisses  =         0
+LogCookStats: Display: TotalGets       =      5975
+LogCookStats: Display: TotalGetHitPct  =  1.000000
+LogCookStats: Display: GetMissPct      =  0.000000
+LogCookStats: Display: TotalPutHits    =         0
+LogCookStats: Display: TotalPutMisses  =         0
+LogCookStats: Display: TotalPuts       =         0
+LogCookStats: Display: TotalPutHitPct  =  0.000000
+LogCookStats: Display: PutMissPct      =  0.000000
+LogCookStats: Display: LocalGetHits    =      4761
+LogCookStats: Display: LocalGetMisses  =         0
+LogCookStats: Display: LocalGetTotal   =      4761
+LogCookStats: Display: LocalGetHitPct  =  1.000000
+LogCookStats: Display: SharedGetHits   =         0
+LogCookStats: Display: SharedGetTotal  =         0
+LogCookStats: Display: SharedGetHitPct =  0.000000
+LogCookStats: Display: ZenLocalGetHits =      4761
+LogCookStats: Display: ZenLocalGetTotal=      4761
+LogCookStats: Display: ZenLocalGetHitPct=  1.000000
+LogCookStats: Display: ZenRemoteGetHits=         0
+LogCookStats: Display: ZenRemoteGetTotal=         0
+LogCookStats: Display: ZenRemoteGetHitPct=  0.000000
+LogCookStats: Display: ZenRemoteReadSpeed=  0.000000
+LogCookStats: Display: ZenRemoteWriteSpeed=  0.000000
+LogCookStats: Display: ZenRemoteLatency=  0.000000
+LogCookStats: Display: CloudGetHits    =         0
+LogCookStats: Display: CloudGetTotal   =         0
+LogCookStats: Display: CloudGetHitPct  =  0.000000
+LogCookStats: Display: LocalLatency    =  2.175095
+LogCookStats: Display: LocalReadSpeed  =130.119135
+LogCookStats: Display: LocalWriteSpeed =  0.000000
+LogCookStats: Display: SharedLatency   =  0.000000
+LogCookStats: Display: SharedReadSpeed =  0.000000
+LogCookStats: Display: SharedWriteSpeed=  0.000000
+LogCookStats: Display: CloudLatency    =  0.000000
+LogCookStats: Display: CloudReadSpeed  =  0.000000
+LogCookStats: Display: CloudWriteSpeed =  0.000000
+LogCookStats: Display:
+LogCookStats: Display: DDC Resource Stats
+LogCookStats: Display: =======================================================================================================
+LogCookStats: Display: Asset Type                          Total Time (Sec)  GameThread Time (Sec)  Assets Built  MB Processed
+LogCookStats: Display: ----------------------------------  ----------------  ---------------------  ------------  ------------
+LogCookStats: Display: GlobalShader                                    2.80                   2.00             0        119.92
+LogCookStats: Display: BulkDataList                                    1.36                   0.00             0          0.60
+LogCookStats: Display: Texture                                         1.35                   0.00             0        206.16
+LogCookStats: Display: MaterialShader                                  1.24                   0.67             0         60.15
+LogCookStats: Display: StaticMesh                                      0.18                   0.00             0         24.54
+LogCookStats: Display: BodySetup                                       0.08                   0.00             0         19.50
+LogCookStats: Display: DistanceField                                   0.07                   0.00             0          0.34
+LogCookStats: Display: CardRepresentation                              0.05                   0.00             0          0.02
+LogCookStats: Display: NavCollision                                    0.05                   0.00             0          0.04
+LogCookStats: Display: STREAMEDAUDIO                                   0.03                   0.00             0          0.17
+LogCookStats: Display: SkeletalMesh                                    0.03                   0.00             0         17.34
+LogCookStats: Display: Audio                                           0.01                   0.00             0          0.17
+LogCookStats: Display: NiagaraScript                                   0.00                   0.00             0          0.17
+LogCookStats: Display: GROOM                                           0.00                   0.00             0          0.27
+LogCookStats: Display: AnimationSequence                               0.00                   0.00             0          0.01
+LogCookStats: Display: GROOMBINDING                                    0.00                   0.00             0          0.29
+LogCookStats: Display: CKERSM                                          0.00                   0.00             0          0.16
+LogCookStats: Display:
+LogCookStats: Display: Accumulated DDC Resource Stats Per Asset Type
+LogCookStats: Display: =======================================================================================================
+LogCookStats: Display: AnimationSequence                               0.00                   0.00             0          0.01
+LogCookStats: Display: Audio                                           0.01                   0.00             0          0.17
+LogCookStats: Display: CardRepresentation                              0.05                   0.00             0          0.02
+LogCookStats: Display: DistanceField                                   0.07                   0.00             0          0.34
+LogCookStats: Display: MaterialShader                                  1.24                   0.67             0         60.15
+LogCookStats: Display: MaterialTranslation                             0.00                   0.00             0          0.00
+LogCookStats: Display: NiagaraScript                                   0.00                   0.00             0          0.17
+LogCookStats: Display: SkeletalMesh                                    0.03                   0.00             0         17.34
+LogCookStats: Display: StaticMesh                                      0.18                   0.00             0         24.54
+LogCookStats: Display: Texture                                         1.35                   0.00             0        206.16
+LogCookStats: Display: Other                                           4.34                   2.00             0        140.95
+LogPackageBuildDependencyTracker: Display: Package Accesses (117 referencing packages with a total of 430 unique accesses)
+LogConfigBuildDependencyTracker: Display: Config Accesses (483 referencing packages with a total of 1069 unique accesses). 1968 unique accesses that were not associated with a package.
+LogCook: Display: ---- Finalisation: End ----
+LogCook: Display: Done!
+LogSavePackage: Display: Took 0.000809s to verify the EDL loading graph.
+LogInit: Display:
+LogInit: Display: Success - 0 error(s), 0 warning(s)
+LogInit: Display:
+
+Execution of commandlet took:  19.31 seconds, PeakPhysMemoryMB=4188 MB, PeakVirtMemoryMB=4445 MB
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles (PostWrite): 1 .ref files found, 1 referenced binaries
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles: 1 total binaries, 1 referenced (kept), 0 old-style pre-migration (kept), 0 orphans deleted, 0 orphans locked (kept)
+LogStreaming: Display: ============ Loader Stats ============
+LogStreaming: Display: Unique Partial Flushes: 0
+LogStreaming: Display: ============ Loader Stats End ============
+LogShaderCompilers: Display: Exiting ShaderCompilingThread
+Took 39.32s to run UnrealEditor-Cmd.exe, ExitCode=0
+Cook command time: 39.56 s
+********** COOK COMMAND COMPLETED **********
+********** STAGE COMMAND STARTED **********
+Creating Staging Manifest...
+Patching bootstrap executable; C:\DGTour\Intermediate\Staging\DiscGolfTour.exe
+Begin update resource 'C:\DGTour\Intermediate\Staging\DiscGolfTour.exe' (0)
+Add resource 101, length 104 (True)
+Add resource 1, length 1996 (True)
+Add resource 2, length 2447 (True)
+Add resource 3, length 2535 (True)
+Add resource 4, length 3037 (True)
+Add resource 5, length 3244 (True)
+Add resource 6, length 3531 (True)
+Add resource 7, length 6931 (True)
+Add resource 201, length 120 (True)
+Add resource 202, length 26 (True)
+Add resource 205, length 2 (True)
+End update resource (True/0)
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Localization\PortableObjectImport.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseSourceControlSettings.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseUnrealInsightsSettings.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Localization\Engine.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseEditor.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Localization\ToolTips.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Localization\WordCount.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Localization\PropertyNames.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Windows\WindowsEditorPerProjectUserSettings.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseLightmass.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BasePakFileRules.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Localization\Keywords.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\ConsoleVariables.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseEditorSettings.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Localization\RepairData.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Localization\Category.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Windows\WindowsEditorSettings.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseEditorKeyBindings.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Localization\PortableObjectExport.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Localization\Editor.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseEditorPerProjectUserSettings.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseGame.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseEngine.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Layouts\DefaultLayout.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\PluginBase.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseScalability.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseRuntimeOptions.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\VulkanPC\DataDrivenPlatformInfo.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseMaterialExpressions.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseInstallBundle.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Windows\BaseWindowsGame.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Windows\BaseWindowsEngine.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Windows\WindowsInput.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Windows\WindowsGame.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseDeviceProfiles.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseCompat.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Base.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseInput.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseHardware.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\BaseGameUserSettings.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\ConfigRedirects.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Layouts\UE4ClassicLayout.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Windows\DataDrivenPlatformInfo.ini
+Including config file C:\Program Files\Epic Games\UE_5.8\Engine\Config\Windows\BaseWindowsInput.ini
+Excluding config file C:\DGTour\Config\DefaultEditor.ini
+Excluding config file C:\DGTour\Config\DefaultPakFileRules.ini
+Including config file C:\DGTour\Config\DefaultScalability.ini
+Including config file C:\DGTour\Config\DefaultEngine.ini
+Including config file C:\DGTour\Config\DefaultGame.ini
+Including config file C:\DGTour\Config\DefaultInput.ini
+Reading oplog from Zen...
+Running UnrealPak with arguments: "C:\DGTour\DiscGolfTour.uproject" IoStore -StartZenServerForStage -SponsorProcessID=20196 -ProjectStore="C:\DGTour\Saved\Cooked\Windows\ue.projectstore"
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealPak.exe "C:\DGTour\DiscGolfTour.uproject" IoStore -StartZenServerForStage -SponsorProcessID=20196 -ProjectStore="C:\DGTour\Saved\Cooked\Windows\ue.projectstore"
+LogStreaming: Display: AsyncLoading2 - Created: Async Loading Thread: false, Async Post Load: false, Multithreaded: false
+LogPakFile: Display: ProjectDir: ../../../../../../DGTour/
+LogIoStore: Display: ==================== IoStore Utils ====================
+LogIoStore: Display: Using command line for crypto configuration
+LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.8/Engine/Binaries/Win64/zen.exe service status'.
+LogZenServiceInstance: Display: Writing plugin version info to 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zen_plugin_versions.json'
+LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/ridge/AppData/Local/UnrealEngine/5.8/Saved/Zen/zen.version', version: '5.8.13-202605190912-windows-x64-release-094f62c2'
+LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version', version: '5.8.13-202605190912-windows-x64-release-094f62c2'
+LogZenServiceInstance: Display: Installed service at 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe' is up to date
+LogZenServiceInstance: Display: Launching executable 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe', working dir 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install', data dir 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Data', args '--port 8558 --data-dir C:\Users\ridge\AppData\Local\UnrealEngine\Common\Zen\Data --http asio --gc-cache-duration-seconds 1209600 --gc-interval-seconds 21600 --gc-low-diskspace-threshold 2147483648 --cache-bucket-limit-overwrites --quiet --restrict-content-types --allow-external-oidctoken-exe=false --plugins-config "C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zen_plugins_v1.json" --security-config-path "C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/security-config.json" --owner-pid 9624  --child-id Zen_9624_Startup'
+LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.
+LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.
+LogPakFile: Display: UnrealPak executed in 4.435848 seconds
+Took 4.74s to run UnrealPak.exe, ExitCode=0
+Reading oplog from http://[::1]:8558/prj/DiscGolfTour.20bba5d6/oplog/Windows/entries?trim_by_referencedset=true
+Parsed 829 package entries from oplog.
+Cleaning Stage Directory: C:\DGTour\Saved\StagedBuilds\Windows
+Creating pak using staging manifest.
+DumpManifest: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\PrePak_Windows_NonUFSFiles.txt, NumItems: 24
+DumpManifest: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\PrePak_Windows_NonUFSFilesDebug.txt, NumItems: 3
+DumpManifest: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\PrePak_Windows_UFSFiles.txt, NumItems: 2813
+No matching platform for PakFileRules for Section ExcludeContentForMobile : Windows
+Staging with more than one target, PakFileRules may apply too many rules!
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\ParticipantsWarning.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\NotRun.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\InProcess.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\Groups.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\Participant.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\ExcludedTestsFilter.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\NotEnoughParticipants.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\DeveloperDirectoryContent.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\Fail.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\RefreshWorkers.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\ErrorFilter.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\NoSessionWarning.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\EditorGroupBorder.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\GameGroupBorder.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\RefreshTests.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\RunTests.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\SmokeTestFilter.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\SmokeTest.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\SmokeTestParent.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\StopTests.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\Success.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\TrackTestHistory.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Testing\BrushWireframe.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\VisualCommandlet.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Experimental\ChaosEditor\ChaosEditor.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Developer\ProjectLauncher\ProjectLauncher.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Testing\DefaultPawn_16px.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Testing\FlatColorSquare.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Experimental\ToolPresets\ToolPresets.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Fab\Fab.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\MovieScene\SequenceValidator\SequenceValidator.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Bridge\Bridge.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\Warning.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Performance\AutomatedPerfTestTools\AutomatedPerfTestTools.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Automation\WarningFilter.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Editor\BlueprintHeaderView\BlueprintHeaderView.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Tests\InterchangeTests\InterchangeTests.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Experimental\EditorPerformance\EditorPerformance.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Animation\AnimatorKit\AnimatorKit.uplugin from pak files
+Excluding C:\DGTour\Saved\Temp\Win64\Engine\Plugins\ChaosClothAssetEditorCore\Config\DefaultChaosClothAssetEditorCore.ini from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Testing\Hyperlink.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\FX\Cascade\Cascade.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Importers\AlembicImporter\AlembicImporter.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Cameras\CameraShakePreviewer\CameraShakePreviewer.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Editor\ColorGrading\ColorGrading.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Experimental\EditorTRSGizmo\EditorTRSGizmo.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Animation\EaseCurveTool\EaseCurveTool.uplugin from pak files
+Excluding C:\DGTour\Saved\Temp\Win64\Engine\Plugins\Editor\EditorScriptingUtilities\Config\DefaultEditorScriptingUtilities.ini from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Testing\Lit.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\FX\NiagaraPreviewContent\NiagaraPreviewContent.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Interchange\Editor\InterchangeEditor.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Editor\CurveEditorTools\CurveEditorTools.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Experimental\GizmoFramework\GizmoFramework.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Testing\NewLevelBlank.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\MeshPainting\MeshPainting.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Editor\GeometryMode\GeometryMode.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Experimental\LevelSequenceNavigatorBridge\LevelSequenceNavigatorBridge.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Testing\TestRotation.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Editor\MaterialAssetWizard\MaterialAssetWizard.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Testing\Unlit.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Editor\ObjectMixer\LightMixer\LightMixer.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Content\Slate\Testing\Wireframe.png from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Editor\ObjectMixer\ObjectMixer\ObjectMixer.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Editor\SequencerAnimTools\SequencerAnimTools.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Editor\UMGWidgetPreview\UMGWidgetPreview.uplugin from pak files
+Excluding C:\Program Files\Epic Games\UE_5.8\Engine\Plugins\Editor\UVEditor\UVEditor.uplugin from pak files
+Using 0 pak order files:
+Running UnrealPak with arguments: "C:\DGTour\DiscGolfTour.uproject"  -cryptokeys="C:\DGTour\Saved\Cooked\Windows\DiscGolfTour\Metadata\Crypto.json" -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=7 -compressmethod=Kraken  -ProjectStore="C:\DGTour\Saved\Cooked\Windows\ue.projectstore" -platform=Windows  -CreateMultiple="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\PakCommands.txt"
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealPak.exe "C:\DGTour\DiscGolfTour.uproject"  -cryptokeys="C:\DGTour\Saved\Cooked\Windows\DiscGolfTour\Metadata\Crypto.json" -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=7 -compressmethod=Kraken  -ProjectStore="C:\DGTour\Saved\Cooked\Windows\ue.projectstore" -platform=Windows  -CreateMultiple="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\PakCommands.txt"
+OodleDataCompression: Display: Oodle v2.9.16 format for pak/iostore with method=Kraken, level=7=Optimal3
+LogStreaming: Display: AsyncLoading2 - Created: Async Loading Thread: false, Async Post Load: false, Multithreaded: false
+LogPakFile: Display: ProjectDir: ../../../../../../DGTour/
+LogPakFile: Display: Parsing crypto keys from a crypto key cache file
+LogPakFile: Display: CompressionFormats in priority order: Oodle, Zlib
+LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.8/Engine/Binaries/Win64/zen.exe service status'.
+LogZenServiceInstance: Display: Writing plugin version info to 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zen_plugin_versions.json'
+LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/ridge/AppData/Local/UnrealEngine/5.8/Saved/Zen/zen.version', version: '5.8.13-202605190912-windows-x64-release-094f62c2'
+LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version', version: '5.8.13-202605190912-windows-x64-release-094f62c2'
+LogZenServiceInstance: Display: Installed service at 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe' is up to date
+LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.
+LogZenStore: Display: Opening oplog DiscGolfTour.20bba5d6 / Windows
+LogIoStore: Display: Fetched 830 oplog items from Zen in 0.45 seconds
+LogIoStore: Display: Parsed 830 oplog items 0.01 seconds, 3944 chunks
+LogIoStore: Display: Loaded 1078 chunk hashes from Zen in 0.06 seconds, 1078 hashes updated in 0.00 seconds
+LogPakFile: Display: Oodle enabled on 'NoPluginCompression' files
+LogPakFile: Display: Loading response file C:\Program Files\Epic Games\UE_5.8\Engine\Programs\AutomationTool\Saved\ResponseFiles\PakList_DiscGolfTour-Windows.txt
+LogPakFile: Display: Added 1665 entries to add to pak file.
+LogPakFile: Display: Collecting files to add to pak file...
+LogPakFile: Display: Collected 1665 files in 0.00s.
+LogPakFile: Display: Creating pak C:/DGTour/Saved/StagedBuilds/Windows/DiscGolfTour/Content/Paks/DiscGolfTour-Windows.pak.
+LogPakFile: Display: Created pak file: C:/DGTour/Saved/StagedBuilds/Windows/DiscGolfTour/Content/Paks/DiscGolfTour-Windows.pak
+LogPakFile: Display: CompressionFormat 0 [Oodle] : 390 files, 28218138 -> 9200847 bytes
+LogPakFile: Display: CompressionFormat 2 [None] : 1275 files, 657591 -> 657591 bytes
+LogPakFile: Display: Added 1665 files, 10475605 bytes total
+LogPakFile: Display: PrimaryIndex size: 23298 bytes
+LogPakFile: Display: PathHashIndex size: 50328 bytes
+LogPakFile: Display: FullDirectoryIndex size: 53561 bytes
+LogPakFile: Display: Compression summary: 32.61% of original size. Compressed Size 9200847 bytes, Original Size 28218138 bytes.
+LogPakFile: Display: Encryption - DISABLED
+LogPakFile: Display:
+LogPakFile: Display: Writer and Compression Threads exited.
+LogPakFile: Display: UnrealPak executed in 1.357578 seconds
+Took 1.61s to run UnrealPak.exe, ExitCode=0
+Running UnrealPak with arguments: "C:\DGTour\DiscGolfTour.uproject" C:\DGTour\DiscGolfTour.uproject -CreateGlobalContainer="C:\DGTour\Saved\StagedBuilds\Windows\DiscGolfTour\Content\Paks\global.utoc" -ProjectStore="C:\DGTour\Saved\Cooked\Windows\ue.projectstore" -CookedDirectory="C:\DGTour\Saved\Cooked\Windows" -Commands="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\IoStoreCommands.txt" -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=7 -compressmethod=Kraken   -cryptokeys="C:\DGTour\Saved\Cooked\Windows\DiscGolfTour\Metadata\Crypto.json" -compressionMinBytesSaved=1024 -compressionMinPercentSaved=5 -WriteBackMetadataToAssetRegistry=Disabled -platform=Windows 
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealPak.exe "C:\DGTour\DiscGolfTour.uproject" C:\DGTour\DiscGolfTour.uproject -CreateGlobalContainer="C:\DGTour\Saved\StagedBuilds\Windows\DiscGolfTour\Content\Paks\global.utoc" -ProjectStore="C:\DGTour\Saved\Cooked\Windows\ue.projectstore" -CookedDirectory="C:\DGTour\Saved\Cooked\Windows" -Commands="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\IoStoreCommands.txt" -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=7 -compressmethod=Kraken   -cryptokeys="C:\DGTour\Saved\Cooked\Windows\DiscGolfTour\Metadata\Crypto.json" -compressionMinBytesSaved=1024 -compressionMinPercentSaved=5 -WriteBackMetadataToAssetRegistry=Disabled -platform=Windows
+OodleDataCompression: Display: Oodle v2.9.16 format for pak/iostore with method=Kraken, level=7=Optimal3
+LogStreaming: Display: AsyncLoading2 - Created: Async Loading Thread: false, Async Post Load: false, Multithreaded: false
+LogPakFile: Display: ProjectDir: ../../../../../../DGTour/
+LogIoStore: Display: ==================== IoStore Utils ====================
+LogIoStore: Display: Parsing crypto keys from a crypto key cache file 'C:\DGTour\Saved\Cooked\Windows\DiscGolfTour\Metadata\Crypto.json'
+LogIoStore: Display: Container signing - DISABLED
+LogIoStore: Display: Directory index - ENABLED
+LogIoStore: Display: Using compression format 'Oodle'
+LogConfig: Display: Read in platform Windows ini files took 0.02 seconds
+LogIoStore: Display: Using memory mapping alignment '16384'
+LogIoStore: Display: Using compression block size '65536'
+LogIoStore: Display: Using compression block alignment '2048'
+LogIoStore: Display: Using compression min bytes saved '1024'
+LogIoStore: Display: Using compression min percent saved '5'
+LogIoStore: Display: Using max partition size '0'
+LogIoStore: Display: Not using DDC for compression
+LogIoStore: Display: Container metadata disabled
+LogIoStore: Display: Using command list file: 'C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\IoStoreCommands.txt'
+LogIoStore: Display: Selected Oodle level 7 (Optimal3) from command line for shaders
+LogZenServiceInstance: Display: Launching zen utility 'C:/Program Files/Epic Games/UE_5.8/Engine/Binaries/Win64/zen.exe service status'.
+LogZenServiceInstance: Display: Writing plugin version info to 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zen_plugin_versions.json'
+LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/ridge/AppData/Local/UnrealEngine/5.8/Saved/Zen/zen.version', version: '5.8.13-202605190912-windows-x64-release-094f62c2'
+LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version', version: '5.8.13-202605190912-windows-x64-release-094f62c2'
+LogZenServiceInstance: Display: Installed service at 'C:/Users/ridge/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe' is up to date
+LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.
+LogZenStore: Display: Opening oplog DiscGolfTour.20bba5d6 / Windows
+LogIoStore: Display: Fetched 830 oplog items from Zen in 0.73 seconds
+LogIoStore: Display: Parsed 830 oplog items 0.00 seconds, 3944 chunks
+LogIoStore: Display: Loaded 1078 chunk hashes from Zen in 0.00 seconds, 1078 hashes updated in 0.00 seconds
+LogIoStore: Display: Searching for cooked assets in folder 'C:\DGTour\Saved\Cooked\Windows'
+LogIoStore: Display: Found '8' files
+LogIoStore: Display: Creating container targets...
+LogIoStore: Display: Processing shader libraries, compressing with Oodle Mermaid, level 7 (Optimal3)
+LogIoStore: Display: Shader library chunk override is disabled
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 239 groups (71 of them didn't need new indices), average uncompressed size 76263 bytes, min 502 bytes, max 921625 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: DiscGolfTour-PCD3D_SM5(PCD3D_SM5): Recompressed 1684 shaders as 239 groups. Library size changed from 5180 KB (3.44 : 1 ratio) to 1695 KB (10.50 : 1 ratio), 32.72% of previous.
+LogIoStore: Display: Save IoStoreShaderCodeArchive 'DiscGolfTour-PCD3D_SM5-PCD3D_SM5' with ChunkId 'c1600a3358815a9300000008' for target file 'C:/DGTour/Saved/Cooked/Windows/DiscGolfTour/Content/ShaderArchive-DiscGolfTour-PCD3D_SM5-PCD3D_SM5.ushaderbytecode'
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 422 groups (178 of them didn't need new indices), average uncompressed size 137204 bytes, min 249 bytes, max 1042761 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: Global-PCD3D_SM5(PCD3D_SM5): Recompressed 4401 shaders as 422 groups. Library size changed from 13116 KB (4.31 : 1 ratio) to 4035 KB (14.01 : 1 ratio), 30.77% of previous.
+LogIoStore: Display: Save IoStoreShaderCodeArchive 'Global-PCD3D_SM5-PCD3D_SM5' with ChunkId 'c3fad98e7ca0cc3100000008' for target file 'C:/DGTour/Saved/Cooked/Windows/DiscGolfTour/Content/ShaderArchive-Global-PCD3D_SM5-PCD3D_SM5.ushaderbytecode'
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 600 groups (197 of them didn't need new indices), average uncompressed size 245818 bytes, min 1249 bytes, max 1036717 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: Global-PCD3D_SM6(PCD3D_SM6): Recompressed 8985 shaders as 600 groups. Library size changed from 109353 KB (1.32 : 1 ratio) to 59696 KB (2.41 : 1 ratio), 54.59% of previous.
+LogIoStore: Display: Save IoStoreShaderCodeArchive 'Global-PCD3D_SM6-PCD3D_SM6' with ChunkId '1680bae1ae38d5b900000008' for target file 'C:/DGTour/Saved/Cooked/Windows/DiscGolfTour/Content/ShaderArchive-Global-PCD3D_SM6-PCD3D_SM6.ushaderbytecode'
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 279 groups (71 of them didn't need new indices), average uncompressed size 144664 bytes, min 2378 bytes, max 1018037 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: DiscGolfTour-PCD3D_SM6(PCD3D_SM6): Recompressed 2744 shaders as 279 groups. Library size changed from 29767 KB (1.32 : 1 ratio) to 17986 KB (2.19 : 1 ratio), 60.42% of previous.
+LogIoStore: Display: Save IoStoreShaderCodeArchive 'DiscGolfTour-PCD3D_SM6-PCD3D_SM6' with ChunkId '53d6c2dfda329ede00000008' for target file 'C:/DGTour/Saved/Cooked/Windows/DiscGolfTour/Content/ShaderArchive-DiscGolfTour-PCD3D_SM6-PCD3D_SM6.ushaderbytecode'
+LogIoStore: Display: Shaders processed in 6.95 seconds
+LogIoStore: Display: Initialized WriteRequestManager with MaxConcurrentSourceReads=8 (16 cores), MaxSourceBufferMemory=3072MiB
+LogIoStore: Display: Processing redirects...
+LogIoStore: Display: Creating disk layout...
+LogIoStore: Display: Ordered 827 packages using fallback bundle order
+LogIoStore: Display: Disabled WriteRequestManager memory throttling, MaxConcurrentSourceReads=8 (16 cores)
+LogIoStore: Display: Writing container(s)...
+LogIoStore: Display: Writing chunks 1753/2624... [354 compressed] [3906 compression tasks] [Scheduled: 1298 MiB] [Physical: 1717 MiB, Virtual: 4511 MiB]
+LogIoStore: Display: Writing chunks 1755/2624... [376 compressed] [5556 compression tasks] [Scheduled: 1263 MiB] [Physical: 2174 MiB, Virtual: 4994 MiB]
+LogIoStore: Display: Writing chunks 1992/2624... [524 compressed] [5115 compression tasks] [Scheduled: 1192 MiB] [Physical: 2155 MiB, Virtual: 4914 MiB]
+LogIoStore: Display: Writing chunks 2098/2624... [618 compressed] [4706 compression tasks] [Scheduled: 1113 MiB] [Physical: 2152 MiB, Virtual: 4825 MiB]
+LogIoStore: Display: Writing chunks 2136/2624... [654 compressed] [4249 compression tasks] [Scheduled: 982 MiB] [Physical: 2102 MiB, Virtual: 4662 MiB]
+LogIoStore: Display: Writing chunks 2261/2624... [740 compressed] [3832 compression tasks] [Scheduled: 914 MiB] [Physical: 2124 MiB, Virtual: 4602 MiB]
+LogIoStore: Display: Writing chunks 2290/2624... [761 compressed] [3390 compression tasks] [Scheduled: 821 MiB] [Physical: 2136 MiB, Virtual: 4507 MiB]
+LogIoStore: Display: Writing chunks 2316/2624... [779 compressed] [3036 compression tasks] [Scheduled: 760 MiB] [Physical: 2143 MiB, Virtual: 4423 MiB]
+LogIoStore: Display: Writing chunks 2343/2624... [800 compressed] [2609 compression tasks] [Scheduled: 637 MiB] [Physical: 2123 MiB, Virtual: 4287 MiB]
+LogIoStore: Display: Writing chunks 2368/2624... [825 compressed] [2253 compression tasks] [Scheduled: 521 MiB] [Physical: 2091 MiB, Virtual: 4164 MiB]
+LogIoStore: Display: Writing chunks 2391/2624... [846 compressed] [1879 compression tasks] [Scheduled: 430 MiB] [Physical: 2043 MiB, Virtual: 4096 MiB]
+LogIoStore: Display: Writing chunks 2414/2624... [869 compressed] [1631 compression tasks] [Scheduled: 372 MiB] [Physical: 2001 MiB, Virtual: 4038 MiB]
+LogIoStore: Display: Writing chunks 2426/2624... [881 compressed] [1255 compression tasks] [Scheduled: 288 MiB] [Physical: 1946 MiB, Virtual: 3947 MiB]
+LogIoStore: Display: Writing chunks 2447/2624... [902 compressed] [968 compression tasks] [Scheduled: 211 MiB] [Physical: 1911 MiB, Virtual: 3871 MiB]
+LogIoStore: Display: Writing chunks 2459/2624... [916 compressed] [725 compression tasks] [Scheduled: 152 MiB] [Physical: 1891 MiB, Virtual: 3811 MiB]
+LogIoStore: Display: Writing chunks 2515/2624... [972 compressed] [420 compression tasks] [Scheduled: 82 MiB] [Physical: 1922 MiB, Virtual: 3788 MiB]
+LogIoStore: Display: Writing and compressing took 33.87 seconds, writes to disk took 1.02 seconds for 1,012,266,848 bytes @ 992,787,561 bytes per second.
+LogIoStore: Display: global: Found perfect hashmap for 1 items.
+LogIoStore: Display: DiscGolfTour-Windows: Found perfect hashmap for 2623 items.
+LogIoStore: Display: Finalize took 0.0 seconds for 2 writers to write 484,164 bytes, 60,767,381 bytes per second
+LogIoStore: Display: Writing tocs... [Physical: 1807 MiB, Virtual: 3639 MiB]
+LogIoStore: Display: 1,078 / 2,624 hashes were loaded from the hash database, by type:
+LogIoStore: Display:     ExportBundleData           827
+LogIoStore: Display:     BulkData                   249
+LogIoStore: Display:     OptionalBulkData           2
+LogIoStore: Display: 1,078 / 2,624 chunks attempted to compress, by type:
+LogIoStore: Display:     ExportBundleData           827 / 827
+LogIoStore: Display:     BulkData                   249 / 249
+LogIoStore: Display:     OptionalBulkData           2 / 2
+LogIoStore: Display:     ScriptObjects              0 / 1
+LogIoStore: Display:     ContainerHeader            0 / 1
+LogIoStore: Display:     ShaderCodeLibrary          0 / 4
+LogIoStore: Display:     ShaderCode                 0 / 1,540
+LogIoStore: Display: Source bytes read:
+LogIoStore: Display:     Zen:                      1,436,863,359
+LogIoStore: Display:         ExportBundleData        894,509,595 bytes over 827 reads
+LogIoStore: Display:         BulkData                475,244,900 bytes over 249 reads
+LogIoStore: Display:         OptionalBulkData         67,108,864 bytes over 2 reads
+LogIoStore: Display:     Loose File:                           0
+LogIoStore: Display:     Memory:                     171,828,244
+LogIoStore: Display:         ShaderCodeLibrary           996,936 bytes over 8 reads
+LogIoStore: Display:         ShaderCode              170,831,308 bytes over 3,080 reads
+LogIoStore: Display: Calculating stats...
+LogIoStore: Display:
+LogIoStore: Display: Container Summary
+LogIoStore: Display: ==================
+LogIoStore: Display:
+LogIoStore: Display:                      Container      Flags      Chunk(s) #       TOC (KiB)       Raw Size (MiB)           Size (MiB)
+LogIoStore: Display: -------------------------------------------------------------------------------------------------------------------
+LogIoStore: Display:                         global  -/-/-/-/-               1            0.82                 3.36                 3.36 -
+LogIoStore: Display:           DiscGolfTour-Windows  C/-/-/I/-            2623          471.99              1454.17               962.02 (33.84% Oodle)
+LogIoStore: Display: -------------------------------------------------------------------------------------------------------------------
+LogIoStore: Display:                          Total                       2624          472.82              1457.53               965.37
+LogIoStore: Display:
+LogIoStore: Display: ** Flags: (C)ompressed / (E)ncrypted / (S)igned) / (I)ndexed) / (O)nDemand **
+LogIoStore: Display:
+LogIoStore: Display: Compression block padding:     1.91 MiB
+LogIoStore: Display:
+LogIoStore: Display: Container Directory Index
+LogIoStore: Display: ==========================
+LogIoStore: Display:
+LogIoStore: Display:                      Container      Size (KiB)
+LogIoStore: Display: ----------------------------------------------
+LogIoStore: Display:                         global            0.00
+LogIoStore: Display:           DiscGolfTour-Windows           52.00
+LogIoStore: Display:
+LogIoStore: Display: Container Patch Report
+LogIoStore: Display: ========================
+LogIoStore: Display:
+LogIoStore: Display:                      Container          Total #       Modified #          Added #   Modified (MiB)      Added (MiB)
+LogIoStore: Display: -------------------------------------------------------------------------------------------------------------------
+LogIoStore: Display:                         global                1                0                0             0.00             0.00
+LogIoStore: Display:           DiscGolfTour-Windows             2623                0             2623             0.00           960.11
+LogIoStore: Display: -------------------------------------------------------------------------------------------------------------------
+LogIoStore: Display:
+LogIoStore: Display: PackageStore
+LogIoStore: Display: =============
+LogIoStore: Display:
+LogIoStore: Display:                      Container      Size (KiB)      Packages #     Localized #
+LogIoStore: Display: ------------------------------------------------------------------------------
+LogIoStore: Display:           DiscGolfTour-Windows              23             827               0
+LogIoStore: Display: ------------------------------------------------------------------------------
+LogIoStore: Display:                          Total              23             827               0
+LogIoStore: Display:
+LogIoStore: Display:
+LogIoStore: Display: Input:       827 Packages
+LogIoStore: Display: Input:         0   B UExp
+LogIoStore: Display: Input:    853.07 MiB UAsset
+LogIoStore: Display: Input:    517.23 MiB UBulk
+LogIoStore: Display: Input:     62.24 MiB for 1022 Global shaders
+LogIoStore: Display: Input:      2.58 MiB for 220 Shared shaders
+LogIoStore: Display: Input:         0   B for 0 Unique shaders
+LogIoStore: Display: Input:     16.64 MiB for 298 Inline shaders
+LogIoStore: Display:
+LogIoStore: Display: Output:      955 Imported package entries
+LogIoStore: Display: Output:      565 Packages without imports
+LogIoStore: Display: Output:        0 Public runtime script objects
+LogIoStore: Display: Output:     3.36 MiB InitialLoadData
+LogIoStore: Display:
+LogIoStore: Display: Success
+LogPakFile: Display: UnrealPak executed in 41.670744 seconds
+Took 41.99s to run UnrealPak.exe, ExitCode=0
+DumpManifest: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\FinalCopyWin64_UFSFiles.txt, NumItems: 2814
+DumpManifest: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\FinalCopyWin64_NonUFSFiles.txt, NumItems: 24
+DumpManifest: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\FinalCopyWin64_NonUFSFilesDebug.txt, NumItems: 3
+Copying NonUFSFiles to staging directory: C:\DGTour\Saved\StagedBuilds\Windows
+Stage command time: 75.54 s
+********** STAGE COMMAND COMPLETED **********
+********** ARCHIVE COMMAND STARTED **********
+Archiving to C:\DGTour_Packages\S19_WindowsShipping_ThrowPhysicsAudit_20260826T040100Z
+Archive command time: 0.95 s
+********** ARCHIVE COMMAND COMPLETED **********
+BuildCookRun time: 1014.79 s
+BUILD SUCCESSFUL
+AutomationTool executed for 0h 16m 55s
+AutomationTool exiting with ExitCode=0 (Success)

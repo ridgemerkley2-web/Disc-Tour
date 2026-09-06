@@ -1,0 +1,100 @@
+{
+  "schema": "DiscGolfTour.Session19BakedPcgRuntimeClosureRetirementPolicy.v2",
+  "schemaVersion": 2,
+  "session": 19,
+  "policyId": "retired_candidate_runtime_pcg_closure_source_separation_bridge_v2",
+  "authority": "SOURCE_PREBUILD_TECHNICAL_EVIDENCE_ONLY_NOT_CANDIDATE_OR_RELEASE_APPROVAL",
+  "state": "RETIRED_RUNTIME_CLOSURE_DELEGATED_TO_EDITOR_AUTHORING_AND_SHIPPING_SEPARATION",
+  "strategy": "SHIP_EXACT_AUTHORED_JSON_TREE_OUTPUT_AND_KEEP_PCG_AUTHORING_CODE_AND_GRAPH_OUT_OF_SHIPPING",
+  "successors": {
+    "sourceAuthority": {
+      "policy": "Config/DG_Session19BakedPcgPolicy.json",
+      "validator": "Scripts/validate_dg_session19_baked_pcg.py",
+      "receipt": "Evidence/Session19/BakedPcgSourceAuthorityReceipt.json",
+      "requiredState": "SOURCE_AUTHORITY_AND_SHIPPING_PCG_SOURCE_SEPARATION_VERIFIED_COOK_PROOF_PENDING"
+    },
+    "shippingSeparation": {
+      "policy": "Config/DG_Session19ShippingPcgSeparationPolicy.json",
+      "validator": "Scripts/validate_dg_session19_shipping_pcg_separation.py",
+      "requiredSourceState": "PASS_SOURCE_CONFIG_SHIPPING_PCG_SEPARATION_COOK_PROOF_PENDING",
+      "candidateReceiptPattern": "Evidence/Session19/ShippingPcgSeparation-{candidateId}.json"
+    }
+  },
+  "retiredCandidateEvidence": {
+    "historicalReceiptPattern": "Evidence/Session19/BakedPcgRuntimeClosure-{candidateId}.json",
+    "historicalReceiptsRemainHistorical": true,
+    "newCandidateReceiptEmissionAllowed": false,
+    "candidateCookProofDelegatedToShippingSeparation": true,
+    "prebuildSourceClosureDelegatedToBakedPcgAuthority": true
+  },
+  "compileBoundary": {
+    "runtimeModuleRules": "Source/DiscGolfTour/DiscGolfTour.Build.cs",
+    "runtimeControllerHeader": "Source/DiscGolfTour/DiscGolfEnvironmentController.h",
+    "runtimeControllerSource": "Source/DiscGolfTour/DiscGolfEnvironmentController.cpp",
+    "runtimeForbiddenModuleDependencies": ["PCG"],
+    "runtimeForbiddenSymbols": [
+      "UPCG",
+      "PCGComponent",
+      "GenerateForest",
+      "GenerateLocal",
+      "SetGraph"
+    ],
+    "editorModuleRules": "Source/DiscGolfTourEditor/DiscGolfTourEditor.Build.cs",
+    "editorRequiredModuleDependency": "PCG",
+    "editorAuthoringController": "Source/DiscGolfTourEditor/DiscGolfPcgAuthoringController.cpp",
+    "editorAuthoringHeader": "Source/DiscGolfTourEditor/DiscGolfPcgAuthoringController.h",
+    "editorGenerateForestDefinitionCount": 1,
+    "pcgPluginTargetAllowList": ["Editor"]
+  },
+  "assetBoundary": {
+    "forestGraphDiskPath": "Content/Environment/Forest/PCG/PCG_TemperateMountainForest.uasset",
+    "forestGraphPackagePath": "/Game/Environment/Forest/PCG/PCG_TemperateMountainForest",
+    "shippingNeverCookDirectory": "/Game/Environment/Forest/PCG",
+    "forestGraphPropertyEditorOnly": true,
+    "runtimeAuthoredTreeSource": "ORDERED_EXPLICIT_TREES_ARRAYS_IN_AUTHORED_HOLE_JSON",
+    "runtimeAuthoredTreeCount": 44,
+    "runtimeAuthoredTreePayloadSha256": "98D9B1F10A683D1C90EC25F766A3224B00AC550F9C379F2051535F9B82638BF6"
+  },
+  "acceptedSourceProof": [
+    "RUNTIME_MODULE_HAS_NO_PCG_DEPENDENCY",
+    "RUNTIME_SOURCE_HAS_NO_PCG_GENERATION_TYPE_OR_API",
+    "PCG_PLUGIN_IS_EDITOR_TARGET_ONLY",
+    "FOREST_GRAPH_PROPERTY_IS_EDITOR_ONLY_AND_GENERIC",
+    "EDITOR_MODULE_OWNS_GRAPH_CONTROLLER_AND_CUSTOM_NODE",
+    "SHIPPING_COOK_CONFIGURATION_EXCLUDES_PCG_GRAPH_DIRECTORY",
+    "AUTHORED_JSON_44_TREE_AUTHORITY_UNCHANGED"
+  ],
+  "remainingEvidence": [
+    "FRESH_REPLACEMENT_WINDOWS_SHIPPING_COOK_PCG_ABSENCE",
+    "THREE_HOLE_COLLISION_VISUAL_ACCEPTANCE",
+    "QUANTITATIVE_PERFORMANCE_AND_SOAK_ACCEPTANCE",
+    "PROVENANCE_LEGAL_DISTRIBUTION_AND_OWNER_APPROVAL"
+  ],
+  "claimBoundary": {
+    "legacyCandidateRuntimeClosureRetired": true,
+    "sourceAuthorityAccepted": true,
+    "sourceConfigSeparationProven": true,
+    "freshShippingCookAbsenceProven": false,
+    "unrealPcgBakeSaveReopenProven": false,
+    "collisionVisualApproval": false,
+    "performanceAcceptance": false,
+    "soakAcceptance": false,
+    "manualGameplayAcceptance": false,
+    "humanPlayFeelApproval": false,
+    "accessibilityApproval": false,
+    "provenanceApproval": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "ownerApproval": false,
+    "releaseApproval": false,
+    "session13BlockerClosed": false,
+    "releaseReady": false
+  },
+  "evidence": {
+    "validator": "Scripts/validate_dg_session19_baked_pcg_runtime_closure.py",
+    "normalState": "PASS_RETIRED_RUNTIME_CLOSURE_SOURCE_PREBUILD_SEPARATION",
+    "selfTestMinimumMutationCount": 16
+  },
+  "session13BlockerClosed": false,
+  "releaseReady": false
+}

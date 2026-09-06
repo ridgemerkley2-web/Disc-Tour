@@ -1,0 +1,96 @@
+{
+  "schema": "DiscGolfTour.Session18PolyHavenPackageIdentityReceipt.v1",
+  "schemaVersion": 1,
+  "session": 18,
+  "packageRunId": "63624166-aa24-49d0-a89f-74a125a36be2",
+  "platform": "Windows",
+  "configuration": "Development",
+  "sourceReceipt": {
+    "path": "SourceArt/PineRidge/PolyHaven/derived_runtime_receipt.json",
+    "bytes": 88601,
+    "sha256": "13ACC125F5B442BE75DE405DBD76D43AA9381436624E12BDDBA3C7BA4F90D858"
+  },
+  "buildCookRunEvidence": {
+    "path": "Evidence/Session18/BuildCookRun.log",
+    "bytes": 329045,
+    "sha256": "72D74C2B1212EE3720CDBF5B799EE57337A949FB22845E1207421CC084791D27",
+    "rawSourceBytes": 329318,
+    "rawSourceSha256": "AC9A98A74DA333DEFA31C3C96D075450CB4E0184C26C928924E0D7DCE8516902",
+    "sanitization": {
+      "replacement": "<USER_HOME>",
+      "windowsHomeMatchesReplaced": 60,
+      "posixHomeMatchesReplaced": 31
+    },
+    "fullCook": true,
+    "cookedPackageCount": 985,
+    "incrementallySkippedPackageCount": 0,
+    "platformSkippedPackageCount": 7,
+    "totalPackageCount": 992,
+    "ioStoreOrderedPackageCount": 985,
+    "ioStoreWrittenChunkCount": 2895,
+    "buildSuccessful": true,
+    "exitCode": 0
+  },
+  "ufsManifestEvidence": {
+    "path": "Evidence/Session18/Manifest_UFSFiles_Win64.txt",
+    "bytes": 300128,
+    "sha256": "C94C9CE041B3E82813439818204B7A1DE2560120E6FEB845F864110EC612F747",
+    "lineCount": 3052
+  },
+  "archiveIdentity": {
+    "label": "S18_PolyHavenProvenance_63624166-aa24-49d0-a89f-74a125a36be2/Windows",
+    "fileManifestPath": "Evidence/Session18/ArchiveFiles.tsv",
+    "fileManifestBytes": 6753,
+    "fileManifestSha256": "0877C04FF8911F0903077F8C68093BF8A783FB6939538D2BFD1E2888D35B1870",
+    "fileManifestLineCount": 54,
+    "physicalFileCount": 54,
+    "physicalByteSize": 1918214604,
+    "sortedRelativePathSizeSha256ManifestDigest": "0877C04FF8911F0903077F8C68093BF8A783FB6939538D2BFD1E2888D35B1870",
+    "bootstrapExecutable": {
+      "relativePath": "DiscGolfTour.exe",
+      "bytes": 171520,
+      "sha256": "320484DEF09542EACF36B07B04F2D68040E64551C84342A34673BB22433DFF35"
+    },
+    "gameExecutable": {
+      "relativePath": "DiscGolfTour/Binaries/Win64/DiscGolfTour.exe",
+      "bytes": 341401088,
+      "sha256": "6051C15D6DCF14D4EE92B34215B79B7AA7BCADC5D8F6F5CA8AB24807E89D4346"
+    }
+  },
+  "packagedRuntimeSmoke": {
+    "runId": "65f4b822-7c11-4ca3-a63e-caa4e10fb857",
+    "path": "Evidence/Session18/PackagedPineRidgePlaySmoke.log",
+    "bytes": 69652,
+    "sha256": "5A5D13A776B9BF337B12FF1580E6E474799F6ADAE4AEF3E0B5E01EBB55176251",
+    "rawSourceBytes": 69655,
+    "rawSourceSha256": "8C7DC2123F7C054E05E57DF43536C6E95EDDD43FA8559E81A016148D3D4C5D15",
+    "canonicalization": "UTF8_NO_BOM",
+    "exitCode": 0,
+    "sampleCount": 1968,
+    "finalCarryMeters": 98.1,
+    "groundContactCount": 1,
+    "authoredCameraActive": true,
+    "localWindActive": true
+  },
+  "pineRidgePackageIdentityPartition": {
+    "derivedCount": 55,
+    "derivedSortedPathDigest": "CA6FE3E1A167B42D4D72E522B6F7A232C71D3B275FC95A60E6F001CD2759DA69",
+    "derivedMissingCount": 0,
+    "excludedProjectOriginalCount": 5,
+    "excludedProjectOriginalSortedPathDigest": "C593C2523F76EE9F7ED0519BD42EC65906075C44CE834E8582BD48319DD716B3",
+    "excludedProjectOriginalMissingCount": 0,
+    "unionCount": 60,
+    "unionSortedPathDigest": "9EDB069BF5BDB40FC74234E85467C8941AF95B0D203DC31443D4A8E185713069",
+    "unionMissingCount": 0,
+    "pineRidgeUassetExtraCount": 0,
+    "pineRidgeNonUassetSidecarCount": 37,
+    "quarantinedImportRootMatchCount": 0
+  },
+  "boundary": {
+    "ufsManifestPineRidgeIdentityPartitionComplete": true,
+    "sourceUassetHashesBoundToCookedIoStoreBytes": false,
+    "allStagedFilesDependenciesAndAnonymousChunksClassified": false,
+    "actualStagedPackageProvenanceClosed": false,
+    "publicReleaseReady": false
+  }
+}

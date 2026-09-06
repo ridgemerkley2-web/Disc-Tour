@@ -1,0 +1,29 @@
+{
+  "schema": "DiscGolfTour.PhysicsMeasuredReferenceDataset.v1",
+  "schemaVersion": 1,
+  "policyId": "physics_measured_reference_capture_v1",
+  "datasetId": null,
+  "recordedUtc": null,
+  "recorder": null,
+  "location": null,
+  "equipmentCalibration": null,
+  "measurementSystems": {
+    "releaseSpeed": null,
+    "spin": null,
+    "releaseAttitude": null,
+    "trajectory": null,
+    "wind": null
+  },
+  "throws": [],
+  "outlierDispositions": [],
+  "review": {
+    "captureOperatorAttested": false,
+    "measurementQualityReviewed": false,
+    "physicsOwnerApproved": false,
+    "playtestOwnerApproved": false,
+    "productOwnerApproved": false
+  },
+  "acceptedForCalibration": false,
+  "releaseReady": false,
+  "template": true
+}

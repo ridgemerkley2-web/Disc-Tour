@@ -1,0 +1,641 @@
+{
+  "changed_protected_paths": [],
+  "command": [
+    "C:\\Program Files\\Epic Games\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor-Cmd.exe",
+    "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\DiscGolfTour.uproject",
+    "-run=PythonScript",
+    "-script=C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Scripts\\inspect_dg_metahuman_to_dgmaster_retargeter.py",
+    "-DGMetaHumanToDGMasterRetargeterInspect",
+    "-UserDir=C:\\DGTour_TestRuns\\MotionRetargetInspection\\a200c1f3-752d-41b2-a511-1ed9fb92b231",
+    "-unattended",
+    "-nop4",
+    "-NullRHI",
+    "-NoSplash",
+    "-NoSound",
+    "-NoAssetRegistryCache",
+    "-stdout",
+    "-FullStdOutLogOutput",
+    "-UTF8Output",
+    "-abslog=C:\\DGTour_TestRuns\\MotionRetargetInspection\\a200c1f3-752d-41b2-a511-1ed9fb92b231\\UnrealEditor-Cmd.log"
+  ],
+  "completed_utc": "2026-08-30T17:31:46Z",
+  "errors": [],
+  "external_user_dir": "C:\\DGTour_TestRuns\\MotionRetargetInspection\\a200c1f3-752d-41b2-a511-1ed9fb92b231",
+  "fatal_log_markers": [],
+  "inspection_switch": "-DGMetaHumanToDGMasterRetargeterInspect",
+  "inspector_payload": {
+    "disk_mutation": "NONE",
+    "external_user_dir": "C:\\DGTour_TestRuns\\MotionRetargetInspection\\a200c1f3-752d-41b2-a511-1ed9fb92b231",
+    "invocation_switch": "-DGMetaHumanToDGMasterRetargeterInspect",
+    "known_unproved_boundaries": [
+      "SOURCE_HEAD_CHAIN_IS_NOT_MAPPED_TO_AN_INDEPENDENT_TARGET_HEAD_CHAIN",
+      "SOURCE_LEG_ENDS_AT_BALL_WHILE_TARGET_LEG_ENDS_AT_FOOT",
+      "TARGET_FOOT_CHAINS_ARE_UNMAPPED",
+      "ROOT_AND_PELVIS_BEHAVIOR_REQUIRES_A_SOLVED_CLIP_EXPORT_TEST",
+      "NO_ANIMATION_OR_CONTACT_QUALITY_APPROVAL"
+    ],
+    "mapping_by_operation": {
+      "FK Chains": {
+        "Arm_L": "LeftArm",
+        "Arm_R": "RightArm",
+        "Foot_L": "None",
+        "Foot_R": "None",
+        "Leg_L": "LeftLeg",
+        "Leg_R": "RightLeg",
+        "Neck": "Neck",
+        "Root": "Root",
+        "Spine": "Spine"
+      },
+      "Run IK Rig": {
+        "Arm_L": "LeftArm",
+        "Arm_R": "RightArm",
+        "Foot_L": "None",
+        "Foot_R": "None",
+        "Leg_L": "LeftLeg",
+        "Leg_R": "RightLeg",
+        "Neck": "Neck",
+        "Root": "Root",
+        "Spine": "Spine"
+      }
+    },
+    "mutation_policy": "NO_CREATE_NO_MODIFY_NO_SAVE_NO_RENAME_NO_DELETE",
+    "numeric_values_finite": true,
+    "op_target_ik_rigs": [
+      "/Game/DiscGolf/Rigs/IK_DG_Master.IK_DG_Master"
+    ],
+    "operation_names_unique_nonempty": true,
+    "operations": [
+      {
+        "controller_class": "IKRetargetPelvisMotionController",
+        "enabled": true,
+        "index": 0,
+        "name": "Pelvis Motion"
+      },
+      {
+        "controller_class": "IKRetargetFKChainsController",
+        "enabled": true,
+        "index": 1,
+        "name": "FK Chains"
+      },
+      {
+        "controller_class": "IKRetargetRunIKRigController",
+        "enabled": true,
+        "index": 2,
+        "name": "Run IK Rig"
+      },
+      {
+        "controller_class": "IKRetargetRootMotionController",
+        "enabled": true,
+        "index": 3,
+        "name": "Root Motion"
+      },
+      {
+        "controller_class": "IKRetargetCurveRemapController",
+        "enabled": true,
+        "index": 4,
+        "name": "Remap Curves"
+      }
+    ],
+    "per_operation_mapping_contract_validated": true,
+    "production_approval": false,
+    "retargeter": "/Game/DiscGolf/Animation/Mocap/Rigs/RTG_MetaHuman_To_DGMaster.RTG_MetaHuman_To_DGMaster",
+    "settings": {
+      "FK Chains": {
+        "chains": [
+          {
+            "enable_fk": true,
+            "rotation_alpha": 1.0,
+            "rotation_mode": "<FKChainRotationMode.INTERPOLATED: 0>",
+            "target_chain": "Arm_L",
+            "translation_alpha": 1.0,
+            "translation_mode": "<FKChainTranslationMode.NONE: 0>"
+          },
+          {
+            "enable_fk": true,
+            "rotation_alpha": 1.0,
+            "rotation_mode": "<FKChainRotationMode.INTERPOLATED: 0>",
+            "target_chain": "Arm_R",
+            "translation_alpha": 1.0,
+            "translation_mode": "<FKChainTranslationMode.NONE: 0>"
+          },
+          {
+            "enable_fk": true,
+            "rotation_alpha": 1.0,
+            "rotation_mode": "<FKChainRotationMode.INTERPOLATED: 0>",
+            "target_chain": "Foot_L",
+            "translation_alpha": 1.0,
+            "translation_mode": "<FKChainTranslationMode.NONE: 0>"
+          },
+          {
+            "enable_fk": true,
+            "rotation_alpha": 1.0,
+            "rotation_mode": "<FKChainRotationMode.INTERPOLATED: 0>",
+            "target_chain": "Foot_R",
+            "translation_alpha": 1.0,
+            "translation_mode": "<FKChainTranslationMode.NONE: 0>"
+          },
+          {
+            "enable_fk": true,
+            "rotation_alpha": 1.0,
+            "rotation_mode": "<FKChainRotationMode.INTERPOLATED: 0>",
+            "target_chain": "Leg_L",
+            "translation_alpha": 1.0,
+            "translation_mode": "<FKChainTranslationMode.NONE: 0>"
+          },
+          {
+            "enable_fk": true,
+            "rotation_alpha": 1.0,
+            "rotation_mode": "<FKChainRotationMode.INTERPOLATED: 0>",
+            "target_chain": "Leg_R",
+            "translation_alpha": 1.0,
+            "translation_mode": "<FKChainTranslationMode.NONE: 0>"
+          },
+          {
+            "enable_fk": true,
+            "rotation_alpha": 1.0,
+            "rotation_mode": "<FKChainRotationMode.INTERPOLATED: 0>",
+            "target_chain": "Neck",
+            "translation_alpha": 1.0,
+            "translation_mode": "<FKChainTranslationMode.NONE: 0>"
+          },
+          {
+            "enable_fk": true,
+            "rotation_alpha": 1.0,
+            "rotation_mode": "<FKChainRotationMode.INTERPOLATED: 0>",
+            "target_chain": "Root",
+            "translation_alpha": 1.0,
+            "translation_mode": "<FKChainTranslationMode.NONE: 0>"
+          },
+          {
+            "enable_fk": true,
+            "rotation_alpha": 1.0,
+            "rotation_mode": "<FKChainRotationMode.INTERPOLATED: 0>",
+            "target_chain": "Spine",
+            "translation_alpha": 1.0,
+            "translation_mode": "<FKChainTranslationMode.NONE: 0>"
+          }
+        ],
+        "target_ik_rig": "/Game/DiscGolf/Rigs/IK_DG_Master.IK_DG_Master"
+      },
+      "Pelvis Motion": {
+        "affect_ik_horizontal": 1.0,
+        "affect_ik_vertical": 0.0,
+        "blend_to_absolute_offset": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "blend_to_source_translation": 0.0,
+        "blend_to_source_translation_weights": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        },
+        "floor_constraint_weight": 0.0,
+        "ground_falloff_height_percent": 0.8999999761581421,
+        "rotation_alpha": 1.0,
+        "rotation_offset_global": {
+          "pitch": 0.0,
+          "roll": 0.0,
+          "yaw": 0.0
+        },
+        "rotation_offset_local": {
+          "pitch": 0.0,
+          "roll": 0.0,
+          "yaw": 0.0
+        },
+        "scale_horizontal": 1.0,
+        "scale_vertical": 1.0,
+        "source_crotch_offset": 0.0,
+        "source_pelvis_bone": "pelvis",
+        "target_crotch_offset": 0.0,
+        "target_pelvis_bone": "pelvis",
+        "translation_alpha": 1.0,
+        "translation_offset_global": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "translation_offset_local": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "use_ground_falloff": false
+      },
+      "Remap Curves": {
+        "copy_all_source_curves": true,
+        "pairs": [],
+        "remap_curves": true
+      },
+      "Root Motion": {
+        "global_offset": {
+          "rotation": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "scale3d": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "translation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "maintain_offset_from_pelvis": true,
+        "propagate_to_non_retargeted_children": true,
+        "root_height_source": "<RootMotionHeightSource.COPY_HEIGHT_FROM_SOURCE: 0>",
+        "root_motion_source": "<RootMotionSource.COPY_FROM_SOURCE_ROOT: 0>",
+        "rotate_with_pelvis": false,
+        "source_root": "pelvis",
+        "target_pelvis": "pelvis",
+        "target_root": "root"
+      },
+      "Run IK Rig": {
+        "chains": [
+          {
+            "chain_position_alpha": 1.0,
+            "chain_rotation_alpha": 1.0,
+            "enable_ik": true,
+            "final_position_alpha": 1.0,
+            "final_rotation_alpha": 1.0,
+            "override_goal_alpha": false,
+            "target_chain": "Arm_L"
+          },
+          {
+            "chain_position_alpha": 1.0,
+            "chain_rotation_alpha": 1.0,
+            "enable_ik": true,
+            "final_position_alpha": 1.0,
+            "final_rotation_alpha": 1.0,
+            "override_goal_alpha": false,
+            "target_chain": "Arm_R"
+          },
+          {
+            "chain_position_alpha": 1.0,
+            "chain_rotation_alpha": 1.0,
+            "enable_ik": true,
+            "final_position_alpha": 1.0,
+            "final_rotation_alpha": 1.0,
+            "override_goal_alpha": false,
+            "target_chain": "Leg_L"
+          },
+          {
+            "chain_position_alpha": 1.0,
+            "chain_rotation_alpha": 1.0,
+            "enable_ik": true,
+            "final_position_alpha": 1.0,
+            "final_rotation_alpha": 1.0,
+            "override_goal_alpha": false,
+            "target_chain": "Leg_R"
+          }
+        ],
+        "target_ik_rig": "/Game/DiscGolf/Rigs/IK_DG_Master.IK_DG_Master"
+      }
+    },
+    "source_ik_rig": "/MetaHumanCharacter/Animation/Retargeting/IK_MH_IKRig.IK_MH_IKRig",
+    "source_pose": "Default Pose",
+    "source_pose_root_offset_cm": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "source_preview_mesh": "/Game/DiscGolf/Characters/MetaHuman/Generated/MHC_DG_Golfer_Default/Body/SKM_MHC_DG_Golfer_Default_BodyMesh.SKM_MHC_DG_Golfer_Default_BodyMesh",
+    "status": "INSPECTION_COMPLETE_RELEASE_BLOCKED",
+    "target_ik_rig": "/Game/DiscGolf/Rigs/IK_DG_Master.IK_DG_Master",
+    "target_pose": "MetaHumanAligned",
+    "target_pose_root_offset_cm": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "target_preview_mesh": "/Game/DiscGolf/Characters/Meshes/SK_DG_Master.SK_DG_Master"
+  },
+  "production_approval": false,
+  "project_root": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1",
+  "protected_file_mutation": "NONE",
+  "protected_files_after": {
+    "inspected_retargeter.uasset": {
+      "bytes": 14068,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Animation\\Mocap\\Rigs\\RTG_MetaHuman_To_DGMaster.uasset",
+      "present": true,
+      "sha256": "B66227838C0857416119BB8A17534A106704081DAA63833F02D99A9AF4F21CD8"
+    },
+    "inspected_retargeter.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Animation\\Mocap\\Rigs\\RTG_MetaHuman_To_DGMaster.ubulk",
+      "present": false
+    },
+    "inspected_retargeter.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Animation\\Mocap\\Rigs\\RTG_MetaHuman_To_DGMaster.uexp",
+      "present": false
+    },
+    "inspected_retargeter.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Animation\\Mocap\\Rigs\\RTG_MetaHuman_To_DGMaster.uptnl",
+      "present": false
+    },
+    "runtime_reverse_retargeter.uasset": {
+      "bytes": 22640,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\RTG_DGMaster_To_MetaHuman.uasset",
+      "present": true,
+      "sha256": "CBD3222614A08BE37979A34C29FDF44F3C438B99358B106ED1A5BBF62E21870C"
+    },
+    "runtime_reverse_retargeter.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\RTG_DGMaster_To_MetaHuman.ubulk",
+      "present": false
+    },
+    "runtime_reverse_retargeter.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\RTG_DGMaster_To_MetaHuman.uexp",
+      "present": false
+    },
+    "runtime_reverse_retargeter.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\RTG_DGMaster_To_MetaHuman.uptnl",
+      "present": false
+    },
+    "source_ik_rig.uasset": {
+      "bytes": 279493,
+      "path": "C:\\Program Files\\Epic Games\\UE_5.8\\Engine\\Plugins\\MetaHuman\\MetaHumanCharacter\\Content\\Animation\\Retargeting\\IK_MH_IKRig.uasset",
+      "present": true,
+      "sha256": "1136C58EF751446707A3DF84121356D4DD6E9863D33F3C3F3BEA6C3AD5E1CA5A"
+    },
+    "source_ik_rig.ubulk": {
+      "path": "C:\\Program Files\\Epic Games\\UE_5.8\\Engine\\Plugins\\MetaHuman\\MetaHumanCharacter\\Content\\Animation\\Retargeting\\IK_MH_IKRig.ubulk",
+      "present": false
+    },
+    "source_ik_rig.uexp": {
+      "path": "C:\\Program Files\\Epic Games\\UE_5.8\\Engine\\Plugins\\MetaHuman\\MetaHumanCharacter\\Content\\Animation\\Retargeting\\IK_MH_IKRig.uexp",
+      "present": false
+    },
+    "source_ik_rig.uptnl": {
+      "path": "C:\\Program Files\\Epic Games\\UE_5.8\\Engine\\Plugins\\MetaHuman\\MetaHumanCharacter\\Content\\Animation\\Retargeting\\IK_MH_IKRig.uptnl",
+      "present": false
+    },
+    "source_preview_mesh.uasset": {
+      "bytes": 2872041,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Generated\\MHC_DG_Golfer_Default\\Body\\SKM_MHC_DG_Golfer_Default_BodyMesh.uasset",
+      "present": true,
+      "sha256": "07F8F4236DDFDEFB00EB94A6BEE963B9662EE392EE0A157D05028CDB0CBC8838"
+    },
+    "source_preview_mesh.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Generated\\MHC_DG_Golfer_Default\\Body\\SKM_MHC_DG_Golfer_Default_BodyMesh.ubulk",
+      "present": false
+    },
+    "source_preview_mesh.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Generated\\MHC_DG_Golfer_Default\\Body\\SKM_MHC_DG_Golfer_Default_BodyMesh.uexp",
+      "present": false
+    },
+    "source_preview_mesh.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Generated\\MHC_DG_Golfer_Default\\Body\\SKM_MHC_DG_Golfer_Default_BodyMesh.uptnl",
+      "present": false
+    },
+    "source_skeleton.uasset": {
+      "bytes": 75287,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Common\\Female\\Medium\\NormalWeight\\Body\\metahuman_base_skel.uasset",
+      "present": true,
+      "sha256": "61ED6B9AF704465A265316243A0621DAD4C18ABB7607507B69F880E399F8D234"
+    },
+    "source_skeleton.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Common\\Female\\Medium\\NormalWeight\\Body\\metahuman_base_skel.ubulk",
+      "present": false
+    },
+    "source_skeleton.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Common\\Female\\Medium\\NormalWeight\\Body\\metahuman_base_skel.uexp",
+      "present": false
+    },
+    "source_skeleton.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Common\\Female\\Medium\\NormalWeight\\Body\\metahuman_base_skel.uptnl",
+      "present": false
+    },
+    "target_ik_rig.uasset": {
+      "bytes": 63490,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Rigs\\IK_DG_Master.uasset",
+      "present": true,
+      "sha256": "13D29A1D4B4F1E2A6F010D95E052D21A1E974A6789BBFE85AC5E4E260EE72958"
+    },
+    "target_ik_rig.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Rigs\\IK_DG_Master.ubulk",
+      "present": false
+    },
+    "target_ik_rig.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Rigs\\IK_DG_Master.uexp",
+      "present": false
+    },
+    "target_ik_rig.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Rigs\\IK_DG_Master.uptnl",
+      "present": false
+    },
+    "target_preview_mesh.uasset": {
+      "bytes": 59553,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SK_DG_Master.uasset",
+      "present": true,
+      "sha256": "5C461476D6877DFBE3E6DF08FF48CDF5BB940BC8C883D3E3F43058331DCC186F"
+    },
+    "target_preview_mesh.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SK_DG_Master.ubulk",
+      "present": false
+    },
+    "target_preview_mesh.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SK_DG_Master.uexp",
+      "present": false
+    },
+    "target_preview_mesh.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SK_DG_Master.uptnl",
+      "present": false
+    },
+    "target_skeleton.uasset": {
+      "bytes": 21380,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SKEL_DG_Master.uasset",
+      "present": true,
+      "sha256": "EF51DE8792217A85886B41E0A1A430DCB3B8A14B1FB4910D855DA100262B3FDA"
+    },
+    "target_skeleton.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SKEL_DG_Master.ubulk",
+      "present": false
+    },
+    "target_skeleton.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SKEL_DG_Master.uexp",
+      "present": false
+    },
+    "target_skeleton.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SKEL_DG_Master.uptnl",
+      "present": false
+    }
+  },
+  "protected_files_before": {
+    "inspected_retargeter.uasset": {
+      "bytes": 14068,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Animation\\Mocap\\Rigs\\RTG_MetaHuman_To_DGMaster.uasset",
+      "present": true,
+      "sha256": "B66227838C0857416119BB8A17534A106704081DAA63833F02D99A9AF4F21CD8"
+    },
+    "inspected_retargeter.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Animation\\Mocap\\Rigs\\RTG_MetaHuman_To_DGMaster.ubulk",
+      "present": false
+    },
+    "inspected_retargeter.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Animation\\Mocap\\Rigs\\RTG_MetaHuman_To_DGMaster.uexp",
+      "present": false
+    },
+    "inspected_retargeter.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Animation\\Mocap\\Rigs\\RTG_MetaHuman_To_DGMaster.uptnl",
+      "present": false
+    },
+    "runtime_reverse_retargeter.uasset": {
+      "bytes": 22640,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\RTG_DGMaster_To_MetaHuman.uasset",
+      "present": true,
+      "sha256": "CBD3222614A08BE37979A34C29FDF44F3C438B99358B106ED1A5BBF62E21870C"
+    },
+    "runtime_reverse_retargeter.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\RTG_DGMaster_To_MetaHuman.ubulk",
+      "present": false
+    },
+    "runtime_reverse_retargeter.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\RTG_DGMaster_To_MetaHuman.uexp",
+      "present": false
+    },
+    "runtime_reverse_retargeter.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\RTG_DGMaster_To_MetaHuman.uptnl",
+      "present": false
+    },
+    "source_ik_rig.uasset": {
+      "bytes": 279493,
+      "path": "C:\\Program Files\\Epic Games\\UE_5.8\\Engine\\Plugins\\MetaHuman\\MetaHumanCharacter\\Content\\Animation\\Retargeting\\IK_MH_IKRig.uasset",
+      "present": true,
+      "sha256": "1136C58EF751446707A3DF84121356D4DD6E9863D33F3C3F3BEA6C3AD5E1CA5A"
+    },
+    "source_ik_rig.ubulk": {
+      "path": "C:\\Program Files\\Epic Games\\UE_5.8\\Engine\\Plugins\\MetaHuman\\MetaHumanCharacter\\Content\\Animation\\Retargeting\\IK_MH_IKRig.ubulk",
+      "present": false
+    },
+    "source_ik_rig.uexp": {
+      "path": "C:\\Program Files\\Epic Games\\UE_5.8\\Engine\\Plugins\\MetaHuman\\MetaHumanCharacter\\Content\\Animation\\Retargeting\\IK_MH_IKRig.uexp",
+      "present": false
+    },
+    "source_ik_rig.uptnl": {
+      "path": "C:\\Program Files\\Epic Games\\UE_5.8\\Engine\\Plugins\\MetaHuman\\MetaHumanCharacter\\Content\\Animation\\Retargeting\\IK_MH_IKRig.uptnl",
+      "present": false
+    },
+    "source_preview_mesh.uasset": {
+      "bytes": 2872041,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Generated\\MHC_DG_Golfer_Default\\Body\\SKM_MHC_DG_Golfer_Default_BodyMesh.uasset",
+      "present": true,
+      "sha256": "07F8F4236DDFDEFB00EB94A6BEE963B9662EE392EE0A157D05028CDB0CBC8838"
+    },
+    "source_preview_mesh.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Generated\\MHC_DG_Golfer_Default\\Body\\SKM_MHC_DG_Golfer_Default_BodyMesh.ubulk",
+      "present": false
+    },
+    "source_preview_mesh.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Generated\\MHC_DG_Golfer_Default\\Body\\SKM_MHC_DG_Golfer_Default_BodyMesh.uexp",
+      "present": false
+    },
+    "source_preview_mesh.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Generated\\MHC_DG_Golfer_Default\\Body\\SKM_MHC_DG_Golfer_Default_BodyMesh.uptnl",
+      "present": false
+    },
+    "source_skeleton.uasset": {
+      "bytes": 75287,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Common\\Female\\Medium\\NormalWeight\\Body\\metahuman_base_skel.uasset",
+      "present": true,
+      "sha256": "61ED6B9AF704465A265316243A0621DAD4C18ABB7607507B69F880E399F8D234"
+    },
+    "source_skeleton.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Common\\Female\\Medium\\NormalWeight\\Body\\metahuman_base_skel.ubulk",
+      "present": false
+    },
+    "source_skeleton.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Common\\Female\\Medium\\NormalWeight\\Body\\metahuman_base_skel.uexp",
+      "present": false
+    },
+    "source_skeleton.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\MetaHuman\\Common\\Female\\Medium\\NormalWeight\\Body\\metahuman_base_skel.uptnl",
+      "present": false
+    },
+    "target_ik_rig.uasset": {
+      "bytes": 63490,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Rigs\\IK_DG_Master.uasset",
+      "present": true,
+      "sha256": "13D29A1D4B4F1E2A6F010D95E052D21A1E974A6789BBFE85AC5E4E260EE72958"
+    },
+    "target_ik_rig.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Rigs\\IK_DG_Master.ubulk",
+      "present": false
+    },
+    "target_ik_rig.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Rigs\\IK_DG_Master.uexp",
+      "present": false
+    },
+    "target_ik_rig.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Rigs\\IK_DG_Master.uptnl",
+      "present": false
+    },
+    "target_preview_mesh.uasset": {
+      "bytes": 59553,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SK_DG_Master.uasset",
+      "present": true,
+      "sha256": "5C461476D6877DFBE3E6DF08FF48CDF5BB940BC8C883D3E3F43058331DCC186F"
+    },
+    "target_preview_mesh.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SK_DG_Master.ubulk",
+      "present": false
+    },
+    "target_preview_mesh.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SK_DG_Master.uexp",
+      "present": false
+    },
+    "target_preview_mesh.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SK_DG_Master.uptnl",
+      "present": false
+    },
+    "target_skeleton.uasset": {
+      "bytes": 21380,
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SKEL_DG_Master.uasset",
+      "present": true,
+      "sha256": "EF51DE8792217A85886B41E0A1A430DCB3B8A14B1FB4910D855DA100262B3FDA"
+    },
+    "target_skeleton.ubulk": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SKEL_DG_Master.ubulk",
+      "present": false
+    },
+    "target_skeleton.uexp": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SKEL_DG_Master.uexp",
+      "present": false
+    },
+    "target_skeleton.uptnl": {
+      "path": "C:\\Users\\ridge\\Documents\\Codex\\2026-08-10\\referenced-chatgpt-conversation-this-is-an\\DiscGolfTourFullGame_v0.1\\Content\\DiscGolf\\Characters\\Meshes\\SKEL_DG_Master.uptnl",
+      "present": false
+    }
+  },
+  "protected_files_unchanged": true,
+  "receipt_path": "C:\\DGTour_TestRuns\\MotionRetargetInspection\\a200c1f3-752d-41b2-a511-1ed9fb92b231\\RetargeterInspectionHostReceipt.json",
+  "schema": "DiscGolfTour.MetaHumanToDGMasterInspectionHostReceipt.v1",
+  "started_utc": "2026-08-30T17:31:29Z",
+  "status": "PASS_NO_PROTECTED_FILE_WRITES",
+  "stdout_log": {
+    "bytes": 268944,
+    "path": "C:\\DGTour_TestRuns\\MotionRetargetInspection\\a200c1f3-752d-41b2-a511-1ed9fb92b231\\UnrealEditor-Cmd.stdout.log",
+    "present": true,
+    "sha256": "9933120AFA8E2C23A5318F9823C9FDFA7E5FC21A54B65448E2D36A6D9828BD20"
+  },
+  "unreal_engine": {
+    "BranchName": "++UE5+Release-5.8",
+    "Changelist": 56702186,
+    "MajorVersion": 5,
+    "MinorVersion": 8,
+    "PatchVersion": 2,
+    "path": "C:\\Program Files\\Epic Games\\UE_5.8\\Engine\\Build\\Build.version",
+    "sha256": "FF99FC3DD98E7C7FD2F5700334BC792DFB7BACED3828CDEE32940BB69581A6A4"
+  },
+  "unreal_exit_code": 0,
+  "unreal_log": {
+    "bytes": 267777,
+    "path": "C:\\DGTour_TestRuns\\MotionRetargetInspection\\a200c1f3-752d-41b2-a511-1ed9fb92b231\\UnrealEditor-Cmd.log",
+    "present": true,
+    "sha256": "26CC01B6A8E94F8B5EAA2B19676234510DBFD216366D71EB27018EE8D3695704"
+  }
+}

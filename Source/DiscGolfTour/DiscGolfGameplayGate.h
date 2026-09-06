@@ -15,4 +15,33 @@ namespace DiscGolfGameplayGate
         return bHasActiveHole && !bHasActiveDisc && !bHasReplay
             && !bFlyoverActive && !bHoleComplete && !bScorecardVisible && !bHoleIntroActive;
     }
+
+    /**
+     * Player-only lifecycle guard shared by the synchronous input path and the
+     * committed animation-notify path. The latter intentionally has an active
+     * throw adapter, so that single condition remains outside this seam.
+     */
+    inline bool CanCommitPlayerRelease(
+        bool bBaseLaunchAllowed,
+        bool bMainMenuVisible,
+        bool bRegressionActive,
+        bool bLieTransitionActive,
+        bool bHasPlayerController,
+        bool bPresentationDismissReleasePending,
+        bool bFreshThrowDownRequiredAfterPresentation,
+        bool bControlsMenuOpen,
+        bool bCharacterCreatorOpen,
+        bool bWorldPaused)
+    {
+        return bBaseLaunchAllowed
+            && !bMainMenuVisible
+            && !bRegressionActive
+            && !bLieTransitionActive
+            && bHasPlayerController
+            && !bPresentationDismissReleasePending
+            && !bFreshThrowDownRequiredAfterPresentation
+            && !bControlsMenuOpen
+            && !bCharacterCreatorOpen
+            && !bWorldPaused;
+    }
 }

@@ -1,0 +1,131 @@
+{
+  "schema": "disc_golf_session19_production_motion_exact_weight_visual_evidence_receipt",
+  "schema_version": 1,
+  "status": "PASS_TECHNICAL_EVIDENCE_RELEASE_ART_BLOCKED",
+  "run_id": "MetaHumanProductionVisual-v006-ExactWeightProof-db7d5db0-9109-49af-9a79-99fe2847220f",
+  "run_root": "C:/DGTour_TestRuns/AnimationFluidity/MetaHumanProductionVisual-v006-ExactWeightProof-db7d5db0-9109-49af-9a79-99fe2847220f",
+  "manifest": {
+    "path_below_run_root": "Saved/CharacterFramework/Screenshots/Session19_MetaHumanProductionMotion/Session19_MetaHumanProductionMotion_CaptureManifest.json",
+    "schema": "DiscGolfTour.Session19MetaHumanProductionMotionVisualEvidence.v5",
+    "bytes": 61803,
+    "sha256": "CE58CFF2ED224D47AFC3EC4F7C1AFF939BB35242D59A599E14F89BA81CBD0671",
+    "status": "PASS"
+  },
+  "log": {
+    "path_below_run_root": "Session19MetaHumanProductionVisual.log",
+    "bytes": 273434,
+    "sha256": "95C054FCD41D0DED056D28BD3282353EC260742B6478CA47C36E97E891EC91DD",
+    "process_exit_code": 0
+  },
+  "montage_instance_binding": {
+    "anim_instance_path": "/Engine/Maps/Entry.Entry:PersistentLevel.DiscGolferPawn_0.SkeletalGolferMesh.ABP_DG_Player_C_0",
+    "montage_path": "/Game/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v006.AM_DG_RHBH_Drive_Procedural_v006",
+    "engine_instance_id": 0,
+    "token": "/Engine/Maps/Entry.Entry:PersistentLevel.DiscGolferPawn_0.SkeletalGolferMesh.ABP_DG_Player_C_0|/Game/DiscGolf/Animation/ProductionMotion/Drive/AM_DG_RHBH_Drive_Procedural_v006.AM_DG_RHBH_Drive_Procedural_v006|instance_id=0",
+    "unique_token_count": 1,
+    "unique_instance_id_count": 1,
+    "minimum_actual_blend_weight": 0.999000012874603,
+    "maximum_actual_blend_weight": 1.00100004673004,
+    "minimum_desired_blend_weight": 0.999000012874603,
+    "maximum_desired_blend_weight": 1.00100004673004,
+    "all_checkpoints_match_committed_throw": true,
+    "all_checkpoints_full_weight": true
+  },
+  "captures": [
+    {
+      "checkpoint": "ReachBack",
+      "filename": "01_MetaHuman_ReachBack_Wide.png",
+      "bytes": 3516419,
+      "sha256": "980C474AE32EE0C650C29484A0CCBE92FBD33D4E952279924151B9016DED00A2",
+      "target_frame": 44,
+      "actual_frame": 44.3189163208008,
+      "frame_error": 0.318916320800781,
+      "actual_blend_weight": 1.0,
+      "desired_blend_weight": 1.0
+    },
+    {
+      "checkpoint": "Plant",
+      "filename": "02_MetaHuman_Plant_Wide.png",
+      "bytes": 3527231,
+      "sha256": "0834E6B505606BA5C3EA524E2D09F36D509841C7E80F56E6A22C8293F530D9C1",
+      "target_frame": 64,
+      "actual_frame": 64.4638595581055,
+      "frame_error": 0.463859558105469,
+      "actual_blend_weight": 1.0,
+      "desired_blend_weight": 1.0
+    },
+    {
+      "checkpoint": "Release",
+      "filename": "03_MetaHuman_Release_Wide.png",
+      "bytes": 3409264,
+      "sha256": "A966C4474349B55FAF280B4779CFAA8D01592FBA3619D495F5D5C7F3E0823B7E",
+      "target_frame": 84,
+      "actual_frame": 84.0,
+      "frame_error": 0.0,
+      "actual_blend_weight": 1.0,
+      "desired_blend_weight": 1.0
+    },
+    {
+      "checkpoint": "FollowThrough",
+      "filename": "04_MetaHuman_FollowThrough_Wide.png",
+      "bytes": 3439755,
+      "sha256": "7B96B175F8F60D8B698A8011A729CCC30F5F7306D934D3126B4D6EEDDB116D59",
+      "target_frame": 94,
+      "actual_frame": 94.6812057495117,
+      "frame_error": 0.681205749511719,
+      "actual_blend_weight": 1.0,
+      "desired_blend_weight": 1.0
+    },
+    {
+      "checkpoint": "Recovery",
+      "filename": "05_MetaHuman_Recovery_Wide.png",
+      "bytes": 3494530,
+      "sha256": "ED7CCBB7785D3B4815DD00F72BD2A8B4E5E3710FFC5296316B084E1AA3D16B6E",
+      "target_frame": 132,
+      "actual_frame": 131.949340820312,
+      "frame_error": 0.0506591796875,
+      "actual_blend_weight": 1.0,
+      "desired_blend_weight": 1.0,
+      "recovery_beat_alpha": 0.998909175395966
+    }
+  ],
+  "authoritative_flight": {
+    "validation_attempted": true,
+    "validation_passed": true,
+    "settled": true,
+    "trajectory_sample_count": 1723,
+    "duration_seconds": 7.17493343353271,
+    "air_carry_meters": 68.4557800292969,
+    "final_carry_meters": 76.3697814941406,
+    "ground_contact_count": 4,
+    "basket_contact_count": 0,
+    "invalid_termination": false,
+    "trajectory_export_deferred": true,
+    "trajectory_export_discarded": true,
+    "trajectory_json_csv_count": 0
+  },
+  "independent_read_only_audit": {
+    "technical_contradiction_found": false,
+    "manifest_log_agree": true,
+    "capture_file_bytes_agree": true,
+    "release_art_approved": false
+  },
+  "release_art_blockers": [
+    "SEVERE_FOOT_AND_TOE_DEFORMATION_AND_GROUND_PENETRATION",
+    "DISC_HAND_WRIST_FOREARM_INTERSECTION",
+    "PROVISIONAL_CYLINDER_AND_INCONSISTENT_DISC_COLOR",
+    "RIGID_ARM_SILHOUETTES_AND_WEAK_KINETIC_CHAIN_READABILITY",
+    "IMPLAUSIBLE_FOLLOW_THROUGH_AND_RECOVERY",
+    "ARM_TORSO_SHIRT_SHORTS_CLIPPING_AND_MESH_TEARING",
+    "FROZEN_FACE_AND_GAZE",
+    "TEMPORAL_FLUIDITY_NOT_PROVEN_BY_STILLS"
+  ],
+  "claims": {
+    "technical_evidence_lane_passed": true,
+    "human_animation_approval": false,
+    "human_disc_contact_approval": false,
+    "product_art_approval": false,
+    "shipping_approval": false,
+    "release_approval": false
+  }
+}

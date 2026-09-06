@@ -1,0 +1,70 @@
+{
+  "schema": "DiscGolfTour.Session19UnusedFabExternalQuarantineReceipt.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "runId": "Session19ReleaseScope_20260824_01",
+  "verifiedUtc": "2026-08-25T01:57:33Z",
+  "operation": "RECOVERABLE_MOVE_OUTSIDE_PROJECT",
+  "state": "EXTERNAL_QUARANTINE_VERIFIED_SHIPPING_ABSENCE_PENDING",
+  "projectSourcesAbsent": true,
+  "destinationOutsideProject": true,
+  "destinationIntegrityVerified": true,
+  "deleted": false,
+  "hostPathRecorded": false,
+  "recoveryLocationToken": "DGTOUR_EXTERNAL_QUARANTINE/Session19ReleaseScope_20260824_01/Content",
+  "beforeMoveManifest": {
+    "path": "Evidence/Session19/QuarantinedFabBeforeMove.tsv",
+    "bytes": 83517,
+    "sha256": "D9F5194FFF35B98C4E32DA39B88E838BA49BC8D86782D6DED371B1871192AF02",
+    "rows": 533
+  },
+  "roots": [
+    {
+      "productId": "fab_project_nature_spruce_forest",
+      "projectPath": "Content/PN_interactiveSpruceForest",
+      "recoveryRelativePath": "PN_interactiveSpruceForest",
+      "files": 363,
+      "bytes": 1565612902,
+      "sourceAbsent": true,
+      "destinationPresent": true,
+      "matchingFiles": 363,
+      "reparseEntries": 0
+    },
+    {
+      "productId": "fab_greenbuggames_stump_scanned",
+      "projectPath": "Content/Stump_Scanned",
+      "recoveryRelativePath": "Stump_Scanned",
+      "files": 63,
+      "bytes": 680263631,
+      "sourceAbsent": true,
+      "destinationPresent": true,
+      "matchingFiles": 63,
+      "reparseEntries": 0
+    },
+    {
+      "productId": "fab_tharlevfx_water_materials",
+      "projectPath": "Content/WaterMaterials",
+      "recoveryRelativePath": "WaterMaterials",
+      "files": 107,
+      "bytes": 91003274,
+      "sourceAbsent": true,
+      "destinationPresent": true,
+      "matchingFiles": 107,
+      "reparseEntries": 0
+    }
+  ],
+  "totals": {
+    "files": 533,
+    "bytes": 2336879807,
+    "matchingFiles": 533,
+    "differenceCount": 0
+  },
+  "releaseClosure": {
+    "projectRootAbsenceSatisfied": true,
+    "shippingPackageAbsenceSatisfied": false,
+    "blockerClosed": false,
+    "remainingEvidence": [
+      "FRESH_WINDOWS_SHIPPING_UFS_NONUFS_AND_IOSTORE_ABSENCE"
+    ]
+  }
+}

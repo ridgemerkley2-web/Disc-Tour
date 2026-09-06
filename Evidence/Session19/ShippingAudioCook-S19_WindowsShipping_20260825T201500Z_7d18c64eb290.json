@@ -1,0 +1,769 @@
+{
+  "schema": "DiscGolfTour.Session19ShippingAudioCookReceipt.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "candidateId": "S19_WindowsShipping_20260825T201500Z_7d18c64eb290",
+  "generatedUtc": "2026-08-25T20:26:52.507171Z",
+  "state": "PASS_CANDIDATE_BOUND_ALL_TWELVE_GENERATED_SOUNDWAVES_COOKED_AUDIBLE_PLAYBACK_AND_HUMAN_APPROVALS_PENDING",
+  "policy": {
+    "path": "Config/DG_Session19ShippingAudioPolicy.json",
+    "bytes": 2567,
+    "sha256": "7FE436903454D1CDCFBF607812061D13202C74B758C069032949CB5FB158A023"
+  },
+  "source": {
+    "bindings": [
+      {
+        "role": "ORIGINAL_AUDIO_CANDIDATE_PACK",
+        "path": "Config/DG_Session19OriginalAudioCandidatePack.json",
+        "bytes": 9875,
+        "sha256": "A21C72AB08E13D99CAA93731E3AFE4BDFDBF9E79A0FD4CE924A33189E7AD6B1A"
+      },
+      {
+        "role": "ORIGINAL_AUDIO_IMPORT_RECEIPT",
+        "path": "Evidence/Session19/OriginalAudioCandidateImport.json",
+        "bytes": 6363,
+        "sha256": "3FD33651C3CD0C660800E68548E6634C4A1E2160980778391C23D8FA4CBA55FA"
+      }
+    ],
+    "records": [
+      {
+        "category": "ThrowRelease",
+        "object": "/Game/Presentation/Audio/Generated/SW_ThrowRelease.SW_ThrowRelease",
+        "sourceSha256": "C6F5EBE99803D21A731BDAD8DE4CB2BBD51DE6CE4DA046963BE481105015C61F",
+        "serializedSource": {
+          "path": "Content/Presentation/Audio/Generated/SW_ThrowRelease.uasset",
+          "bytes": 41190,
+          "sha256": "3AA44EB00B34ABC181F3C77E2189038AA9DB17FAD7DC81E88D91D9EFFAA7BCD9"
+        }
+      },
+      {
+        "category": "AirborneFlight",
+        "object": "/Game/Presentation/Audio/Generated/SW_AirborneFlight.SW_AirborneFlight",
+        "sourceSha256": "57044D0427E47D7BFAE2697F7D4872B636B10215C91B0B0280B113C2A62FE148",
+        "serializedSource": {
+          "path": "Content/Presentation/Audio/Generated/SW_AirborneFlight.uasset",
+          "bytes": 132756,
+          "sha256": "15236315EF40C0676E695DE79F09FCB47D539C115389ADC75BA719BF5840F228"
+        }
+      },
+      {
+        "category": "GroundContact",
+        "object": "/Game/Presentation/Audio/Generated/SW_GroundContact.SW_GroundContact",
+        "sourceSha256": "E2F060470CEC816CBA973E82D779C14AC4B7BB76251284DCDDC30A6EBAE78B07",
+        "serializedSource": {
+          "path": "Content/Presentation/Audio/Generated/SW_GroundContact.uasset",
+          "bytes": 31674,
+          "sha256": "CF075D4411EC01CE11B3DD115A02E00C6ED7C952E0B5FDB0A9B41B3A6BC97CD5"
+        }
+      },
+      {
+        "category": "GroundState",
+        "object": "/Game/Presentation/Audio/Generated/SW_GroundState.SW_GroundState",
+        "sourceSha256": "BD5DAB2EA7509A419DC015B381873D591355685F1BB846658AEE412C9881AA56",
+        "serializedSource": {
+          "path": "Content/Presentation/Audio/Generated/SW_GroundState.uasset",
+          "bytes": 87395,
+          "sha256": "CA0C354ED6A38385B0B4539D85C84743BBDDFA26317FA70F63413AE72488CF54"
+        }
+      },
+      {
+        "category": "BasketOutcome",
+        "object": "/Game/Presentation/Audio/Generated/SW_BasketOutcome.SW_BasketOutcome",
+        "sourceSha256": "E1F99AA806D16FA629B529D007FA96CE82D1F8A3406DF7EA324EE4B981BA1850",
+        "serializedSource": {
+          "path": "Content/Presentation/Audio/Generated/SW_BasketOutcome.uasset",
+          "bytes": 58305,
+          "sha256": "DB1865313C30F3B1F4F781A69E4EB57E6B175DDEE1407941C2128062D84FD2B9"
+        }
+      },
+      {
+        "category": "Penalty",
+        "object": "/Game/Presentation/Audio/Generated/SW_Penalty.SW_Penalty",
+        "sourceSha256": "028078BD77B73AE29F8DA731CA5ABDEDCB52BB311D822922431522BD24D1AE35",
+        "serializedSource": {
+          "path": "Content/Presentation/Audio/Generated/SW_Penalty.uasset",
+          "bytes": 27602,
+          "sha256": "D50B761D8035B884DB185C8A490878F6C892C3D72B788CB52E974DBACCE64802"
+        }
+      },
+      {
+        "category": "HoleStart",
+        "object": "/Game/Presentation/Audio/Generated/SW_HoleStart.SW_HoleStart",
+        "sourceSha256": "C911709D3280C100581476549E216FA10BE40DCDDE789C3377322B6427F9EC34",
+        "serializedSource": {
+          "path": "Content/Presentation/Audio/Generated/SW_HoleStart.uasset",
+          "bytes": 63613,
+          "sha256": "E5F2EE0FBB74D0CDEC904291F6D4F3221F3E55D05AF24B12CD80A7D93836732A"
+        }
+      },
+      {
+        "category": "HoleCompletion",
+        "object": "/Game/Presentation/Audio/Generated/SW_HoleCompletion.SW_HoleCompletion",
+        "sourceSha256": "80BD130E97D63E1E35411F2EB3E23FF8350C5140A582519902DA82234C2A62D9",
+        "serializedSource": {
+          "path": "Content/Presentation/Audio/Generated/SW_HoleCompletion.uasset",
+          "bytes": 65421,
+          "sha256": "5F131CF142B470F5CCE67A18E4ED1C91606A0F495FBE2F93E56A5879745D8EEA"
+        }
+      },
+      {
+        "category": "HoleTransition",
+        "object": "/Game/Presentation/Audio/Generated/SW_HoleTransition.SW_HoleTransition",
+        "sourceSha256": "B1F2952121EEC772D8F3AB203D4976FD5B52E3584AAFE16F931153BCE5431080",
+        "serializedSource": {
+          "path": "Content/Presentation/Audio/Generated/SW_HoleTransition.uasset",
+          "bytes": 59610,
+          "sha256": "01D73F2C1201D1E577F3F9ADD5401F7324BFFABFDE7A17A32981F211D6ACD030"
+        }
+      },
+      {
+        "category": "RoundCompletion",
+        "object": "/Game/Presentation/Audio/Generated/SW_RoundCompletion.SW_RoundCompletion",
+        "sourceSha256": "0B44541DE7809ABA10A8210AF044373BE7AFD19A941F820177AC805C83DE35AC",
+        "serializedSource": {
+          "path": "Content/Presentation/Audio/Generated/SW_RoundCompletion.uasset",
+          "bytes": 92023,
+          "sha256": "A1D12264E535A2433C64CA6A1BAB6C64994879E8DF0DD1C74E1957CC6C97D8F0"
+        }
+      },
+      {
+        "category": "Replay",
+        "object": "/Game/Presentation/Audio/Generated/SW_Replay.SW_Replay",
+        "sourceSha256": "04880F32B454CE862E8FBD3EC0B5FEA55175DEF293AD2B7819FAB2ADD73F04AD",
+        "serializedSource": {
+          "path": "Content/Presentation/Audio/Generated/SW_Replay.uasset",
+          "bytes": 57609,
+          "sha256": "43EFF820C63C7A1F6A88704AF84712534DB08921570FFCA3818AEE96B2B2BF6F"
+        }
+      },
+      {
+        "category": "Flyover",
+        "object": "/Game/Presentation/Audio/Generated/SW_Flyover.SW_Flyover",
+        "sourceSha256": "54BF00258BBB98B1F360B92251F555AC7D944B31BD63203283754C63B2428193",
+        "serializedSource": {
+          "path": "Content/Presentation/Audio/Generated/SW_Flyover.uasset",
+          "bytes": 118464,
+          "sha256": "25E5FA4802A3498884A592A0D048851E2530E251845849F7C787D46783E89CB4"
+        }
+      }
+    ],
+    "cookRootConfigured": true
+  },
+  "archive": {
+    "hostPathRecorded": false,
+    "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260825T201500Z_7d18c64eb290/Windows",
+    "fileCount": 31,
+    "bytes": 1245913831,
+    "canonicalManifestSha256": "54515E7422C4E39F4575E16203C20C38408006B10707CB44D4A9245F0B97EEAB"
+  },
+  "tools": {
+    "unrealPak": {
+      "bytes": 160696,
+      "sha256": "77BAB732FC3315727265CBD5673008D45ABBED332980599CEE05BEB03C07F01F"
+    },
+    "unrealEditorCmd": {
+      "bytes": 512952,
+      "sha256": "0FB325CF215CC800CE260A1890AF3F3DC314B8CC6331061D4E7E7246489AF2E0"
+    }
+  },
+  "containers": {
+    "pak": {
+      "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.pak",
+      "bytes": 10475605,
+      "sha256": "44D6270AB6EB0F135999A7B5783BD393ABCA5A667AA27E16ED9EB2B5926ED014"
+    },
+    "utoc": {
+      "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.utoc",
+      "bytes": 483322,
+      "sha256": "EAB9A3E7DAEFE6DD83FE6AA25752A237898AD071D919560549188BE8A3234D62"
+    },
+    "ucas": {
+      "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.ucas",
+      "bytes": 1008746016,
+      "sha256": "B7FA11DBCE2088BCC838F68E53162D9E5182BD27710363DAEE1002DBA32BF074"
+    }
+  },
+  "ioStore": {
+    "rowCount": 2623,
+    "generatedSoundWaveExportBundleCount": 12,
+    "canonicalInventorySha256": "48A3A62E942EC8BC9631501762822390361ACBA82A5AF704561A080CFC23F523"
+  },
+  "packagedAssetRegistry": {
+    "path": "DiscGolfTour/AssetRegistry.bin",
+    "bytes": 409252,
+    "sha256": "88023139CC993BD1C7DF652D2C4E29FA95A76975896CCC92C48755CC0548F8C3",
+    "soundWaveClassObjectCount": 12,
+    "generatedSoundWaveObjectCount": 12,
+    "dumpCanonicalSha256": "8F3772FB726F528B2E0A82ADEE2EBE8F607358A4C96497BB7A6A9D6F8AFECEDB"
+  },
+  "categoryCount": 12,
+  "categories": [
+    {
+      "category": "ThrowRelease",
+      "object": "/Game/Presentation/Audio/Generated/SW_ThrowRelease.SW_ThrowRelease",
+      "sourceSha256": "C6F5EBE99803D21A731BDAD8DE4CB2BBD51DE6CE4DA046963BE481105015C61F",
+      "serializedSource": {
+        "path": "Content/Presentation/Audio/Generated/SW_ThrowRelease.uasset",
+        "bytes": 41190,
+        "sha256": "3AA44EB00B34ABC181F3C77E2189038AA9DB17FAD7DC81E88D91D9EFFAA7BCD9"
+      },
+      "ioStore": {
+        "filename": "../../../DiscGolfTour/Content/Presentation/Audio/Generated/SW_ThrowRelease.uasset",
+        "chunkId": "a2c935dd99c4dfe600000001",
+        "packageId": "0xE6DFC499DD35C9A2",
+        "size": 518,
+        "compressedSize": 518,
+        "ioHash": "0x062513ba4fa52f92d2260e23cc6cf93c8ecc05ba",
+        "chunkType": "ExportBundleData"
+      },
+      "packagedAssetRegistrySoundWave": true,
+      "cookedObject": {
+        "exportBundleBytes": 518,
+        "bulkPayloadBytes": 9171,
+        "partCount": 3,
+        "parts": [
+          {
+            "name": "SW_ThrowRelease.ubulk",
+            "bytes": 9171,
+            "sha256": "874F5A93792EBAC427A51DDA6BC9253EF01469EFF7BBD6C59AB463273EDE4678"
+          },
+          {
+            "name": "SW_ThrowRelease.uexp",
+            "bytes": 126,
+            "sha256": "88907D795E7A913C7F9E332C18D86C93A1B94ED6A64EFB1680F6480A95FE280C"
+          },
+          {
+            "name": "SW_ThrowRelease.uheader",
+            "bytes": 392,
+            "sha256": "80B6FBF291CB236006E0E5CEED447056D894834F30F40B49E2C9FCFAB0F0F796"
+          }
+        ],
+        "objectNameMarkerPresent": true,
+        "bulkPayloadPresent": true
+      },
+      "shippingCookProven": true,
+      "audibleRuntimePlaybackProven": false
+    },
+    {
+      "category": "AirborneFlight",
+      "object": "/Game/Presentation/Audio/Generated/SW_AirborneFlight.SW_AirborneFlight",
+      "sourceSha256": "57044D0427E47D7BFAE2697F7D4872B636B10215C91B0B0280B113C2A62FE148",
+      "serializedSource": {
+        "path": "Content/Presentation/Audio/Generated/SW_AirborneFlight.uasset",
+        "bytes": 132756,
+        "sha256": "15236315EF40C0676E695DE79F09FCB47D539C115389ADC75BA719BF5840F228"
+      },
+      "ioStore": {
+        "filename": "../../../DiscGolfTour/Content/Presentation/Audio/Generated/SW_AirborneFlight.uasset",
+        "chunkId": "8a78b8d03d6e684600000001",
+        "packageId": "0x46686E3DD0B8788A",
+        "size": 526,
+        "compressedSize": 526,
+        "ioHash": "0x159bc7b9ff3f40a2834bc170fcbb04c18a0e2bc7",
+        "chunkType": "ExportBundleData"
+      },
+      "packagedAssetRegistrySoundWave": true,
+      "cookedObject": {
+        "exportBundleBytes": 526,
+        "bulkPayloadBytes": 32019,
+        "partCount": 3,
+        "parts": [
+          {
+            "name": "SW_AirborneFlight.ubulk",
+            "bytes": 32019,
+            "sha256": "A4B1D2CFD66013ACF68B7A117B265A98EB211090B59B976048F53EF70FE11892"
+          },
+          {
+            "name": "SW_AirborneFlight.uexp",
+            "bytes": 126,
+            "sha256": "38E450A02C013670C9A02F876C11C746430CF18F1A24AFE0EEEC8B93DED64F7D"
+          },
+          {
+            "name": "SW_AirborneFlight.uheader",
+            "bytes": 400,
+            "sha256": "AD5410BD5B3F159358801096230AA406CAA44400328A1A07679546AB957CFE65"
+          }
+        ],
+        "objectNameMarkerPresent": true,
+        "bulkPayloadPresent": true
+      },
+      "shippingCookProven": true,
+      "audibleRuntimePlaybackProven": false
+    },
+    {
+      "category": "GroundContact",
+      "object": "/Game/Presentation/Audio/Generated/SW_GroundContact.SW_GroundContact",
+      "sourceSha256": "E2F060470CEC816CBA973E82D779C14AC4B7BB76251284DCDDC30A6EBAE78B07",
+      "serializedSource": {
+        "path": "Content/Presentation/Audio/Generated/SW_GroundContact.uasset",
+        "bytes": 31674,
+        "sha256": "CF075D4411EC01CE11B3DD115A02E00C6ED7C952E0B5FDB0A9B41B3A6BC97CD5"
+      },
+      "ioStore": {
+        "filename": "../../../DiscGolfTour/Content/Presentation/Audio/Generated/SW_GroundContact.uasset",
+        "chunkId": "58b9c6fd3912276900000001",
+        "packageId": "0x69271239FDC6B958",
+        "size": 526,
+        "compressedSize": 526,
+        "ioHash": "0x53a32ed818f79480a21a981f658c9cb35e907ea5",
+        "chunkType": "ExportBundleData"
+      },
+      "packagedAssetRegistrySoundWave": true,
+      "cookedObject": {
+        "exportBundleBytes": 526,
+        "bulkPayloadBytes": 7317,
+        "partCount": 3,
+        "parts": [
+          {
+            "name": "SW_GroundContact.ubulk",
+            "bytes": 7317,
+            "sha256": "63DEBD5708DE17594B79C94A454FD84838F63DF0C37F07DC6215E4F693D2E008"
+          },
+          {
+            "name": "SW_GroundContact.uexp",
+            "bytes": 126,
+            "sha256": "F3551DAB1D8559BB10ACD9A2697005BC9AC5915AB0D56F5A979026E718FB04A9"
+          },
+          {
+            "name": "SW_GroundContact.uheader",
+            "bytes": 400,
+            "sha256": "FF5BD4A7537B34953D60E05DBDF565C8BC4B691F9BBF9B72ABBEFB929C9142A6"
+          }
+        ],
+        "objectNameMarkerPresent": true,
+        "bulkPayloadPresent": true
+      },
+      "shippingCookProven": true,
+      "audibleRuntimePlaybackProven": false
+    },
+    {
+      "category": "GroundState",
+      "object": "/Game/Presentation/Audio/Generated/SW_GroundState.SW_GroundState",
+      "sourceSha256": "BD5DAB2EA7509A419DC015B381873D591355685F1BB846658AEE412C9881AA56",
+      "serializedSource": {
+        "path": "Content/Presentation/Audio/Generated/SW_GroundState.uasset",
+        "bytes": 87395,
+        "sha256": "CA0C354ED6A38385B0B4539D85C84743BBDDFA26317FA70F63413AE72488CF54"
+      },
+      "ioStore": {
+        "filename": "../../../DiscGolfTour/Content/Presentation/Audio/Generated/SW_GroundState.uasset",
+        "chunkId": "0de793b6d31efbe400000001",
+        "packageId": "0xE4FB1ED3B693E70D",
+        "size": 518,
+        "compressedSize": 518,
+        "ioHash": "0xc4dc043c731aaa6d8015347ef5b7983a712aad81",
+        "chunkType": "ExportBundleData"
+      },
+      "packagedAssetRegistrySoundWave": true,
+      "cookedObject": {
+        "exportBundleBytes": 518,
+        "bulkPayloadBytes": 20251,
+        "partCount": 3,
+        "parts": [
+          {
+            "name": "SW_GroundState.ubulk",
+            "bytes": 20251,
+            "sha256": "207AA8E2B7C53EE78752A5CE99CC9060BEDC215B46EEF98C517BAA898A4B2557"
+          },
+          {
+            "name": "SW_GroundState.uexp",
+            "bytes": 126,
+            "sha256": "E6404F60580FFD4C33EAEE4DC90C253EBEDAF64E29487EC789931BCDA3DC1091"
+          },
+          {
+            "name": "SW_GroundState.uheader",
+            "bytes": 392,
+            "sha256": "4AEF65CEF661D00F12922F0073BB15EE2BDED9E7F00E25ED0616D7E267BEC36A"
+          }
+        ],
+        "objectNameMarkerPresent": true,
+        "bulkPayloadPresent": true
+      },
+      "shippingCookProven": true,
+      "audibleRuntimePlaybackProven": false
+    },
+    {
+      "category": "BasketOutcome",
+      "object": "/Game/Presentation/Audio/Generated/SW_BasketOutcome.SW_BasketOutcome",
+      "sourceSha256": "E1F99AA806D16FA629B529D007FA96CE82D1F8A3406DF7EA324EE4B981BA1850",
+      "serializedSource": {
+        "path": "Content/Presentation/Audio/Generated/SW_BasketOutcome.uasset",
+        "bytes": 58305,
+        "sha256": "DB1865313C30F3B1F4F781A69E4EB57E6B175DDEE1407941C2128062D84FD2B9"
+      },
+      "ioStore": {
+        "filename": "../../../DiscGolfTour/Content/Presentation/Audio/Generated/SW_BasketOutcome.uasset",
+        "chunkId": "272675eb39aeab5200000001",
+        "packageId": "0x52ABAE39EB752627",
+        "size": 526,
+        "compressedSize": 526,
+        "ioHash": "0x7a0451c6a3e9cc74b9a8f798a023cb46392b67b5",
+        "chunkType": "ExportBundleData"
+      },
+      "packagedAssetRegistrySoundWave": true,
+      "cookedObject": {
+        "exportBundleBytes": 526,
+        "bulkPayloadBytes": 10549,
+        "partCount": 3,
+        "parts": [
+          {
+            "name": "SW_BasketOutcome.ubulk",
+            "bytes": 10549,
+            "sha256": "795C3544644967C89A3B3AABB43D160B556030612F3F5421CB2B16884E0622E7"
+          },
+          {
+            "name": "SW_BasketOutcome.uexp",
+            "bytes": 126,
+            "sha256": "D56AB6C484D3CF7D6B9212FD36D2652098D30558089CE9E0CCAC8395C800D932"
+          },
+          {
+            "name": "SW_BasketOutcome.uheader",
+            "bytes": 400,
+            "sha256": "00D17A5E2E05F10364BD15BD8A25EBC8D36780803D8C2C01E1A06EB97FCE8C69"
+          }
+        ],
+        "objectNameMarkerPresent": true,
+        "bulkPayloadPresent": true
+      },
+      "shippingCookProven": true,
+      "audibleRuntimePlaybackProven": false
+    },
+    {
+      "category": "Penalty",
+      "object": "/Game/Presentation/Audio/Generated/SW_Penalty.SW_Penalty",
+      "sourceSha256": "028078BD77B73AE29F8DA731CA5ABDEDCB52BB311D822922431522BD24D1AE35",
+      "serializedSource": {
+        "path": "Content/Presentation/Audio/Generated/SW_Penalty.uasset",
+        "bytes": 27602,
+        "sha256": "D50B761D8035B884DB185C8A490878F6C892C3D72B788CB52E974DBACCE64802"
+      },
+      "ioStore": {
+        "filename": "../../../DiscGolfTour/Content/Presentation/Audio/Generated/SW_Penalty.uasset",
+        "chunkId": "40dd6720582785c500000001",
+        "packageId": "0xC58527582067DD40",
+        "size": 510,
+        "compressedSize": 510,
+        "ioHash": "0xac0475ffb7225b8eb7efdb2b38bee390f8c641bd",
+        "chunkType": "ExportBundleData"
+      },
+      "packagedAssetRegistrySoundWave": true,
+      "cookedObject": {
+        "exportBundleBytes": 510,
+        "bulkPayloadBytes": 6937,
+        "partCount": 3,
+        "parts": [
+          {
+            "name": "SW_Penalty.ubulk",
+            "bytes": 6937,
+            "sha256": "8D5B09EF57A011AEE5B9AF178642CB4B2E18932058CD3FB1AA0E9A8F203F505F"
+          },
+          {
+            "name": "SW_Penalty.uexp",
+            "bytes": 126,
+            "sha256": "18DA5D84A60CF5BA37D4981683701581F78B3D778C51A0593E09F53C0680430F"
+          },
+          {
+            "name": "SW_Penalty.uheader",
+            "bytes": 384,
+            "sha256": "E588A0BD13FDCA761B60708999B55108D9ABF9972C3DA3D8FFF7FCC879E11D15"
+          }
+        ],
+        "objectNameMarkerPresent": true,
+        "bulkPayloadPresent": true
+      },
+      "shippingCookProven": true,
+      "audibleRuntimePlaybackProven": false
+    },
+    {
+      "category": "HoleStart",
+      "object": "/Game/Presentation/Audio/Generated/SW_HoleStart.SW_HoleStart",
+      "sourceSha256": "C911709D3280C100581476549E216FA10BE40DCDDE789C3377322B6427F9EC34",
+      "serializedSource": {
+        "path": "Content/Presentation/Audio/Generated/SW_HoleStart.uasset",
+        "bytes": 63613,
+        "sha256": "E5F2EE0FBB74D0CDEC904291F6D4F3221F3E55D05AF24B12CD80A7D93836732A"
+      },
+      "ioStore": {
+        "filename": "../../../DiscGolfTour/Content/Presentation/Audio/Generated/SW_HoleStart.uasset",
+        "chunkId": "034e770cfb5e830300000001",
+        "packageId": "0x3835EFB0C774E03",
+        "size": 518,
+        "compressedSize": 518,
+        "ioHash": "0x39b98c1b6747c75814cea5b783d66590b8247668",
+        "chunkType": "ExportBundleData"
+      },
+      "packagedAssetRegistrySoundWave": true,
+      "cookedObject": {
+        "exportBundleBytes": 518,
+        "bulkPayloadBytes": 12961,
+        "partCount": 3,
+        "parts": [
+          {
+            "name": "SW_HoleStart.ubulk",
+            "bytes": 12961,
+            "sha256": "6B44D7044B4AC75D0611724AEB775EDC2ED9FE6F6FEB539421E318DE531EDDA2"
+          },
+          {
+            "name": "SW_HoleStart.uexp",
+            "bytes": 126,
+            "sha256": "5B169EF99EE3A46113E06EFF564A1CBAC54AADAAD874FA617CF6207829FAF848"
+          },
+          {
+            "name": "SW_HoleStart.uheader",
+            "bytes": 392,
+            "sha256": "B4DE0FCAEFB97881C702F29F0F4540C6521E64F57D10CC0FC9F45B351613A0B6"
+          }
+        ],
+        "objectNameMarkerPresent": true,
+        "bulkPayloadPresent": true
+      },
+      "shippingCookProven": true,
+      "audibleRuntimePlaybackProven": false
+    },
+    {
+      "category": "HoleCompletion",
+      "object": "/Game/Presentation/Audio/Generated/SW_HoleCompletion.SW_HoleCompletion",
+      "sourceSha256": "80BD130E97D63E1E35411F2EB3E23FF8350C5140A582519902DA82234C2A62D9",
+      "serializedSource": {
+        "path": "Content/Presentation/Audio/Generated/SW_HoleCompletion.uasset",
+        "bytes": 65421,
+        "sha256": "5F131CF142B470F5CCE67A18E4ED1C91606A0F495FBE2F93E56A5879745D8EEA"
+      },
+      "ioStore": {
+        "filename": "../../../DiscGolfTour/Content/Presentation/Audio/Generated/SW_HoleCompletion.uasset",
+        "chunkId": "81944773eb7f21ce00000001",
+        "packageId": "0xCE217FEB73479481",
+        "size": 526,
+        "compressedSize": 526,
+        "ioHash": "0xc5e5e22cee65a013659aaaa5c112580ff78549b5",
+        "chunkType": "ExportBundleData"
+      },
+      "packagedAssetRegistrySoundWave": true,
+      "cookedObject": {
+        "exportBundleBytes": 526,
+        "bulkPayloadBytes": 13107,
+        "partCount": 3,
+        "parts": [
+          {
+            "name": "SW_HoleCompletion.ubulk",
+            "bytes": 13107,
+            "sha256": "F0A6324B1F6A5DF0AE5F2648781C74577F9252B12DDD3C56DA8AECB60DAAECE6"
+          },
+          {
+            "name": "SW_HoleCompletion.uexp",
+            "bytes": 126,
+            "sha256": "BBEA051467DE2BBA261F7927DAD1E93D1291A6AE0ADEE15C29CED7F0988BABEE"
+          },
+          {
+            "name": "SW_HoleCompletion.uheader",
+            "bytes": 400,
+            "sha256": "85B1F7F2F8FC46E44FEE1A029E89B257CD248CCCF17FF0F8B3E2C832937BDAA0"
+          }
+        ],
+        "objectNameMarkerPresent": true,
+        "bulkPayloadPresent": true
+      },
+      "shippingCookProven": true,
+      "audibleRuntimePlaybackProven": false
+    },
+    {
+      "category": "HoleTransition",
+      "object": "/Game/Presentation/Audio/Generated/SW_HoleTransition.SW_HoleTransition",
+      "sourceSha256": "B1F2952121EEC772D8F3AB203D4976FD5B52E3584AAFE16F931153BCE5431080",
+      "serializedSource": {
+        "path": "Content/Presentation/Audio/Generated/SW_HoleTransition.uasset",
+        "bytes": 59610,
+        "sha256": "01D73F2C1201D1E577F3F9ADD5401F7324BFFABFDE7A17A32981F211D6ACD030"
+      },
+      "ioStore": {
+        "filename": "../../../DiscGolfTour/Content/Presentation/Audio/Generated/SW_HoleTransition.uasset",
+        "chunkId": "73b806f029d1ab1200000001",
+        "packageId": "0x12ABD129F006B873",
+        "size": 526,
+        "compressedSize": 526,
+        "ioHash": "0xcdad8bc517cec497f18ee854506c64a8a73140d4",
+        "chunkType": "ExportBundleData"
+      },
+      "packagedAssetRegistrySoundWave": true,
+      "cookedObject": {
+        "exportBundleBytes": 526,
+        "bulkPayloadBytes": 14355,
+        "partCount": 3,
+        "parts": [
+          {
+            "name": "SW_HoleTransition.ubulk",
+            "bytes": 14355,
+            "sha256": "3A108B0CAF55CB2298DF3747257858AA3E2097F94C29F96145EF8E0CB3837072"
+          },
+          {
+            "name": "SW_HoleTransition.uexp",
+            "bytes": 126,
+            "sha256": "DDE48393B0556E1ABF49B9F1470BF8714E047718B5745C8DD32F3FB47C01FA2D"
+          },
+          {
+            "name": "SW_HoleTransition.uheader",
+            "bytes": 400,
+            "sha256": "ECD467FC3CA0947B87E79EF2E6411929580C1B0D351F8E344EDE82904219F478"
+          }
+        ],
+        "objectNameMarkerPresent": true,
+        "bulkPayloadPresent": true
+      },
+      "shippingCookProven": true,
+      "audibleRuntimePlaybackProven": false
+    },
+    {
+      "category": "RoundCompletion",
+      "object": "/Game/Presentation/Audio/Generated/SW_RoundCompletion.SW_RoundCompletion",
+      "sourceSha256": "0B44541DE7809ABA10A8210AF044373BE7AFD19A941F820177AC805C83DE35AC",
+      "serializedSource": {
+        "path": "Content/Presentation/Audio/Generated/SW_RoundCompletion.uasset",
+        "bytes": 92023,
+        "sha256": "A1D12264E535A2433C64CA6A1BAB6C64994879E8DF0DD1C74E1957CC6C97D8F0"
+      },
+      "ioStore": {
+        "filename": "../../../DiscGolfTour/Content/Presentation/Audio/Generated/SW_RoundCompletion.uasset",
+        "chunkId": "00c4705dec1d978c00000001",
+        "packageId": "0x8C971DEC5D70C400",
+        "size": 526,
+        "compressedSize": 526,
+        "ioHash": "0x769d048146257af05d05ac59497431a413fdf5a4",
+        "chunkType": "ExportBundleData"
+      },
+      "packagedAssetRegistrySoundWave": true,
+      "cookedObject": {
+        "exportBundleBytes": 526,
+        "bulkPayloadBytes": 18613,
+        "partCount": 3,
+        "parts": [
+          {
+            "name": "SW_RoundCompletion.ubulk",
+            "bytes": 18613,
+            "sha256": "329B6D3C479EACA8EB2AE3528A3E9351D19BCDF02A85D6F3A07A6DA40397A737"
+          },
+          {
+            "name": "SW_RoundCompletion.uexp",
+            "bytes": 126,
+            "sha256": "297CDD72022320AA012C54BDA6BE200CD675D354D37F29B9541A87F54F447661"
+          },
+          {
+            "name": "SW_RoundCompletion.uheader",
+            "bytes": 400,
+            "sha256": "ABA4E04E6D6008DAF2CB8443615789E554F8F59DCC131C980FB46994E43C5E3B"
+          }
+        ],
+        "objectNameMarkerPresent": true,
+        "bulkPayloadPresent": true
+      },
+      "shippingCookProven": true,
+      "audibleRuntimePlaybackProven": false
+    },
+    {
+      "category": "Replay",
+      "object": "/Game/Presentation/Audio/Generated/SW_Replay.SW_Replay",
+      "sourceSha256": "04880F32B454CE862E8FBD3EC0B5FEA55175DEF293AD2B7819FAB2ADD73F04AD",
+      "serializedSource": {
+        "path": "Content/Presentation/Audio/Generated/SW_Replay.uasset",
+        "bytes": 57609,
+        "sha256": "43EFF820C63C7A1F6A88704AF84712534DB08921570FFCA3818AEE96B2B2BF6F"
+      },
+      "ioStore": {
+        "filename": "../../../DiscGolfTour/Content/Presentation/Audio/Generated/SW_Replay.uasset",
+        "chunkId": "bd18fe83926c4b6c00000001",
+        "packageId": "0x6C4B6C9283FE18BD",
+        "size": 510,
+        "compressedSize": 510,
+        "ioHash": "0xea35178685fc49b1e094153ff1d59e511e28f46c",
+        "chunkType": "ExportBundleData"
+      },
+      "packagedAssetRegistrySoundWave": true,
+      "cookedObject": {
+        "exportBundleBytes": 510,
+        "bulkPayloadBytes": 14439,
+        "partCount": 3,
+        "parts": [
+          {
+            "name": "SW_Replay.ubulk",
+            "bytes": 14439,
+            "sha256": "90A0EBD611D1D7CDC267723941E6C56F4589029C4C9AE54B089FD39EC8CFE77D"
+          },
+          {
+            "name": "SW_Replay.uexp",
+            "bytes": 126,
+            "sha256": "C1533A60202C80AAC355D08A1B9C2210D925C4BA7E45BB9E1C34125C0CAC74DD"
+          },
+          {
+            "name": "SW_Replay.uheader",
+            "bytes": 384,
+            "sha256": "43C87FE47189AE73B42167027D401D47690471D6A894766A5B5F8445117801EB"
+          }
+        ],
+        "objectNameMarkerPresent": true,
+        "bulkPayloadPresent": true
+      },
+      "shippingCookProven": true,
+      "audibleRuntimePlaybackProven": false
+    },
+    {
+      "category": "Flyover",
+      "object": "/Game/Presentation/Audio/Generated/SW_Flyover.SW_Flyover",
+      "sourceSha256": "54BF00258BBB98B1F360B92251F555AC7D944B31BD63203283754C63B2428193",
+      "serializedSource": {
+        "path": "Content/Presentation/Audio/Generated/SW_Flyover.uasset",
+        "bytes": 118464,
+        "sha256": "25E5FA4802A3498884A592A0D048851E2530E251845849F7C787D46783E89CB4"
+      },
+      "ioStore": {
+        "filename": "../../../DiscGolfTour/Content/Presentation/Audio/Generated/SW_Flyover.uasset",
+        "chunkId": "4715fae51619853c00000001",
+        "packageId": "0x3C851916E5FA1547",
+        "size": 510,
+        "compressedSize": 510,
+        "ioHash": "0xafabca051643c10b5d8c0c3f7f61788094f17780",
+        "chunkType": "ExportBundleData"
+      },
+      "packagedAssetRegistrySoundWave": true,
+      "cookedObject": {
+        "exportBundleBytes": 510,
+        "bulkPayloadBytes": 31593,
+        "partCount": 3,
+        "parts": [
+          {
+            "name": "SW_Flyover.ubulk",
+            "bytes": 31593,
+            "sha256": "21B87E74CCB851FD401C1AF092FD1B0C415FED275ED0AA27E58481503F7AE5BD"
+          },
+          {
+            "name": "SW_Flyover.uexp",
+            "bytes": 126,
+            "sha256": "FCBA738986DAB477DF797BE4DF16B919E8444BAD20CE3DA481A35456164AB599"
+          },
+          {
+            "name": "SW_Flyover.uheader",
+            "bytes": 384,
+            "sha256": "798C4B91003BBCC1199FD891620FDB7AA97F0DC856D5ABA44A39B41EBEFEFC5A"
+          }
+        ],
+        "objectNameMarkerPresent": true,
+        "bulkPayloadPresent": true
+      },
+      "shippingCookProven": true,
+      "audibleRuntimePlaybackProven": false
+    }
+  ],
+  "claimBoundary": {
+    "allTwelveSerializedSoundWavesSourceBound": true,
+    "allTwelveSoundWavePackagesInIoStore": true,
+    "allTwelveSoundWaveObjectsInPackagedAssetRegistry": true,
+    "allTwelveCookedObjectsExtractedAndInspected": true,
+    "shippingCookProven": true,
+    "audibleRuntimePlaybackProven": false,
+    "humanMixApproved": false,
+    "finalQualityApproved": false,
+    "accessibilityApproved": false,
+    "legalApproved": false,
+    "productOwnerApproved": false,
+    "blockerClosed": false,
+    "releaseReady": false
+  }
+}

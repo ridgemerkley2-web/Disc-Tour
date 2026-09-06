@@ -1,0 +1,620 @@
+{
+  "archive": {
+    "bytes": 1246026263,
+    "canonicalManifestSha256": "5F8BB2E5885358CA3CBAD310AC0A4EC024196B4E80811AE8E748685E4DB50231",
+    "fileCount": 31,
+    "hostPathRecorded": false,
+    "missingRequiredFiles": [],
+    "recoveryLocationToken": "DGTOUR_PACKAGES/S19_WindowsShipping_20260827T023919Z_51a1c132f837/Windows"
+  },
+  "automationRepeats": [
+    {
+      "binding": {
+        "artifact": "automation-repeat-1",
+        "bytes": 603792,
+        "fileName": "Automation_AllDiscGolfTour_S19_WindowsShipping_20260827T023919Z_51a1c132f837_A.log",
+        "hostPathRecorded": false,
+        "sha256": "7BE6A6A049286FB4CFC1F0784E315878093C2C9706FCD112E2AD271ECE302164"
+      },
+      "completedCount": 305,
+      "duplicateRequiredTests": [],
+      "missingRequiredTests": [],
+      "nonSuccessCount": 0,
+      "nonSuccessResults": [],
+      "passed": true,
+      "requiredSuccessCount": 23,
+      "requiredTestCount": 23,
+      "successCount": 305
+    },
+    {
+      "binding": {
+        "artifact": "automation-repeat-2",
+        "bytes": 602777,
+        "fileName": "Automation_AllDiscGolfTour_S19_WindowsShipping_20260827T023919Z_51a1c132f837_B.log",
+        "hostPathRecorded": false,
+        "sha256": "9794413148DE2821AE25073CC2EB1B4646F378E4DA57D09677E7F50D19C16A60"
+      },
+      "completedCount": 305,
+      "duplicateRequiredTests": [],
+      "missingRequiredTests": [],
+      "nonSuccessCount": 0,
+      "nonSuccessResults": [],
+      "passed": true,
+      "requiredSuccessCount": 23,
+      "requiredTestCount": 23,
+      "successCount": 305
+    }
+  ],
+  "bindings": {
+    "candidateContent": {
+      "artifact": "candidate-content",
+      "bytes": 26660,
+      "fileName": "CandidateContent-S19_WindowsShipping_20260827T023919Z_51a1c132f837.json",
+      "hostPathRecorded": false,
+      "sha256": "26EA3283C34A93275B93AFDE44801DF14948643E6119995D3ED54C60A5F920B9"
+    },
+    "candidateVerification": {
+      "artifact": "candidate-verification",
+      "bytes": 6452,
+      "fileName": "ShippingCandidateVerification-S19_WindowsShipping_20260827T023919Z_51a1c132f837.json",
+      "hostPathRecorded": false,
+      "sha256": "5AA620A58CA56E1E300B8470489594BEA12A64BDFE0524EAF389F042999A67F4"
+    },
+    "featureExclusionReceipt": {
+      "artifact": "feature-exclusion-receipt",
+      "bytes": 5127,
+      "fileName": "V05CareerAiThrowLabExclusion-S19_WindowsShipping_20260827T023919Z_51a1c132f837.json",
+      "hostPathRecorded": false,
+      "sha256": "D3D290AF8EE700EEE797804BA0B2033DB79B51836F8A96A13B1963F2194664DB"
+    },
+    "freshUserDirManifest": {
+      "artifact": "fresh-userdir-manifest",
+      "bytes": 3919,
+      "fileName": "FreshUserDir-S19_WindowsShipping_20260827T023919Z_51a1c132f837.json",
+      "hostPathRecorded": false,
+      "sha256": "455D9C4D9BCAE14A1EFC8F47C34BB5E6ADE8F4703A9926FFE5F87F73694B8FAB"
+    },
+    "policy": {
+      "artifact": "policy",
+      "bytes": 16358,
+      "fileName": "DG_Session19V05EquipmentShippingTechnicalPolicy-S19_WindowsShipping_20260827T023919Z_51a1c132f837.json",
+      "hostPathRecorded": false,
+      "sha256": "C64501F9FA79FF988B499279030065A1F0720633E57CACCB7D7BE7F6B32DC07D"
+    },
+    "shippingBinary": {
+      "artifact": "shipping-binary",
+      "bytes": 2327,
+      "fileName": "ShippingBinary-S19_WindowsShipping_20260827T023919Z_51a1c132f837.json",
+      "hostPathRecorded": false,
+      "sha256": "658B7DA8CFC93AD231E96AA9B7A77C509F7109AA0DA1FCE1837F0FDD68BF287B"
+    },
+    "validator": {
+      "artifact": "validator",
+      "bytes": 69024,
+      "fileName": "validate_dg_session19_v05_equipment_shipping.py",
+      "hostPathRecorded": false,
+      "sha256": "3B9F5B202D741D3E8B75DADA29DB6E0D6CDC120164116AD3DAEB451217183C61"
+    }
+  },
+  "candidateBinary": {
+    "bytes": 162632192,
+    "relativePath": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe",
+    "scan": {
+      "caseInsensitive": true,
+      "encodings": [
+        "ascii",
+        "utf-16le"
+      ],
+      "forbidden": [
+        {
+          "foundAscii": false,
+          "foundUtf16Le": false,
+          "marker": "DGT_Equipment_Dev_v1",
+          "passed": true
+        }
+      ],
+      "forbiddenMatches": [],
+      "missingRequiredMarkers": [],
+      "required": [
+        {
+          "foundAscii": false,
+          "foundUtf16Le": true,
+          "marker": "DiscCatalogSubsystem",
+          "passed": true
+        },
+        {
+          "foundAscii": false,
+          "foundUtf16Le": true,
+          "marker": "DiscBagComponent",
+          "passed": true
+        },
+        {
+          "foundAscii": true,
+          "foundUtf16Le": false,
+          "marker": "SelectEquipment",
+          "passed": true
+        },
+        {
+          "foundAscii": true,
+          "foundUtf16Le": false,
+          "marker": "SelectDiscInstance",
+          "passed": true
+        },
+        {
+          "foundAscii": true,
+          "foundUtf16Le": false,
+          "marker": "ToggleSelectedFavorite",
+          "passed": true
+        },
+        {
+          "foundAscii": true,
+          "foundUtf16Le": true,
+          "marker": "CyclePlastic",
+          "passed": true
+        },
+        {
+          "foundAscii": true,
+          "foundUtf16Le": false,
+          "marker": "PracticeMoldId",
+          "passed": true
+        },
+        {
+          "foundAscii": true,
+          "foundUtf16Le": false,
+          "marker": "PracticePlastic",
+          "passed": true
+        },
+        {
+          "foundAscii": false,
+          "foundUtf16Le": true,
+          "marker": "dg_generic_bag_default",
+          "passed": true
+        },
+        {
+          "foundAscii": false,
+          "foundUtf16Le": true,
+          "marker": "dg_generic_default",
+          "passed": true
+        },
+        {
+          "foundAscii": false,
+          "foundUtf16Le": true,
+          "marker": "PRIMARY ASSETS -",
+          "passed": true
+        },
+        {
+          "foundAscii": false,
+          "foundUtf16Le": true,
+          "marker": "SOURCE FALLBACK -",
+          "passed": true
+        },
+        {
+          "foundAscii": true,
+          "foundUtf16Le": true,
+          "marker": "Apex",
+          "passed": true
+        },
+        {
+          "foundAscii": true,
+          "foundUtf16Le": true,
+          "marker": "Vector",
+          "passed": true
+        },
+        {
+          "foundAscii": true,
+          "foundUtf16Le": true,
+          "marker": "Line",
+          "passed": true
+        },
+        {
+          "foundAscii": false,
+          "foundUtf16Le": true,
+          "marker": "Compass",
+          "passed": true
+        },
+        {
+          "foundAscii": true,
+          "foundUtf16Le": true,
+          "marker": "Touch",
+          "passed": true
+        },
+        {
+          "foundAscii": true,
+          "foundUtf16Le": true,
+          "marker": "Base",
+          "passed": true
+        },
+        {
+          "foundAscii": true,
+          "foundUtf16Le": true,
+          "marker": "Tour",
+          "passed": true
+        },
+        {
+          "foundAscii": true,
+          "foundUtf16Le": true,
+          "marker": "Crystal",
+          "passed": true
+        }
+      ]
+    },
+    "sha256": "9A7AB59B8B055335D249F4C7537EF047F6AADB687DEE20BD6D427C33CECADEF9"
+  },
+  "candidateEquipmentContent": {
+    "containers": [
+      {
+        "bytes": 10475605,
+        "canonicalIdentitySha256": "32E6ED5D33DE109F47B8644015D82D54A38334AE8BEFC76D3BA287C64FD6DC64",
+        "entryCount": 1665,
+        "method": "UnrealPak positional -List",
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.pak",
+        "sha256": "44D6270AB6EB0F135999A7B5783BD393ABCA5A667AA27E16ED9EB2B5926ED014"
+      },
+      {
+        "anonymousChunkCount": 1541,
+        "bytes": 483322,
+        "canonicalIdentitySha256": "394A7A88F036C62C7AB02307E8F16B5BFD63F7935D83700228043D73E35968BC",
+        "chunkCount": 2623,
+        "method": "UnrealPak -ListContainer CSV",
+        "namedEntryCount": 1082,
+        "path": "DiscGolfTour/Content/Paks/DiscGolfTour-Windows.utoc",
+        "sha256": "EAB9A3E7DAEFE6DD83FE6AA25752A237898AD071D919560549188BE8A3234D62"
+      }
+    ],
+    "equipmentAssets": {
+      "actual": [
+        "DiscGolfTour/Content/Data/Discs/Molds/DA_Mold_Apex.uasset",
+        "DiscGolfTour/Content/Data/Discs/Molds/DA_Mold_Compass.uasset",
+        "DiscGolfTour/Content/Data/Discs/Molds/DA_Mold_Line.uasset",
+        "DiscGolfTour/Content/Data/Discs/Molds/DA_Mold_Touch.uasset",
+        "DiscGolfTour/Content/Data/Discs/Molds/DA_Mold_Vector.uasset",
+        "DiscGolfTour/Content/Data/Discs/Plastics/DA_Plastic_Base.uasset",
+        "DiscGolfTour/Content/Data/Discs/Plastics/DA_Plastic_Crystal.uasset",
+        "DiscGolfTour/Content/Data/Discs/Plastics/DA_Plastic_Tour.uasset"
+      ],
+      "actualCount": 8,
+      "duplicates": [],
+      "exactSet": true,
+      "expectedCount": 8,
+      "extra": [],
+      "missing": []
+    },
+    "inventoryTool": {
+      "artifact": "container-inventory-tool",
+      "bytes": 160696,
+      "fileName": "UnrealPak.exe",
+      "hostPathRecorded": false,
+      "sha256": "77BAB732FC3315727265CBD5673008D45ABBED332980599CEE05BEB03C07F01F"
+    }
+  },
+  "candidateId": "S19_WindowsShipping_20260827T023919Z_51a1c132f837",
+  "catalogAndBag": {
+    "bag": {
+      "bagEquipmentId": "dg_generic_bag_default",
+      "capacity": 24,
+      "defaultPlastic": "Tour",
+      "instances": [
+        {
+          "guidWords": [
+            3591438337,
+            1397052243,
+            1229934129,
+            822083585
+          ],
+          "massGrams": 175.0,
+          "mold": "Apex"
+        },
+        {
+          "guidWords": [
+            3591438338,
+            1397052243,
+            1229934129,
+            822083586
+          ],
+          "massGrams": 175.0,
+          "mold": "Vector"
+        },
+        {
+          "guidWords": [
+            3591438339,
+            1397052243,
+            1229934129,
+            822083587
+          ],
+          "massGrams": 175.0,
+          "mold": "Line"
+        },
+        {
+          "guidWords": [
+            3591438340,
+            1397052243,
+            1229934129,
+            822083588
+          ],
+          "massGrams": 175.0,
+          "mold": "Compass"
+        },
+        {
+          "guidWords": [
+            3591438341,
+            1397052243,
+            1229934129,
+            822083589
+          ],
+          "massGrams": 175.0,
+          "mold": "Touch"
+        }
+      ],
+      "selectedInstanceIndex": 0,
+      "selectedMold": "Apex",
+      "stampId": "dg_generic_default"
+    },
+    "candidateSemanticInference": "Packaged asset identities, executable markers, implementation bindings, and repeated automation are combined technical evidence; they are not a byte-level proof of every runtime field value or a human play-feel assessment.",
+    "catalogAuthority": "BOUNDED_V05_GENERIC_EQUIPMENT_CATALOG",
+    "molds": [
+      {
+        "fade": 3.0,
+        "glide": 5,
+        "id": "Apex",
+        "speed": 12,
+        "turn": -1.0
+      },
+      {
+        "fade": 2.0,
+        "glide": 5,
+        "id": "Vector",
+        "speed": 9,
+        "turn": -2.0
+      },
+      {
+        "fade": 2.0,
+        "glide": 5,
+        "id": "Line",
+        "speed": 7,
+        "turn": -1.0
+      },
+      {
+        "fade": 1.0,
+        "glide": 5,
+        "id": "Compass",
+        "speed": 5,
+        "turn": 0.0
+      },
+      {
+        "fade": 1.0,
+        "glide": 3,
+        "id": "Touch",
+        "speed": 2,
+        "turn": 0.0
+      }
+    ],
+    "plastics": [
+      {
+        "fadeScale": 0.88,
+        "frictionScale": 1.18,
+        "id": "Base",
+        "restitutionScale": 0.72,
+        "turnScale": 1.18
+      },
+      {
+        "fadeScale": 1.0,
+        "frictionScale": 1.0,
+        "id": "Tour",
+        "restitutionScale": 1.0,
+        "turnScale": 1.0
+      },
+      {
+        "fadeScale": 1.12,
+        "frictionScale": 0.86,
+        "id": "Crystal",
+        "restitutionScale": 1.2,
+        "turnScale": 0.84
+      }
+    ],
+    "sourceTechnicalBindings": [
+      {
+        "bytes": 18655,
+        "hostPathRecorded": false,
+        "missingRequiredFragmentCount": 0,
+        "path": "Source/DiscGolfTour/DiscGolfTypes.h",
+        "requiredFragmentCount": 11,
+        "role": "base-aerodynamic-and-ground-calibration-authority",
+        "sha256": "396757C17722BBC2BAAF8A13D7BB0A9876EA1F40FE0424623CEDB47221CDCA41"
+      },
+      {
+        "bytes": 15358,
+        "hostPathRecorded": false,
+        "missingRequiredFragmentCount": 0,
+        "path": "Source/DiscGolfTour/DiscCatalogSubsystem.cpp",
+        "requiredFragmentCount": 4,
+        "role": "catalog-and-flight-vector-authority",
+        "sha256": "9C41C3BFABE59037D655050A70BA92E8D12E03CE84AC77336970661321DA67D6"
+      },
+      {
+        "bytes": 19135,
+        "hostPathRecorded": false,
+        "missingRequiredFragmentCount": 0,
+        "path": "Source/DiscGolfTour/DiscBagComponent.cpp",
+        "requiredFragmentCount": 5,
+        "role": "bag-identity-selection-atomic-save-authority",
+        "sha256": "B4D111A6C30EE7D08EF7ADCF96B233E030B89F47A579449D56A9EA6695DA3197"
+      },
+      {
+        "bytes": 2572,
+        "hostPathRecorded": false,
+        "missingRequiredFragmentCount": 0,
+        "path": "Source/DiscGolfTour/DiscGolfSaveGame.h",
+        "requiredFragmentCount": 3,
+        "role": "production-profile-schema-authority",
+        "sha256": "5620C359BC4ACB2462F596CD5ED2011D1C965B1E6EA126F21E7F01728F2016D0"
+      },
+      {
+        "bytes": 24304,
+        "hostPathRecorded": false,
+        "missingRequiredFragmentCount": 0,
+        "path": "Source/DiscGolfTour/DiscGolfTourGameInstance.cpp",
+        "requiredFragmentCount": 3,
+        "role": "production-profile-migration-authority",
+        "sha256": "BB41F7B444C3E133578CE9B4EE785DAF43701EA1FC61BF0D54BB8361D317FA0A"
+      },
+      {
+        "bytes": 18310,
+        "hostPathRecorded": false,
+        "missingRequiredFragmentCount": 0,
+        "path": "Source/DiscGolfTour/Tests/DiscEquipmentSession11Tests.cpp",
+        "requiredFragmentCount": 3,
+        "role": "equipment-identity-calibration-and-atomicity-test-authority",
+        "sha256": "F9C3F93FB7CBA257942E605F6357BE2BA101BD24A58EB1A57B2D1D138ABA7935"
+      },
+      {
+        "bytes": 9566,
+        "hostPathRecorded": false,
+        "missingRequiredFragmentCount": 0,
+        "path": "Source/DiscGolfTour/Tests/DiscGolfSaveSchemaTests.cpp",
+        "requiredFragmentCount": 2,
+        "role": "profile-schema-test-authority",
+        "sha256": "9D3B548A9EF8192FDD142823603FA02CF84FD7F93F1A8D098C94076F3B704DB4"
+      },
+      {
+        "bytes": 3251,
+        "hostPathRecorded": false,
+        "missingRequiredFragmentCount": 0,
+        "path": "Source/DiscGolfTour/Tests/DiscGolfMathTests.cpp",
+        "requiredFragmentCount": 3,
+        "role": "flight-sign-and-stability-test-authority",
+        "sha256": "A6DF51E0015E1177E9FB98377ACA6AC70FC26E8D7859416EDD113AD17FFC6A26"
+      }
+    ]
+  },
+  "claimBoundary": {
+    "blockerClosureClaimed": false,
+    "distributionClearance": false,
+    "equipmentNameClearance": false,
+    "legalApproval": false,
+    "manualGameplayReviewComplete": false,
+    "manualPlayFeelApproval": false,
+    "provenanceApproval": false,
+    "publicEquipmentNameClaimAllowed": false,
+    "releaseReady": false,
+    "technicalEvidenceOnly": true
+  },
+  "disclaimer": "This receipt proves only bounded equipment Shipping technical evidence for one immutable candidate. Equipment-name clearance, public claims, manual play-feel/gameplay approval, legal/provenance/distribution approval, blocker closure, and release readiness remain pending.",
+  "failures": [],
+  "flightPhysicsCalibration": {
+    "absoluteTolerance": 1e-09,
+    "allRepeatsIdentical": true,
+    "anchors": [
+      {
+        "mismatches": [],
+        "mold": "Apex",
+        "passed": true,
+        "plastic": "Tour"
+      },
+      {
+        "mismatches": [],
+        "mold": "Vector",
+        "passed": true,
+        "plastic": "Base"
+      },
+      {
+        "mismatches": [],
+        "mold": "Touch",
+        "passed": true,
+        "plastic": "Crystal"
+      }
+    ],
+    "expectedResolvedVectorSha256": "7201CC14DC8E81773850B1576194B20B0A62FD6E1ECA2D81CB1823709FFED60B",
+    "massCalibration": {
+      "actual": {
+        "inertiaAxialKgM2": 0.0007792,
+        "inertiaPlanarKgM2": 0.0003896,
+        "massKg": 0.14,
+        "massScale": 0.8,
+        "wearAffectsPhysics": false
+      },
+      "coefficientFamilyUnchanged": true,
+      "inputMassGrams": 140.0,
+      "mismatches": [],
+      "passed": true
+    },
+    "repeatCount": 5,
+    "repeatSha256": [
+      "7201CC14DC8E81773850B1576194B20B0A62FD6E1ECA2D81CB1823709FFED60B",
+      "7201CC14DC8E81773850B1576194B20B0A62FD6E1ECA2D81CB1823709FFED60B",
+      "7201CC14DC8E81773850B1576194B20B0A62FD6E1ECA2D81CB1823709FFED60B",
+      "7201CC14DC8E81773850B1576194B20B0A62FD6E1ECA2D81CB1823709FFED60B",
+      "7201CC14DC8E81773850B1576194B20B0A62FD6E1ECA2D81CB1823709FFED60B"
+    ],
+    "resolvedVectorCount": 15
+  },
+  "generatedUtc": "2026-08-27T03:32:50.365772Z",
+  "passed": true,
+  "saveSchemaAndAtomicity": {
+    "freshUserDir": {
+      "candidateUserDirBindingSha256": "12d210ef7a55a1259706941bd0cef6c10e2086ce43848bcf8c594ac95ae74366",
+      "forbiddenArtifactCount": 0,
+      "isolatedEquipmentSaveCount": 0,
+      "observedFileCount": 5,
+      "passed": true,
+      "productionProfile": {
+        "bytes": 5291,
+        "classification": "production_profile",
+        "relativePath": "Saved/SaveGames/DiscGolfTour_Profile_0.sav",
+        "sha256": "f9d57c521f6406d1292fd240eb17e87056029367cd8006700811282bed7d7d8f"
+      },
+      "unknownFileCount": 0,
+      "userDirToken": "de633085-9a16-4b8d-ae18-e226c48735d9"
+    },
+    "isolatedEquipmentPersistenceScope": "DEVELOPMENT_AUTOMATION_ONLY",
+    "isolatedEquipmentSchemaVersion": 1,
+    "legacyDefaults": {
+      "mold": "Apex",
+      "plastic": "Tour"
+    },
+    "legacyEquipmentMigrationThreshold": 5,
+    "migrationAndAtomicityAutomationPaths": [
+      "DiscGolfTour.Session11.Equipment.DefaultLoadoutIsStableAndGeneric",
+      "DiscGolfTour.Session11.Equipment.FavoriteToggleIsInstanceScoped",
+      "DiscGolfTour.Session11.Equipment.LegacySelectionIsAtomic",
+      "DiscGolfTour.Session11.Equipment.LoadoutValidationRejectsInvalidIdentity",
+      "DiscGolfTour.Session11.Equipment.MassResolutionPreservesParityAndWearBoundary",
+      "DiscGolfTour.Session11.Equipment.ResolutionRejectsCatalogMismatch",
+      "DiscGolfTour.Session11.Equipment.SeparateSchemaV1SaveIsAtomic",
+      "DiscGolfTour.Persistence.SaveSchema.DefaultVersion",
+      "DiscGolfTour.Persistence.SaveSchema.CurrentVersionAccepted",
+      "DiscGolfTour.Persistence.SaveSchema.StaleAndFutureVersionsRejected",
+      "DiscGolfTour.Character.Session4.Profile.Schema6Migration",
+      "DiscGolfTour.Character.Session4.Profile.FutureSchemaGuard",
+      "DiscGolfTour.Character.Session4.Profile.LegacyMigrationRegression",
+      "DiscGolfTour.Rules.LieSaveSerialization"
+    ],
+    "productionProfileSchemaVersion": 10,
+    "selectedMoldField": "PracticeMoldId",
+    "selectedPlasticField": "PracticePlastic",
+    "shippingIsolatedEquipmentPersistenceAllowed": false
+  },
+  "schema": "DiscGolfTour.Session19V05EquipmentShippingTechnicalReceipt.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "state": "PASS_CANDIDATE_BOUND_V05_EQUIPMENT_TECHNICAL_EVIDENCE",
+  "technicalAssertions": {
+    "exactBoundedCatalogAssetIdentitiesPresent": true,
+    "exactGenericBagIdentityAndSelectionCovered": true,
+    "isolatedEquipmentAtomicFallbackCoveredInAutomationOnly": true,
+    "isolatedEquipmentShippingPersistenceAbsent": true,
+    "productionProfileMigrationCovered": true,
+    "repeatedFlightPhysicsCalibrationCovered": true,
+    "throwLabShippingFeatureAbsentByConsumedReceipt": true
+  },
+  "throwLabExclusion": {
+    "manualPublicLegalReleaseClaimsRemainFalse": true,
+    "passed": true,
+    "requiredAssertions": {
+      "throwLabModuleSymbolAndContentIdentityAbsent": true,
+      "throwLabShippingEntrypointAbsent": true,
+      "throwLabShippingSaveAbsent": true
+    },
+    "sourceReceiptSchema": "DiscGolfTour.Session19V05CareerAiThrowLabShippingExclusionReceipt.v1",
+    "sourceReceiptState": "PASS_CANDIDATE_BOUND_V05_CAREER_AI_THROW_LAB_EXCLUSION"
+  }
+}

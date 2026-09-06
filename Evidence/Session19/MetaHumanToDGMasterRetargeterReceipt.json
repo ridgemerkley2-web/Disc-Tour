@@ -1,0 +1,202 @@
+{
+  "schema": "DiscGolfTour.MetaHumanToDGMasterRetargeterReceipt.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "createdUtc": "2026-08-30T05:14:19Z",
+  "status": "PASS_AUTHOR_AND_COLD_RELOAD_RELEASE_BLOCKED",
+  "direction": "METAHUMAN_TO_DGMASTER_EDITOR_AUTHORING_ONLY",
+  "asset": {
+    "objectPath": "/Game/DiscGolf/Animation/Mocap/Rigs/RTG_MetaHuman_To_DGMaster.RTG_MetaHuman_To_DGMaster",
+    "projectPath": "Content/DiscGolf/Animation/Mocap/Rigs/RTG_MetaHuman_To_DGMaster.uasset",
+    "bytes": 14068,
+    "sha256": "B66227838C0857416119BB8A17534A106704081DAA63833F02D99A9AF4F21CD8",
+    "coldReloadByteIdentityPreserved": true
+  },
+  "protectedInputs": [
+    {
+      "objectPath": "/Game/DiscGolf/Characters/MetaHuman/Generated/MHC_DG_Golfer_Default/Body/SKM_MHC_DG_Golfer_Default_BodyMesh.SKM_MHC_DG_Golfer_Default_BodyMesh",
+      "projectPath": "Content/DiscGolf/Characters/MetaHuman/Generated/MHC_DG_Golfer_Default/Body/SKM_MHC_DG_Golfer_Default_BodyMesh.uasset",
+      "bytes": 2872041,
+      "sha256": "07F8F4236DDFDEFB00EB94A6BEE963B9662EE392EE0A157D05028CDB0CBC8838"
+    },
+    {
+      "objectPath": "/Game/DiscGolf/Characters/MetaHuman/Common/Female/Medium/NormalWeight/Body/metahuman_base_skel.metahuman_base_skel",
+      "projectPath": "Content/DiscGolf/Characters/MetaHuman/Common/Female/Medium/NormalWeight/Body/metahuman_base_skel.uasset",
+      "bytes": 75287,
+      "sha256": "61ED6B9AF704465A265316243A0621DAD4C18ABB7607507B69F880E399F8D234"
+    },
+    {
+      "objectPath": "/MetaHumanCharacter/Animation/Retargeting/IK_MH_IKRig.IK_MH_IKRig",
+      "enginePluginPath": "MetaHumanCharacter/Content/Animation/Retargeting/IK_MH_IKRig.uasset",
+      "bytes": 279493,
+      "sha256": "1136C58EF751446707A3DF84121356D4DD6E9863D33F3C3F3BEA6C3AD5E1CA5A"
+    },
+    {
+      "objectPath": "/Game/DiscGolf/Characters/Meshes/SK_DG_Master.SK_DG_Master",
+      "projectPath": "Content/DiscGolf/Characters/Meshes/SK_DG_Master.uasset",
+      "bytes": 59553,
+      "sha256": "5C461476D6877DFBE3E6DF08FF48CDF5BB940BC8C883D3E3F43058331DCC186F"
+    },
+    {
+      "objectPath": "/Game/DiscGolf/Characters/Meshes/SKEL_DG_Master.SKEL_DG_Master",
+      "projectPath": "Content/DiscGolf/Characters/Meshes/SKEL_DG_Master.uasset",
+      "bytes": 21380,
+      "sha256": "EF51DE8792217A85886B41E0A1A430DCB3B8A14B1FB4910D855DA100262B3FDA"
+    },
+    {
+      "objectPath": "/Game/DiscGolf/Rigs/IK_DG_Master.IK_DG_Master",
+      "projectPath": "Content/DiscGolf/Rigs/IK_DG_Master.uasset",
+      "bytes": 63490,
+      "sha256": "13D29A1D4B4F1E2A6F010D95E052D21A1E974A6789BBFE85AC5E4E260EE72958"
+    }
+  ],
+  "retargetContract": {
+    "explicitMappings": [
+      { "source": "Root", "target": "Root" },
+      { "source": "Spine", "target": "Spine" },
+      { "source": "Neck", "target": "Neck" },
+      { "source": "LeftArm", "target": "Arm_L" },
+      { "source": "RightArm", "target": "Arm_R" },
+      { "source": "LeftLeg", "target": "Leg_L" },
+      { "source": "RightLeg", "target": "Leg_R" }
+    ],
+    "unmappedTargetChains": ["Foot_L", "Foot_R"],
+    "unmappedTargetPolicy": "TOE_ARTICULATION_AND_PLANTED_CONTACT_REQUIRE_NONDESTRUCTIVE_CLEANUP",
+    "targetPose": "MetaHumanAligned",
+    "targetPoseRootOffsetCm": [0.0, 0.0, 0.0],
+    "opControllers": [
+      "IKRetargetPelvisMotionController",
+      "IKRetargetFKChainsController",
+      "IKRetargetRunIKRigController",
+      "IKRetargetRootMotionController",
+      "IKRetargetCurveRemapController"
+    ],
+    "opEnabledMask": [true, true, true, true, true],
+    "fuzzyMappingUsed": false
+  },
+  "runs": {
+    "correctedReadOnlyInputInspection": {
+      "runId": "94c9a699-c3f0-4d3d-819c-49905c29fa73",
+      "log": "C:/DGTour_TestRuns/MotionRetargetAudit/94c9a699-c3f0-4d3d-819c-49905c29fa73/UnrealEditor-Cmd.log",
+      "logBytes": 264318,
+      "logSha256": "A17F4ABFDC20375EBDB1780463E904BA4BBE3BDE6438CB482D5CF539FD375D45",
+      "status": "PASS_READ_ONLY_INPUT_INSPECTION",
+      "exitCode": 0,
+      "unrealErrors": 0
+    },
+    "guardedAuthor": {
+      "runId": "94551518-a3d2-4f0b-bd48-556cca54f1a3",
+      "log": "C:/DGTour_TestRuns/MotionRetargetAuthor/94551518-a3d2-4f0b-bd48-556cca54f1a3/UnrealEditor-Cmd.log",
+      "logBytes": 263260,
+      "logSha256": "7A13FB01E79ED61D8C31C213B9E6ADF53215DC61F31BE1302392506621B7D489",
+      "status": "PASS_AUTHORED_METAHUMAN_TO_DGMASTER_RETARGETER",
+      "exitCode": 0,
+      "unrealErrors": 0,
+      "diskMutation": "EXACTLY_ONE_NEW_RETARGETER_PACKAGE"
+    },
+    "coldReload": {
+      "runId": "c0b45924-f576-4aaf-a144-981cb0c3b067",
+      "log": "C:/DGTour_TestRuns/MotionRetargetReload/c0b45924-f576-4aaf-a144-981cb0c3b067/UnrealEditor-Cmd.log",
+      "logBytes": 260526,
+      "logSha256": "C95281FDF63C2B6A9D65A21D7D398C81BFDB8C3B7EC35DC2D6237AF5801FC0C5",
+      "status": "PASS_ALREADY_CURRENT_NO_ASSET_WRITES",
+      "exitCode": 0,
+      "unrealErrors": 0,
+      "diskMutation": "NONE"
+    }
+  },
+  "tooling": [
+    {
+      "path": "Scripts/author_dg_metahuman_to_dgmaster_retargeter.py",
+      "bytes": 19820,
+      "sha256": "D7F6C998037F05030061ABC7D518348B8009BAC79A2DE19104EDC0AA874979C5"
+    },
+    {
+      "path": "Scripts/inspect_dg_metahuman_to_master_inputs.py",
+      "bytes": 3334,
+      "sha256": "54778A6D08A392865460E192818FD88145B0D16EAEB8C6811857785C8BC8B321"
+    },
+    {
+      "path": "Scripts/validate_dg_metahuman_to_dgmaster_retargeter.py",
+      "bytes": 17711,
+      "sha256": "53787494AE266C6BF1463CB35AFAA7B40C0EF168BEB1C4F1A316FF6D6885F224"
+    },
+    {
+      "path": "Scripts/inspect_dg_metahuman_to_dgmaster_retargeter.py",
+      "bytes": 11343,
+      "sha256": "821BD41C6501EB9DEF82AB3F4F771FEDADC466451BB64E23463A1F27E1B86857"
+    }
+  ],
+  "inspectionBoundary": {
+    "authorAndColdReloadProved": [
+      "EXACT_ASSET_IDENTITY",
+      "EXACT_SOURCE_AND_TARGET_RIG_AND_PREVIEW_MESH_BINDINGS",
+      "OP_CONTROLLER_CLASS_ORDER_AND_ENABLED_MASK",
+      "DEFAULT_FIRST_CHAIN_MAPPING_TABLE",
+      "TARGET_POSE_SELECTION_AND_ROOT_TRANSLATION_OFFSET"
+    ],
+    "authorAndColdReloadDidNotProve": [
+      "PER_OPERATION_CHAIN_MAPPING_TABLES",
+      "PELVIS_MOTION_NUMERIC_SETTINGS",
+      "ROOT_MOTION_SOURCE_HEIGHT_OFFSET_AND_PROPAGATION_SETTINGS",
+      "FK_OR_IK_PER_CHAIN_SETTINGS",
+      "CURVE_COPY_OR_REMAP_SETTINGS",
+      "HEAD_ROTATION_TRANSFER",
+      "ANKLE_TOE_OR_PLANTED_FOOT_BEHAVIOR",
+      "SOLVED_CLIP_EXPORT_OR_DOUBLE_MOTION_ABSENCE"
+    ],
+    "readOnlyRetargeterInspector": {
+      "path": "Scripts/inspect_dg_metahuman_to_dgmaster_retargeter.py",
+      "sourceReady": true,
+      "executedAndReceiptBound": false,
+      "diskMutation": "NONE_WHEN_EXECUTED"
+    },
+    "topologyLimitations": {
+      "unmappedSourceChains": ["Head"],
+      "sourceNeckEnd": "neck_02",
+      "targetNeckEnd": "head",
+      "sourceLegEnds": ["ball_l", "ball_r"],
+      "targetLegEnds": ["foot_l", "foot_r"],
+      "unmappedTargetChains": ["Foot_L", "Foot_R"]
+    }
+  },
+  "preservation": {
+    "existingRuntimeRetargeter": {
+      "objectPath": "/Game/DiscGolf/Characters/MetaHuman/RTG_DGMaster_To_MetaHuman.RTG_DGMaster_To_MetaHuman",
+      "bytes": 22640,
+      "sha256BeforeAndAfter": "CBD3222614A08BE37979A34C29FDF44F3C438B99358B106ED1A5BBF62E21870C",
+      "unchanged": true
+    },
+    "protectedInputHashesUnchanged": true,
+    "sourceFootageCopiedOrImported": false,
+    "runtimeAuthorityChanged": false
+  },
+  "approvalBoundary": {
+    "sourceFootageApproved": false,
+    "retargetedAnimationExists": false,
+    "animationQualityApproved": false,
+    "rootMotionPolicyApproved": false,
+    "pelvisMotionApproved": false,
+    "headMotionApproved": false,
+    "legEndpointCompatibilityApproved": false,
+    "discContactApproved": false,
+    "footContactApproved": false,
+    "productionPromotionAllowed": false,
+    "shippingApproved": false,
+    "legalApproved": false,
+    "releaseReady": false
+  },
+  "remainingWork": [
+    "AUTHENTIC_CLEARED_60_FPS_OR_HIGHER_CAPTURE",
+    "METAHUMAN_BODY_SOLVE_WITH_NONZERO_PROCESSED_RANGE",
+    "READ_ONLY_PER_OPERATION_SETTINGS_INSPECTION_AND_RECEIPT_BINDING",
+    "ROOT_AND_PELVIS_MOTION_POLICY_VALIDATED_ON_A_SOLVED_CLIP_EXPORT",
+    "HEAD_MOTION_MAPPING_OR_NONDESTRUCTIVE_CLEANUP_POLICY",
+    "LEG_ENDPOINT_AND_UNMAPPED_FOOT_CHAIN_EXPORT_VALIDATION",
+    "RETARGETED_SEQUENCE_AUTHORED_THROUGH_THIS_ASSET",
+    "NONDESTRUCTIVE_FOOT_TOE_GRIP_AND_DISC_CONTACT_CLEANUP",
+    "CURRENT_V006_FULL_PROFILE_MATRIX",
+    "SHIPPING_RUNTIME_SEQUENCE_INCLUSION",
+    "NAMED_HUMAN_ANIMATION_CONTACT_CLOTH_HAIR_CONTINUITY_AND_PRODUCT_APPROVALS"
+  ]
+}

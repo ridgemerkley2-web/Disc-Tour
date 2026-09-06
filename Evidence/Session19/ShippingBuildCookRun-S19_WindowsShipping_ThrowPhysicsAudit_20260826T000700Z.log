@@ -1,0 +1,36 @@
+Running AutomationTool...
+Using bundled DotNet SDK version: 10.0 win-x64
+Starting AutomationTool...
+Parsing command line: BuildCookRun -project=C:\DGTour\DiscGolfTour.uproject -noP4 -platform=Win64 -clientconfig=Shipping -build -cook -stage -pak -iostore -archive -archivedirectory=C:\DGTour_Packages\S19_WindowsShipping_ThrowPhysicsAudit_20260826T000700Z -clean -distribution -nodebuginfo -utf8output
+Initializing script modules...
+Total script module initialization time: 0.23 s.
+Using C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe
+Executing commands...
+Setting up ProjectParams for C:\DGTour\DiscGolfTour.uproject
+********** BUILD COMMAND STARTED **********
+Running: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" DiscGolfTourEditor Win64 Development -Project="C:\DGTour\DiscGolfTour.uproject" -Clean -NoHotReload "C:\DGTour\DiscGolfTour.uproject" -NoUBTMakefiles  -log="C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development.txt"
+Log file: C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development.txt
+Cleaning DiscGolfTourEditor binaries...
+Unhandled 1 aggregate exceptions
+Unhandled 3 aggregate exceptions
+Unable to delete C:\DGTour\Binaries\Win64\UnrealEditor-DiscGolfTour.dll (Unable to delete C:\DGTour\Binaries\Win64\UnrealEditor-DiscGolfTour.dll (error 5) - Access is denied.
+Processes with open handles to file:
+  20552: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe (started 08/25/2026 17:08:29)
+    Command line: "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe" C:\DGTour\DiscGolfTour.uproject -game -Session6OutfitVisualCapture -Session6OutfitValidationNoSave -Session6OutfitValidat...
+    Parent: 12092 (exited))
+Unable to delete C:\DGTour\Binaries\Win64\UnrealEditor-DiscGolfRuntimeFoundation.dll (Unable to delete C:\DGTour\Binaries\Win64\UnrealEditor-DiscGolfRuntimeFoundation.dll (error 5) - Access is denied.
+Processes with open handles to file:
+  20552: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe (started 08/25/2026 17:08:29)
+    Command line: "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe" C:\DGTour\DiscGolfTour.uproject -game -Session6OutfitVisualCapture -Session6OutfitValidationNoSave -Session6OutfitValidat...
+    Parent: 12092 (exited))
+Unable to delete C:\DGTour\Binaries\Win64\UnrealEditor-DiscGolfTourDeveloper.dll (Unable to delete C:\DGTour\Binaries\Win64\UnrealEditor-DiscGolfTourDeveloper.dll (error 5) - Access is denied.
+Processes with open handles to file:
+  20552: C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe (started 08/25/2026 17:08:29)
+    Command line: "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe" C:\DGTour\DiscGolfTour.uproject -game -Session6OutfitVisualCapture -Session6OutfitValidationNoSave -Session6OutfitValidat...
+    Parent: 12092 (exited))
+Trace written to file C:\Users\ridge\AppData\Local\UnrealBuildTool\Trace.uba with size 608b
+Took 1.59s to run dotnet.exe, ExitCode=6
+UnrealBuildTool failed. See log for more details. (C:\Users\ridge\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.8\UBA-DiscGolfTourEditor-Win64-Development.txt)
+AutomationTool executed for 0h 0m 3s
+AutomationTool exiting with ExitCode=6 (6)
+BUILD FAILED

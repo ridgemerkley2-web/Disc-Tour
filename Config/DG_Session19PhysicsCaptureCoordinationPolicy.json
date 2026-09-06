@@ -1,0 +1,114 @@
+{
+  "schema": "DiscGolfTour.Session19PhysicsCaptureCoordinationPolicy.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "authority": "PREDECLARED_EXTERNAL_CAPTURE_COORDINATION_NOT_MEASUREMENTS_NOT_APPROVAL",
+  "target": {
+    "platform": "Windows",
+    "configuration": "Shipping",
+    "candidateIdPattern": "^S19_WindowsShipping_[0-9]{8}T[0-9]{6}Z_[0-9a-f]{12}$",
+    "archiveLeaf": "Windows",
+    "launcherRelativePath": "DiscGolfTour.exe",
+    "shippingExecutableRelativePath": "DiscGolfTour/Binaries/Win64/DiscGolfTour-Win64-Shipping.exe"
+  },
+  "measuredReference": {
+    "policyPath": "Config/DG_PhysicsMeasuredReferencePolicy.json",
+    "policySchema": "DiscGolfTour.PhysicsMeasuredReferencePolicy.v1",
+    "policyId": "physics_measured_reference_capture_v1",
+    "validatorPath": "Scripts/validate_dg_physics_measured_reference.py",
+    "readinessAuditPath": "Scripts/audit_dg_physics_capture_readiness.py",
+    "datasetSchema": "DiscGolfTour.PhysicsMeasuredReferenceDataset.v1",
+    "requiredThrowCount": 100,
+    "requiredFitThrowCount": 75,
+    "requiredHoldoutThrowCount": 25,
+    "minimumAcceptedRepeatsPerEquipmentLaunch": 5,
+    "snapshotsMustBeExternalAndAppendOnly": true,
+    "partialSnapshotsMayNotClaimCalibrationAcceptance": true
+  },
+  "routeTelemetry": {
+    "validatorPath": "Scripts/validate_route_telemetry.py",
+    "reportSchema": "disc_golf_route_telemetry",
+    "reportSchemaVersion": 1,
+    "courseId": "PineRidgeChampionship",
+    "layoutId": "Championship",
+    "collisionProfileId": "PineRidgeCompetitiveV2_Fixtures",
+    "holeNumber": 2,
+    "routeIds": [
+      "NeedlePlacement",
+      "LateCrosswindAttack",
+      "LeftPitchOut"
+    ],
+    "attemptsPerRoute": 20,
+    "requiredAttemptCount": 60,
+    "captureRuntime": "DevelopmentEditorGame",
+    "shippingCandidateRouteTelemetryAvailable": false,
+    "shippingCandidateBindingPurpose": "IMMUTABLE_RELEASE_COMPARISON_CONTEXT_NOT_ROUTE_TELEMETRY_EMITTER",
+    "requiredDevelopmentCapabilityMarkers": [
+      "NeedleGateRouteTelemetry",
+      "DGT_SelectTelemetryRoute",
+      "DGT_TelemetryTradeoffUnderstood",
+      "DGT_TelemetryNextShotClear"
+    ],
+    "runtimeFlag": "-NeedleGateRouteTelemetry",
+    "reportRelativePathUnderUserDir": "Saved/RouteTelemetryReports/LatestRouteTelemetry.json",
+    "onePersistentUserDirPerDeclaration": true,
+    "freshOrStructurallyValidPartialReportRequired": true,
+    "humanPlayAndAnnotationsRequired": true,
+    "automationMayNotSynthesizeAttempts": true
+  },
+  "guardedLaunch": {
+    "executableKind": "UnrealEditor.exe",
+    "boundProjectDescriptor": "DiscGolfTour.uproject",
+    "requiredArgumentsBeforeUserDir": [
+      "-game",
+      "-Course=PineRidge",
+      "-Hole=2",
+      "-NeedleGateRouteTelemetry",
+      "-ResX=1920",
+      "-ResY=1080",
+      "-ForceRes",
+      "-dx12",
+      "-NoLoadExistingSave",
+      "-DGNoProfileWrites",
+      "-log"
+    ],
+    "interactiveVisibleWindowRequired": true,
+    "unattendedForbidden": true,
+    "renderOffscreenForbidden": true,
+    "benchmarkOrFixedTimeForbidden": true,
+    "profileSaveFilesForbidden": true,
+    "candidateArchiveMustMatchBeforeAndAfter": true,
+    "launchIntentMustPrecedeProcessStart": true,
+    "routeSnapshotMustFollowProcessExit": true
+  },
+  "externalEvidence": {
+    "projectAndArchiveWritesForbidden": true,
+    "declarationsAreExclusiveCreate": true,
+    "snapshotDirectoriesAreExclusiveCreate": true,
+    "reparsePointsForbidden": true,
+    "routeUserDirLeafMustBeCanonicalUuidV4": true,
+    "routeUserDirMustRemainOutsideProjectAndArchive": true
+  },
+  "schemas": {
+    "declaration": "DiscGolfTour.Session19PhysicsCaptureDeclaration.v1",
+    "routeLaunchIntent": "DiscGolfTour.Session19PhysicsRouteLaunchIntent.v1",
+    "routeLaunchResult": "DiscGolfTour.Session19PhysicsRouteLaunchResult.v1",
+    "routeSnapshotReceipt": "DiscGolfTour.Session19PhysicsRouteSnapshotReceipt.v1",
+    "measuredSnapshotReceipt": "DiscGolfTour.Session19PhysicsMeasuredSnapshotReceipt.v1"
+  },
+  "claimBoundary": {
+    "declarationIsCapturedEvidence": false,
+    "deterministicOrSyntheticDataIsMeasuredReference": false,
+    "routeAutomationMayReplaceHumanAttempts": false,
+    "shippingCandidateEmittedRouteTelemetry": false,
+    "routeCaptureRuntimeIsDevelopmentEditorGame": true,
+    "captureOperatorAttested": false,
+    "measurementQualityReviewed": false,
+    "physicsOwnerApproved": false,
+    "playtestOwnerApproved": false,
+    "productOwnerApproved": false,
+    "calibrationAccepted": false,
+    "releaseReady": false,
+    "disclaimer": "This policy coordinates append-only external capture against one exact Shipping candidate. It does not create field measurements, gameplay attempts, human annotations, approvals, calibration acceptance, or release authority."
+  }
+}

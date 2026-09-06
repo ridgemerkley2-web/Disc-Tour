@@ -2,4 +2,4 @@
 
 #include "CoreMinimal.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogDiscGolfTour, Log, All);
+DISCGOLFTOUR_API DECLARE_LOG_CATEGORY_EXTERN(LogDiscGolfTour, Log, All);

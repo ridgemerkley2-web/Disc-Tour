@@ -1,5 +1,6 @@
 #include "DiscTrajectorySubsystem.h"
 
+#include "DiscGolfMath.h"
 #include "DiscGolfTour.h"
 #include "Dom/JsonObject.h"
 #include "Dom/JsonValue.h"
@@ -7,12 +8,30 @@
 #include "Misc/EngineVersion.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
+#include "Misc/SecureHash.h"
 #include "Serialization/JsonSerializer.h"
 #include "Serialization/JsonWriter.h"
 
 namespace
 {
-constexpr int32 TrajectorySchemaVersion = 3;
+constexpr int32 TrajectorySchemaVersion = 5;
+constexpr int32 RegressionReportSchemaVersion = 3;
+constexpr const TCHAR* CanonicalRegressionPresetFileSha1 =
+    TEXT("193C48DBCEDDBC629FA5873892F061C30BA4FF21");
+
+struct FCanonicalRegressionScenario
+{
+    const TCHAR* PresetId;
+    int32 RenderFps;
+};
+
+constexpr FCanonicalRegressionScenario CanonicalRegressionScenarios[] = {
+    {TEXT("ApexCalm30"), 30},
+    {TEXT("ApexCalm60"), 60},
+    {TEXT("ApexCalm120"), 120},
+    {TEXT("ApexForehandCalm60"), 60},
+    {TEXT("TouchCircle1Center"), 60},
+    {TEXT("TouchCircle2Center"), 60}};
 
 FString PlasticName(EDiscPlastic Plastic)
 {
@@ -30,6 +49,16 @@ FString ThrowStyleName(EThrowStyle Style)
     return Style == EThrowStyle::Forehand ? TEXT("Forehand") : TEXT("Backhand");
 }
 
+FString HandednessName(EDGHandedness Handedness)
+{
+    switch (Handedness)
+    {
+        case EDGHandedness::Right: return TEXT("Right");
+        case EDGHandedness::Left: return TEXT("Left");
+        default: return TEXT("Unknown");
+    }
+}
+
 FString ShotContextName(EDiscShotContext Context)
 {
     switch (Context)
@@ -41,11 +70,59 @@ FString ShotContextName(EDiscShotContext Context)
     }
 }
 
-EDiscShotContext ParseShotContext(const FString& Value)
+bool TryParsePlastic(const FString& Value, EDiscPlastic& OutPlastic)
 {
-    if (Value.Equals(TEXT("Circle1Putt"), ESearchCase::IgnoreCase)) return EDiscShotContext::Circle1Putt;
-    if (Value.Equals(TEXT("Circle2Putt"), ESearchCase::IgnoreCase)) return EDiscShotContext::Circle2Putt;
-    return EDiscShotContext::Drive;
+    if (Value.Equals(TEXT("Base"), ESearchCase::IgnoreCase))
+    {
+        OutPlastic = EDiscPlastic::Base;
+        return true;
+    }
+    if (Value.Equals(TEXT("Tour"), ESearchCase::IgnoreCase))
+    {
+        OutPlastic = EDiscPlastic::Tour;
+        return true;
+    }
+    if (Value.Equals(TEXT("Crystal"), ESearchCase::IgnoreCase))
+    {
+        OutPlastic = EDiscPlastic::Crystal;
+        return true;
+    }
+    return false;
+}
+
+bool TryParseThrowStyle(const FString& Value, EThrowStyle& OutStyle)
+{
+    if (Value.Equals(TEXT("Backhand"), ESearchCase::IgnoreCase))
+    {
+        OutStyle = EThrowStyle::Backhand;
+        return true;
+    }
+    if (Value.Equals(TEXT("Forehand"), ESearchCase::IgnoreCase))
+    {
+        OutStyle = EThrowStyle::Forehand;
+        return true;
+    }
+    return false;
+}
+
+bool TryParseShotContext(const FString& Value, EDiscShotContext& OutContext)
+{
+    if (Value.Equals(TEXT("Drive"), ESearchCase::IgnoreCase))
+    {
+        OutContext = EDiscShotContext::Drive;
+        return true;
+    }
+    if (Value.Equals(TEXT("Circle1Putt"), ESearchCase::IgnoreCase))
+    {
+        OutContext = EDiscShotContext::Circle1Putt;
+        return true;
+    }
+    if (Value.Equals(TEXT("Circle2Putt"), ESearchCase::IgnoreCase))
+    {
+        OutContext = EDiscShotContext::Circle2Putt;
+        return true;
+    }
+    return false;
 }
 
 FString BasketContactName(EBasketContactResult Result)
@@ -74,13 +151,49 @@ FString FixtureTypeName(EDiscGolfFixtureType Type)
     }
 }
 
-EBasketContactResult ParseBasketContact(const FString& Value)
+bool TryParseBasketContact(const FString& Value, EBasketContactResult& OutResult)
 {
-    if (Value.Equals(TEXT("Caught"), ESearchCase::IgnoreCase)) return EBasketContactResult::Caught;
-    if (Value.Equals(TEXT("ChainDeflection"), ESearchCase::IgnoreCase)) return EBasketContactResult::ChainDeflection;
-    if (Value.Equals(TEXT("BandRejection"), ESearchCase::IgnoreCase)) return EBasketContactResult::BandRejection;
-    if (Value.Equals(TEXT("TrayRejection"), ESearchCase::IgnoreCase)) return EBasketContactResult::TrayRejection;
-    return EBasketContactResult::None;
+    if (Value.Equals(TEXT("None"), ESearchCase::IgnoreCase))
+    {
+        OutResult = EBasketContactResult::None;
+        return true;
+    }
+    if (Value.Equals(TEXT("Caught"), ESearchCase::IgnoreCase))
+    {
+        OutResult = EBasketContactResult::Caught;
+        return true;
+    }
+    if (Value.Equals(TEXT("ChainDeflection"), ESearchCase::IgnoreCase))
+    {
+        OutResult = EBasketContactResult::ChainDeflection;
+        return true;
+    }
+    if (Value.Equals(TEXT("BandRejection"), ESearchCase::IgnoreCase))
+    {
+        OutResult = EBasketContactResult::BandRejection;
+        return true;
+    }
+    if (Value.Equals(TEXT("TrayRejection"), ESearchCase::IgnoreCase))
+    {
+        OutResult = EBasketContactResult::TrayRejection;
+        return true;
+    }
+    return false;
+}
+
+bool IsKnownBasketContact(const EBasketContactResult Result)
+{
+    switch (Result)
+    {
+        case EBasketContactResult::None:
+        case EBasketContactResult::Caught:
+        case EBasketContactResult::ChainDeflection:
+        case EBasketContactResult::BandRejection:
+        case EBasketContactResult::TrayRejection:
+            return true;
+        default:
+            return false;
+    }
 }
 
 FString GroundStateName(EDiscGroundState State)
@@ -157,14 +270,55 @@ FString ReliefName(EDiscGolfReliefRule Relief)
     return Relief == EDiscGolfReliefRule::LastInBounds ? TEXT("LastInBounds") : TEXT("PlayFromResult");
 }
 
-EDiscGroundState ParseGroundState(const FString& Value)
+bool TryParseGroundState(const FString& Value, EDiscGroundState& OutState)
 {
-    if (Value.Equals(TEXT("Impact"), ESearchCase::IgnoreCase)) return EDiscGroundState::Impact;
-    if (Value.Equals(TEXT("Skipping"), ESearchCase::IgnoreCase)) return EDiscGroundState::Skipping;
-    if (Value.Equals(TEXT("Sliding"), ESearchCase::IgnoreCase)) return EDiscGroundState::Sliding;
-    if (Value.Equals(TEXT("EdgeRolling"), ESearchCase::IgnoreCase)) return EDiscGroundState::EdgeRolling;
-    if (Value.Equals(TEXT("Settled"), ESearchCase::IgnoreCase)) return EDiscGroundState::Settled;
-    return EDiscGroundState::Airborne;
+    if (Value.Equals(TEXT("Airborne"), ESearchCase::IgnoreCase))
+    {
+        OutState = EDiscGroundState::Airborne;
+        return true;
+    }
+    if (Value.Equals(TEXT("Impact"), ESearchCase::IgnoreCase))
+    {
+        OutState = EDiscGroundState::Impact;
+        return true;
+    }
+    if (Value.Equals(TEXT("Skipping"), ESearchCase::IgnoreCase))
+    {
+        OutState = EDiscGroundState::Skipping;
+        return true;
+    }
+    if (Value.Equals(TEXT("Sliding"), ESearchCase::IgnoreCase))
+    {
+        OutState = EDiscGroundState::Sliding;
+        return true;
+    }
+    if (Value.Equals(TEXT("EdgeRolling"), ESearchCase::IgnoreCase))
+    {
+        OutState = EDiscGroundState::EdgeRolling;
+        return true;
+    }
+    if (Value.Equals(TEXT("Settled"), ESearchCase::IgnoreCase))
+    {
+        OutState = EDiscGroundState::Settled;
+        return true;
+    }
+    return false;
+}
+
+bool IsKnownGroundState(const EDiscGroundState State)
+{
+    switch (State)
+    {
+        case EDiscGroundState::Airborne:
+        case EDiscGroundState::Impact:
+        case EDiscGroundState::Skipping:
+        case EDiscGroundState::Sliding:
+        case EDiscGroundState::EdgeRolling:
+        case EDiscGroundState::Settled:
+            return true;
+        default:
+            return false;
+    }
 }
 
 TSharedRef<FJsonObject> VectorObject(const FVector& Vector)
@@ -176,32 +330,81 @@ TSharedRef<FJsonObject> VectorObject(const FVector& Vector)
     return Object;
 }
 
-FVector ReadVector(const TSharedPtr<FJsonObject>& Object)
+bool ReadFiniteFloatField(const TSharedPtr<FJsonObject>& Object, const TCHAR* Field, float& OutValue)
 {
-    if (!Object.IsValid()) return FVector::ZeroVector;
-    return FVector(
-        Object->GetNumberField(TEXT("x")),
-        Object->GetNumberField(TEXT("y")),
-        Object->GetNumberField(TEXT("z")));
+    double Value = 0.0;
+    if (!Object.IsValid() || !Object->TryGetNumberField(Field, Value)
+        || !FMath::IsFinite(Value)
+        || FMath::Abs(Value) > static_cast<double>(TNumericLimits<float>::Max()))
+    {
+        return false;
+    }
+    OutValue = static_cast<float>(Value);
+    return FMath::IsFinite(OutValue);
+}
+
+bool ReadFiniteVectorField(const TSharedPtr<FJsonObject>& Object, const TCHAR* Field, FVector& OutValue)
+{
+    const TSharedPtr<FJsonObject>* Vector = nullptr;
+    if (!Object.IsValid() || !Object->TryGetObjectField(Field, Vector) || !Vector || !Vector->IsValid())
+    {
+        return false;
+    }
+
+    double X = 0.0;
+    double Y = 0.0;
+    double Z = 0.0;
+    if (!(*Vector)->TryGetNumberField(TEXT("x"), X)
+        || !(*Vector)->TryGetNumberField(TEXT("y"), Y)
+        || !(*Vector)->TryGetNumberField(TEXT("z"), Z)
+        || !FMath::IsFinite(X) || !FMath::IsFinite(Y) || !FMath::IsFinite(Z))
+    {
+        return false;
+    }
+
+    OutValue = FVector(X, Y, Z);
+    return true;
 }
 
 bool ReadFloatRange(const TSharedPtr<FJsonObject>& Object, const TCHAR* Field, float& OutMin, float& OutMax)
 {
     const TArray<TSharedPtr<FJsonValue>>* Values = nullptr;
     if (!Object.IsValid() || !Object->TryGetArrayField(Field, Values) || !Values || Values->Num() != 2) return false;
-    OutMin = static_cast<float>((*Values)[0]->AsNumber());
-    OutMax = static_cast<float>((*Values)[1]->AsNumber());
-    return FMath::IsFinite(OutMin) && FMath::IsFinite(OutMax) && OutMin <= OutMax;
+    double Minimum = 0.0;
+    double Maximum = 0.0;
+    if (!(*Values)[0].IsValid() || !(*Values)[1].IsValid()
+        || !(*Values)[0]->TryGetNumber(Minimum) || !(*Values)[1]->TryGetNumber(Maximum)
+        || !FMath::IsFinite(Minimum) || !FMath::IsFinite(Maximum)
+        || FMath::Abs(Minimum) > static_cast<double>(TNumericLimits<float>::Max())
+        || FMath::Abs(Maximum) > static_cast<double>(TNumericLimits<float>::Max())
+        || Minimum > Maximum)
+    {
+        return false;
+    }
+    OutMin = static_cast<float>(Minimum);
+    OutMax = static_cast<float>(Maximum);
+    return FMath::IsFinite(OutMin) && FMath::IsFinite(OutMax);
 }
 
 bool ReadIntRange(const TSharedPtr<FJsonObject>& Object, const TCHAR* Field, int32& OutMin, int32& OutMax)
 {
-    float Min = 0.0f;
-    float Max = 0.0f;
-    if (!ReadFloatRange(Object, Field, Min, Max)) return false;
-    OutMin = FMath::RoundToInt(Min);
-    OutMax = FMath::RoundToInt(Max);
-    return OutMin <= OutMax;
+    const TArray<TSharedPtr<FJsonValue>>* Values = nullptr;
+    if (!Object.IsValid() || !Object->TryGetArrayField(Field, Values) || !Values || Values->Num() != 2) return false;
+    double Minimum = 0.0;
+    double Maximum = 0.0;
+    if (!(*Values)[0].IsValid() || !(*Values)[1].IsValid()
+        || !(*Values)[0]->TryGetNumber(Minimum) || !(*Values)[1]->TryGetNumber(Maximum)
+        || !FMath::IsFinite(Minimum) || !FMath::IsFinite(Maximum)
+        || FMath::TruncToDouble(Minimum) != Minimum || FMath::TruncToDouble(Maximum) != Maximum
+        || Minimum < static_cast<double>(MIN_int32) || Minimum > static_cast<double>(MAX_int32)
+        || Maximum < static_cast<double>(MIN_int32) || Maximum > static_cast<double>(MAX_int32)
+        || Minimum > Maximum)
+    {
+        return false;
+    }
+    OutMin = static_cast<int32>(Minimum);
+    OutMax = static_cast<int32>(Maximum);
+    return true;
 }
 
 FString CsvFloat(float Value)
@@ -211,6 +414,16 @@ FString CsvFloat(float Value)
 
 void AddFailure(FDiscTrajectorySummary& Summary, const TCHAR* Label, float Value, float Minimum, float Maximum)
 {
+    if (!FMath::IsFinite(Minimum) || !FMath::IsFinite(Maximum) || Minimum > Maximum)
+    {
+        Summary.RegressionFailures.Add(FString::Printf(TEXT("%s envelope is non-finite or reversed"), Label));
+        return;
+    }
+    if (!FMath::IsFinite(Value))
+    {
+        Summary.RegressionFailures.Add(FString::Printf(TEXT("%s result is non-finite"), Label));
+        return;
+    }
     if (Value < Minimum || Value > Maximum)
     {
         Summary.RegressionFailures.Add(FString::Printf(
@@ -225,6 +438,8 @@ TSharedRef<FJsonObject> SummaryObject(const FDiscTrajectorySummary& Summary)
     Object->SetStringField(TEXT("captured_utc"), Summary.CapturedUtc);
     Object->SetStringField(TEXT("preset_id"), Summary.PresetId.ToString());
     Object->SetNumberField(TEXT("render_fps"), Summary.RenderFps);
+    Object->SetStringField(TEXT("handedness"), HandednessName(Summary.Handedness));
+    Object->SetNumberField(TEXT("wind_phase_origin_s"), Summary.WindPhaseOriginSeconds);
     Object->SetNumberField(TEXT("sample_count"), Summary.SampleCount);
     Object->SetNumberField(TEXT("ground_transition_count"), Summary.GroundTransitionCount);
     Object->SetNumberField(TEXT("duration_s"), Summary.DurationSeconds);
@@ -259,14 +474,162 @@ TSharedRef<FJsonObject> SummaryObject(const FDiscTrajectorySummary& Summary)
     Object->SetArrayField(TEXT("regression_failures"), Failures);
     return Object;
 }
+
+#if DG_WITH_DEVELOPMENT_CONTENT
+bool BuildRegressionReportJson(
+    const TArray<FDiscTrajectorySummary>& Summaries,
+    const FString& RunState,
+    bool bPassed,
+    bool bAuthoritativePresetsLoaded,
+    bool bPresentationTraceUnchanged,
+    const FString& PresetFileSha1,
+    const TArray<FString>& ComparisonFailures,
+    FString& OutJson)
+{
+    TSharedRef<FJsonObject> Root = MakeShared<FJsonObject>();
+    Root->SetStringField(TEXT("schema"), TEXT("disc_golf_physics_regression_report"));
+    Root->SetNumberField(TEXT("schema_version"), RegressionReportSchemaVersion);
+    Root->SetStringField(TEXT("run_state"), RunState);
+    Root->SetStringField(TEXT("completed_utc"), FDateTime::UtcNow().ToIso8601());
+    Root->SetBoolField(TEXT("passed"), bPassed);
+    Root->SetBoolField(TEXT("authoritative_presets_loaded"), bAuthoritativePresetsLoaded);
+    Root->SetBoolField(TEXT("presentation_trace_unchanged"), bPresentationTraceUnchanged);
+    Root->SetStringField(TEXT("preset_file_sha1"), PresetFileSha1);
+    Root->SetStringField(TEXT("frame_rate_reference"), TEXT("ApexCalm60"));
+    Root->SetNumberField(TEXT("max_final_carry_delta_m"), 0.35);
+    Root->SetNumberField(TEXT("max_apex_delta_m"), 0.10);
+    Root->SetNumberField(TEXT("max_lateral_delta_m"), 0.25);
+    Root->SetNumberField(TEXT("max_ground_distance_delta_m"), 0.50);
+
+    TArray<TSharedPtr<FJsonValue>> Results;
+    Results.Reserve(Summaries.Num());
+    for (const FDiscTrajectorySummary& Summary : Summaries)
+    {
+        Results.Add(MakeShared<FJsonValueObject>(SummaryObject(Summary)));
+    }
+    Root->SetArrayField(TEXT("results"), Results);
+
+    TArray<TSharedPtr<FJsonValue>> Failures;
+    Failures.Reserve(ComparisonFailures.Num());
+    for (const FString& Failure : ComparisonFailures)
+    {
+        Failures.Add(MakeShared<FJsonValueString>(Failure));
+    }
+    Root->SetArrayField(TEXT("comparison_failures"), Failures);
+
+    OutJson.Reset();
+    const TSharedRef<TJsonWriter<TCHAR, TPrettyJsonPrintPolicy<TCHAR>>> Writer =
+        TJsonWriterFactory<TCHAR, TPrettyJsonPrintPolicy<TCHAR>>::Create(&OutJson);
+    return FJsonSerializer::Serialize(Root, Writer);
+}
+
+bool InvalidateLatestRegressionReport()
+{
+    IFileManager& FileManager = IFileManager::Get();
+    const FString LatestPath = FPaths::Combine(
+        FPaths::ProjectSavedDir(),
+        TEXT("PhysicsRegressionReports/LatestPhysicsRegression.json"));
+    if (FileManager.FileExists(*LatestPath))
+    {
+        FileManager.Delete(*LatestPath, false, true, true);
+    }
+    return !FileManager.FileExists(*LatestPath);
+}
+
+bool CommitLatestRegressionReport(
+    const FString& Json,
+    bool bWriteArchive,
+    FString& OutReportPath,
+    FString& OutError)
+{
+    OutReportPath.Reset();
+    OutError.Reset();
+
+    IFileManager& FileManager = IFileManager::Get();
+    const FString ReportDirectory = FPaths::Combine(
+        FPaths::ProjectSavedDir(), TEXT("PhysicsRegressionReports"));
+    const FString LatestPath = FPaths::Combine(
+        ReportDirectory, TEXT("LatestPhysicsRegression.json"));
+    if (!FileManager.MakeDirectory(*ReportDirectory, true)
+        && !FileManager.DirectoryExists(*ReportDirectory))
+    {
+        OutError = FString::Printf(
+            TEXT("Could not create regression report directory %s"), *ReportDirectory);
+        return false;
+    }
+
+    const FDateTime ReportTime = FDateTime::UtcNow();
+    const FString Stamp = FString::Printf(TEXT("%s%03dZ"),
+        *ReportTime.ToString(TEXT("%Y%m%dT%H%M%S")), ReportTime.GetMillisecond());
+    const FString StagedLatestPath = FPaths::Combine(
+        ReportDirectory,
+        FString::Printf(TEXT("LatestPhysicsRegression.%s.tmp"), *Stamp));
+
+    if (!FFileHelper::SaveStringToFile(
+            Json, *StagedLatestPath,
+            FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM))
+    {
+        FileManager.Delete(*StagedLatestPath, false, true, true);
+        const bool bInvalidated = InvalidateLatestRegressionReport();
+        OutError = FString::Printf(
+            TEXT("Could not stage regression report in %s%s"),
+            *ReportDirectory,
+            bInvalidated ? TEXT("") : TEXT("; prior Latest report could not be invalidated"));
+        return false;
+    }
+
+    if (!FileManager.Move(
+            *LatestPath, *StagedLatestPath,
+            true, true, false, true))
+    {
+        FileManager.Delete(*StagedLatestPath, false, true, true);
+        const bool bInvalidated = InvalidateLatestRegressionReport();
+        OutError = FString::Printf(
+            TEXT("Could not atomically publish regression report to %s%s"),
+            *LatestPath,
+            bInvalidated ? TEXT("") : TEXT("; prior Latest report could not be invalidated"));
+        return false;
+    }
+
+    OutReportPath = LatestPath;
+    if (bWriteArchive)
+    {
+        const FString ArchivePath = FPaths::Combine(
+            ReportDirectory,
+            FString::Printf(TEXT("PhysicsRegression_%s.json"), *Stamp));
+        if (FFileHelper::SaveStringToFile(
+                Json, *ArchivePath,
+                FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM))
+        {
+            UE_LOG(LogDiscGolfTour, Verbose,
+                TEXT("Archived committed regression report to %s."), *ArchivePath);
+        }
+        else
+        {
+            UE_LOG(LogDiscGolfTour, Warning,
+                TEXT("Latest regression report committed, but archival copy could not be written to %s."),
+                *ArchivePath);
+        }
+    }
+    return true;
+}
+#endif
 }
 
 void UDiscTrajectorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
+#if DG_RELEASE_V05_SCOPE
+    ExportDirectory.Reset();
+    LastExportJsonPath.Reset();
+    LastExportCsvPath.Reset();
+    UE_LOG(LogDiscGolfTour, Display,
+        TEXT("In-memory trajectory summaries ready; diagnostic file export is disabled."));
+#else
     ExportDirectory = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("TrajectoryExports"));
     IFileManager::Get().MakeDirectory(*ExportDirectory, true);
 
+#if DG_WITH_DEVELOPMENT_CONTENT
     FString Error;
     if (!LoadRegressionPresets(Error))
     {
@@ -275,17 +638,86 @@ void UDiscTrajectorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
     }
     UE_LOG(LogDiscGolfTour, Display, TEXT("Trajectory export ready at %s with %d regression preset(s)."),
         *ExportDirectory, RegressionPresets.Num());
+#else
+    UE_LOG(LogDiscGolfTour, Display, TEXT("Trajectory export ready at %s."), *ExportDirectory);
+#endif
+#endif
+}
+
+FString UDiscTrajectorySubsystem::ComputeRegressionPresetFileSha1(
+    const TArray<uint8>& RawBytes)
+{
+    uint8 Digest[FSHA1::DigestSize];
+    const uint8 EmptyByte = 0;
+    FSHA1::HashBuffer(
+        RawBytes.IsEmpty() ? static_cast<const void*>(&EmptyByte)
+                           : static_cast<const void*>(RawBytes.GetData()),
+        static_cast<uint64>(RawBytes.Num()),
+        Digest);
+    return BytesToHex(Digest, FSHA1::DigestSize).ToUpper();
+}
+
+bool UDiscTrajectorySubsystem::IsRegressionPresetDigestAuthoritative(
+    const FString& Digest)
+{
+    return Digest.Equals(
+        CanonicalRegressionPresetFileSha1,
+        ESearchCase::CaseSensitive);
+}
+
+bool UDiscTrajectorySubsystem::IsRegressionPresetCommandValid(
+    const FPhysicsRegressionPreset& Preset)
+{
+    // Regression direction is supplied by the golfer at runtime. A canonical
+    // horizontal direction lets the loader validate every preset-authored field
+    // through the same fail-closed contract used by LaunchThrow.
+    return DiscGolfMath::IsThrowCommandValid(Preset.MakeCommand(FVector::ForwardVector));
+}
+
+FDiscTrajectorySummary UDiscTrajectorySubsystem::MakeRegressionLaunchFailureSummary(
+    const FPhysicsRegressionPreset& Preset,
+    EDGHandedness Handedness,
+    const FString& Failure)
+{
+    FDiscTrajectorySummary Summary;
+    Summary.PresetId = Preset.PresetId;
+    Summary.RenderFps = Preset.RenderFps;
+    Summary.Handedness = Handedness;
+    Summary.bWasRegression = true;
+    Summary.bRegressionPassed = false;
+    Summary.RegressionFailures.Add(Failure.IsEmpty()
+        ? TEXT("Authoritative throw boundary rejected the regression launch")
+        : Failure);
+    return Summary;
 }
 
 bool UDiscTrajectorySubsystem::LoadRegressionPresets(FString& OutError)
 {
+    RegressionPresets.Reset();
+    bRegressionPresetsAuthoritative = false;
+    RegressionPresetFileSha1.Reset();
+#if !DG_WITH_DEVELOPMENT_CONTENT
+    OutError = TEXT("Regression presets are unavailable in this build");
+    return false;
+#else
     const FString Path = FPaths::Combine(FPaths::ProjectDir(), TEXT("Data/PhysicsRegressionPresets.json"));
-    FString Text;
-    if (!FFileHelper::LoadFileToString(Text, *Path))
+    TArray<uint8> RawBytes;
+    if (!FFileHelper::LoadFileToArray(RawBytes, *Path))
     {
-        OutError = FString::Printf(TEXT("Cannot read %s"), *Path);
+        OutError = FString::Printf(TEXT("Cannot read raw bytes from %s"), *Path);
         return false;
     }
+    const FString ParsedFileSha1 = ComputeRegressionPresetFileSha1(RawBytes);
+    if (!IsRegressionPresetDigestAuthoritative(ParsedFileSha1))
+    {
+        OutError = FString::Printf(
+            TEXT("Preset file SHA-1 %s does not match canonical contract %s"),
+            *ParsedFileSha1, CanonicalRegressionPresetFileSha1);
+        return false;
+    }
+
+    FString Text;
+    FFileHelper::BufferToString(Text, RawBytes.GetData(), RawBytes.Num());
 
     TSharedPtr<FJsonObject> Root;
     const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Text);
@@ -294,9 +726,15 @@ bool UDiscTrajectorySubsystem::LoadRegressionPresets(FString& OutError)
         OutError = TEXT("Preset JSON is malformed");
         return false;
     }
-    if (Root->GetIntegerField(TEXT("schema_version")) != 2)
+    FString Schema;
+    double SchemaVersion = 0.0;
+    if (!Root->TryGetStringField(TEXT("schema"), Schema)
+        || Schema != TEXT("disc_golf_physics_regression_presets")
+        || !Root->TryGetNumberField(TEXT("schema_version"), SchemaVersion)
+        || !FMath::IsFinite(SchemaVersion)
+        || SchemaVersion != 2.0)
     {
-        OutError = TEXT("Unsupported preset schema version");
+        OutError = TEXT("Unsupported preset schema or version");
         return false;
     }
 
@@ -319,35 +757,54 @@ bool UDiscTrajectorySubsystem::LoadRegressionPresets(FString& OutError)
         }
 
         FPhysicsRegressionPreset Preset;
-        Preset.PresetId = FName(Object->GetStringField(TEXT("id")));
-        Preset.DisplayName = FText::FromString(Object->GetStringField(TEXT("name")));
-        Preset.Description = Object->GetStringField(TEXT("description"));
-        Preset.MoldId = FName(Object->GetStringField(TEXT("mold_id")));
-        const FString Plastic = Object->GetStringField(TEXT("plastic"));
-        Preset.Plastic = Plastic.Equals(TEXT("Base"), ESearchCase::IgnoreCase)
-            ? EDiscPlastic::Base
-            : Plastic.Equals(TEXT("Crystal"), ESearchCase::IgnoreCase)
-                ? EDiscPlastic::Crystal
-                : EDiscPlastic::Tour;
-        Preset.ThrowStyle = Object->GetStringField(TEXT("throw_style")).Equals(TEXT("Forehand"), ESearchCase::IgnoreCase)
-            ? EThrowStyle::Forehand
-            : EThrowStyle::Backhand;
-        Preset.ShotContext = ParseShotContext(Object->GetStringField(TEXT("shot_context")));
-        Preset.StartDistanceMeters = static_cast<float>(Object->GetNumberField(TEXT("start_distance_m")));
-        Preset.AimOffsetDeg = static_cast<float>(Object->GetNumberField(TEXT("aim_offset_deg")));
-        Preset.Power01 = static_cast<float>(Object->GetNumberField(TEXT("power")));
-        Preset.HyzerDeg = static_cast<float>(Object->GetNumberField(TEXT("hyzer_deg")));
-        Preset.NoseAngleDeg = static_cast<float>(Object->GetNumberField(TEXT("nose_deg")));
-        Preset.LaunchAngleDeg = static_cast<float>(Object->GetNumberField(TEXT("launch_deg")));
-        Preset.TimingError = static_cast<float>(Object->GetNumberField(TEXT("timing_error")));
-        Preset.WindMps = ReadVector(Object->GetObjectField(TEXT("wind_mps")));
-        Preset.RenderFps = Object->GetIntegerField(TEXT("render_fps"));
-
-        const TSharedPtr<FJsonObject> Expected = Object->GetObjectField(TEXT("expected"));
+        FString PresetId;
+        FString DisplayName;
+        FString MoldId;
+        FString Plastic;
+        FString ThrowStyle;
+        FString ShotContext;
         FString FinalState;
         FString BasketContact;
         bool bExpectedHoledOut = false;
-        if (Preset.PresetId.IsNone() || SeenIds.Contains(Preset.PresetId)
+        double RenderFps = 0.0;
+        const TSharedPtr<FJsonObject>* ExpectedValue = nullptr;
+        const bool bHasRequiredFields =
+            Object->TryGetStringField(TEXT("id"), PresetId)
+            && Object->TryGetStringField(TEXT("name"), DisplayName)
+            && Object->TryGetStringField(TEXT("description"), Preset.Description)
+            && Object->TryGetStringField(TEXT("mold_id"), MoldId)
+            && Object->TryGetStringField(TEXT("plastic"), Plastic)
+            && Object->TryGetStringField(TEXT("throw_style"), ThrowStyle)
+            && Object->TryGetStringField(TEXT("shot_context"), ShotContext)
+            && TryParsePlastic(Plastic, Preset.Plastic)
+            && TryParseThrowStyle(ThrowStyle, Preset.ThrowStyle)
+            && TryParseShotContext(ShotContext, Preset.ShotContext)
+            && ReadFiniteFloatField(Object, TEXT("start_distance_m"), Preset.StartDistanceMeters)
+            && ReadFiniteFloatField(Object, TEXT("aim_offset_deg"), Preset.AimOffsetDeg)
+            && ReadFiniteFloatField(Object, TEXT("power"), Preset.Power01)
+            && ReadFiniteFloatField(Object, TEXT("hyzer_deg"), Preset.HyzerDeg)
+            && ReadFiniteFloatField(Object, TEXT("nose_deg"), Preset.NoseAngleDeg)
+            && ReadFiniteFloatField(Object, TEXT("launch_deg"), Preset.LaunchAngleDeg)
+            && ReadFiniteFloatField(Object, TEXT("timing_error"), Preset.TimingError)
+            && ReadFiniteVectorField(Object, TEXT("wind_mps"), Preset.WindMps)
+            && Object->TryGetNumberField(TEXT("render_fps"), RenderFps)
+            && FMath::IsFinite(RenderFps)
+            && FMath::TruncToDouble(RenderFps) == RenderFps
+            && RenderFps >= static_cast<double>(MIN_int32)
+            && RenderFps <= static_cast<double>(MAX_int32)
+            && Object->TryGetObjectField(TEXT("expected"), ExpectedValue)
+            && ExpectedValue && ExpectedValue->IsValid();
+
+        if (bHasRequiredFields)
+        {
+            Preset.PresetId = FName(*PresetId);
+            Preset.DisplayName = FText::FromString(DisplayName);
+            Preset.MoldId = FName(*MoldId);
+            Preset.RenderFps = static_cast<int32>(RenderFps);
+        }
+        const TSharedPtr<FJsonObject> Expected = bHasRequiredFields ? *ExpectedValue : nullptr;
+        if (!bHasRequiredFields
+            || Preset.PresetId.IsNone() || Preset.MoldId.IsNone() || SeenIds.Contains(Preset.PresetId)
             || Preset.RenderFps < 15 || Preset.RenderFps > 240
             || !ReadFloatRange(Expected, TEXT("air_carry_m"), Preset.Expected.MinAirCarryMeters, Preset.Expected.MaxAirCarryMeters)
             || !ReadFloatRange(Expected, TEXT("final_carry_m"), Preset.Expected.MinFinalCarryMeters, Preset.Expected.MaxFinalCarryMeters)
@@ -358,27 +815,36 @@ bool UDiscTrajectorySubsystem::LoadRegressionPresets(FString& OutError)
             || !Expected->TryGetStringField(TEXT("final_ground_state"), FinalState)
             || !Expected->TryGetBoolField(TEXT("holed_out"), bExpectedHoledOut)
             || !Expected->TryGetStringField(TEXT("basket_contact"), BasketContact)
-            || !FMath::IsFinite(Preset.StartDistanceMeters) || Preset.StartDistanceMeters < 0.0f || Preset.StartDistanceMeters > 25.0f
-            || !FMath::IsFinite(Preset.AimOffsetDeg) || FMath::Abs(Preset.AimOffsetDeg) > 45.0f)
+            || !TryParseGroundState(FinalState, Preset.Expected.ExpectedFinalGroundState)
+            || !TryParseBasketContact(BasketContact, Preset.Expected.ExpectedBasketContact)
+            || Preset.StartDistanceMeters < 0.0f || Preset.StartDistanceMeters > 25.0f
+            || FMath::Abs(Preset.AimOffsetDeg) > 45.0f
+            || !IsRegressionPresetCommandValid(Preset))
         {
-            OutError = FString::Printf(TEXT("Preset %s is incomplete, duplicated, or outside safe bounds"), *Preset.PresetId.ToString());
+            const FString ErrorId = PresetId.IsEmpty() ? TEXT("<unknown>") : PresetId;
+            OutError = FString::Printf(
+                TEXT("Preset %s is incomplete, duplicated, has unknown enum values, or is outside safe bounds"),
+                *ErrorId);
             return false;
         }
-        Preset.Expected.ExpectedFinalGroundState = ParseGroundState(FinalState);
         Preset.Expected.ExpectedHoledOut = bExpectedHoledOut ? 1 : 0;
         Preset.Expected.bRequireBasketContact = true;
-        Preset.Expected.ExpectedBasketContact = ParseBasketContact(BasketContact);
         SeenIds.Add(Preset.PresetId);
         Parsed.Add(Preset);
     }
 
     RegressionPresets = MoveTemp(Parsed);
+    RegressionPresetFileSha1 = ParsedFileSha1;
+    bRegressionPresetsAuthoritative = true;
     OutError.Reset();
     return true;
+#endif
 }
 
 void UDiscTrajectorySubsystem::BuildFallbackPresets()
 {
+    bRegressionPresetsAuthoritative = false;
+    RegressionPresetFileSha1.Reset();
     RegressionPresets.Reset();
     for (const int32 Fps : {30, 60, 120})
     {
@@ -419,6 +885,8 @@ FDiscTrajectorySummary UDiscTrajectorySubsystem::BuildSummary(
     FDiscTrajectorySummary Summary;
     Summary.PresetId = PresetId;
     Summary.RenderFps = RenderFps;
+    Summary.Handedness = Release.Handedness;
+    Summary.WindPhaseOriginSeconds = Release.WindPhaseOriginSeconds;
     Summary.SampleCount = Samples.Num();
     Summary.GroundTransitionCount = Transitions.Num();
     Summary.DurationSeconds = Telemetry.FlightTimeSeconds;
@@ -482,26 +950,54 @@ bool UDiscTrajectorySubsystem::EvaluateRegression(
         Preset.Expected.MinAirTimeSeconds, Preset.Expected.MaxAirTimeSeconds);
     AddFailure(InOutSummary, TEXT("lateral_m"), InOutSummary.LateralMeters,
         Preset.Expected.MinLateralMeters, Preset.Expected.MaxLateralMeters);
-    if (InOutSummary.GroundContactCount < Preset.Expected.MinGroundContacts
+    if (Preset.Expected.MinGroundContacts > Preset.Expected.MaxGroundContacts)
+    {
+        InOutSummary.RegressionFailures.Add(TEXT("ground_contacts envelope is reversed"));
+    }
+    else if (InOutSummary.GroundContactCount < Preset.Expected.MinGroundContacts
         || InOutSummary.GroundContactCount > Preset.Expected.MaxGroundContacts)
     {
         InOutSummary.RegressionFailures.Add(FString::Printf(TEXT("ground_contacts %d outside [%d, %d]"),
             InOutSummary.GroundContactCount, Preset.Expected.MinGroundContacts, Preset.Expected.MaxGroundContacts));
     }
-    if (Preset.Expected.bRequireFinalGroundState
+    const bool bExpectedGroundStateKnown = IsKnownGroundState(Preset.Expected.ExpectedFinalGroundState);
+    const bool bFinalGroundStateKnown = IsKnownGroundState(InOutSummary.FinalGroundState);
+    if (!bExpectedGroundStateKnown)
+    {
+        InOutSummary.RegressionFailures.Add(TEXT("expected final_ground_state enum is unknown"));
+    }
+    if (!bFinalGroundStateKnown)
+    {
+        InOutSummary.RegressionFailures.Add(TEXT("final_ground_state result enum is unknown"));
+    }
+    if (Preset.Expected.bRequireFinalGroundState && bExpectedGroundStateKnown && bFinalGroundStateKnown
         && InOutSummary.FinalGroundState != Preset.Expected.ExpectedFinalGroundState)
     {
         InOutSummary.RegressionFailures.Add(FString::Printf(TEXT("final_ground_state %s expected %s"),
             *GroundStateName(InOutSummary.FinalGroundState), *GroundStateName(Preset.Expected.ExpectedFinalGroundState)));
     }
-    if (Preset.Expected.ExpectedHoledOut >= 0
+    if (Preset.Expected.ExpectedHoledOut < -1 || Preset.Expected.ExpectedHoledOut > 1)
+    {
+        InOutSummary.RegressionFailures.Add(TEXT("holed_out envelope must be -1, 0, or 1"));
+    }
+    else if (Preset.Expected.ExpectedHoledOut >= 0
         && InOutSummary.bHoledOut != (Preset.Expected.ExpectedHoledOut == 1))
     {
         InOutSummary.RegressionFailures.Add(FString::Printf(TEXT("holed_out %s expected %s"),
             InOutSummary.bHoledOut ? TEXT("true") : TEXT("false"),
             Preset.Expected.ExpectedHoledOut == 1 ? TEXT("true") : TEXT("false")));
     }
-    if (Preset.Expected.bRequireBasketContact
+    const bool bExpectedBasketContactKnown = IsKnownBasketContact(Preset.Expected.ExpectedBasketContact);
+    const bool bLastBasketContactKnown = IsKnownBasketContact(InOutSummary.LastBasketContact);
+    if (!bExpectedBasketContactKnown)
+    {
+        InOutSummary.RegressionFailures.Add(TEXT("expected basket_contact enum is unknown"));
+    }
+    if (!bLastBasketContactKnown)
+    {
+        InOutSummary.RegressionFailures.Add(TEXT("basket_contact result enum is unknown"));
+    }
+    if (Preset.Expected.bRequireBasketContact && bExpectedBasketContactKnown && bLastBasketContactKnown
         && InOutSummary.LastBasketContact != Preset.Expected.ExpectedBasketContact)
     {
         InOutSummary.RegressionFailures.Add(FString::Printf(TEXT("basket_contact %s expected %s"),
@@ -514,6 +1010,209 @@ bool UDiscTrajectorySubsystem::EvaluateRegression(
     }
     InOutSummary.bRegressionPassed = InOutSummary.RegressionFailures.IsEmpty();
     return InOutSummary.bRegressionPassed;
+}
+
+bool UDiscTrajectorySubsystem::EvaluateRegressionSuite(
+    const TArray<FDiscTrajectorySummary>& Summaries,
+    TArray<FString>& OutFailures)
+{
+    OutFailures.Reset();
+    if (Summaries.Num() != UE_ARRAY_COUNT(CanonicalRegressionScenarios))
+    {
+        OutFailures.Add(FString::Printf(
+            TEXT("Canonical regression suite requires exactly %d scenarios; received %d"),
+            UE_ARRAY_COUNT(CanonicalRegressionScenarios), Summaries.Num()));
+    }
+
+    TMap<FName, const FDiscTrajectorySummary*> CanonicalSummaries;
+    TSet<float> WindPhaseOrigins;
+    for (const FDiscTrajectorySummary& Summary : Summaries)
+    {
+        const FCanonicalRegressionScenario* Canonical = nullptr;
+        for (const FCanonicalRegressionScenario& Candidate : CanonicalRegressionScenarios)
+        {
+            if (Summary.PresetId == FName(Candidate.PresetId))
+            {
+                Canonical = &Candidate;
+                break;
+            }
+        }
+
+        if (!Canonical)
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("Unknown regression scenario identity %s"), *Summary.PresetId.ToString()));
+            continue;
+        }
+        if (CanonicalSummaries.Contains(Summary.PresetId))
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("Duplicate regression scenario identity %s"), *Summary.PresetId.ToString()));
+            continue;
+        }
+        CanonicalSummaries.Add(Summary.PresetId, &Summary);
+
+        if (Summary.RenderFps != Canonical->RenderFps)
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("%s render_fps %d expected %d"),
+                Canonical->PresetId, Summary.RenderFps, Canonical->RenderFps));
+        }
+        if (Summary.Handedness != EDGHandedness::Right)
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("%s handedness %s expected Right for the canonical baseline"),
+                Canonical->PresetId, *HandednessName(Summary.Handedness)));
+        }
+        if (!Summary.bWasRegression)
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("%s was not captured as a regression scenario"), Canonical->PresetId));
+        }
+        if (!Summary.bRegressionPassed)
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("%s failed its acceptance envelope"), Canonical->PresetId));
+        }
+        else if (!Summary.RegressionFailures.IsEmpty())
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("%s claims acceptance while retaining failure details"), Canonical->PresetId));
+        }
+        if (Summary.SampleCount <= 1)
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("%s sample_count %d must be greater than 1"),
+                Canonical->PresetId, Summary.SampleCount));
+        }
+        const bool bCanonicalTouchPutt =
+            Summary.PresetId == FName(TEXT("TouchCircle1Center"))
+            || Summary.PresetId == FName(TEXT("TouchCircle2Center"));
+        if (bCanonicalTouchPutt && !Summary.bHoledOut)
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("%s did not hole out"), Canonical->PresetId));
+        }
+        if (bCanonicalTouchPutt
+            && Summary.LastBasketContact != EBasketContactResult::Caught)
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("%s basket_contact %s expected Caught"),
+                Canonical->PresetId,
+                *BasketContactName(Summary.LastBasketContact)));
+        }
+        if (!IsKnownGroundState(Summary.FinalGroundState))
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("%s final_ground_state result enum is unknown"), Canonical->PresetId));
+        }
+        if (!IsKnownBasketContact(Summary.LastBasketContact))
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("%s basket_contact result enum is unknown"), Canonical->PresetId));
+        }
+
+        const auto RequireFinite = [&OutFailures, Canonical](const TCHAR* Label, const float Value)
+        {
+            if (!FMath::IsFinite(Value))
+            {
+                OutFailures.Add(FString::Printf(
+                    TEXT("%s %s result is non-finite"), Canonical->PresetId, Label));
+            }
+        };
+        RequireFinite(TEXT("duration_s"), Summary.DurationSeconds);
+        RequireFinite(TEXT("air_carry_m"), Summary.AirCarryMeters);
+        RequireFinite(TEXT("final_carry_m"), Summary.FinalCarryMeters);
+        RequireFinite(TEXT("apex_m"), Summary.ApexMeters);
+        RequireFinite(TEXT("air_time_s"), Summary.AirTimeSeconds);
+        RequireFinite(TEXT("lateral_m"), Summary.LateralMeters);
+        RequireFinite(TEXT("ground_distance_m"), Summary.GroundDistanceMeters);
+        if (!FMath::IsFinite(Summary.WindPhaseOriginSeconds)
+            || Summary.WindPhaseOriginSeconds < 0.0f
+            || Summary.WindPhaseOriginSeconds >= 4096.0f)
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("%s wind_phase_origin_s is outside the deterministic phase envelope"),
+                Canonical->PresetId));
+        }
+        else if (WindPhaseOrigins.Contains(Summary.WindPhaseOriginSeconds))
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("%s reuses deterministic wind phase %.3f within the suite"),
+                Canonical->PresetId, Summary.WindPhaseOriginSeconds));
+        }
+        else
+        {
+            WindPhaseOrigins.Add(Summary.WindPhaseOriginSeconds);
+        }
+    }
+
+    for (const FCanonicalRegressionScenario& Canonical : CanonicalRegressionScenarios)
+    {
+        if (!CanonicalSummaries.Contains(FName(Canonical.PresetId)))
+        {
+            OutFailures.Add(FString::Printf(
+                TEXT("Canonical regression scenario %s is missing"), Canonical.PresetId));
+        }
+    }
+
+    const FDiscTrajectorySummary* Reference = nullptr;
+    if (const FDiscTrajectorySummary* const* Found = CanonicalSummaries.Find(FName(TEXT("ApexCalm60"))))
+    {
+        Reference = *Found;
+    }
+    if (Reference)
+    {
+        for (const TCHAR* ComparedId : {TEXT("ApexCalm30"), TEXT("ApexCalm120")})
+        {
+            const FDiscTrajectorySummary* const* Found = CanonicalSummaries.Find(FName(ComparedId));
+            if (!Found) continue;
+            const FDiscTrajectorySummary& Summary = **Found;
+            if (!FMath::IsFinite(Summary.FinalCarryMeters) || !FMath::IsFinite(Reference->FinalCarryMeters)
+                || !FMath::IsFinite(Summary.ApexMeters) || !FMath::IsFinite(Reference->ApexMeters)
+                || !FMath::IsFinite(Summary.LateralMeters) || !FMath::IsFinite(Reference->LateralMeters)
+                || !FMath::IsFinite(Summary.GroundDistanceMeters) || !FMath::IsFinite(Reference->GroundDistanceMeters))
+            {
+                continue;
+            }
+
+            const float CarryDelta = FMath::Abs(Summary.FinalCarryMeters - Reference->FinalCarryMeters);
+            const float ApexDelta = FMath::Abs(Summary.ApexMeters - Reference->ApexMeters);
+            const float LateralDelta = FMath::Abs(Summary.LateralMeters - Reference->LateralMeters);
+            const float GroundDelta = FMath::Abs(Summary.GroundDistanceMeters - Reference->GroundDistanceMeters);
+            if (CarryDelta > 0.35f || ApexDelta > 0.10f || LateralDelta > 0.25f || GroundDelta > 0.50f
+                || Summary.GroundContactCount != Reference->GroundContactCount)
+            {
+                OutFailures.Add(FString::Printf(
+                    TEXT("%s differs from ApexCalm60: carry %.3f m, apex %.3f m, lateral %.3f m, ground %.3f m, contacts %d/%d"),
+                    ComparedId, CarryDelta, ApexDelta, LateralDelta, GroundDelta,
+                    Summary.GroundContactCount, Reference->GroundContactCount));
+            }
+        }
+    }
+
+    return OutFailures.IsEmpty();
+}
+
+bool UDiscTrajectorySubsystem::EvaluateRegressionReportAcceptance(
+    const TArray<FDiscTrajectorySummary>& Summaries,
+    bool bAuthoritativePresetsLoaded,
+    bool bPresentationTraceUnchanged,
+    TArray<FString>& OutFailures)
+{
+    bool bPassed = EvaluateRegressionSuite(Summaries, OutFailures);
+    if (!bAuthoritativePresetsLoaded)
+    {
+        OutFailures.Add(
+            TEXT("Canonical preset file was not loaded; built-in fallback captures are diagnostic-only"));
+        bPassed = false;
+    }
+    if (!bPresentationTraceUnchanged)
+    {
+        OutFailures.Add(TEXT("Regression emitted presentation audio events"));
+        bPassed = false;
+    }
+    return bPassed;
 }
 
 FString UDiscTrajectorySubsystem::BuildCsv(
@@ -533,6 +1232,9 @@ FString UDiscTrajectorySubsystem::BuildCsv(
     Lines.Add(FString::Printf(TEXT("# mold_id=%s"), *Disc.MoldId.ToString()));
     Lines.Add(FString::Printf(TEXT("# plastic=%s"), *PlasticName(Disc.Plastic)));
     Lines.Add(FString::Printf(TEXT("# shot_context=%s"), *ShotContextName(Release.ShotContext)));
+    Lines.Add(FString::Printf(TEXT("# handedness=%s"), *HandednessName(Release.Handedness)));
+    Lines.Add(FString::Printf(TEXT("# wind_phase_origin_s=%s"),
+        *CsvFloat(Release.WindPhaseOriginSeconds)));
     Lines.Add(FString::Printf(TEXT("# holed_out=%s"), Summary.bHoledOut ? TEXT("true") : TEXT("false")));
     Lines.Add(FString::Printf(TEXT("# basket_contact=%s"), *BasketContactName(Summary.LastBasketContact)));
     Lines.Add(FString::Printf(TEXT("# course_surface_at_rest=%s"), *CourseSurfaceName(Summary.SurfaceAtRest)));
@@ -614,6 +1316,8 @@ FString UDiscTrajectorySubsystem::BuildJson(
     TSharedRef<FJsonObject> ReleaseObject = MakeShared<FJsonObject>();
     ReleaseObject->SetStringField(TEXT("throw_style"), ThrowStyleName(Release.ThrowStyle));
     ReleaseObject->SetStringField(TEXT("shot_context"), ShotContextName(Release.ShotContext));
+    ReleaseObject->SetStringField(TEXT("handedness"), HandednessName(Release.Handedness));
+    ReleaseObject->SetNumberField(TEXT("wind_phase_origin_s"), Release.WindPhaseOriginSeconds);
     ReleaseObject->SetObjectField(TEXT("direction"), VectorObject(Release.Direction));
     ReleaseObject->SetNumberField(TEXT("timing_error"), Release.TimingError);
     ReleaseObject->SetNumberField(TEXT("quality"), Release.Quality01);
@@ -668,6 +1372,8 @@ FString UDiscTrajectorySubsystem::BuildJson(
 
     TSharedRef<FJsonObject> FinalTelemetry = MakeShared<FJsonObject>();
     FinalTelemetry->SetNumberField(TEXT("flight_time_s"), Telemetry.FlightTimeSeconds);
+    FinalTelemetry->SetNumberField(
+        TEXT("wind_phase_origin_s"), Telemetry.WindPhaseOriginSeconds);
     FinalTelemetry->SetNumberField(TEXT("carry_m"), Telemetry.CarryMeters);
     FinalTelemetry->SetNumberField(TEXT("ground_time_s"), Telemetry.GroundPlayTimeSeconds);
     FinalTelemetry->SetNumberField(TEXT("ground_distance_m"), Telemetry.GroundDistanceMeters);
@@ -697,6 +1403,83 @@ FString UDiscTrajectorySubsystem::BuildJson(
     return Output;
 }
 
+bool UDiscTrajectorySubsystem::DeferNextCaptureExport(FString& OutError)
+{
+#if DG_RELEASE_V05_SCOPE
+    OutError = TEXT("Trajectory file export is unavailable in this release build");
+    return false;
+#else
+    if (bHasPendingDeferredCaptureExport)
+    {
+        OutError = TEXT("A deferred trajectory capture is already pending; flush or discard it first");
+        return false;
+    }
+    if (bCaptureExportDeferralArmed)
+    {
+        OutError = TEXT("Trajectory export deferral is already armed");
+        return false;
+    }
+
+    bCaptureExportDeferralArmed = true;
+    OutError.Reset();
+    return true;
+#endif
+}
+
+bool UDiscTrajectorySubsystem::FlushDeferredCaptureExport(
+    FDiscTrajectorySummary& OutSummary,
+    FString& OutError)
+{
+    OutSummary = FDiscTrajectorySummary();
+#if DG_RELEASE_V05_SCOPE
+    OutError = TEXT("Trajectory file export is unavailable in this release build");
+    return false;
+#else
+    if (!bHasPendingDeferredCaptureExport)
+    {
+        OutError = bCaptureExportDeferralArmed
+            ? TEXT("Trajectory export deferral is armed, but no completed capture is pending")
+            : TEXT("No deferred trajectory capture is pending");
+        return false;
+    }
+
+    if (!WriteCaptureExport(
+        PendingDeferredDisc,
+        PendingDeferredRelease,
+        PendingDeferredSamples,
+        PendingDeferredTransitions,
+        PendingDeferredTelemetry,
+        PendingDeferredSummary,
+        OutError))
+    {
+        // Retain the complete value snapshot so a transient I/O failure can be retried.
+        return false;
+    }
+
+    OutSummary = PendingDeferredSummary;
+    ResetDeferredCapturePayload();
+    OutError.Reset();
+    return true;
+#endif
+}
+
+bool UDiscTrajectorySubsystem::DiscardDeferredCaptureExport()
+{
+    const bool bHadDeferredState = bCaptureExportDeferralArmed || bHasPendingDeferredCaptureExport;
+    bCaptureExportDeferralArmed = false;
+    ResetDeferredCapturePayload();
+    return bHadDeferredState;
+}
+
+bool UDiscTrajectorySubsystem::GetPendingDeferredCaptureSummary(
+    FDiscTrajectorySummary& OutSummary) const
+{
+    OutSummary = bHasPendingDeferredCaptureExport
+        ? PendingDeferredSummary
+        : FDiscTrajectorySummary();
+    return bHasPendingDeferredCaptureExport;
+}
+
 bool UDiscTrajectorySubsystem::CompleteCapture(
     const FResolvedDiscDefinition& Disc,
     const FThrowRelease& Release,
@@ -713,6 +1496,27 @@ bool UDiscTrajectorySubsystem::CompleteCapture(
     if (Samples.IsEmpty())
     {
         OutError = TEXT("Flight produced no trajectory samples");
+        return false;
+    }
+    if (!FMath::IsFinite(Release.WindPhaseOriginSeconds)
+        || Release.WindPhaseOriginSeconds < 0.0f
+        || Release.WindPhaseOriginSeconds >= 4096.0f
+        || !FMath::IsFinite(Telemetry.WindPhaseOriginSeconds)
+        || !FMath::IsNearlyEqual(
+            Telemetry.WindPhaseOriginSeconds,
+            Release.WindPhaseOriginSeconds,
+            KINDA_SMALL_NUMBER)
+        || !FMath::IsNearlyEqual(
+            Telemetry.Release.WindPhaseOriginSeconds,
+            Release.WindPhaseOriginSeconds,
+            KINDA_SMALL_NUMBER))
+    {
+        OutError = TEXT("Trajectory release/telemetry wind phase provenance is invalid or inconsistent");
+        return false;
+    }
+    if (bHasPendingDeferredCaptureExport)
+    {
+        OutError = TEXT("A deferred trajectory capture is already pending; refusing to replace it");
         return false;
     }
 
@@ -738,14 +1542,72 @@ bool UDiscTrajectorySubsystem::CompleteCapture(
         EvaluateRegression(*Preset, OutSummary);
     }
 
-    const FString Json = BuildJson(Disc, Release, Samples, Transitions, Telemetry, OutSummary);
-    const FString Csv = BuildCsv(Disc, Release, Samples, Transitions, OutSummary);
-    LastExportJsonPath = FPaths::Combine(ExportDirectory, OutSummary.CaptureId + TEXT(".json"));
-    LastExportCsvPath = FPaths::Combine(ExportDirectory, OutSummary.CaptureId + TEXT(".csv"));
+#if DG_RELEASE_V05_SCOPE
+    // The summary remains gameplay-observable for HUD, replay and round-flow
+    // consumers, but normal Shipping play never serializes diagnostic samples.
+    LastSummary = OutSummary;
+    bHasLastCapture = true;
+    LastExportJsonPath.Reset();
+    LastExportCsvPath.Reset();
+    OutError.Reset();
+    return true;
+#else
+    if (bCaptureExportDeferralArmed)
+    {
+        // These are deliberate value copies. The flight actor and component are
+        // free to finish their normal lifetime before the deferred export flushes.
+        PendingDeferredDisc = Disc;
+        PendingDeferredRelease = Release;
+        PendingDeferredSamples = Samples;
+        PendingDeferredTransitions = Transitions;
+        PendingDeferredTelemetry = Telemetry;
+        PendingDeferredSummary = OutSummary;
+        bCaptureExportDeferralArmed = false;
+        bHasPendingDeferredCaptureExport = true;
+
+        // The completed flight remains immediately observable even though no disk
+        // serialization is performed on this frame.
+        LastSummary = OutSummary;
+        bHasLastCapture = true;
+        OutError.Reset();
+        UE_LOG(LogDiscGolfTour, Display,
+            TEXT("Trajectory export deferred for capture %s: %d samples, %.2f m air / %.2f m final carry, %.2f m apex"),
+            *OutSummary.CaptureId, OutSummary.SampleCount, OutSummary.AirCarryMeters,
+            OutSummary.FinalCarryMeters, OutSummary.ApexMeters);
+        return true;
+    }
+
+    return WriteCaptureExport(Disc, Release, Samples, Transitions, Telemetry, OutSummary, OutError);
+#endif
+}
+
+bool UDiscTrajectorySubsystem::WriteCaptureExport(
+    const FResolvedDiscDefinition& Disc,
+    const FThrowRelease& Release,
+    const TArray<FDiscTrajectorySample>& Samples,
+    const TArray<FDiscGroundTransition>& Transitions,
+    const FDiscFlightTelemetry& Telemetry,
+    const FDiscTrajectorySummary& Summary,
+    FString& OutError)
+{
+#if DG_RELEASE_V05_SCOPE
+    (void)Disc;
+    (void)Release;
+    (void)Samples;
+    (void)Transitions;
+    (void)Telemetry;
+    (void)Summary;
+    OutError = TEXT("Trajectory file export is unavailable in this release build");
+    return false;
+#else
+    const FString Json = BuildJson(Disc, Release, Samples, Transitions, Telemetry, Summary);
+    const FString Csv = BuildCsv(Disc, Release, Samples, Transitions, Summary);
+    const FString ExportJsonPath = FPaths::Combine(ExportDirectory, Summary.CaptureId + TEXT(".json"));
+    const FString ExportCsvPath = FPaths::Combine(ExportDirectory, Summary.CaptureId + TEXT(".csv"));
     const FString LatestJsonPath = FPaths::Combine(ExportDirectory, TEXT("LatestTrajectory.json"));
     const FString LatestCsvPath = FPaths::Combine(ExportDirectory, TEXT("LatestTrajectory.csv"));
-    if (!FFileHelper::SaveStringToFile(Json, *LastExportJsonPath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM)
-        || !FFileHelper::SaveStringToFile(Csv, *LastExportCsvPath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM)
+    if (!FFileHelper::SaveStringToFile(Json, *ExportJsonPath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM)
+        || !FFileHelper::SaveStringToFile(Csv, *ExportCsvPath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM)
         || !FFileHelper::SaveStringToFile(Json, *LatestJsonPath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM)
         || !FFileHelper::SaveStringToFile(Csv, *LatestCsvPath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM))
     {
@@ -753,101 +1615,145 @@ bool UDiscTrajectorySubsystem::CompleteCapture(
         return false;
     }
 
-    LastSummary = OutSummary;
+    LastExportJsonPath = ExportJsonPath;
+    LastExportCsvPath = ExportCsvPath;
+    LastSummary = Summary;
     bHasLastCapture = true;
     OutError.Reset();
     UE_LOG(LogDiscGolfTour, Display,
         TEXT("Trajectory export %s: %d samples, %.2f m air / %.2f m final carry, %.2f m apex -> %s"),
-        *OutSummary.CaptureId, OutSummary.SampleCount, OutSummary.AirCarryMeters,
-        OutSummary.FinalCarryMeters, OutSummary.ApexMeters, *LastExportJsonPath);
+        *Summary.CaptureId, Summary.SampleCount, Summary.AirCarryMeters,
+        Summary.FinalCarryMeters, Summary.ApexMeters, *LastExportJsonPath);
     return true;
+#endif
+}
+
+void UDiscTrajectorySubsystem::ResetDeferredCapturePayload()
+{
+    bHasPendingDeferredCaptureExport = false;
+    PendingDeferredDisc = FResolvedDiscDefinition();
+    PendingDeferredRelease = FThrowRelease();
+    PendingDeferredSamples.Empty();
+    PendingDeferredTransitions.Empty();
+    PendingDeferredTelemetry = FDiscFlightTelemetry();
+    PendingDeferredSummary = FDiscTrajectorySummary();
 }
 
 bool UDiscTrajectorySubsystem::WriteRegressionSuiteReport(
     const TArray<FDiscTrajectorySummary>& Summaries,
+    bool bPresentationTraceUnchanged,
     FString& OutReportPath,
     bool& OutPassed,
     FString& OutError) const
 {
-    if (Summaries.IsEmpty())
+    OutReportPath.Reset();
+    OutPassed = false;
+    OutError.Reset();
+#if !DG_WITH_DEVELOPMENT_CONTENT
+    (void)Summaries;
+    (void)bPresentationTraceUnchanged;
+    OutError = TEXT("Regression reporting is unavailable in this build");
+    return false;
+#else
+    TArray<FString> ComparisonFailures;
+    OutPassed = EvaluateRegressionReportAcceptance(
+        Summaries, bRegressionPresetsAuthoritative,
+        bPresentationTraceUnchanged, ComparisonFailures);
+
+    FString Json;
+    if (!BuildRegressionReportJson(
+            Summaries,
+            TEXT("completed"),
+            OutPassed,
+            bRegressionPresetsAuthoritative,
+            bPresentationTraceUnchanged,
+            RegressionPresetFileSha1,
+            ComparisonFailures,
+            Json))
     {
-        OutError = TEXT("Regression suite has no completed captures");
+        InvalidateLatestRegressionReport();
+        OutError = TEXT("Could not serialize regression report");
         OutPassed = false;
         return false;
     }
 
-    OutPassed = true;
-    TArray<FString> ComparisonFailures;
-    const FDiscTrajectorySummary* Reference = Summaries.FindByPredicate([](const FDiscTrajectorySummary& Summary)
+    if (!CommitLatestRegressionReport(Json, true, OutReportPath, OutError))
     {
-        return Summary.PresetId == FName(TEXT("ApexCalm60"));
-    });
-    for (const FDiscTrajectorySummary& Summary : Summaries)
-    {
-        OutPassed &= Summary.bRegressionPassed;
-        if (Reference && Summary.PresetId.ToString().StartsWith(TEXT("ApexCalm")) && &Summary != Reference)
-        {
-            const float CarryDelta = FMath::Abs(Summary.FinalCarryMeters - Reference->FinalCarryMeters);
-            const float ApexDelta = FMath::Abs(Summary.ApexMeters - Reference->ApexMeters);
-            const float LateralDelta = FMath::Abs(Summary.LateralMeters - Reference->LateralMeters);
-            const float GroundDelta = FMath::Abs(Summary.GroundDistanceMeters - Reference->GroundDistanceMeters);
-            if (CarryDelta > 0.35f || ApexDelta > 0.10f || LateralDelta > 0.25f || GroundDelta > 0.50f
-                || Summary.GroundContactCount != Reference->GroundContactCount)
-            {
-                ComparisonFailures.Add(FString::Printf(
-                    TEXT("%s differs from ApexCalm60: carry %.3f m, apex %.3f m, lateral %.3f m, ground %.3f m, contacts %d/%d"),
-                    *Summary.PresetId.ToString(), CarryDelta, ApexDelta, LateralDelta, GroundDelta,
-                    Summary.GroundContactCount, Reference->GroundContactCount));
-            }
-        }
-    }
-    if (!Reference)
-    {
-        ComparisonFailures.Add(TEXT("ApexCalm60 reference capture is missing"));
-    }
-    OutPassed &= ComparisonFailures.IsEmpty();
-
-    TSharedRef<FJsonObject> Root = MakeShared<FJsonObject>();
-    Root->SetStringField(TEXT("schema"), TEXT("disc_golf_physics_regression_report"));
-    Root->SetNumberField(TEXT("schema_version"), 2);
-    Root->SetStringField(TEXT("completed_utc"), FDateTime::UtcNow().ToIso8601());
-    Root->SetBoolField(TEXT("passed"), OutPassed);
-    Root->SetStringField(TEXT("frame_rate_reference"), TEXT("ApexCalm60"));
-    Root->SetNumberField(TEXT("max_final_carry_delta_m"), 0.35);
-    Root->SetNumberField(TEXT("max_apex_delta_m"), 0.10);
-    Root->SetNumberField(TEXT("max_lateral_delta_m"), 0.25);
-    Root->SetNumberField(TEXT("max_ground_distance_delta_m"), 0.50);
-    TArray<TSharedPtr<FJsonValue>> Results;
-    for (const FDiscTrajectorySummary& Summary : Summaries)
-    {
-        Results.Add(MakeShared<FJsonValueObject>(SummaryObject(Summary)));
-    }
-    Root->SetArrayField(TEXT("results"), Results);
-    TArray<TSharedPtr<FJsonValue>> Failures;
-    for (const FString& Failure : ComparisonFailures)
-    {
-        Failures.Add(MakeShared<FJsonValueString>(Failure));
-    }
-    Root->SetArrayField(TEXT("comparison_failures"), Failures);
-
-    FString Json;
-    const TSharedRef<TJsonWriter<TCHAR, TPrettyJsonPrintPolicy<TCHAR>>> Writer =
-        TJsonWriterFactory<TCHAR, TPrettyJsonPrintPolicy<TCHAR>>::Create(&Json);
-    FJsonSerializer::Serialize(Root, Writer);
-
-    const FString ReportDirectory = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("PhysicsRegressionReports"));
-    IFileManager::Get().MakeDirectory(*ReportDirectory, true);
-    const FDateTime ReportTime = FDateTime::UtcNow();
-    const FString Stamp = FString::Printf(TEXT("%s%03dZ"),
-        *ReportTime.ToString(TEXT("%Y%m%dT%H%M%S")), ReportTime.GetMillisecond());
-    OutReportPath = FPaths::Combine(ReportDirectory, FString::Printf(TEXT("PhysicsRegression_%s.json"), *Stamp));
-    const FString LatestPath = FPaths::Combine(ReportDirectory, TEXT("LatestPhysicsRegression.json"));
-    if (!FFileHelper::SaveStringToFile(Json, *OutReportPath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM)
-        || !FFileHelper::SaveStringToFile(Json, *LatestPath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM))
-    {
-        OutError = FString::Printf(TEXT("Could not write regression report to %s"), *ReportDirectory);
+        OutPassed = false;
         return false;
     }
-    OutError.Reset();
     return true;
+#endif
+}
+
+bool UDiscTrajectorySubsystem::BeginRegressionSuiteReport(
+    FString& OutReportPath,
+    FString& OutError) const
+{
+    static const TArray<FDiscTrajectorySummary> NoSummaries;
+    return WriteRegressionSuiteStateReport(
+        NoSummaries,
+        TEXT("in_progress"),
+        TEXT("Regression suite has not completed"),
+        false,
+        OutReportPath,
+        OutError);
+}
+
+bool UDiscTrajectorySubsystem::WriteRegressionSuiteFailureReport(
+    const TArray<FDiscTrajectorySummary>& Summaries,
+    const FString& Failure,
+    FString& OutReportPath,
+    FString& OutError) const
+{
+    return WriteRegressionSuiteStateReport(
+        Summaries,
+        TEXT("failed"),
+        Failure.IsEmpty() ? TEXT("Regression suite failed without a reason") : Failure,
+        true,
+        OutReportPath,
+        OutError);
+}
+
+bool UDiscTrajectorySubsystem::WriteRegressionSuiteStateReport(
+    const TArray<FDiscTrajectorySummary>& Summaries,
+    const FString& RunState,
+    const FString& Failure,
+    bool bWriteArchive,
+    FString& OutReportPath,
+    FString& OutError) const
+{
+    OutReportPath.Reset();
+    OutError.Reset();
+#if !DG_WITH_DEVELOPMENT_CONTENT
+    (void)Summaries;
+    (void)RunState;
+    (void)Failure;
+    (void)bWriteArchive;
+    OutError = TEXT("Regression reporting is unavailable in this build");
+    return false;
+#else
+    TArray<FString> Failures;
+    Failures.Add(Failure.IsEmpty()
+        ? TEXT("Regression suite state is not accepted")
+        : Failure);
+
+    FString Json;
+    if (!BuildRegressionReportJson(
+            Summaries,
+            RunState,
+            false,
+            bRegressionPresetsAuthoritative,
+            false,
+            RegressionPresetFileSha1,
+            Failures,
+            Json))
+    {
+        InvalidateLatestRegressionReport();
+        OutError = TEXT("Could not serialize regression state report");
+        return false;
+    }
+    return CommitLatestRegressionReport(
+        Json, bWriteArchive, OutReportPath, OutError);
+#endif
 }

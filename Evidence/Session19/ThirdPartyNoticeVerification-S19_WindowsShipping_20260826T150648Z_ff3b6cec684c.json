@@ -1,0 +1,122 @@
+{
+  "schema": "DiscGolfTour.Session19RuntimeThirdPartyNoticeVerification.v1",
+  "schemaVersion": 1,
+  "session": 19,
+  "candidateId": "S19_WindowsShipping_20260826T150648Z_ff3b6cec684c",
+  "state": "PASS_TECHNICAL_NOTICE_COVERAGE_LEGAL_APPROVAL_PENDING",
+  "policy": {
+    "path": "Config/DG_Session19RuntimeThirdPartyLicensePolicy.json",
+    "bytes": 8458,
+    "sha256": "97CC603D5C93C2DEECB2F6F1CAB275FD3A41427879676D259EAC1EA00B83944C"
+  },
+  "authority": {
+    "path": "Evidence/Session19/UE58RuntimeThirdPartyLicenseAuthority.json",
+    "bytes": 13066,
+    "sha256": "5E52D9A29A89E5FCE2D68D2BC94A1E8C4D178293F85635754AC1E728E9C0C4D7",
+    "engineBuildVersionSha256": "D35D3D5F4DE0636FBB62386B63DEE8056889FB2BAF199D012DC32EE77F7A2997"
+  },
+  "notices": {
+    "archiveIdentity": "NOTICES.txt",
+    "expectedBytes": 49180,
+    "expectedSha256": "884A9E2B635911BF968250D2BCF52517F9312789F8A9678DC718552158CA8264",
+    "actualBytes": 49180,
+    "actualSha256": "884A9E2B635911BF968250D2BCF52517F9312789F8A9678DC718552158CA8264",
+    "exactMatch": true,
+    "nonUfsManifestExactBinding": true
+  },
+  "coverage": {
+    "supportedDllIdentityCount": 13,
+    "stagedDllIdentityCount": 13,
+    "mappedStagedDllIdentityCount": 13,
+    "unmappedStagedDllIdentityCount": 0,
+    "unmappedStagedDlls": [],
+    "supportedButAbsentDlls": [],
+    "stagedDlls": [
+      {
+        "identity": "DiscGolfTour/Binaries/Win64/D3D12/x64/D3D12Core.dll",
+        "bytes": 4831768,
+        "sha256": "9734A9719F44AF1F67B668A3513D55289D610ECF2FC10A389C91BDDCAC42EAF2",
+        "componentId": "d3d12_redistributable"
+      },
+      {
+        "identity": "DiscGolfTour/Binaries/Win64/D3D12/x64/d3d12SDKLayers.dll",
+        "bytes": 4943344,
+        "sha256": "20CA160D9B47AE5CDC016202C2A0F81691E6C240F59DF29B7C952B86986D747E",
+        "componentId": "d3d12_redistributable"
+      },
+      {
+        "identity": "DiscGolfTour/Binaries/Win64/DML/x64/DirectML.dll",
+        "bytes": 18538488,
+        "sha256": "1A84C43657B71D5587385CDB97C2751B5B7D532F8E4BA8DBA5D73748415E4E49",
+        "componentId": "directml"
+      },
+      {
+        "identity": "DiscGolfTour/Binaries/Win64/tbb12.dll",
+        "bytes": 342456,
+        "sha256": "69C9C37C3175C4146F287B8C832D3B5C2050B770C9CD26F8ACAC2BA449372E9A",
+        "componentId": "onetbb"
+      },
+      {
+        "identity": "DiscGolfTour/Binaries/Win64/tbbmalloc.dll",
+        "bytes": 117176,
+        "sha256": "A70C98E717EA7C1B3806E643A3DF2E7A40AB1827A1096EAB53731E4E2C5D92B5",
+        "componentId": "onetbb"
+      },
+      {
+        "identity": "Engine/Binaries/ThirdParty/DbgHelp/dbghelp.dll",
+        "bytes": 2232688,
+        "sha256": "0E7BF6483C6E021B74860FA69B272B8CBB3D37154FA832E650D9ECD066447D2B",
+        "componentId": "dbghelp"
+      },
+      {
+        "identity": "Engine/Binaries/ThirdParty/MsQuic/v220/win64/msquic.dll",
+        "bytes": 2547080,
+        "sha256": "4A45BB092EF8358253DA6FFB33609839961582843761F4B35FBDE6FAEB8B3500",
+        "componentId": "msquic"
+      },
+      {
+        "identity": "Engine/Binaries/ThirdParty/NVIDIA/NVaftermath/Win64/GFSDK_Aftermath_Lib.x64.dll",
+        "bytes": 5799016,
+        "sha256": "343403805CBE0A9671385C762F2AEDE14CCC2D7A822B768F2EA0CE54B4B50EB6",
+        "componentId": "nvidia_aftermath"
+      },
+      {
+        "identity": "Engine/Binaries/ThirdParty/Ogg/Win64/VS2015/libogg_64.dll",
+        "bytes": 59832,
+        "sha256": "3B49A6B1C8E9F877E78F5E17BE5756E43D480149898D1CA70E7989E0CC7D0F63",
+        "componentId": "ogg_vorbis"
+      },
+      {
+        "identity": "Engine/Binaries/ThirdParty/Vorbis/Win64/VS2015/libvorbis_64.dll",
+        "bytes": 1724856,
+        "sha256": "0BC486ED509EE87995C712F82688F147E5481997101B3CA96DC6731FB87EFA74",
+        "componentId": "ogg_vorbis"
+      },
+      {
+        "identity": "Engine/Binaries/ThirdParty/Vorbis/Win64/VS2015/libvorbisfile_64.dll",
+        "bytes": 48568,
+        "sha256": "8B9CDA6EFA49C91F66DCA10067965A1DC83E8778F05863159873E60F25D6A7E0",
+        "componentId": "ogg_vorbis"
+      },
+      {
+        "identity": "Engine/Binaries/ThirdParty/Windows/XAudio2_9/x64/xaudio2_9redist.dll",
+        "bytes": 858144,
+        "sha256": "A9E31476088B8B07A00B82C04DE85E6B02C3671DEAE73AE8DE502C6393505355",
+        "componentId": "xaudio2_redist"
+      },
+      {
+        "identity": "Engine/Plugins/NNE/NNERuntimeORT/Binaries/ThirdParty/Onnxruntime/Win64/onnxruntime.dll",
+        "bytes": 17339384,
+        "sha256": "8EBBD55909E8AC94A0CC25282108E2371A56E1A060A82863C0D631415FC7855B",
+        "componentId": "onnxruntime"
+      }
+    ]
+  },
+  "releaseBoundary": {
+    "releaseReady": false,
+    "legalApproval": false,
+    "distributionClearance": false,
+    "technicalCoverageOnly": true,
+    "remainingDecision": "INDEPENDENT_LICENSE_REVIEW_AND_DISTRIBUTION_APPROVAL"
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "schema": "DiscGolfTour.PhysicsMeasuredReferencePolicy.v1",
+  "schemaVersion": 1,
+  "policyId": "physics_measured_reference_capture_v1",
+  "authority": "PREDECLARED_CAPTURE_AND_COMPARISON_PROTOCOL_NOT_ACCEPTED_MEASURED_DATA",
+  "units": {
+    "distance": "meters",
+    "time": "seconds",
+    "speed": "meters_per_second",
+    "spin": "revolutions_per_minute",
+    "angle": "degrees",
+    "mass": "grams",
+    "wind": "meters_per_second"
+  },
+  "captureConditions": {
+    "maximumMeanWindMps": 2.0,
+    "maximumGustDeltaMps": 1.0,
+    "maximumTerrainSlopeDegrees": 2.0,
+    "minimumTrajectorySampleRateHz": 30.0,
+    "minimumReleaseVideoFrameRateHz": 120.0,
+    "releaseSpeedMeasurementRequired": true,
+    "spinMeasurementRequired": true,
+    "releaseAttitudeMeasurementRequired": true,
+    "trajectoryOrReconstructedVideoRequired": true,
+    "landingObservationRequired": true
+  },
+  "measurementUncertaintyCeilings": {
+    "releaseSpeedMps": 0.5,
+    "spinRpm": 75.0,
+    "releaseAngleDegrees": 1.5,
+    "trajectoryPositionMeters": 0.35,
+    "landingPositionMeters": 0.5,
+    "windMps": 0.5
+  },
+  "equipmentMatrix": [
+    {"category": "neutral_putter", "moldId": "Touch", "plastic": "Tour", "targetMassGrams": 175.0},
+    {"category": "neutral_mid", "moldId": "Compass", "plastic": "Tour", "targetMassGrams": 175.0},
+    {"category": "neutral_fairway", "moldId": "Line", "plastic": "Tour", "targetMassGrams": 175.0},
+    {"category": "understable_control_driver", "moldId": "Vector", "plastic": "Tour", "targetMassGrams": 175.0},
+    {"category": "overstable_distance_driver", "moldId": "Apex", "plastic": "Tour", "targetMassGrams": 175.0}
+  ],
+  "launchMatrix": [
+    {"launchId": "flat_baseline", "throwStyle": "Backhand", "targetHyzerDeg": 0.0, "targetNoseDeg": 0.0, "targetLaunchDeg": 10.0},
+    {"launchId": "controlled_hyzer", "throwStyle": "Backhand", "targetHyzerDeg": 15.0, "targetNoseDeg": 0.0, "targetLaunchDeg": 10.0},
+    {"launchId": "controlled_anhyzer", "throwStyle": "Backhand", "targetHyzerDeg": -15.0, "targetNoseDeg": 0.0, "targetLaunchDeg": 10.0},
+    {"launchId": "forehand_flat_holdout", "throwStyle": "Forehand", "targetHyzerDeg": 0.0, "targetNoseDeg": 0.0, "targetLaunchDeg": 10.0}
+  ],
+  "samplePlan": {
+    "fitLaunchIds": ["flat_baseline", "controlled_hyzer", "controlled_anhyzer"],
+    "holdoutLaunchIds": ["forehand_flat_holdout"],
+    "minimumAcceptedRepeatsPerEquipmentLaunch": 5,
+    "requiredFitSampleCount": 75,
+    "requiredHoldoutSampleCount": 25,
+    "requiredTotalSampleCount": 100,
+    "fitAndHoldoutThrowIdsMustBeDisjoint": true
+  },
+  "requiredThrowFields": [
+    "throwId",
+    "partition",
+    "equipmentCategory",
+    "moldId",
+    "plastic",
+    "massGrams",
+    "launchId",
+    "throwStyle",
+    "releaseSpeedMps",
+    "spinRpm",
+    "releaseHyzerDeg",
+    "releaseNoseDeg",
+    "releaseLaunchDeg",
+    "meanWindMps",
+    "gustDeltaMps",
+    "trajectorySampleRateHz",
+    "trajectoryPoints",
+    "finalCarryMeters",
+    "lateralDisplacementMeters",
+    "apexMeters",
+    "turnOnsetSeconds",
+    "fadeOnsetSeconds",
+    "landingSpeedMps",
+    "landingAngleDeg",
+    "measurementUncertainty"
+  ],
+  "trajectoryPointFields": ["timeSeconds", "xMeters", "yMeters", "zMeters"],
+  "comparisonTolerances": {
+    "finalCarryMetersAbsolute": 4.0,
+    "finalCarryPercent": 5.0,
+    "lateralDisplacementMetersAbsolute": 3.0,
+    "apexMetersAbsolute": 2.0,
+    "turnOnsetSecondsAbsolute": 0.5,
+    "fadeOnsetSecondsAbsolute": 0.5,
+    "landingSpeedMpsAbsolute": 2.0,
+    "landingSpeedPercent": 10.0,
+    "landingAngleDegreesAbsolute": 5.0,
+    "requiredHoldoutPassPercent": 90.0,
+    "outliersRequireWrittenDisposition": true
+  },
+  "routeTelemetryMatrix": {
+    "courseId": "PineRidgeChampionship",
+    "layoutId": "Championship",
+    "collisionProfileId": "PineRidgeCompetitiveV2_Fixtures",
+    "holeNumber": 2,
+    "routeIds": ["NeedlePlacement", "LateCrosswindAttack", "LeftPitchOut"],
+    "attemptsPerRoute": 20,
+    "requiredAttemptCount": 60,
+    "validator": "Scripts/validate_route_telemetry.py"
+  },
+  "claimBoundary": {
+    "templateOrEngineeringRegressionIsAcceptedMeasuredCalibration": false,
+    "physicsOwnerApproval": false,
+    "playtestOwnerApproval": false,
+    "productOwnerApproval": false,
+    "acceptedMeasuredReferenceDatasetPath": null,
+    "releaseReady": false,
+    "disclaimer": "This policy predeclares a capture matrix, measurement-quality ceilings, comparison tolerances, and route-telemetry coverage. It does not supply measurements, approve seed coefficients, establish play feel, or close the release gate."
+  }
+}
