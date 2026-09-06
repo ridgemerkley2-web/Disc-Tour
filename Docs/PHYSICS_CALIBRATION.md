@@ -120,9 +120,33 @@ Measured behaviour of the reference model, coarsest step first:
 | 1/480 | 84.585 | 9.871 | -24.377 | 7.419 |
 | 1/960 | 84.604 | 9.872 | -24.385 | 7.420 |
 
-Total carry spread is 0.569 m (0.67 per cent) and each halving of the step moves the result roughly half as far as the previous halving did, which is the first-order convergence a correctly time-scaled explicit integrator produces. The guard therefore asserts three things: carry spread within 1.0 m, lateral spread within 0.5 m with no sign change, and each successive delta no more than 0.75 of the one before it. The last condition is what distinguishes convergence from coincidence — a solver can sit inside a tolerance band while still varying arbitrarily with step size.
+Total carry spread is 0.569 m (0.67 per cent) and each halving of the step moves the result roughly half as far as the previous halving did, which is the first-order convergence a correctly time-scaled explicit integrator produces.
 
-`python Scripts/reference_flight_check.py --self-test` proves the guard has teeth. The solver decays spin as `exp(-k*dt)` per step, retaining `exp(-k*T)` over a flight of length `T` at any step size. Applying that decay once per step instead would retain `exp(-k*T/dt)` — the classic frame-rate bug — and passing `k = k/dt` at each rate reproduces exactly that through the real integrator. Faulted, the same throw ranges over 51.1 m to 75.8 m: a **24.679 m spread against the correct 0.569 m**, and non-monotone, so it fails both the band and the ratio condition. The self-test fails if the guard ever accepts it.
+The guard asserts four things:
+
+- every sample landed, rather than stalling or hitting the integration cap;
+- carry spread within 2 per cent of carry, floored at 1.0 m;
+- lateral spread within 0.75 m, and no sign change for a throw whose mean lateral exceeds 1.0 m;
+- the finest halving moving carry no more than half as far as the coarsest, when the coarsest halving moved it at least 0.20 m.
+
+The last condition is what separates convergence from coincidence: a solver can sit inside a tolerance band while still varying arbitrarily with step size. Its first formulation compared every consecutive pair of deltas and required each to be at most 0.75 of the previous. That reads well and is wrong in practice — once deltas fall below roughly a centimetre they are quantisation noise from the landing test, and the ratio between two such numbers is meaningless. Swept across 25 configurations it fired on 11 of them, every one of which was converging perfectly well (`launch35` deltas run 0.3663, 0.0045, 0.0470, 0.0235, 0.0006 m — a ratio of 10.5 between the second and third, on a throw whose total spread is 0.442 m). Comparing the finest halving against the coarsest needs no noise floor of its own and cannot be fooled by two adjacent deltas that are both already negligible.
+
+Bounds are relative because short throws converge to smaller absolute spreads than long ones: a single metre-valued limit is either too loose for a 22 m pitch or too tight for a 90 m tailwind drive. The measured worst case across the sweep is 1.28 per cent of carry, so 2 per cent clears every configuration by at least 1.5x.
+
+The sweep covers twelve throws, not one: backhand and forehand, both hands, the hyzer and anhyzer clamps, nose-down, 20 and 100 per cent power, tail/head/crosswind, and a worst-case timing miss. Each engages a term the baseline does not — forehand mirrors the spin sign, the hyzer extremes drive precession hardest, low power sits in the fade regime while full power sits in the turn regime, and wind enters the relative air velocity rather than the integration.
+
+`python Scripts/reference_flight_check.py --self-test` proves the guard has teeth, against two faults in different terms:
+
+- **Per-step spin decay.** The solver decays spin as `exp(-k*dt)` per step, retaining `exp(-k*T)` over a flight of length `T` at any step size. Applying it once per step would retain `exp(-k*T/dt)`; passing `k/dt` at each rate reproduces that through the real integrator. The throw then ranges 51.1–75.8 m: **24.679 m of spread against 0.569 m**, non-monotone.
+- **Per-step precession.** The attitude update integrates `normal_rate*dt`. Applying `normal_rate` once per step is the same mistake in the term that steers turn and fade, reproduced by passing the turn and fade moments as `moment/dt`. Carry then ranges 38.1–66.1 m, **28.062 m of spread**, and lateral swings from 2.8 m to 17.0 m — it corrupts attitude before distance, which is why a carry-only guard is not enough.
+
+The self-test fails if the guard accepts either.
+
+### Flights that do not land
+
+`simulate` now reports `termination` on its result: `landed`, `stalled` (relative airspeed fell below 0.05 m/s), or `time_cap` (the 30 s `INTEGRATION_LIMIT_S` was exhausted). The cap is reachable by a legitimate call — a 8 m/s updraft holds the disc airborne past 30 s — and previously returned a truncated trajectory indistinguishable from a landing. The step guard rejects any sample that did not land, because a truncated flight cannot be compared against a completed one.
+
+Note also that `carry_m` clamps at zero, so a throw driven backwards reports `0.000` rather than a negative distance. A 5 m/s updraft or a 15 m/s headwind both reach that point in the current model. The clamp is longstanding and not changed here, but it means carry alone cannot distinguish "landed at the tee" from "finished behind the thrower".
 
 These tolerances bound the reference model's numerics. They are not a claim about the Unreal solver, which is authoritative and separately covered by the in-engine regression suite.
 
