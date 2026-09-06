@@ -105,6 +105,27 @@ python Scripts/reference_flight_check.py
 
 The Unreal implementation remains authoritative once it can be compiled and tested in-engine.
 
+### Fixed-step independence
+
+The architecture rule that disc flight must not depend on frame rate previously had no source-only guard: the 30/60/120 FPS regression suite proves it in-engine, so a checkout without Unreal could not test it at all. The reference check now sweeps one Apex RHBH throw across 30, 60, 120, 240, 480, and 960 Hz and asserts convergence rather than mere similarity.
+
+Measured behaviour of the reference model, coarsest step first:
+
+| Step | Carry (m) | Peak (m) | Lateral (m) | Flight (s) |
+| --- | --- | --- | --- | --- |
+| 1/30 | 84.036 | 9.825 | -24.251 | 7.400 |
+| 1/60 | 84.344 | 9.849 | -24.390 | 7.417 |
+| 1/120 | 84.478 | 9.861 | -24.370 | 7.417 |
+| 1/240 | 84.546 | 9.868 | -24.360 | 7.417 |
+| 1/480 | 84.585 | 9.871 | -24.377 | 7.419 |
+| 1/960 | 84.604 | 9.872 | -24.385 | 7.420 |
+
+Total carry spread is 0.569 m (0.67 per cent) and each halving of the step moves the result roughly half as far as the previous halving did, which is the first-order convergence a correctly time-scaled explicit integrator produces. The guard therefore asserts three things: carry spread within 1.0 m, lateral spread within 0.5 m with no sign change, and each successive delta no more than 0.75 of the one before it. The last condition is what distinguishes convergence from coincidence — a solver can sit inside a tolerance band while still varying arbitrarily with step size.
+
+`python Scripts/reference_flight_check.py --self-test` proves the guard has teeth. The solver decays spin as `exp(-k*dt)` per step, retaining `exp(-k*T)` over a flight of length `T` at any step size. Applying that decay once per step instead would retain `exp(-k*T/dt)` — the classic frame-rate bug — and passing `k = k/dt` at each rate reproduces exactly that through the real integrator. Faulted, the same throw ranges over 51.1 m to 75.8 m: a **24.679 m spread against the correct 0.569 m**, and non-monotone, so it fails both the band and the ratio condition. The self-test fails if the guard ever accepts it.
+
+These tolerances bound the reference model's numerics. They are not a claim about the Unreal solver, which is authoritative and separately covered by the in-engine regression suite.
+
 ## Critical limitation
 Modern disc-golf molds differ dramatically in rim width, dome, nose, mass distribution, surface, plastic stiffness, wear, and stability. The current coefficients are therefore **seeds**. The game should be calibrated against measured golf-disc throws before calling the physics simulation-grade.
 

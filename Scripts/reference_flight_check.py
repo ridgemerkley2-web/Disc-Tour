@@ -202,8 +202,12 @@ def resolve_ground_impact(*, velocity: V, surface_normal: V, disc_normal: V,
 def simulate(*, throw_style: str = "backhand", handedness: str = "right",
              hyzer_deg: float=3.0, power: float=0.82,
              nose_deg: float=1.0, launch_deg: float=7.0, timing_error: float=0.0,
-             wind: V=(0.0,0.0,0.0)) -> Result:
-    a = Aero()
+             wind: V=(0.0,0.0,0.0), dt: float=0.0, aero: Aero=None) -> Result:
+    # dt is explicit so the fixed-step contract can be exercised directly. It
+    # defaults to the module step rather than binding DT at definition time, so
+    # a caller that overrides DT still gets the step it asked for.
+    dt = DT if dt <= 0.0 else dt
+    a = aero if aero is not None else Aero()
     rotation_sign = throw_rotation_sign(
         throw_style=throw_style, handedness=handedness)
     release = resolve_release(
@@ -233,7 +237,7 @@ def simulate(*, throw_style: str = "backhand", handedness: str = "right",
     peak = pos[2]
     t = 0.0
 
-    for _ in range(int(30.0/DT)):
+    for _ in range(int(30.0/dt)):
         air = sub(vel, wind)
         speed = mag(air)
         if speed < 0.05:
@@ -253,7 +257,7 @@ def simulate(*, throw_style: str = "backhand", handedness: str = "right",
         qarea = 0.5*RHO*a.area*speed*speed
         aero_force = add(mul(lift_dir, cl*qarea), mul(uvel, -cd*qarea))
         accel = add(mul(aero_force, 1.0/a.mass), (0.0,0.0,-G))
-        vel = add(vel, mul(accel, DT))
+        vel = add(vel, mul(accel, dt))
 
         turn_w = clamp((speed-a.turn_above)/8.0, 0.0, 1.0)
         fade_w = clamp((a.fade_below-speed)/8.0, 0.0, 1.0)
@@ -267,14 +271,14 @@ def simulate(*, throw_style: str = "backhand", handedness: str = "right",
             rate = mag(normal_rate)
             if rate > 2.5:
                 normal_rate = mul(normal_rate, 2.5/rate)
-            normal = norm(add(normal, mul(normal_rate, DT)), normal)
+            normal = norm(add(normal, mul(normal_rate, dt)), normal)
 
-        spin *= math.exp(-a.spin_decay*DT)
+        spin *= math.exp(-a.spin_decay*dt)
         preferred_forward = sub(vel, mul(normal, dot(vel, normal)))
         forward = norm(preferred_forward, forward)
-        pos = add(pos, mul(vel, DT))
+        pos = add(pos, mul(vel, dt))
         peak = max(peak, pos[2])
-        t += DT
+        t += dt
 
         if not all(math.isfinite(x) for x in (*pos, *vel, *normal, spin)):
             raise AssertionError("non-finite state encountered")
@@ -288,6 +292,107 @@ def simulate(*, throw_style: str = "backhand", handedness: str = "right",
         flight_s=t,
         final_speed_mps=mag(vel),
     )
+
+
+# Fixed-step rates the guard sweeps. 30 and 60 bracket the frame rates the
+# engine-side regression suite runs at; the finer steps establish the limit the
+# coarser ones must be converging toward.
+CONVERGENCE_RATES_HZ = (30, 60, 120, 240, 480, 960)
+
+# Measured spread across that sweep is 0.57 m of carry and 0.14 m of lateral.
+# These bounds sit above the measurement with room for ordinary retuning, and far
+# below the metre-scale divergence a genuinely step-dependent term produces.
+CONVERGENCE_CARRY_TOLERANCE_M = 1.0
+CONVERGENCE_LATERAL_TOLERANCE_M = 0.5
+CONVERGENCE_RATIO_LIMIT = 0.75
+
+
+def fixed_step_convergence(*, aero_for_rate=None, **throw):
+    """Simulate one throw across the fixed-step sweep, coarsest first.
+
+    aero_for_rate lets a caller vary the disc profile per step size, which is how
+    the self-test reproduces a step-dependent solver using the real integrator.
+    """
+    samples = []
+    for hz in CONVERGENCE_RATES_HZ:
+        dt = 1.0/hz
+        aero = aero_for_rate(dt) if aero_for_rate is not None else None
+        samples.append((hz, simulate(dt=dt, aero=aero, **throw)))
+    return samples
+
+
+def assert_step_independent(samples, label: str) -> None:
+    """Assert the throw converges as the step shrinks, rather than merely varying.
+
+    AGENTS.md forbids frame-rate-dependent flight. A correctly time-scaled
+    integrator answers the same question at every step size, so halving the step
+    must move the result by less than the previous halving did and the whole
+    sweep must stay inside a narrow band. A term applied per step instead of per
+    second passes neither test: its contribution scales with the step count, so
+    the spread grows and the deltas never shrink.
+    """
+    carries = [r.carry_m for _, r in samples]
+    laterals = [r.lateral_m for _, r in samples]
+    spread = max(carries) - min(carries)
+    assert spread <= CONVERGENCE_CARRY_TOLERANCE_M, (
+        f"{label} carry varies {spread:.3f} m across "
+        f"{CONVERGENCE_RATES_HZ[0]}-{CONVERGENCE_RATES_HZ[-1]} Hz "
+        f"(limit {CONVERGENCE_CARRY_TOLERANCE_M} m): flight depends on step size"
+    )
+    lateral_spread = max(laterals) - min(laterals)
+    assert lateral_spread <= CONVERGENCE_LATERAL_TOLERANCE_M, (
+        f"{label} lateral varies {lateral_spread:.3f} m across the step sweep "
+        f"(limit {CONVERGENCE_LATERAL_TOLERANCE_M} m)"
+    )
+    assert len({l < 0.0 for l in laterals}) == 1, (
+        f"{label} lateral tendency changed sign with step size: {laterals}"
+    )
+    deltas = [abs(carries[i+1]-carries[i]) for i in range(len(carries)-1)]
+    for index in range(1, len(deltas)):
+        if deltas[index-1] < 1e-6:
+            continue
+        ratio = deltas[index]/deltas[index-1]
+        assert ratio <= CONVERGENCE_RATIO_LIMIT, (
+            f"{label} is not converging: halving the step from "
+            f"1/{CONVERGENCE_RATES_HZ[index]}s changed carry by "
+            f"{deltas[index]:.4f} m against {deltas[index-1]:.4f} m for the "
+            f"previous halving (ratio {ratio:.2f} > {CONVERGENCE_RATIO_LIMIT})"
+        )
+
+
+def self_test() -> None:
+    """Prove the step-independence guard fails on a step-dependent solver.
+
+    Spin decay is applied per second. Reapplying it per step instead is the exact
+    mistake the guard exists to catch, so the guard must reject it.
+    """
+    baseline = fixed_step_convergence(power=0.82, hyzer_deg=3.0)
+    assert_step_independent(baseline, "baseline")
+
+    # The solver applies decay as exp(-k*dt) per step, so over a flight of length
+    # T it retains exp(-k*T) regardless of step size. Applying the same decay once
+    # per step instead would retain exp(-k*T/dt) -- the classic frame-rate bug.
+    # Setting k to original/dt for each rate reproduces exactly that: every step
+    # then decays by a constant exp(-original), independent of how long it lasts.
+    per_second = Aero().spin_decay
+    samples = fixed_step_convergence(
+        aero_for_rate=lambda dt: Aero(spin_decay=per_second/dt),
+        power=0.82, hyzer_deg=3.0,
+    )
+    checks = 0
+    try:
+        assert_step_independent(samples, "injected per-step spin decay")
+    except AssertionError:
+        checks += 1
+    else:
+        carries = [r.carry_m for _, r in samples]
+        raise AssertionError(
+            "guard accepted a per-step spin decay; carries were "
+            + ", ".join(f"{c:.3f}" for c in carries)
+        )
+
+    assert checks == 1, "self-test did not exercise the guard"
+    print(f"REFERENCE FLIGHT STEP-INDEPENDENCE SELF-TEST PASS: {checks}/1")
 
 
 def check() -> None:
@@ -377,6 +482,10 @@ def check() -> None:
         "ground response forked on spin sign"
     )
 
+    convergence = fixed_step_convergence(power=0.82, hyzer_deg=3.0)
+    assert_step_independent(convergence, "Apex RHBH 82% / 3 deg hyzer")
+    carries = [r.carry_m for _, r in convergence]
+
     print("Reference flight envelope OK")
     print(f"  Apex RHBH 82% / 3 deg hyzer: carry={baseline.carry_m:.1f}m ({baseline.carry_m*3.28084:.0f}ft), peak={baseline.peak_m:.1f}m, flight={baseline.flight_s:.2f}s")
     print(
@@ -386,10 +495,17 @@ def check() -> None:
     )
     print(f"  Release model: perfect={perfect.speed_mps:.2f}m/s, 75% miss={late.speed_mps:.2f}m/s, aim={late.aim_offset_deg:+.2f}deg")
     print(f"  Ground model: fairway={fairway_skip.state}, rough={rough_landing.state}, edge={edge_roll.state}, base/crystal={base_borderline.state}/{crystal_borderline.state}")
+    print(
+        f"  Fixed step {CONVERGENCE_RATES_HZ[0]}-{CONVERGENCE_RATES_HZ[-1]} Hz: "
+        f"carry spread={max(carries)-min(carries):.3f}m, converging"
+    )
 
 
 if __name__ == "__main__":
     try:
+        if "--self-test" in sys.argv:
+            self_test()
+            sys.exit(0)
         check()
     except AssertionError as exc:
         print(f"Reference flight envelope FAILED: {exc}")
