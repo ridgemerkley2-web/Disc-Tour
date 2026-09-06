@@ -142,6 +142,31 @@ The sweep covers twelve throws, not one: backhand and forehand, both hands, the 
 
 The self-test fails if the guard accepts either.
 
+### Invariants beyond the envelope
+
+Envelope bounds catch catastrophe. They do not catch a solver that is quietly wrong in a way that still lands the disc 84 m away, so the check also asserts properties that must hold regardless of how the coefficients are later calibrated:
+
+- **Handedness is a reflection of the whole problem.** Simulating right-handed in wind `(wx, wy, wz)` and left-handed in wind `(wx, -wy, wz)` must agree bit-for-bit on carry, peak, flight time and final speed, with lateral exactly opposed, across ten configurations including both hyzer clamps and oblique wind. The older flat-mirror assertions are all taken at `hyzer_deg = 0`, where the attitude rotation is the identity — so a handedness fork in the attitude path was invisible to them. Measured deviation is exactly zero on every field, so the 1e-9 tolerance is pure headroom.
+- **Turn and fade oppose.** Isolating each moment against a neutral run, the two lateral deviations must have non-positive product. This is the binding rule from the *Turn/fade convention* section above, and it had no coverage at all. The `<= 0` form is deliberate: an overstable recalibration whose turn window sits above the release ceiling contributes exactly zero turn, which must stay legal.
+- **Contact resolution is frame-equivariant.** Rotating velocity, surface normal and disc normal together — about arbitrary axes, not only world Z — must rotate the outgoing velocity by the same rotation and leave state, incidence, edge angle, restitution and friction untouched. Measured error is 1.2e-14 m/s over 4,000 random rotations.
+- **A head-on impact reads 90 degrees.** A disc arriving straight down the surface normal has 90 degrees of incidence by definition and must leave along that normal. This pins the normal/tangent split, which frame-equivariance cannot see: a scale error there rotates correctly while changing the outgoing velocity on 99.8 per cent of oblique impacts.
+- **The release penalty never rewards a worse throw**, is not reshaped by handedness or by throw style, and inside the perfect band does not reach the solver at all. Style sets different speed and spin ceilings; it must not change the shape of the miss penalty.
+- **Crosswind couples with the right sign**, on the two named baselines only. Deliberately narrow: for throws whose own fade dominates, the ordering legitimately reverses.
+
+### Proving the check has teeth
+
+A check that asserts only what the code already does is indistinguishable from no check. `python Scripts/mutation_test_reference_flight.py` injects eleven known-bad behaviours into a scratch copy and requires the reference check to reject every one: per-step spin decay, turn/fade collapsed to one sign, hyzer ignoring handedness, left-handed spin scaled 2 per cent, timing bypassing the release, wind sign flipped, wind ignored, contact measured against world Z, a scale error in the normal/tangent split, a non-monotone release penalty, and a penalty reshaped by throw style. All eleven are caught. A survivor is a hole in the envelope, not a pass.
+
+Run it after any change to the flight, release or ground models. The repository is never modified; mutants are written to a temporary directory and deleted.
+
+### Two defects in the harness itself
+
+Both were found by adversarial review of the check rather than of the physics, and both are fixed.
+
+**Assertions could be stripped.** Every enforcement point in the reference check is an `assert`, and CPython removes all of them under `-O`, `-OO` or `PYTHONOPTIMIZE`. A copy carrying the per-step spin-decay bug printed `Reference flight envelope OK`, exited 0, and reported `12 throws converge, baseline carry spread=24.679m` in the same breath — a fault 17.9x over the guard's own limit, reported as success. Because Unreal is not installed on a source checkout, this script is one of only two tests that run at all, so a false green here is worse than no test. The module now refuses to run with assertions disabled, and the step guard raises explicitly rather than asserting.
+
+**A negative step was silently swallowed.** `dt = DT if dt <= 0.0 else dt` replaced any non-positive step with the module default, so `dt = -1/240` returned bit-identical results to the default and a sign slip in a rate table would have turned the whole sweep into six identical runs — reporting convergence while testing nothing, and passing even on a solver carrying the exact bug the sweep exists to catch. `dt` is now honoured or rejected: exactly `0.0` remains the documented sentinel for the module step, and anything else non-positive or non-finite raises. The authoritative solver band-limits its own step the same way.
+
 ### Flights that do not land
 
 `simulate` now reports `termination` on its result: `landed`, `stalled` (relative airspeed fell below 0.05 m/s), or `time_cap` (the 30 s `INTEGRATION_LIMIT_S` was exhausted). The cap is reachable by a legitimate call — a 8 m/s updraft holds the disc airborne past 30 s — and previously returned a truncated trajectory indistinguishable from a landing. The step guard rejects any sample that did not land, because a truncated flight cannot be compared against a completed one.

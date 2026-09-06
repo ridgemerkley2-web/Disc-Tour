@@ -12,6 +12,30 @@ import math
 import sys
 from typing import Tuple
 
+# Enforcement below is written as `assert`, and CPython strips every one of them
+# under -O, -OO or PYTHONOPTIMIZE. Without this refusal the script prints its OK
+# banner and exits 0 no matter what the solver does: a copy carrying the per-step
+# spin-decay bug this file exists to catch reports "12 throws converge, baseline
+# carry spread=24.679m" and succeeds. Because Unreal is not installed on a source
+# checkout, this script is one of only two tests that run at all, so a false green
+# here is worse than no test. Fail closed instead.
+if not __debug__:
+    raise SystemExit(
+        "reference_flight_check requires assertions: re-run without "
+        "-O/-OO/PYTHONOPTIMIZE. Every check in this file is an assert and the "
+        "optimiser removes them, which would report success unconditionally."
+    )
+
+class EnvelopeFailure(AssertionError):
+    """An envelope violation, raised explicitly so -O cannot remove it."""
+
+
+def require(condition, message: str) -> None:
+    """Enforce an envelope rule. Unlike assert, a raise survives the optimiser."""
+    if not condition:
+        raise EnvelopeFailure(message)
+
+
 V = Tuple[float, float, float]
 DT = 1.0 / 240.0
 INTEGRATION_LIMIT_S = 30.0
@@ -208,10 +232,23 @@ def simulate(*, throw_style: str = "backhand", handedness: str = "right",
              hyzer_deg: float=3.0, power: float=0.82,
              nose_deg: float=1.0, launch_deg: float=7.0, timing_error: float=0.0,
              wind: V=(0.0,0.0,0.0), dt: float=0.0, aero: Aero=None) -> Result:
-    # dt is explicit so the fixed-step contract can be exercised directly. It
-    # defaults to the module step rather than binding DT at definition time, so
-    # a caller that overrides DT still gets the step it asked for.
-    dt = DT if dt <= 0.0 else dt
+    # dt is explicit so the fixed-step contract can be exercised directly, and
+    # resolves at call time rather than binding DT at definition time so a caller
+    # that overrides DT still gets the step it asked for. Exactly 0.0 is the
+    # documented sentinel for "use the module step"; anything else non-positive
+    # or non-finite is rejected rather than substituted. Silently swapping in DT
+    # would let a sign slip in a rate table turn the step sweep into six
+    # identical runs of the default step -- which reports convergence while
+    # testing nothing, and passes even on a solver carrying the exact
+    # frame-rate bug the sweep exists to catch. The authoritative solver
+    # band-limits its own step the same way.
+    if dt == 0.0:
+        dt = DT
+    elif not math.isfinite(dt) or dt <= 0.0:
+        raise EnvelopeFailure(
+            f"simulate() needs a positive finite step; got dt={dt!r}. "
+            "Pass 0.0 to use the module step."
+        )
     a = aero if aero is not None else Aero()
     rotation_sign = throw_rotation_sign(
         throw_style=throw_style, handedness=handedness)
@@ -378,32 +415,30 @@ def assert_step_independent(samples, label: str) -> None:
     the spread grows and the deltas never shrink.
     """
     for hz, result in samples:
-        assert result.termination == "landed", (
-            f"{label} at {hz} Hz did not land: termination={result.termination}. "
-            "A truncated flight cannot be compared against a completed one."
-        )
+        require(result.termination == "landed",
+                f"{label} at {hz} Hz did not land: "
+                f"termination={result.termination}. A truncated flight cannot "
+                "be compared against a completed one.")
     carries = [r.carry_m for _, r in samples]
     laterals = [r.lateral_m for _, r in samples]
 
     spread = max(carries) - min(carries)
     limit = max(CONVERGENCE_CARRY_FLOOR_M,
                 CONVERGENCE_CARRY_TOLERANCE_FRACTION*carries[-1])
-    assert spread <= limit, (
-        f"{label} carry varies {spread:.3f} m across "
-        f"{CONVERGENCE_RATES_HZ[0]}-{CONVERGENCE_RATES_HZ[-1]} Hz "
-        f"(limit {limit:.3f} m): flight depends on step size"
-    )
+    require(spread <= limit,
+            f"{label} carry varies {spread:.3f} m across "
+            f"{CONVERGENCE_RATES_HZ[0]}-{CONVERGENCE_RATES_HZ[-1]} Hz "
+            f"(limit {limit:.3f} m): flight depends on step size")
 
     lateral_spread = max(laterals) - min(laterals)
-    assert lateral_spread <= CONVERGENCE_LATERAL_TOLERANCE_M, (
-        f"{label} lateral varies {lateral_spread:.3f} m across the step sweep "
-        f"(limit {CONVERGENCE_LATERAL_TOLERANCE_M} m)"
-    )
+    require(lateral_spread <= CONVERGENCE_LATERAL_TOLERANCE_M,
+            f"{label} lateral varies {lateral_spread:.3f} m across the step "
+            f"sweep (limit {CONVERGENCE_LATERAL_TOLERANCE_M} m)")
     mean_lateral = sum(laterals)/len(laterals)
     if abs(mean_lateral) > CONVERGENCE_LATERAL_SIGN_MIN_M:
-        assert len({l < 0.0 for l in laterals}) == 1, (
-            f"{label} lateral tendency changed sign with step size: {laterals}"
-        )
+        require(len({l < 0.0 for l in laterals}) == 1,
+                f"{label} lateral tendency changed sign with step size: "
+                f"{laterals}")
 
     # Halving the step must shed error, not merely move the answer. Comparing the
     # finest halving against the coarsest is robust where a pairwise ratio is not:
@@ -411,12 +446,285 @@ def assert_step_independent(samples, label: str) -> None:
     # deltas that are both already negligible.
     deltas = [abs(carries[i+1]-carries[i]) for i in range(len(carries)-1)]
     if deltas[0] >= CONVERGENCE_FIRST_DELTA_FLOOR_M:
-        assert deltas[-1] <= CONVERGENCE_TAIL_FRACTION*deltas[0], (
-            f"{label} is not converging: the finest halving still moved carry "
-            f"{deltas[-1]:.4f} m against {deltas[0]:.4f} m for the coarsest "
-            f"(limit {CONVERGENCE_TAIL_FRACTION:g} of it). Deltas: "
-            + ", ".join(f"{d:.4f}" for d in deltas)
-        )
+        require(deltas[-1] <= CONVERGENCE_TAIL_FRACTION*deltas[0],
+                f"{label} is not converging: the finest halving still moved "
+                f"carry {deltas[-1]:.4f} m against {deltas[0]:.4f} m for the "
+                f"coarsest (limit {CONVERGENCE_TAIL_FRACTION:g} of it). Deltas: "
+                + ", ".join(f"{d:.4f}" for d in deltas))
+
+
+
+# Handedness is a reflection of the whole solver through the fairway centreline,
+# not a lateral sign flip applied to the result. Mirroring the crosswind with the
+# hand is what makes it exact: the reflected problem needs a reflected wind. The
+# existing flat-mirror assertions are all taken at hyzer_deg 0, where the attitude
+# rotation is the identity, so a handedness fork in the attitude path is invisible
+# to them.
+REFLECTION_CASES = (
+    ("RHBH baseline", dict(power=0.82, hyzer_deg=3.0)),
+    ("RHFH baseline", dict(throw_style="forehand", power=0.82, hyzer_deg=3.0)),
+    ("hyzer clamp", dict(power=0.82, hyzer_deg=34.0)),
+    ("anhyzer clamp", dict(power=0.82, hyzer_deg=-34.0)),
+    ("forehand anhyzer", dict(throw_style="forehand", power=1.0, hyzer_deg=-34.0)),
+    ("20% power", dict(power=0.2, hyzer_deg=3.0)),
+    ("crosswind", dict(power=0.82, hyzer_deg=3.0, wind=(0.0, 10.0, 0.0))),
+    ("headwind", dict(power=0.82, hyzer_deg=3.0, wind=(-10.0, 0.0, 0.0))),
+    ("oblique wind", dict(power=0.82, hyzer_deg=-12.0, wind=(-8.0, 4.0, 2.0))),
+    ("worst timing miss", dict(power=0.82, hyzer_deg=3.0, timing_error=1.0)),
+)
+
+# Deviation is exactly zero on every field today, so this is entirely headroom
+# against a future reordering of the floating-point arithmetic.
+REFLECTION_TOLERANCE = 1e-9
+
+
+def assert_handedness_reflection() -> None:
+    for label, throw in REFLECTION_CASES:
+        wind = throw.get("wind", (0.0, 0.0, 0.0))
+        mirrored = dict(throw)
+        mirrored["wind"] = (wind[0], -wind[1], wind[2])
+        right = simulate(handedness="right", **throw)
+        left = simulate(handedness="left", **mirrored)
+        require(right.termination == left.termination,
+                f"{label} terminated differently by hand: "
+                f"{right.termination} vs {left.termination}")
+        for field, a, b in (
+                ("carry", right.carry_m, left.carry_m),
+                ("peak", right.peak_m, left.peak_m),
+                ("flight time", right.flight_s, left.flight_s),
+                ("final speed", right.final_speed_mps, left.final_speed_mps),
+        ):
+            require(abs(a-b) <= REFLECTION_TOLERANCE,
+                    f"{label} {field} changed with handedness: {a} vs {b}. "
+                    "Handedness must mirror through spin, not alter the throw.")
+        require(abs(right.lateral_m + left.lateral_m) <= REFLECTION_TOLERANCE,
+                f"{label} lateral did not mirror: {right.lateral_m} vs "
+                f"{left.lateral_m}; they must sum to zero")
+
+
+# Turn and fade must oppose. Isolating each against a neutral run and requiring
+# the two lateral deviations to have non-positive product is a statement about
+# sign, so there is no tolerance to choose. The <= form is deliberate: an
+# overstable recalibration whose turn window sits above the release ceiling
+# contributes exactly zero turn, which must stay legal.
+OPPOSITION_CASES = (
+    ("RHBH full power flat", dict(power=1.0, hyzer_deg=0.0)),
+    ("Apex RHBH baseline", dict(power=0.82, hyzer_deg=3.0)),
+    ("RHFH full power flat", dict(throw_style="forehand", power=1.0, hyzer_deg=0.0)),
+    ("LHBH full power flat", dict(handedness="left", power=1.0, hyzer_deg=0.0)),
+)
+
+
+def assert_turn_and_fade_oppose() -> None:
+    seed = Aero()
+    for label, throw in OPPOSITION_CASES:
+        neutral = simulate(aero=Aero(turn_moment=0.0, fade_moment=0.0), **throw)
+        turn_only = simulate(aero=Aero(fade_moment=0.0), **throw)
+        fade_only = simulate(aero=Aero(turn_moment=0.0), **throw)
+        turn_delta = turn_only.lateral_m - neutral.lateral_m
+        fade_delta = fade_only.lateral_m - neutral.lateral_m
+        require(turn_delta*fade_delta <= 0.0,
+                f"{label}: turn and fade push the same way "
+                f"(turn {turn_delta:+.3f} m, fade {fade_delta:+.3f} m). They are "
+                "opposing stability effects and must never collapse into one "
+                f"same-sign curve. Seed moments are {seed.turn_moment} turn / "
+                f"{seed.fade_moment} fade.")
+
+
+# The ground model resolves contact geometry, not world geometry. Rotating the
+# whole problem must rotate the answer and change nothing else.
+GROUND_EQUIVARIANCE_TOLERANCE = 1e-9
+
+GROUND_EQUIVARIANCE_CASES = (
+    ((10.0, 0.0, -1.5), (0.0, 0.0, 1.0), (0.0, 0.0, 1.0), 700.0, "fairway"),
+    ((10.0, 0.0, -1.5), (0.0, 0.0, 1.0), (0.0, 0.0, 1.0), 700.0, "rough"),
+    ((7.0, 0.0, -2.0), (0.0, 0.0, 1.0), (0.0, 1.0, 0.0), 500.0, "fairway"),
+    ((12.0, -3.0, -4.0), (0.08, -0.05, 1.0), (0.2, 0.1, 0.97), -640.0, "fairway"),
+    ((4.0, 1.0, -0.8), (-0.1, 0.06, 1.0), (0.0, 0.3, 0.95), 300.0, "rough"),
+)
+
+# Arbitrary axes, not only world Z: a term that leaks world X or world Z into the
+# response survives a yaw-only test.
+GROUND_EQUIVARIANCE_ROTATIONS = (
+    ((0.0, 0.0, 1.0), 0.7),
+    ((1.0, 0.0, 0.0), 0.4),
+    ((0.3, -0.8, 0.5), 2.1),
+    ((-0.6, 0.2, 0.77), -1.3),
+)
+
+
+def assert_ground_frame_equivariance() -> None:
+    for velocity, surface_normal, disc_normal, spin_rpm, surface in GROUND_EQUIVARIANCE_CASES:
+        plain = resolve_ground_impact(
+            velocity=velocity, surface_normal=surface_normal,
+            disc_normal=disc_normal, spin_rpm=spin_rpm,
+            base_restitution=0.16, base_friction=0.46, surface=surface)
+        for axis, angle in GROUND_EQUIVARIANCE_ROTATIONS:
+            turned = resolve_ground_impact(
+                velocity=rotate(velocity, axis, angle),
+                surface_normal=rotate(surface_normal, axis, angle),
+                disc_normal=rotate(disc_normal, axis, angle),
+                spin_rpm=spin_rpm, base_restitution=0.16, base_friction=0.46,
+                surface=surface)
+            require(turned.state == plain.state,
+                    f"ground state changed with world orientation on {surface}: "
+                    f"{plain.state} became {turned.state}")
+            expected = rotate(plain.velocity_mps, axis, angle)
+            error = max(abs(a-b) for a, b in zip(expected, turned.velocity_mps))
+            require(error <= GROUND_EQUIVARIANCE_TOLERANCE,
+                    f"ground response is not frame-equivariant on {surface}: "
+                    f"rotating the impact moved the outgoing velocity by "
+                    f"{error:.3e} m/s. Something is being measured against a "
+                    "world axis instead of the surface normal.")
+            for field in ("spin_multiplier", "incidence_deg", "edge_angle_deg",
+                          "restitution", "friction"):
+                a = getattr(plain, field)
+                b = getattr(turned, field)
+                require(abs(a-b) <= GROUND_EQUIVARIANCE_TOLERANCE,
+                        f"ground {field} changed with world orientation on "
+                        f"{surface}: {a} vs {b}")
+
+
+# A disc arriving straight down the surface normal has 90 degrees of incidence by
+# definition, whatever the surface tilt or approach speed, and must leave along
+# that normal with no tangential component. This pins the normal/tangent split
+# itself: a scale error there is frame-equivariant, so the rotation test above
+# cannot see it, yet it moves the outgoing velocity on virtually every oblique
+# impact.
+NORMAL_INCIDENCE_TOLERANCE_DEG = 0.01
+NORMAL_INCIDENCE_TANGENT_TOLERANCE = 1e-9
+
+NORMAL_INCIDENCE_CASES = (
+    ((0.0, 0.0, 1.0), 12.0),
+    ((0.2, -0.15, 1.0), 12.0),
+    ((0.2, -0.15, 1.0), 4.0),
+    ((-0.25, 0.1, 1.0), 8.0),
+)
+
+
+def assert_ground_normal_incidence() -> None:
+    for tilt, speed in NORMAL_INCIDENCE_CASES:
+        normal = norm(tilt)
+        impact = resolve_ground_impact(
+            velocity=mul(normal, -speed), surface_normal=normal,
+            disc_normal=normal, spin_rpm=0.0, base_restitution=0.16,
+            base_friction=0.46, surface="fairway")
+        require(abs(impact.incidence_deg - 90.0) <= NORMAL_INCIDENCE_TOLERANCE_DEG,
+                f"a head-on impact at {speed} m/s on normal {normal} reported "
+                f"{impact.incidence_deg:.4f} deg of incidence, not 90. The "
+                "normal/tangent split is wrong.")
+        tangential = sub(impact.velocity_mps,
+                         mul(normal, dot(impact.velocity_mps, normal)))
+        require(mag(tangential) <= NORMAL_INCIDENCE_TANGENT_TOLERANCE,
+                f"a head-on impact at {speed} m/s left {mag(tangential):.6f} m/s "
+                "of tangential velocity; it must leave along the normal.")
+
+
+# Release-quality shape: the perfect band must be a genuine dead zone, the penalty
+# must never reward a worse release, and neither handedness nor style may fork a
+# magnitude channel.
+RELEASE_SHAPE_TOLERANCE = 1e-12
+RELEASE_GRID = tuple(i/240.0 for i in range(241))
+
+
+def assert_release_shape() -> None:
+    for power in (0.2, 0.82, 1.0):
+        for style in ("backhand", "forehand"):
+            previous = None
+            for timing_error in RELEASE_GRID:
+                current = resolve_release(
+                    timing_error=timing_error, power=power, throw_style=style)
+                if previous is not None:
+                    for field in ("speed_multiplier", "spin_multiplier",
+                                  "speed_mps", "spin_rpm"):
+                        before = getattr(previous, field)
+                        after = getattr(current, field)
+                        require(after <= before + RELEASE_SHAPE_TOLERANCE,
+                                f"{style} {field} rose from {before} to {after} "
+                                f"as timing error grew to {timing_error:.4f}: a "
+                                "worse release was rewarded")
+                previous = current
+
+            for timing_error in (0.0, 0.31, 0.62, 1.0):
+                right = resolve_release(timing_error=timing_error, power=power,
+                                        throw_style=style, handedness="right")
+                left = resolve_release(timing_error=timing_error, power=power,
+                                       throw_style=style, handedness="left")
+                for field in ("quality", "speed_multiplier", "spin_multiplier",
+                              "speed_mps", "spin_rpm"):
+                    a = getattr(right, field)
+                    b = getattr(left, field)
+                    require(abs(a-b) <= RELEASE_SHAPE_TOLERANCE,
+                            f"{style} {field} forked by handedness at timing "
+                            f"error {timing_error}: {a} vs {b}")
+                require(abs(right.aim_offset_deg + left.aim_offset_deg)
+                        <= RELEASE_SHAPE_TOLERANCE,
+                        f"{style} aim offset did not mirror by handedness at "
+                        f"timing error {timing_error}")
+
+    # Style sets different speed and spin ceilings, but it must not reshape the
+    # penalty. Compare the shape channels only -- speed_mps and spin_rpm carry the
+    # ceilings and legitimately differ.
+    for power in (0.2, 0.82, 1.0):
+        for timing_error in (0.0, 0.2, 0.55, 1.0):
+            backhand = resolve_release(timing_error=timing_error, power=power,
+                                       throw_style="backhand")
+            forehand = resolve_release(timing_error=timing_error, power=power,
+                                       throw_style="forehand")
+            for field in ("quality", "speed_multiplier", "spin_multiplier",
+                          "hyzer_offset_deg", "nose_offset_deg",
+                          "launch_offset_deg"):
+                a = getattr(backhand, field)
+                b = getattr(forehand, field)
+                require(abs(a-b) <= RELEASE_SHAPE_TOLERANCE,
+                        f"{field} was reshaped by throw style at timing error "
+                        f"{timing_error}: backhand {a} vs forehand {b}. Style "
+                        "may change the ceilings, not the penalty shape.")
+            require(abs(backhand.aim_offset_deg + forehand.aim_offset_deg)
+                    <= RELEASE_SHAPE_TOLERANCE,
+                    f"aim offset did not mirror across throw style at timing "
+                    f"error {timing_error}")
+
+    # Inside the perfect band the release is unpenalized, so the solver must not
+    # see the timing error at all. This catches a timing term wired straight into
+    # the flight model rather than through the release.
+    baseline = simulate(power=0.82, hyzer_deg=3.0, timing_error=0.0)
+    for fraction in (-1.0, -0.5, 0.0, 0.5, 1.0):
+        timing_error = fraction*RELEASE_PERFECT_ERROR
+        inside = simulate(power=0.82, hyzer_deg=3.0, timing_error=timing_error)
+        for field, a, b in (
+                ("carry", baseline.carry_m, inside.carry_m),
+                ("lateral", baseline.lateral_m, inside.lateral_m),
+                ("peak", baseline.peak_m, inside.peak_m),
+                ("flight time", baseline.flight_s, inside.flight_s),
+        ):
+            require(abs(a-b) <= REFLECTION_TOLERANCE,
+                    f"timing error {timing_error:+.4f} is inside the perfect "
+                    f"band but changed {field}: {a} vs {b}. Timing must reach "
+                    "the solver only through the release.")
+
+
+# Wind sign. A crosswind toward +Y must leave the disc further toward +Y than the
+# opposite crosswind does. Deliberately narrow -- only the two named baselines --
+# because the ordering legitimately reverses for throws whose own fade dominates.
+CROSSWIND_MIN_SPREAD_M = 5.0
+
+
+def assert_crosswind_sign() -> None:
+    for style in ("backhand", "forehand"):
+        toward = simulate(throw_style=style, power=0.82, hyzer_deg=3.0,
+                          wind=(0.0, 10.0, 0.0))
+        against = simulate(throw_style=style, power=0.82, hyzer_deg=3.0,
+                           wind=(0.0, -10.0, 0.0))
+        require(toward.termination == "landed" and against.termination == "landed",
+                f"{style} crosswind cases did not land")
+        spread = toward.lateral_m - against.lateral_m
+        require(spread >= CROSSWIND_MIN_SPREAD_M,
+                f"{style} crosswind pushed the wrong way: +10 m/s toward +Y "
+                f"finished at {toward.lateral_m:.2f} m against "
+                f"{against.lateral_m:.2f} m for -10 m/s (spread {spread:.2f} m, "
+                f"minimum {CROSSWIND_MIN_SPREAD_M} m). Check the sign of the "
+                "relative airflow.")
 
 
 def self_test() -> None:
@@ -454,7 +762,7 @@ def self_test() -> None:
             aero_for_rate=aero_for_rate, power=0.82, hyzer_deg=3.0)
         try:
             assert_step_independent(samples, f"injected {name}")
-        except AssertionError:
+        except (EnvelopeFailure, AssertionError):
             checks += 1
         else:
             carries = [r.carry_m for _, r in samples]
@@ -568,6 +876,13 @@ def check() -> None:
             convergence = samples
     carries = [r.carry_m for _, r in convergence]
 
+    assert_handedness_reflection()
+    assert_turn_and_fade_oppose()
+    assert_ground_frame_equivariance()
+    assert_ground_normal_incidence()
+    assert_release_shape()
+    assert_crosswind_sign()
+
     print("Reference flight envelope OK")
     print(f"  Apex RHBH 82% / 3 deg hyzer: carry={baseline.carry_m:.1f}m ({baseline.carry_m*3.28084:.0f}ft), peak={baseline.peak_m:.1f}m, flight={baseline.flight_s:.2f}s")
     print(
@@ -581,6 +896,13 @@ def check() -> None:
         f"  Fixed step {CONVERGENCE_RATES_HZ[0]}-{CONVERGENCE_RATES_HZ[-1]} Hz: "
         f"{len(STEP_INDEPENDENCE_CASES)} throws converge, "
         f"baseline carry spread={max(carries)-min(carries):.3f}m"
+    )
+    print(
+        f"  Invariants: handedness reflection {len(REFLECTION_CASES)}, "
+        f"turn/fade opposition {len(OPPOSITION_CASES)}, ground equivariance "
+        f"{len(GROUND_EQUIVARIANCE_CASES)}x{len(GROUND_EQUIVARIANCE_ROTATIONS)}, "
+        f"normal incidence {len(NORMAL_INCIDENCE_CASES)}, "
+        "release shape, crosswind sign"
     )
 
 

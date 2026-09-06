@@ -71,6 +71,16 @@ python Scripts/validate_project.py
 python Scripts/reference_flight_check.py
 ```
 
+Do not run these under `-O`, `-OO` or `PYTHONOPTIMIZE`: the reference check enforces
+through `assert` and refuses to run with assertions disabled rather than report a
+false pass. After changing the flight, release or ground models, also run the
+mutation harness, which proves the reference check still rejects known-bad solver
+behaviour:
+
+```text
+python Scripts/mutation_test_reference_flight.py
+```
+
 If Unreal Engine is available locally, also run an editor build. On Windows PowerShell:
 
 ```powershell
