@@ -81,6 +81,14 @@ behaviour:
 python Scripts/mutation_test_reference_flight.py
 ```
 
+The reference check is a mirror of the C++ solver, so it can pass while the two
+drift apart. After editing either side, confirm they still state the same
+conventions:
+
+```text
+python Scripts/validate_solver_convention_parity.py
+```
+
 If Unreal Engine is available locally, also run an editor build. On Windows PowerShell:
 
 ```powershell
