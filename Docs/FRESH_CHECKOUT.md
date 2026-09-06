@@ -72,10 +72,22 @@ caught by this check after a hand-picked suffix list missed them.
 
 Two Session 18 logs remain unresolved: `Evidence/Session18/PolyHavenReimport.log`
 and `Evidence/Session18/PackagedPineRidgePlaySmoke.log` are 6 and 2 bytes larger
-than their recorded digests describe, and the difference is not a whole-file
-line-ending transform. Both contracts also record a separate larger "raw" byte
-count, so the recorded values are a processed form whose exact derivation is not
-reproducible from this tree.
+than their recorded digests describe. This is **not** the line-ending problem, and
+it is not any encoding or truncation artefact. Both files are already fully CRLF
+(3,505 and 798 pairs, matching their line counts), contain zero non-ASCII bytes,
+and no transformation reproduces the recorded digest: not dropping leading or
+trailing bytes, not deleting any single line, not collapsing blank lines. The
+committed logs therefore differ from the hashed ones in **content**, by two and six
+bytes respectively — they are from a slightly different run than the one the
+receipt recorded.
+
+Nothing in this repository can resolve that, and editing a log so it matches a
+digest would be fabricating evidence rather than verifying it. Note that the
+substantive checks on these logs still pass: the Session 18 gate finds its exact
+pass marker (`PINE RIDGE PLAY SMOKE PASS: 1968 samples, 98.1 m final carry ...`)
+and no failure markers. Only the identity binding is broken, so what is lost is the
+proof that these exact bytes came from that exact run — not the evidence that the
+run passed.
 
 ## Original authoring tree
 
