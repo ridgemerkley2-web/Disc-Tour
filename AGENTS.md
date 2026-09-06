@@ -11,6 +11,11 @@ Before making substantial changes, read:
 4. `ROADMAP.md`
 5. The relevant file in `Tasks/`
 
+If you are working from a clone rather than the authoring tree, read
+`Docs/FRESH_CHECKOUT.md` first. It explains which validator results a checkout
+without `Saved/` cannot pass, and which paths accepted policy requires to stay
+absent.
+
 `Legacy/BrowserPilot_v0.3` is a read-only behavioral reference. Do not turn it back into the production game.
 
 ## Non-negotiable architecture rules
