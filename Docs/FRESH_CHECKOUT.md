@@ -58,10 +58,17 @@ directions - `*.json text eol=lf` forces LF, and the bare `* text=auto` rule
 yields CRLF for `.tsv`/`.log`/`.txt` on Windows - so a normalized file can no
 longer reproduce its recorded digest even though its content is intact.
 
-Ninety-two such paths are now pinned with `-text` and stored in the byte form
-their digests describe. **When you add a file whose SHA-256 is recorded in a
-contract or receipt, pin it the same way**, or the digest becomes unverifiable
-from any clone.
+102 such paths are now pinned with `-text` and stored in the byte form their
+digests describe. **When you add a file whose SHA-256 is recorded in a contract or
+receipt, pin it the same way**, or the digest becomes unverifiable from any clone.
+
+`python Scripts/audit_dg_digest_pinned_files.py` enforces this. It finds every
+tracked file whose recorded digest matches only after reconstructing the other
+line-ending form, and `--fix` restores the byte form and appends the pin. It exits
+0 when nothing needs pinning, so it is cheap to run after any change that adds
+digest-verified evidence. Note that the affected extensions are not predictable
+from a list — `.base64`, `.js`, `.html`, `.bat`, `.sh` and `.css` files were all
+caught by this check after a hand-picked suffix list missed them.
 
 Two Session 18 logs remain unresolved: `Evidence/Session18/PolyHavenReimport.log`
 and `Evidence/Session18/PackagedPineRidgePlaySmoke.log` are 6 and 2 bytes larger

@@ -126,3 +126,13 @@ SourceArt/DiscGolf/Characters/Customization/Proxy/proxy_customization_source_man
 SourceArt/DiscGolf/Outfits/Proxy/proxy_outfit_source_manifest.json -text
 SourceArt/PineRidge/PolyHaven/asset_manifest.json -text
 SourceArt/PineRidge/PolyHaven/derived_runtime_receipt.json -text
+Legacy/BrowserPilot_v0.3/game.js -text
+Legacy/BrowserPilot_v0.3/index.html -text
+Legacy/BrowserPilot_v0.3/run-local.bat -text
+Legacy/BrowserPilot_v0.3/run-local.sh -text
+Legacy/BrowserPilot_v0.3/styles.css -text
+Scripts/init-git.bat -text
+Scripts/open-project.bat -text
+Scripts/validate-project.bat -text
+SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png.base64 -text
+SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png.base64 -text
