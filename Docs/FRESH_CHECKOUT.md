@@ -89,6 +89,29 @@ and no failure markers. Only the identity binding is broken, so what is lost is 
 proof that these exact bytes came from that exact run — not the evidence that the
 run passed.
 
+## How much of the evidence actually verifies
+
+701 files inside the repository have a SHA-256 recorded for them by some contract
+or receipt. **647 of those verify exactly.** The 54 that do not split into two
+groups, and the difference matters:
+
+- **9 match an older committed revision.** A receipt from one session recorded a
+  file as it stood then, and a later session changed it. Ordinary historical drift,
+  and the older bytes are still recoverable from history. Affected: the flight
+  component and disc actor sources, the RHBH adapter, the rig units header, the
+  Session 2 rig script and the mocap pipeline doc.
+- **45 match no revision that was ever committed.** These bindings describe states
+  the authoring machine held and never pushed, because only the final checkpoint
+  was committed rather than each session's tree. `Docs/DG_SESSION19_MANUAL_RELEASE_REVIEW.md`
+  is the clearest example: its binding records 11,243 bytes, the repository has the
+  16,998-byte version, and no revision in between exists here. The two Session 18
+  logs above are in this group too.
+
+Nothing in this second group can be repaired from the repository, and editing a
+file so that it matches a digest would be fabricating provenance rather than
+verifying it. They close by rebinding against the authoring tree, or by accepting
+that those particular bindings describe an unrecoverable intermediate state.
+
 ## Original authoring tree
 
 Session 19 evidence records the authoring project root as `C:\DGTour` and its
