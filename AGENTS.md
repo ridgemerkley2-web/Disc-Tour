@@ -64,7 +64,15 @@ Target a smooth development experience on a mid/high-tier HP Omen before final v
 - Comment **why**, especially for coordinate/sign conventions and physics, not obvious syntax.
 
 ## Verification after every code change
-Always run both source-only checks:
+Run every source-only check at once, which reports all of them rather than
+stopping at the first failure:
+
+```text
+python Scripts/run_source_checks.py
+```
+
+On a checkout without `Saved/` and `_BuildKit/` the evidence-bound gates cannot
+pass; `Docs/FRESH_CHECKOUT.md` explains which and why. The individual checks:
 
 ```text
 python Scripts/validate_project.py

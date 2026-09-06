@@ -948,6 +948,12 @@ def safe_path(value: Any, label: str, issues: list[str]) -> Path | None:
 
 def verify_bound_file(
         binding: Any, label: str, issues: list[str], *, check_files: bool) -> Path | None:
+    """Verify one path/bytes/sha256 binding.
+
+    Returns the path even when the file is absent, having recorded the issue, so
+    every caller that goes on to read the file must check is_file() first. A
+    checkout without Saved/ hits exactly that case.
+    """
     keys = {"path", "bytes", "sha256"}
     if not exact_keys(binding, keys, label, issues):
         return None
@@ -1182,19 +1188,21 @@ def validate(receipt: Any, root: Path = ROOT, *, check_files: bool = True) -> tu
                 workflow["finalRunReport"], "workflow.finalRunReport", issues,
                 check_files=check_files)
             if check_files:
-                if migration_script and "runpy.run_path" not in migration_script.read_text(encoding="utf-8"):
+                if (migration_script and migration_script.is_file()
+                        and "runpy.run_path" not in migration_script.read_text(
+                            encoding="utf-8")):
                     issues.append("migration script does not invoke the project-owned rig workflow")
-                if foundation_script:
+                if foundation_script and foundation_script.is_file():
                     source = foundation_script.read_text(encoding="utf-8")
                     if "DG_SESSION2_RIG:" not in source or 'f"PASS ik=' not in source:
                         issues.append("foundation script lacks its Session 2 pass marker")
-                if recreate_log:
+                if recreate_log and recreate_log.is_file():
                     text = recreate_log.read_text(encoding="utf-8", errors="replace")
                     if "DG_SESSION2_RIG: PASS" not in text:
                         issues.append("recreation run does not prove independent Session 2 rig creation")
                     if "Session 4 authoring utility did not accept recreated CR_DG_Master" not in text:
                         issues.append("recreation run does not preserve its fail-closed handoff")
-                if normalize_log:
+                if normalize_log and normalize_log.is_file():
                     text = normalize_log.read_text(encoding="utf-8", errors="replace")
                     for marker in [
                         "Compiling Blueprint '/Game/DiscGolf/Rigs/CR_DG_Master.CR_DG_Master'",
@@ -1203,7 +1211,7 @@ def validate(receipt: Any, root: Path = ROOT, *, check_files: bool = True) -> tu
                     ]:
                         if marker not in text:
                             issues.append(f"normalization/acceptance log lacks marker: {marker}")
-                if clean_log:
+                if clean_log and clean_log.is_file():
                     text = clean_log.read_text(encoding="utf-8", errors="replace")
                     for forbidden in [
                         "Mounting Project plugin DiscGolfCharacterFramework",
@@ -1219,9 +1227,11 @@ def validate(receipt: Any, root: Path = ROOT, *, check_files: bool = True) -> tu
                     ]:
                         if marker not in text:
                             issues.append(f"final clean-load log lacks marker: {marker}")
-                if editor_log and "Result: Succeeded" not in editor_log.read_text(encoding="utf-8", errors="replace"):
+                if (editor_log and editor_log.is_file()
+                        and "Result: Succeeded" not in editor_log.read_text(
+                            encoding="utf-8", errors="replace")):
                     issues.append("Editor build log does not report success")
-                if report_path:
+                if report_path and report_path.is_file():
                     report = load_json(report_path)
                     for key, expected in {
                         "status": "PASS_RETAINED_ASSETS_RESAVED_EXCLUDED_ASSETS_UNCHANGED",
