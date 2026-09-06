@@ -309,6 +309,26 @@ SESSION19_DEVELOPER_RELOCATIONS = {
     **SESSION19_VERTICAL_SLICE_RELOCATIONS,
 }
 
+# Evidence roots that .gitignore deliberately keeps out of version control. Frozen
+# gates hash build logs, packaged archives, and the protected save under these
+# roots, so a clean checkout cannot reproduce them no matter how correct the
+# source is.
+UNVERSIONED_EVIDENCE_MARKERS = (
+    "Saved/", "Saved\\", "_BuildKit/", "_BuildKit\\",
+    "DGTour_Packages", "C:/DGTour", "C:\\DGTour",
+)
+
+# Paths that Session 19 requires to be ABSENT: the DeveloperTool files it moved
+# out of the runtime module, and the character framework it moved outside the
+# project root entirely (Config/DG_Session19ReleaseScopeContract.json,
+# characterFrameworkExternalQuarantine). Frozen gates still name their old
+# locations, and the supersession that answers them needs the unversioned
+# Session 19 evidence to run. Restoring these paths would violate the accepted
+# quarantine, not repair the tree.
+SESSION19_ABSENT_BY_POLICY_MARKERS = tuple(SESSION19_DEVELOPER_RELOCATIONS) + (
+    "Plugins/DiscGolfCharacterFramework", "Plugins\\DiscGolfCharacterFramework",
+)
+
 
 def build_rule_dependencies(source):
     dependencies = {"Public": set(), "Private": set()}
@@ -1678,6 +1698,44 @@ for path in (ROOT / "Source").rglob("*.cpp"):
     if "TODO(CRITICAL)" in text:
         errors.append(f"critical TODO left in {path.relative_to(ROOT)}")
 
+
+def print_unversioned_evidence_summary(reported_errors):
+    """Explain which failures a clean checkout cannot pass, without hiding any.
+
+    Every error is still reported and the exit code is unchanged. This only
+    separates results that depend on the unversioned evidence tree, or on paths
+    Session 19 requires to be absent, from findings about the source itself, so
+    a checkout without `Saved/` is not mistaken for a broken project.
+    """
+    absent_roots = [root for root in ("Saved", "_BuildKit")
+                    if not (ROOT / root).exists()]
+    if not absent_roots:
+        return
+    unversioned = [e for e in reported_errors
+                   if any(marker in e for marker in UNVERSIONED_EVIDENCE_MARKERS)]
+    absent_by_policy = [e for e in reported_errors
+                        if e not in unversioned
+                        and any(marker in e
+                                for marker in SESSION19_ABSENT_BY_POLICY_MARKERS)]
+    source_findings = [e for e in reported_errors
+                       if e not in unversioned and e not in absent_by_policy]
+    print(
+        "Checkout note: this tree has no "
+        + "/".join(absent_roots)
+        + " directory, so evidence-bound gates cannot be reproduced here."
+    )
+    print(f" - results naming unversioned evidence: {len(unversioned)}")
+    print(
+        " - results naming paths Session 19 requires to be absent: "
+        f"{len(absent_by_policy)}"
+    )
+    print(f" - remaining results: {len(source_findings)}")
+    print(
+        " - none of the above are suppressed; run on the authoring tree, with "
+        "Saved/ and _BuildKit/ present, for an authoritative result."
+    )
+
+
 if errors:
     if args.scope == "v05-shipping":
         print("Project validation FAILED (v0.5 Shipping technical scope)")
@@ -1707,6 +1765,7 @@ if errors:
         print("Release/public-approval blockers retained by selected authority:")
         for blocker in selected_release_scope_release_blockers:
             print(" -", blocker)
+    print_unversioned_evidence_summary(errors)
     sys.exit(1)
 
 if args.scope == "v05-shipping":
