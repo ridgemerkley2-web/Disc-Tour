@@ -128,6 +128,72 @@ struct FDiscGolfWindZoneDefinition
     UPROPERTY(EditAnywhere, BlueprintReadWrite) FVector AdditiveWindMps = FVector::ZeroVector;
 };
 
+/**
+ * One authored tee pad on a hole.
+ *
+ * A hole owns its tee positions; a layout chooses which one is in play. Keeping
+ * them on the hole rather than duplicating the hole per layout means the geometry,
+ * trees, hazards and camera work are authored once and shared, which is also how a
+ * real course works: the same hole plays from a longer pad, not a different hole.
+ */
+USTRUCT(BlueprintType)
+struct FDiscGolfTeePositionDefinition
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName TeeId = TEXT("Default");
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FText DisplayName;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FVector LocationCm = FVector::ZeroVector;
+};
+
+/**
+ * One authored pin placement on a hole.
+ *
+ * Par travels with the pin, not with the hole: moving a pin long enough turns a
+ * three into a four, and a layout that could not say so would mis-score the round.
+ * A zero par means "inherit the hole's par" rather than "par zero".
+ */
+USTRUCT(BlueprintType)
+struct FDiscGolfPinPositionDefinition
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName PinId = TEXT("Default");
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FText DisplayName;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FVector LocationCm = FVector::ZeroVector;
+
+    /** Par when this pin is in play. 0 inherits the hole's authored par. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) int32 Par = 0;
+};
+
+/** One hole's tee and pin selection within a layout. */
+USTRUCT(BlueprintType)
+struct FDiscGolfLayoutHoleSelection
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) int32 HoleNumber = 1;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName TeeId = TEXT("Default");
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName PinId = TEXT("Default");
+};
+
+/**
+ * A named way to play a course: which tee and pin each hole uses.
+ *
+ * A layout may cover a subset of the manifest's holes, which is what makes a front
+ * nine expressible without re-authoring the course. Holes it does not name are not
+ * in the round.
+ */
+USTRUCT(BlueprintType)
+struct FDiscGolfCourseLayoutDefinition
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName LayoutId = TEXT("Championship");
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FText DisplayName;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FDiscGolfLayoutHoleSelection> Holes;
+};
+
 USTRUCT(BlueprintType)
 struct FDiscGolfHoleBlockoutDefinition
 {
@@ -150,6 +216,31 @@ struct FDiscGolfHoleBlockoutDefinition
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FDiscGolfSpectatorBoundaryDefinition> SpectatorBoundaries;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FDiscGolfWindZoneDefinition> WindZones;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FVector> FlyoverPointsCm;
+
+    /**
+     * Alternate tees and pins, empty on a schema-v1 hole.
+     *
+     * TeeLocationCm, BasketLocationCm and Par above remain the authored default and
+     * stay authoritative when these are empty, so every existing hole file keeps
+     * loading and playing exactly as before.
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FDiscGolfTeePositionDefinition> TeePositions;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FDiscGolfPinPositionDefinition> PinPositions;
+};
+
+/** A hole resolved for one layout: which tee, which pin, and the par that follows. */
+USTRUCT(BlueprintType)
+struct FDiscGolfResolvedHole
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly) int32 HoleNumber = 1;
+    UPROPERTY(BlueprintReadOnly) FText HoleName;
+    UPROPERTY(BlueprintReadOnly) FName TeeId = TEXT("Default");
+    UPROPERTY(BlueprintReadOnly) FName PinId = TEXT("Default");
+    UPROPERTY(BlueprintReadOnly) FVector TeeLocationCm = FVector::ZeroVector;
+    UPROPERTY(BlueprintReadOnly) FVector BasketLocationCm = FVector::ZeroVector;
+    UPROPERTY(BlueprintReadOnly) int32 Par = 3;
 };
 
 USTRUCT(BlueprintType)
@@ -173,6 +264,15 @@ struct FDiscGolfCourseManifestDefinition
     UPROPERTY(EditAnywhere, BlueprintReadWrite) FName LayoutId = TEXT("Championship");
     UPROPERTY(EditAnywhere, BlueprintReadWrite) FText DisplayName;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FDiscGolfCourseManifestHoleEntry> Holes;
+
+    /**
+     * Selectable layouts, empty on a schema-v1 manifest.
+     *
+     * When empty the manifest's own LayoutId names the single implicit layout, in
+     * which every hole plays its authored tee, basket and par. That is what keeps
+     * the existing Pine Ridge manifest valid without editing a byte of it.
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FDiscGolfCourseLayoutDefinition> Layouts;
 };
 
 /** Result of attempting to load the authored Pine Ridge manifest or hole definition. */
@@ -238,4 +338,39 @@ namespace DiscGolfCourseDefinition
         const TArray<FDiscGolfHoleBlockoutDefinition>& Definitions,
         FString& OutError);
     DISCGOLFTOUR_API float MeasuredDistanceFeet(const FDiscGolfHoleBlockoutDefinition& Definition);
+
+    /**
+     * Resolve one hole for one layout.
+     *
+     * Fails rather than substituting when a layout names a tee or pin the hole does
+     * not author. A silent fallback there would move the basket without telling
+     * anyone, which mis-scores a round and is indistinguishable from correct play.
+     *
+     * A layout that names no selection for the hole, or a hole with no alternate
+     * positions, resolves to the authored tee, basket and par.
+     */
+    DISCGOLFTOUR_API bool ResolveHoleForLayout(
+        const FDiscGolfHoleBlockoutDefinition& Hole,
+        const FDiscGolfCourseLayoutDefinition& Layout,
+        FDiscGolfResolvedHole& OutResolved,
+        FString& OutError);
+
+    /** Find a layout by id. Returns nullptr when the manifest does not declare it. */
+    DISCGOLFTOUR_API const FDiscGolfCourseLayoutDefinition* FindLayout(
+        const FDiscGolfCourseManifestDefinition& Manifest,
+        FName LayoutId);
+
+    /**
+     * The layout a schema-v1 manifest implies: every manifest hole, authored tee and
+     * pin. Lets callers treat legacy and layout-aware courses through one path.
+     */
+    DISCGOLFTOUR_API FDiscGolfCourseLayoutDefinition ImplicitLayout(
+        const FDiscGolfCourseManifestDefinition& Manifest);
+
+    /** Validate a layout against the manifest and the holes it selects from. */
+    DISCGOLFTOUR_API bool ValidateLayout(
+        const FDiscGolfCourseManifestDefinition& Manifest,
+        const FDiscGolfCourseLayoutDefinition& Layout,
+        const TArray<FDiscGolfHoleBlockoutDefinition>& Holes,
+        FString& OutError);
 }

@@ -254,7 +254,7 @@ namespace
     {
         if (!ValidateAllowedFields(Root, TEXT("manifest"),
             { TEXT("schema"), TEXT("schemaVersion"), TEXT("courseId"), TEXT("layoutId"),
-              TEXT("displayName"), TEXT("holes") }, OutError)) return false;
+              TEXT("displayName"), TEXT("holes"), TEXT("layouts") }, OutError)) return false;
         FString IgnoredString;
         if (!RequireString(Root, TEXT("schema"), TEXT("manifest"), IgnoredString, OutError)
             || !RequireInteger(Root, TEXT("schemaVersion"), TEXT("manifest"), OutError)
@@ -276,6 +276,35 @@ namespace
             double IgnoredNumber = 0.0;
             if (!RequireFiniteNumber(Hole, TEXT("worldYawDeg"), *Context, IgnoredNumber, OutError)) return false;
         }
+
+        // Optional in schema v2 only. Validated when present so a malformed layout
+        // is rejected at load rather than silently selecting nothing.
+        const TArray<TSharedPtr<FJsonValue>>* Layouts = nullptr;
+        if (Root->TryGetArrayField(TEXT("layouts"), Layouts))
+        {
+            for (int32 Index = 0; Index < Layouts->Num(); ++Index)
+            {
+                TSharedPtr<FJsonObject> Layout;
+                if (!RequireObjectArrayElement((*Layouts)[Index], TEXT("manifest.layouts"), Index, Layout, OutError)) return false;
+                const FString Context = FString::Printf(TEXT("manifest.layouts[%d]"), Index);
+                if (!ValidateAllowedFields(Layout, *Context,
+                    { TEXT("layoutId"), TEXT("displayName"), TEXT("holes") }, OutError)
+                    || !RequireString(Layout, TEXT("layoutId"), *Context, IgnoredString, OutError)
+                    || !RequireString(Layout, TEXT("displayName"), *Context, IgnoredString, OutError)) return false;
+                const TArray<TSharedPtr<FJsonValue>>* Selections = nullptr;
+                if (!RequireArray(Layout, TEXT("holes"), *Context, Selections, OutError)) return false;
+                for (int32 SelectionIndex = 0; SelectionIndex < Selections->Num(); ++SelectionIndex)
+                {
+                    TSharedPtr<FJsonObject> Selection;
+                    if (!RequireObjectArrayElement((*Selections)[SelectionIndex], *Context, SelectionIndex, Selection, OutError)) return false;
+                    const FString SelectionContext =
+                        FString::Printf(TEXT("manifest.layouts[%d].holes[%d]"), Index, SelectionIndex);
+                    if (!ValidateAllowedFields(Selection, *SelectionContext,
+                        { TEXT("holeNumber"), TEXT("teeId"), TEXT("pinId") }, OutError)
+                        || !RequireInteger(Selection, TEXT("holeNumber"), *SelectionContext, OutError)) return false;
+                }
+            }
+        }
         return true;
     }
 
@@ -286,7 +315,8 @@ namespace
               TEXT("holeNumber"), TEXT("holeName"), TEXT("par"), TEXT("teeLocationCm"),
               TEXT("basketLocationCm"), TEXT("surfaces"), TEXT("trees"), TEXT("collisionFixtures"),
               TEXT("landingZones"), TEXT("shotRoutes"), TEXT("cameraAnchors"),
-              TEXT("spectatorBoundaries"), TEXT("windZones"), TEXT("flyoverPointsCm") }, OutError)) return false;
+              TEXT("spectatorBoundaries"), TEXT("windZones"), TEXT("flyoverPointsCm"),
+              TEXT("teePositions"), TEXT("pinPositions") }, OutError)) return false;
 
         FString IgnoredString;
         if (!RequireString(Root, TEXT("schema"), TEXT("hole"), IgnoredString, OutError)
@@ -298,6 +328,35 @@ namespace
             || !RequireInteger(Root, TEXT("par"), TEXT("hole"), OutError)
             || !ValidateVectorField(Root, TEXT("teeLocationCm"), TEXT("hole"), OutError)
             || !ValidateVectorField(Root, TEXT("basketLocationCm"), TEXT("hole"), OutError)) return false;
+
+        // Optional in schema v2 and absent from every authored v1 hole, so these are
+        // validated only when present rather than required.
+        const TArray<TSharedPtr<FJsonValue>>* TeeValues = nullptr;
+        if (Root->TryGetArrayField(TEXT("teePositions"), TeeValues))
+        {
+            for (int32 Index = 0; Index < TeeValues->Num(); ++Index)
+            {
+                TSharedPtr<FJsonObject> O;
+                if (!RequireObjectArrayElement((*TeeValues)[Index], TEXT("teePositions"), Index, O, OutError)) return false;
+                const FString C = FString::Printf(TEXT("teePositions[%d]"), Index);
+                if (!ValidateAllowedFields(O, *C, { TEXT("teeId"), TEXT("displayName"), TEXT("locationCm") }, OutError)
+                    || !RequireString(O, TEXT("teeId"), *C, IgnoredString, OutError)
+                    || !ValidateVectorField(O, TEXT("locationCm"), *C, OutError)) return false;
+            }
+        }
+        const TArray<TSharedPtr<FJsonValue>>* PinValues = nullptr;
+        if (Root->TryGetArrayField(TEXT("pinPositions"), PinValues))
+        {
+            for (int32 Index = 0; Index < PinValues->Num(); ++Index)
+            {
+                TSharedPtr<FJsonObject> O;
+                if (!RequireObjectArrayElement((*PinValues)[Index], TEXT("pinPositions"), Index, O, OutError)) return false;
+                const FString C = FString::Printf(TEXT("pinPositions[%d]"), Index);
+                if (!ValidateAllowedFields(O, *C, { TEXT("pinId"), TEXT("displayName"), TEXT("locationCm"), TEXT("par") }, OutError)
+                    || !RequireString(O, TEXT("pinId"), *C, IgnoredString, OutError)
+                    || !ValidateVectorField(O, TEXT("locationCm"), *C, OutError)) return false;
+            }
+        }
 
         const TArray<TSharedPtr<FJsonValue>>* Values = nullptr;
         if (!RequireArray(Root, TEXT("surfaces"), TEXT("hole"), Values, OutError)) return false;
@@ -952,6 +1011,44 @@ bool DiscGolfCourseDefinition::ParseManifestJson(
             Manifest.Holes.Add(Entry);
         }
     }
+    // Optional in schema v2. Absent on every v1 manifest, which then plays its one
+    // implicit layout exactly as before.
+    const TArray<TSharedPtr<FJsonValue>>* LayoutValues = nullptr;
+    if (Root->TryGetArrayField(TEXT("layouts"), LayoutValues))
+    {
+        for (const TSharedPtr<FJsonValue>& Value : *LayoutValues)
+        {
+            const TSharedPtr<FJsonObject> LayoutObject = Value->AsObject();
+            if (!LayoutObject.IsValid()) continue;
+            FDiscGolfCourseLayoutDefinition Layout;
+            Layout.LayoutId = FName(*LayoutObject->GetStringField(TEXT("layoutId")));
+            Layout.DisplayName = FText::FromString(
+                LayoutObject->GetStringField(TEXT("displayName")));
+            const TArray<TSharedPtr<FJsonValue>>* SelectionValues = nullptr;
+            if (LayoutObject->TryGetArrayField(TEXT("holes"), SelectionValues))
+            {
+                for (const TSharedPtr<FJsonValue>& SelectionValue : *SelectionValues)
+                {
+                    const TSharedPtr<FJsonObject> SelectionObject = SelectionValue->AsObject();
+                    if (!SelectionObject.IsValid()) continue;
+                    FDiscGolfLayoutHoleSelection Selection;
+                    Selection.HoleNumber = SelectionObject->GetIntegerField(TEXT("holeNumber"));
+                    FString TeeId;
+                    if (SelectionObject->TryGetStringField(TEXT("teeId"), TeeId))
+                    {
+                        Selection.TeeId = FName(*TeeId);
+                    }
+                    FString PinId;
+                    if (SelectionObject->TryGetStringField(TEXT("pinId"), PinId))
+                    {
+                        Selection.PinId = FName(*PinId);
+                    }
+                    Layout.Holes.Add(Selection);
+                }
+            }
+            Manifest.Layouts.Add(Layout);
+        }
+    }
     if (!ValidateManifest(Manifest, OutError)) return false;
     OutManifest = MoveTemp(Manifest);
     return true;
@@ -961,7 +1058,29 @@ bool DiscGolfCourseDefinition::ValidateManifest(
     const FDiscGolfCourseManifestDefinition& Manifest,
     FString& OutError)
 {
-    if (Manifest.SchemaVersion != 1) { OutError = TEXT("unsupported manifest schema version"); return false; }
+    // v1 is the authored Pine Ridge manifest; v2 adds the optional layouts array
+    // and nothing else, so both remain loadable by the same parser.
+    if (Manifest.SchemaVersion != 1 && Manifest.SchemaVersion != 2)
+    { OutError = TEXT("unsupported manifest schema version"); return false; }
+    if (!Manifest.Layouts.IsEmpty() && Manifest.SchemaVersion < 2)
+    { OutError = TEXT("layouts require manifest schema version 2"); return false; }
+    {
+        TSet<FName> SeenLayoutIds;
+        for (const FDiscGolfCourseLayoutDefinition& Layout : Manifest.Layouts)
+        {
+            if (Layout.LayoutId.IsNone() || Layout.Holes.IsEmpty())
+            { OutError = TEXT("course layout identity or holes are invalid"); return false; }
+            bool bAlreadySeen = false;
+            SeenLayoutIds.Add(Layout.LayoutId, &bAlreadySeen);
+            if (bAlreadySeen)
+            {
+                OutError = FString::Printf(
+                    TEXT("course declares layout '%s' more than once"),
+                    *Layout.LayoutId.ToString());
+                return false;
+            }
+        }
+    }
     if (Manifest.CourseId.IsNone() || Manifest.LayoutId.IsNone() || Manifest.DisplayName.IsEmpty() || Manifest.Holes.IsEmpty())
     { OutError = TEXT("course manifest identity or holes are invalid"); return false; }
     TSet<int32> SeenHoles;
@@ -1118,13 +1237,80 @@ bool DiscGolfCourseDefinition::ParseJson(
     }
 
     if (!Validate(D, OutError)) return false;
+    // Optional alternates. Absent on a v1 hole, in which case the authored
+    // teeLocationCm / basketLocationCm / par remain the only positions in play.
+    const TArray<TSharedPtr<FJsonValue>>* TeePositionValues = nullptr;
+    if (Root->TryGetArrayField(TEXT("teePositions"), TeePositionValues))
+    {
+        for (const TSharedPtr<FJsonValue>& Value : *TeePositionValues)
+        {
+            const TSharedPtr<FJsonObject> O = Value->AsObject();
+            if (!O.IsValid()) continue;
+            FDiscGolfTeePositionDefinition Tee;
+            Tee.TeeId = FName(*O->GetStringField(TEXT("teeId")));
+            FString DisplayName;
+            if (O->TryGetStringField(TEXT("displayName"), DisplayName))
+            {
+                Tee.DisplayName = FText::FromString(DisplayName);
+            }
+            Tee.LocationCm = VectorFromJson(O, TEXT("locationCm"), FVector::ZeroVector);
+            D.TeePositions.Add(Tee);
+        }
+    }
+    const TArray<TSharedPtr<FJsonValue>>* PinPositionValues = nullptr;
+    if (Root->TryGetArrayField(TEXT("pinPositions"), PinPositionValues))
+    {
+        for (const TSharedPtr<FJsonValue>& Value : *PinPositionValues)
+        {
+            const TSharedPtr<FJsonObject> O = Value->AsObject();
+            if (!O.IsValid()) continue;
+            FDiscGolfPinPositionDefinition Pin;
+            Pin.PinId = FName(*O->GetStringField(TEXT("pinId")));
+            FString DisplayName;
+            if (O->TryGetStringField(TEXT("displayName"), DisplayName))
+            {
+                Pin.DisplayName = FText::FromString(DisplayName);
+            }
+            Pin.LocationCm = VectorFromJson(O, TEXT("locationCm"), FVector::ZeroVector);
+            int32 Par = 0;
+            if (O->TryGetNumberField(TEXT("par"), Par))
+            {
+                Pin.Par = Par;
+            }
+            D.PinPositions.Add(Pin);
+        }
+    }
+
     OutDefinition = MoveTemp(D);
     return true;
 }
 
 bool DiscGolfCourseDefinition::Validate(const FDiscGolfHoleBlockoutDefinition& D, FString& OutError)
 {
-    if (D.SchemaVersion != 1) { OutError = TEXT("unsupported schema version"); return false; }
+    // v1 is every authored Pine Ridge hole; v2 adds optional tee and pin alternates.
+    if (D.SchemaVersion != 1 && D.SchemaVersion != 2)
+    { OutError = TEXT("unsupported schema version"); return false; }
+    if ((!D.TeePositions.IsEmpty() || !D.PinPositions.IsEmpty()) && D.SchemaVersion < 2)
+    { OutError = TEXT("tee and pin alternates require hole schema version 2"); return false; }
+    {
+        TSet<FName> SeenTeeIds;
+        for (const FDiscGolfTeePositionDefinition& Tee : D.TeePositions)
+        {
+            bool bSeen = false;
+            SeenTeeIds.Add(Tee.TeeId, &bSeen);
+            if (Tee.TeeId.IsNone() || bSeen || !IsFiniteVector(Tee.LocationCm))
+            { OutError = TEXT("tee position identity or location is invalid"); return false; }
+        }
+        TSet<FName> SeenPinIds;
+        for (const FDiscGolfPinPositionDefinition& Pin : D.PinPositions)
+        {
+            bool bSeen = false;
+            SeenPinIds.Add(Pin.PinId, &bSeen);
+            // Par 0 means inherit; a negative par is a authoring mistake, not a default.
+            if (Pin.PinId.IsNone() || bSeen || !IsFiniteVector(Pin.LocationCm) || Pin.Par < 0)
+            { OutError = TEXT("pin position identity, location, or par is invalid"); return false; }
+        }
+    }
     if (D.CourseId.IsNone() || D.LayoutId.IsNone() || D.HoleNumber <= 0 || D.Par <= 0 || D.HoleName.IsEmpty())
     { OutError = TEXT("course identity, hole metadata, or par is invalid"); return false; }
     if (!IsFiniteVector(D.TeeLocationCm) || !IsFiniteVector(D.BasketLocationCm) || FVector::Dist2D(D.TeeLocationCm,D.BasketLocationCm) < 3000.0f)
@@ -1578,4 +1764,193 @@ bool DiscGolfCourseDefinition::LoadPineRidgeHole1(
 float DiscGolfCourseDefinition::MeasuredDistanceFeet(const FDiscGolfHoleBlockoutDefinition& D)
 {
     return FVector::Dist(D.TeeLocationCm, D.BasketLocationCm) / 30.48f;
+}
+
+const FDiscGolfCourseLayoutDefinition* DiscGolfCourseDefinition::FindLayout(
+    const FDiscGolfCourseManifestDefinition& Manifest,
+    FName LayoutId)
+{
+    for (const FDiscGolfCourseLayoutDefinition& Layout : Manifest.Layouts)
+    {
+        if (Layout.LayoutId == LayoutId)
+        {
+            return &Layout;
+        }
+    }
+    return nullptr;
+}
+
+FDiscGolfCourseLayoutDefinition DiscGolfCourseDefinition::ImplicitLayout(
+    const FDiscGolfCourseManifestDefinition& Manifest)
+{
+    // A schema-v1 manifest describes exactly one way to play: every hole it lists,
+    // from the tee and to the basket the hole authored. Expressing that as a real
+    // layout lets callers use one code path for legacy and layout-aware courses.
+    FDiscGolfCourseLayoutDefinition Layout;
+    Layout.LayoutId = Manifest.LayoutId;
+    Layout.DisplayName = Manifest.DisplayName;
+    Layout.Holes.Reserve(Manifest.Holes.Num());
+    for (const FDiscGolfCourseManifestHoleEntry& Entry : Manifest.Holes)
+    {
+        FDiscGolfLayoutHoleSelection Selection;
+        Selection.HoleNumber = Entry.HoleNumber;
+        Layout.Holes.Add(Selection);
+    }
+    return Layout;
+}
+
+bool DiscGolfCourseDefinition::ResolveHoleForLayout(
+    const FDiscGolfHoleBlockoutDefinition& Hole,
+    const FDiscGolfCourseLayoutDefinition& Layout,
+    FDiscGolfResolvedHole& OutResolved,
+    FString& OutError)
+{
+    OutError.Reset();
+
+    OutResolved = FDiscGolfResolvedHole();
+    OutResolved.HoleNumber = Hole.HoleNumber;
+    OutResolved.HoleName = Hole.HoleName;
+    OutResolved.TeeLocationCm = Hole.TeeLocationCm;
+    OutResolved.BasketLocationCm = Hole.BasketLocationCm;
+    OutResolved.Par = Hole.Par;
+
+    const FDiscGolfLayoutHoleSelection* Selection = nullptr;
+    for (const FDiscGolfLayoutHoleSelection& Candidate : Layout.Holes)
+    {
+        if (Candidate.HoleNumber == Hole.HoleNumber)
+        {
+            Selection = &Candidate;
+            break;
+        }
+    }
+
+    // A layout that says nothing about this hole leaves it exactly as authored.
+    if (Selection == nullptr)
+    {
+        return true;
+    }
+
+    OutResolved.TeeId = Selection->TeeId;
+    OutResolved.PinId = Selection->PinId;
+
+    // An unnamed selection against a hole with no alternates is the schema-v1 case:
+    // "Default" means the authored position, and there is nothing to look up.
+    if (!Hole.TeePositions.IsEmpty())
+    {
+        const FDiscGolfTeePositionDefinition* Tee = Hole.TeePositions.FindByPredicate(
+            [Selection](const FDiscGolfTeePositionDefinition& Candidate)
+            {
+                return Candidate.TeeId == Selection->TeeId;
+            });
+        if (Tee == nullptr)
+        {
+            // Deliberately fail rather than fall back. Silently playing a different
+            // tee than the layout asked for is indistinguishable from correct play.
+            OutError = FString::Printf(
+                TEXT("layout '%s' selects tee '%s' on hole %d, which the hole does not author"),
+                *Layout.LayoutId.ToString(), *Selection->TeeId.ToString(), Hole.HoleNumber);
+            return false;
+        }
+        OutResolved.TeeLocationCm = Tee->LocationCm;
+    }
+
+    if (!Hole.PinPositions.IsEmpty())
+    {
+        const FDiscGolfPinPositionDefinition* Pin = Hole.PinPositions.FindByPredicate(
+            [Selection](const FDiscGolfPinPositionDefinition& Candidate)
+            {
+                return Candidate.PinId == Selection->PinId;
+            });
+        if (Pin == nullptr)
+        {
+            OutError = FString::Printf(
+                TEXT("layout '%s' selects pin '%s' on hole %d, which the hole does not author"),
+                *Layout.LayoutId.ToString(), *Selection->PinId.ToString(), Hole.HoleNumber);
+            return false;
+        }
+        OutResolved.BasketLocationCm = Pin->LocationCm;
+
+        // Par travels with the pin when the pin states one; zero means inherit.
+        if (Pin->Par > 0)
+        {
+            OutResolved.Par = Pin->Par;
+        }
+    }
+
+    return true;
+}
+
+bool DiscGolfCourseDefinition::ValidateLayout(
+    const FDiscGolfCourseManifestDefinition& Manifest,
+    const FDiscGolfCourseLayoutDefinition& Layout,
+    const TArray<FDiscGolfHoleBlockoutDefinition>& Holes,
+    FString& OutError)
+{
+    OutError.Reset();
+
+    if (Layout.LayoutId.IsNone())
+    {
+        OutError = TEXT("layout id is empty");
+        return false;
+    }
+    if (Layout.Holes.IsEmpty())
+    {
+        OutError = FString::Printf(
+            TEXT("layout '%s' selects no holes"), *Layout.LayoutId.ToString());
+        return false;
+    }
+
+    TSet<int32> SeenHoleNumbers;
+    for (const FDiscGolfLayoutHoleSelection& Selection : Layout.Holes)
+    {
+        bool bAlreadySeen = false;
+        SeenHoleNumbers.Add(Selection.HoleNumber, &bAlreadySeen);
+        if (bAlreadySeen)
+        {
+            OutError = FString::Printf(
+                TEXT("layout '%s' selects hole %d more than once"),
+                *Layout.LayoutId.ToString(), Selection.HoleNumber);
+            return false;
+        }
+
+        const bool bInManifest = Manifest.Holes.ContainsByPredicate(
+            [&Selection](const FDiscGolfCourseManifestHoleEntry& Entry)
+            {
+                return Entry.HoleNumber == Selection.HoleNumber;
+            });
+        if (!bInManifest)
+        {
+            OutError = FString::Printf(
+                TEXT("layout '%s' selects hole %d, which the manifest does not list"),
+                *Layout.LayoutId.ToString(), Selection.HoleNumber);
+            return false;
+        }
+
+        const FDiscGolfHoleBlockoutDefinition* Hole = Holes.FindByPredicate(
+            [&Selection](const FDiscGolfHoleBlockoutDefinition& Candidate)
+            {
+                return Candidate.HoleNumber == Selection.HoleNumber;
+            });
+        if (Hole == nullptr)
+        {
+            // Validating a subset of loaded holes is legitimate; only the ones we
+            // were given can be checked against their selections.
+            continue;
+        }
+
+        FDiscGolfResolvedHole Resolved;
+        if (!ResolveHoleForLayout(*Hole, Layout, Resolved, OutError))
+        {
+            return false;
+        }
+        if (Resolved.Par <= 0)
+        {
+            OutError = FString::Printf(
+                TEXT("layout '%s' resolves hole %d to par %d"),
+                *Layout.LayoutId.ToString(), Selection.HoleNumber, Resolved.Par);
+            return false;
+        }
+    }
+
+    return true;
 }
