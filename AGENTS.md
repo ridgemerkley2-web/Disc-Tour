@@ -97,6 +97,16 @@ conventions:
 python Scripts/validate_solver_convention_parity.py
 ```
 
+When Unreal is not installed there is no compiler feedback, so run the source-only
+C++ lint after editing any header or source. It checks the mechanical rules a
+compiler would otherwise catch -- generated.h ordering, GENERATED_BODY presence,
+own-header-first includes, the runtime/DeveloperTool module boundary, TObjectPtr on
+reflected pointers, and raw UObject allocation:
+
+```text
+python Scripts/lint_cpp_conventions.py
+```
+
 If Unreal Engine is available locally, also run an editor build. On Windows PowerShell:
 
 ```powershell

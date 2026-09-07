@@ -40,6 +40,9 @@ CHECKS = (
      "physics", True),
     ("trajectory artifacts", "validate_trajectory_artifacts.py", [], "physics", False),
 
+    ("C++ convention lint", "lint_cpp_conventions.py", [], "repository", False),
+    ("C++ convention lint self-test", "lint_cpp_conventions.py", ["--self-test"],
+     "repository", False),
     ("digest-pinned evidence", "audit_dg_digest_pinned_files.py", [], "repository", False),
     ("project validation", "validate_project.py", [], "repository", False),
 
