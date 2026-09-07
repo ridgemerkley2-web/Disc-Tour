@@ -54,8 +54,12 @@ private:
     FDGFullCharacterCustomization OpeningCustomization;
     FDGFullCharacterCustomization ExpectedCustomization;
     FThrowAuthoritySnapshot AuthorityBeforeCustomization;
-    TObjectPtr<UActorComponent> OpeningCustomizationAuthority;
-    TObjectPtr<UActorComponent> OpeningOutfitAuthority;
+    // Reflected so the collector keeps them alive: both are captured from the
+    // golfer during preflight and compared by identity many latent frames later,
+    // so an unreflected pointer here would be a use-after-collect waiting for a
+    // GC to land between the two.
+    UPROPERTY() TObjectPtr<UActorComponent> OpeningCustomizationAuthority;
+    UPROPERTY() TObjectPtr<UActorComponent> OpeningOutfitAuthority;
     bool bPreflightPassed = false;
     bool bHairHatSelectionPreserved = false;
     bool bValidationTempSlotDeleted = false;
