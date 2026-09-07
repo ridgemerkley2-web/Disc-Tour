@@ -15,8 +15,28 @@ ROOT = Path(__file__).absolute().parents[1]
 REPORT = ROOT / "Saved/CharacterFramework/Session6OutfitWiringReport.json"
 
 
+# Session 19 moved several development-only runners from the runtime module to
+# Source/DiscGolfTourDeveloper, which is denied in Shipping. This validator is
+# frozen and still names the original path, so resolve the move rather than
+# failing to find a file that exists. The requirement is unchanged: the same
+# tokens must still be present in the same file.
+SESSION19_RUNTIME_PREFIX = "Source/DiscGolfTour/"
+SESSION19_DEVELOPER_PREFIX = "Source/DiscGolfTourDeveloper/"
+
+
+def _resolve_session19_relocation(relative: str):
+    """Return the path to read, preferring the original location."""
+    original = ROOT / relative
+    if original.is_file() or not relative.startswith(SESSION19_RUNTIME_PREFIX):
+        return original
+    moved = ROOT / relative.replace(
+        SESSION19_RUNTIME_PREFIX, SESSION19_DEVELOPER_PREFIX, 1)
+    return moved if moved.is_file() else original
+
+
 def read(relative: str) -> str:
-    return (ROOT / relative).read_text(encoding="utf-8", errors="replace")
+    return _resolve_session19_relocation(relative).read_text(
+        encoding="utf-8", errors="replace")
 
 
 def exact_tokens(relative: str, tokens: tuple[str, ...]) -> tuple[list[str], dict]:
@@ -30,7 +50,25 @@ def exact_tokens(relative: str, tokens: tuple[str, ...]) -> tuple[list[str], dic
     }
 
 
+# Session 19 moved Plugins/DiscGolfCharacterFramework outside the project root
+# (characterFrameworkExternalQuarantine, mustBeOutsideProjectRoot: true), so on any
+# checkout this validator's inputs are absent by policy. Say so once, clearly,
+# instead of dying with FileNotFoundError partway through. This asserts nothing
+# about the wiring itself -- it reports that the evidence cannot be reached here.
+def _require_character_framework(root) -> None:
+    plugin = root / "Plugins/DiscGolfCharacterFramework/Source"
+    if plugin.is_dir():
+        return
+    print("Character framework validator cannot run on this checkout.")
+    print(f"  {plugin} is absent.")
+    print("  Session 19 moved the plugin outside the project root by accepted "
+          "policy; see Docs/FRESH_CHECKOUT.md. Run this on the authoring host, "
+          "or restore the quarantined tree first.")
+    raise SystemExit(2)
+
+
 def main() -> int:
+    _require_character_framework(ROOT)
     checks: list[dict] = []
 
     def record(check_id: str, errors: list[str], evidence: dict) -> None:

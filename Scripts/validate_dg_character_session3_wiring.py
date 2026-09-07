@@ -54,15 +54,52 @@ OUTFIT_COMPONENT_PATH = SESSION6_SESSION7_PLUGIN_CHANGES[1]
 AVATAR_BACKEND_CPP, AVATAR_BACKEND_H = SESSION8_PLUGIN_CHANGES
 
 
+# Session 19 moved several development-only runners from the runtime module to
+# Source/DiscGolfTourDeveloper, which is denied in Shipping. This validator is
+# frozen and still names the original path, so resolve the move rather than
+# failing to find a file that exists. The requirement is unchanged: the same
+# tokens must still be present in the same file.
+SESSION19_RUNTIME_PREFIX = "Source/DiscGolfTour/"
+SESSION19_DEVELOPER_PREFIX = "Source/DiscGolfTourDeveloper/"
+
+
+def _resolve_session19_relocation(relative: str):
+    """Return the path to read, preferring the original location."""
+    original = PROJECT_ROOT / relative
+    if original.is_file() or not relative.startswith(SESSION19_RUNTIME_PREFIX):
+        return original
+    moved = PROJECT_ROOT / relative.replace(
+        SESSION19_RUNTIME_PREFIX, SESSION19_DEVELOPER_PREFIX, 1)
+    return moved if moved.is_file() else original
+
+
 def _read(relative: str) -> str:
-    return (PROJECT_ROOT / relative).read_text(encoding="utf-8")
+    return _resolve_session19_relocation(relative).read_text(encoding="utf-8")
 
 
 def _require(checks: list[dict], name: str, condition: bool, detail: str) -> None:
     checks.append({"check": name, "passed": bool(condition), "detail": detail})
 
 
+# Session 19 moved Plugins/DiscGolfCharacterFramework outside the project root
+# (characterFrameworkExternalQuarantine, mustBeOutsideProjectRoot: true), so on any
+# checkout this validator's inputs are absent by policy. Say so once, clearly,
+# instead of dying with FileNotFoundError partway through. This asserts nothing
+# about the wiring itself -- it reports that the evidence cannot be reached here.
+def _require_character_framework(root) -> None:
+    plugin = root / "Plugins/DiscGolfCharacterFramework/Source"
+    if plugin.is_dir():
+        return
+    print("Character framework validator cannot run on this checkout.")
+    print(f"  {plugin} is absent.")
+    print("  Session 19 moved the plugin outside the project root by accepted "
+          "policy; see Docs/FRESH_CHECKOUT.md. Run this on the authoring host, "
+          "or restore the quarantined tree first.")
+    raise SystemExit(2)
+
+
 def main() -> None:
+    _require_character_framework(PROJECT_ROOT)
     pawn = _read("Source/DiscGolfTour/DiscGolferPawn.cpp")
     pawn_header = _read("Source/DiscGolfTour/DiscGolferPawn.h")
     adapter = _read("Source/DiscGolfTour/DiscGolfRHBHThrowAdapterComponent.cpp")

@@ -112,7 +112,25 @@ def _struct_block(source: str, struct_name: str, next_marker: str) -> str:
     return source.split(marker, 1)[1].split(next_marker, 1)[0]
 
 
+# Session 19 moved Plugins/DiscGolfCharacterFramework outside the project root
+# (characterFrameworkExternalQuarantine, mustBeOutsideProjectRoot: true), so on any
+# checkout this validator's inputs are absent by policy. Say so once, clearly,
+# instead of dying with FileNotFoundError partway through. This asserts nothing
+# about the contract itself -- it reports that the evidence cannot be reached here.
+def _require_character_framework(root) -> None:
+    plugin = root / "Plugins/DiscGolfCharacterFramework/Source"
+    if plugin.is_dir():
+        return
+    print("Character framework validator cannot run on this checkout.")
+    print(f"  {plugin} is absent.")
+    print("  Session 19 moved the plugin outside the project root by accepted "
+          "policy; see Docs/FRESH_CHECKOUT.md. Run this on the authoring host, "
+          "or restore the quarantined tree first.")
+    raise SystemExit(2)
+
+
 def main() -> int:
+    _require_character_framework(ROOT)
     checks: list[dict] = []
 
     diff = _git(
