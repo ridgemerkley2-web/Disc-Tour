@@ -70,29 +70,39 @@ digest-verified evidence. Note that the affected extensions are not predictable
 from a list — `.base64`, `.js`, `.html`, `.bat`, `.sh` and `.css` files were all
 caught by this check after a hand-picked suffix list missed them.
 
-Two Session 18 logs remain unresolved: `Evidence/Session18/PolyHavenReimport.log`
-and `Evidence/Session18/PackagedPineRidgePlaySmoke.log` are 6 and 2 bytes larger
-than their recorded digests describe. This is **not** the line-ending problem, and
-it is not any encoding or truncation artefact. Both files are already fully CRLF
-(3,505 and 798 pairs, matching their line counts), contain zero non-ASCII bytes,
-and no transformation reproduces the recorded digest: not dropping leading or
-trailing bytes, not deleting any single line, not collapsing blank lines. The
-committed logs therefore differ from the hashed ones in **content**, by two and six
-bytes respectively — they are from a slightly different run than the one the
-receipt recorded.
+### Mixed line endings, and a wrong conclusion worth recording
 
-Nothing in this repository can resolve that, and editing a log so it matches a
-digest would be fabricating evidence rather than verifying it. Note that the
-substantive checks on these logs still pass: the Session 18 gate finds its exact
-pass marker (`PINE RIDGE PLAY SMOKE PASS: 1968 samples, 98.1 m final carry ...`)
-and no failure markers. Only the identity binding is broken, so what is lost is the
-proof that these exact bytes came from that exact run — not the evidence that the
-run passed.
+Two Session 18 logs were 6 and 2 bytes larger than their recorded digests, and the
+first analysis of them here was **wrong**. It concluded they came from a different
+run, on the grounds that both files were fully CRLF, contained no non-ASCII bytes,
+and matched no whole-file transform, single-line deletion, or blank-line collapse.
+Every one of those observations was true. The conclusion drawn from them was not.
+
+Unreal terminates each log message with CRLF but writes the message body verbatim,
+so a multi-line message carries **bare LF inside it**. `text=auto` round-trips that
+lossily: the blob is stored fully LF, and checkout promotes every LF back to CRLF,
+gaining exactly one byte per interior break. `PolyHavenReimport.log` has six such
+breaks and `PackagedPineRidgePlaySmoke.log` has two, which is the entire
+discrepancy. Demoting the separator before each tab- or space-led continuation line
+reproduces both recorded digests exactly, byte for byte.
+
+The lesson generalises: **a mixed-ending file is invisible to an LF/CRLF flip.**
+Searching only whole-file transforms will report content drift where there is none.
+`Scripts/audit_dg_digest_pinned_files.py` now tries this third reconstruction as
+well, because without it the audit gave a confident all-clear while two
+digest-bound files were unverifiable.
+
+Both logs are now stored verbatim and pinned, along with `BuildCookRun.log` and
+`Manifest_UFSFiles_Win64.txt` — those two verified only because their round trip
+happened to be lossless, which is the same fragile state the other two were in
+before a multi-line message appeared in them. Pinning without re-staging the bytes
+in the same commit would have broken them, so both steps are done together and the
+blob sizes are checked afterwards.
 
 ## How much of the evidence actually verifies
 
 701 files inside the repository have a SHA-256 recorded for them by some contract
-or receipt. **647 of those verify exactly.** The 54 that do not split into two
+or receipt. **648 of those verify exactly.** The 53 that do not split into two
 groups, and the difference matters:
 
 - **9 match an older committed revision.** A receipt from one session recorded a
@@ -100,12 +110,16 @@ groups, and the difference matters:
   and the older bytes are still recoverable from history. Affected: the flight
   component and disc actor sources, the RHBH adapter, the rig units header, the
   Session 2 rig script and the mocap pipeline doc.
-- **45 match no revision that was ever committed.** These bindings describe states
+- **44 match no revision that was ever committed.** These bindings describe states
   the authoring machine held and never pushed, because only the final checkpoint
   was committed rather than each session's tree. `Docs/DG_SESSION19_MANUAL_RELEASE_REVIEW.md`
   is the clearest example: its binding records 11,243 bytes, the repository has the
-  16,998-byte version, and no revision in between exists here. The two Session 18
-  logs above are in this group too.
+  16,998-byte version, and no revision in between exists here. `Config/DefaultGame.ini`
+  (2,891 recorded against 2,975 present) and several Session 10/12/19 validators are
+  in the same group.
+
+  Before assigning anything to this group, rule out a mixed-ending original first —
+  that mistake is described above, and it cost two files a wrong verdict.
 
 Nothing in this second group can be repaired from the repository, and editing a
 file so that it matches a digest would be fabricating provenance rather than

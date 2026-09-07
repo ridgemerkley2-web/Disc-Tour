@@ -49,6 +49,28 @@ def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest().upper()
 
 
+def continuation_lf(raw: bytes) -> bytes:
+    """Undo CRLF promotion of the interior line breaks in a multi-line message.
+
+    Unreal terminates each log message with CRLF but writes the message body
+    verbatim, so a multi-line message carries bare LF inside it. `text=auto`
+    round-trips that lossily: the blob is stored fully LF and checkout promotes
+    every LF back to CRLF, gaining one byte per interior break. Neither whole-file
+    transform can express the original, so a mixed-ending file is invisible to an
+    LF/CRLF flip -- which is why the two Session 18 logs looked for a while like
+    content drift rather than a normalization artefact.
+
+    Continuation lines are the ones beginning with a tab or a space.
+    """
+    parts = raw.split(b"\r\n")
+    out = bytearray()
+    for index, segment in enumerate(parts[:-1]):
+        out += segment
+        out += b"\n" if parts[index + 1][:1] in (b"\t", b" ") else b"\r\n"
+    out += parts[-1]
+    return bytes(out)
+
+
 def tracked_files() -> list[str]:
     done = subprocess.run(
         ["git", "-C", str(ROOT), "ls-files", "-z"],
@@ -113,7 +135,7 @@ def main() -> int:
             continue
         lf = raw.replace(b"\r\n", b"\n")
         crlf = lf.replace(b"\n", b"\r\n")
-        for form in (lf, crlf):
+        for form in (lf, crlf, continuation_lf(raw)):
             if form != raw and sha(form) in digests:
                 (unpinned_ok if rel in already else needs_pin).append((rel, form))
                 break

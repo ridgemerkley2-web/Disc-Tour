@@ -136,3 +136,7 @@ Scripts/open-project.bat -text
 Scripts/validate-project.bat -text
 SourceArt/PineRidge/Generated/pine_ridge_grass_card_alpha.png.base64 -text
 SourceArt/PineRidge/Generated/pine_ridge_litter_card_alpha.png.base64 -text
+Evidence/Session18/PolyHavenReimport.log -text
+Evidence/Session18/PackagedPineRidgePlaySmoke.log -text
+Evidence/Session18/BuildCookRun.log -text
+Evidence/Session18/Manifest_UFSFiles_Win64.txt -text
